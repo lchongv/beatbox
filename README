@@ -3,7 +3,7 @@ This project was recently moved to github. The original location was at launchpa
 Building (2026 port: meson, GTK3, GStreamer 1.0, libgee-0.8, libsoup-3, Granite 6, sqlite3)
 
   Dependencies (Arch): vala meson gtk3 granite libgee gstreamer gst-plugins-base
-  gst-plugins-good taglib libxml2 libnotify libsoup3 json-glib libgpod libpeas sqlite
+  gst-plugins-good taglib libxml2 libnotify libsoup3 json-glib libgpod sqlite
 
   meson setup build --prefix=$HOME/.local
   ninja -C build install
@@ -11,3 +11,6 @@ Building (2026 port: meson, GTK3, GStreamer 1.0, libgee-0.8, libsoup-3, Granite 
 
 The library lives in ~/.local/share/beatbox/beatbox.db and is kept between runs.
 The iTunes-style theme is data/itunes.css (embedded in the binary).
+Optional skins are folders dropped into ~/.local/share/beatbox/skins; see skins/README.md.
+Missing album art is looked up in MusicBrainz / the Cover Art Archive and the Apple Music
+catalogue (Preferences > Behavior); internet radio stations come from radio-browser.info.

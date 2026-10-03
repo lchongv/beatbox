@@ -1,0 +1,76 @@
+/* Midnight: dark chrome and lists with a blue LCD. */
+
+@define-color it7_chrome_top      #55585e;
+@define-color it7_chrome_mid      #3b3e43;
+@define-color it7_chrome_bottom   #2a2c30;
+@define-color it7_chrome_border   #101113;
+@define-color it7_accent          #3f74d6;
+@define-color it7_accent_light    #6f97e0;
+@define-color it7_sidebar_top     #30343a;
+@define-color it7_sidebar_bottom  #22252a;
+@define-color it7_sidebar_border  #0e0f11;
+@define-color it7_sidebar_text    #dde1e7;
+@define-color it7_sidebar_heading #8e9aac;
+@define-color it7_row_a           #1f2124;
+@define-color it7_row_b           #27292d;
+@define-color it7_detail_bg       #2b2e33;
+@define-color it7_detail_border   #121315;
+@define-color it7_lcd_top         #1c2a3b;
+@define-color it7_lcd_mid         #22354a;
+@define-color it7_lcd_bottom      #15202d;
+@define-color it7_lcd_border      #050607;
+@define-color it7_lcd_text        #d4e8ff;
+@define-color it7_lcd_dim         #86aed3;
+@define-color theme_selected_bg_color @it7_accent;
+
+window.beatbox, window.beatbox label { color: #e4e6ea; }
+
+toolbar.itunes-header button:not(.traffic-light),
+toolbar.itunes-header toolbutton.transport-button > button,
+toolbar.itunes-header toolitem button.round-menu {
+  background-image: linear-gradient(to bottom, #6a6e75, #45484e 50%, #33363a);
+  border-color: #141517;
+  color: #eceef1;
+  box-shadow: inset 0 1px 0 alpha(white, .25), 0 1px 1px alpha(black, .4);
+}
+toolbar.itunes-header toolbutton.transport-button > button:hover {
+  background-image: linear-gradient(to bottom, #7a7e85, #50545a 50%, #3b3e43);
+}
+toolbar.itunes-header toolbutton.transport-button > button:disabled { color: #8b8f96; }
+
+window.beatbox .album-detail button, window.beatbox .source-actions button, window.beatbox dialog button {
+  background-image: linear-gradient(to bottom, #5a5e65, #3d4045);
+  border-color: #141517;
+  color: #eceef1;
+}
+
+entry.search-bar { background-color: #26282c; color: #eceef1; border-color: #101113; }
+
+treeview.tracklist, treeview.tracklist.view { color: #e4e6ea; }
+treeview.view header button {
+  background-image: linear-gradient(to bottom, #44474c, #33363a);
+  border-color: #17181a;
+  color: #e4e6ea;
+}
+
+iconview.albumgrid, iconview.albumgrid.view, .albumwall {
+  background-color: #1a1c1f;
+  color: #e4e6ea;
+}
+
+.source-page, .source-page .view { background-color: #1a1c1f; }
+.source-page label { color: #e4e6ea; }
+.source-page button { background: none; border: none; box-shadow: none; }
+.source-page button:hover { background-color: alpha(white, .06); }
+
+.source-actions {
+  background-image: linear-gradient(to bottom, #3c3f44, #2d3034);
+  border-bottom-color: #101113;
+}
+
+/* the status bar icons are dark, so this bar stays mid grey */
+actionbar.itunes-statusbar > revealer > box {
+  background-image: linear-gradient(to bottom, #9a9da2, #85888d);
+  border-top-color: #101113;
+}
+actionbar.itunes-statusbar label { color: #141517; text-shadow: none; }

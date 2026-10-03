@@ -309,6 +309,7 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		viewSelectorBin.add(viewSelector);
 		
 		searchFieldBin.add(searchField);
+		searchField.valign = Gtk.Align.CENTER; // half the height of the LCD, not the whole toolbar
 		searchFieldBin.margin_left = 12;
 		searchFieldBin.margin_right = 6;
 		
@@ -330,7 +331,10 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		topControls.insert(top_displayBin, -1);
 		topControls.insert(searchFieldBin, -1);
 		var appmenu_button = new Gtk.MenuButton ();
-		appmenu_button.image = new Gtk.Image.from_icon_name ("open-menu-symbolic", Gtk.IconSize.LARGE_TOOLBAR);
+		appmenu_button.image = new Gtk.Image.from_icon_name ("open-menu-symbolic", Gtk.IconSize.MENU);
+		appmenu_button.get_style_context ().add_class ("round-menu");
+		appmenu_button.set_size_request (30, 30);
+		appmenu_button.valign = appmenu_button.halign = Gtk.Align.CENTER;
 		appmenu_button.popup = settingsMenu;
 		settingsMenu.show_all ();
 		var appmenu = new Gtk.ToolItem ();
@@ -447,7 +451,7 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		// Keep the toolbar from stretching them: square size => perfect circle
 		foreach (var item in new ToolButton[] { previousButton, playButton, nextButton }) {
 			var button = item.get_child ();
-			int size = (item == playButton) ? 48 : 36;
+			int size = (item == playButton) ? 56 : 42;
 			button.set_size_request (size, size);
 			button.valign = button.halign = Align.CENTER;
 		}

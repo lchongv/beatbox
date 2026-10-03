@@ -43,7 +43,8 @@ public class BeatBox.PodcastSourceView : SourceView {
 		welcome_screen = new Granite.Widgets.Welcome(_("Subscribe to Podcasts"), _("No Podcasts were found."));
 		welcome_screen_keys = new HashMap<int, Device>();
 		var podcast_icon = App.icons.PODCAST.render (IconSize.DIALOG, null);
-		welcome_screen.append_with_pixbuf(podcast_icon, _("Search"), _("Find RSS feeds online."));
+		welcome_screen.append_with_pixbuf(podcast_icon, _("Find Podcasts"), _("Search the Apple Podcasts directory."));
+		welcome_screen.append("list-add", _("Subscribe by Address"), _("Paste the address of a podcast RSS feed."));
 		welcome_screen.activated.connect(welcome_screen_activated);
 		
 		list_view = new PodcastList (tvs);
@@ -51,8 +52,19 @@ public class BeatBox.PodcastSourceView : SourceView {
 		error_box = new EmbeddedAlert();
 		pack_widgets();
 		
+		var find = action_button ("system-search-symbolic", _("Find Podcasts…"));
+		var subscribe = action_button ("list-add-symbolic", _("Subscribe by Address…"));
+		var refresh = action_button ("view-refresh-symbolic", _("Download new Episodes"));
+		find.clicked.connect (() => { new DirectoryDialog (DirectoryDialog.Kind.PODCAST); });
+		subscribe.clicked.connect (() => { App.actions.add_podcast_feed.activate (); });
+		refresh.clicked.connect (() => { App.actions.refresh_podcasts.activate (); });
+		pack_action_bar ({ find, subscribe, refresh });
+		
 		// Setup context menu
 		podcastMenu = new Gtk.Menu();
+		var find_item = new Gtk.MenuItem.with_label (_("Find Podcasts…"));
+		find_item.activate.connect (() => { new DirectoryDialog (DirectoryDialog.Kind.PODCAST); });
+		podcastMenu.append(find_item);
 		podcastMenu.append((Gtk.MenuItem)App.actions.add_podcast_feed.create_menu_item());
 		podcastMenu.append((Gtk.MenuItem)App.actions.refresh_podcasts.create_menu_item());
 		podcastMenu.show_all();
@@ -71,31 +83,15 @@ public class BeatBox.PodcastSourceView : SourceView {
 	}
 	
 	protected override void set_default_warning () {
-		error_box.set_alert (_("No Podcasts Found"), _("To add a podcast, visit a website such as Miro Guide to find RSS Feeds.") + 
-		"\n" + _("You can then copy and paste the feed into the \"Add Podcast\" window by right clicking on \"Podcasts\"."),
+		error_box.set_alert (_("No Podcasts Found"), _("Use “Find Podcasts…” above to search the directory, or “Subscribe by Address…” to paste an RSS feed."),
 		null, true, Gtk.MessageType.INFO);
 	}
 	
 	void welcome_screen_activated(int index) {
-		if(index == 0) {
-			try {
-				new Thread<void*>.try (null, take_action);
-			}
-			catch (Error err) {
-				warning ("Could not create thread to have fun: %s", err.message);
-			}
-		}
-	}
-	
-	private void* take_action () {
-		try {
-			GLib.AppInfo.launch_default_for_uri ("https://www.miroguide.com/toprated/", null);
-		}
-		catch(Error err) {
-			stdout.printf("Couldn't open miro guide webpage: %s\n", err.message);
-		}
-		
-		return null;
+		if(index == 0)
+			new DirectoryDialog (DirectoryDialog.Kind.PODCAST);
+		else
+			App.actions.add_podcast_feed.activate ();
 	}
 	
 	/** Specific implementations for View interface **/

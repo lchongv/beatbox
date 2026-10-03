@@ -144,6 +144,7 @@ app_sources = files(
   'src/Core/PlaylistManager.vala',
   'src/Core/ListSetupManager.vala',
   'src/Core/LyricsManager.vala',
+  'src/Core/Skins.vala',
   'src/CellRenderers/SideBarRenderer.vala',
   'src/CellRenderers/SmartAlbumDataFunc.vala',
   'src/DataBase/DataBaseManager.vala',
@@ -222,6 +223,7 @@ app_sources = files(
   'src/Widgets/SpaceWidget.vala',
   'src/Widgets/StatusBar.vala',
   'src/Widgets/CoverFlow.vala',
+  'src/Widgets/AlbumWall.vala',
   'src/Widgets/AdvancedSearchBox.vala',
   'src/Widgets/SourceViewSearchSuggestions.vala',
   'src/Widgets/OptionChooser.vala',
@@ -245,13 +247,15 @@ app_sources = files(
   'src/Windows/PreferencesWindow.vala',
   'src/Windows/PlaylistNameWindow.vala',
   'src/Windows/AddPodcastWindow.vala',
+  'src/Windows/DirectoryDialog.vala',
   'src/Windows/RemoveDuplicatesDialog.vala',
 )
 
 resources = gnome.compile_resources('beatbox-resources', 'data/beatbox.gresource.xml', source_dir: 'data')
 icon_resources = gnome.compile_resources('beatbox-icons', 'images/icons.gresource.xml', source_dir: 'images')
+skin_resources = gnome.compile_resources('beatbox-skins', 'skins/skins.gresource.xml', source_dir: 'skins')
 
-executable('beatbox', app_sources, resources, icon_resources,
+executable('beatbox', app_sources, resources, icon_resources, skin_resources,
   dependencies: core_dep,
   install_rpath: prefix / get_option('libdir'),
   export_dynamic: true,

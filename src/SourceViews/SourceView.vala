@@ -38,6 +38,9 @@ public abstract class BeatBox.SourceView : Box, View {
 	Widget               list_page;     // list_scroll, or Cover Flow above it
 	CoverFlow?           cover_flow;
 	ScrolledWindow		 album_scroll	{ get; private set; }
+	Stack                album_page;    // album_scroll (popup mode) or the inline wall
+	ScrolledWindow       wall_scroll;
+	AlbumWall?           wall;
 	public GenericList	 list_view      { get; protected set; }
 	public GenericGrid	 album_view		{ get; protected set; }
 	public EmbeddedAlert error_box      { get; protected set; }
@@ -166,10 +169,12 @@ public abstract class BeatBox.SourceView : Box, View {
 	
 	protected void pack_widgets() {
 		if (have_error_box) {
+			error_box.get_style_context ().add_class ("source-page"); // for skins
 			view_container.append_page (error_box);
 		}
 
 		if (have_welcome_screen) {
+			welcome_screen.get_style_context ().add_class ("source-page");
 			view_container.append_page (welcome_screen);
 		}
 
@@ -190,7 +195,21 @@ public abstract class BeatBox.SourceView : Box, View {
 			album_scroll = new ScrolledWindow(null, null);
 			album_scroll.set_policy(PolicyType.AUTOMATIC, PolicyType.AUTOMATIC);
 			album_scroll.add(album_view);
-			view_container.append_page (album_scroll);
+			
+			// iTunes 11 grid: albums unfold inline instead of in a popup
+			wall = new AlbumWall(album_view, this);
+			wall.album_activated.connect(play_album);
+			wall_scroll = new ScrolledWindow(null, null);
+			wall_scroll.set_policy(PolicyType.NEVER, PolicyType.AUTOMATIC);
+			wall_scroll.add(wall);
+			
+			album_page = new Stack();
+			album_page.add(album_scroll);
+			album_page.add(wall_scroll);
+			album_page.show_all();
+			apply_album_click_mode();
+			App.settings.main.notify["album-grid-inline"].connect(apply_album_click_mode);
+			view_container.append_page (album_page);
 			
 			// Must do this after, so genericgrid can setup vadjustment listeners
 			album_view.set_parent_wrapper (this);
@@ -217,6 +236,30 @@ public abstract class BeatBox.SourceView : Box, View {
 		
 		if (have_list_view)
 			view_container.append_page (list_page);
+	}
+
+	void apply_album_click_mode () {
+		bool inline = App.settings.main.album_grid_inline;
+		album_page.visible_child = inline ? (Widget)wall_scroll : (Widget)album_scroll;
+		if (inline)
+			album_view.item_activated_handler (null); // hide the popup
+	}
+
+	/** A row of explicit buttons above the view (Podcasts, Internet Radio) */
+	protected void pack_action_bar (Button[] buttons) {
+		var bar = new Box (Orientation.HORIZONTAL, 6);
+		bar.get_style_context ().add_class ("source-actions");
+		foreach (var b in buttons)
+			bar.pack_start (b, false, false, 0);
+		pack_start (bar, false, false, 0);
+		reorder_child (bar, 0);
+	}
+
+	protected static Button action_button (string icon_name, string label) {
+		var b = new Button.with_label (label);
+		b.image = new Image.from_icon_name (icon_name, IconSize.MENU);
+		b.always_show_image = true;
+		return b;
 	}
 
 	// We only check for white space at the moment
@@ -253,7 +296,7 @@ public abstract class BeatBox.SourceView : Box, View {
 				break;
 			case SourceViewType.GRID:
 				if (have_album_view) {
-					view_index = view_container.page_num (album_scroll);
+					view_index = view_container.page_num (album_page);
 				}
 				break;
 			case SourceViewType.ERROR:
@@ -830,8 +873,13 @@ public abstract class BeatBox.SourceView : Box, View {
 	
 	void play_album(Album album) {
 		int row = first_row_of(album);
-		if (row >= 0)
-			list_view.row_activated(new TreePath.from_indices(row), list_view.get_column(0));
+		if (row < 0)
+			return;
+		// the list plays its selected row, whatever path is activated
+		var path = new TreePath.from_indices(row);
+		list_view.get_selection().unselect_all();
+		list_view.get_selection().select_path(path);
+		list_view.row_activated(path, list_view.get_column(0));
 	}
 	
 	// Playback

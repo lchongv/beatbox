@@ -85,6 +85,21 @@
       <summary>Size of the LCD position marker</summary>
       <description>Size in pixels of the diamond that marks the playback position in the LCD</description>
     </key>
+    <key type="b" name="album-grid-inline">
+      <default>true</default>
+      <summary>Open albums inline in the cover grid</summary>
+      <description>When true, clicking a cover in the grid unfolds its tracks under that row (iTunes 11). When false, they open in a popup window.</description>
+    </key>
+    <key type="b" name="download-covers">
+      <default>true</default>
+      <summary>Download missing album art</summary>
+      <description>Look up covers that are missing from the music folders in MusicBrainz / the Cover Art Archive, then in the Apple Music catalogue</description>
+    </key>
+    <key type="s" name="skin">
+      <default>''</default>
+      <summary>Skin</summary>
+      <description>Folder name of the skin laid over the built-in iTunes look; empty for none</description>
+    </key>
     <key type="as" name="plugins-enabled">
       <default>['azlyrics', 'lastfminfo']</default>
       <summary>List of enabled plugins</summary>

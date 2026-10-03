@@ -176,8 +176,9 @@ public class BeatBox.CoverManager : Object, BeatBox.CoverInterface {
     }
 	
     public string? get_best_album_art_file(Media m) {
-		// If it is not a local file, ignore it
-		if(m.uri.has_prefix("http:/")) {
+		// If it is not a local file, ignore it (asking GVfs about an https
+		// podcast episode is a network round trip per episode)
+		if(!m.uri.has_prefix("file:")) {
 			return get_cached_album_art_path(get_media_coverart_key(m));
 		}
 		
@@ -305,52 +306,134 @@ public class BeatBox.CoverManager : Object, BeatBox.CoverInterface {
 		// Views may have been drawn before the covers were ready
 		Idle.add(() => { App.window.queue_draw(); return false; });
 		
-		// TODO: Causes continous memory growth
-		//fetch_remaining_album_art();
+		fetch_remaining_album_art();
 		
 		return null;
 	}
 	
+	/* Covers missing from the music folders: MusicBrainz finds the album's
+	 * release group, the Cover Art Archive has its front cover. MusicBrainz
+	 * allows one request per second, so this runs slowly in the background. */
+	bool fetching_online = false;
+	
 	public void fetch_remaining_album_art() {
+		if(fetching_online || !App.settings.main.download_covers)
+			return;
+		fetching_online = true;
+		new Thread<void*>("covers-online", fetch_online_thread);
+	}
+	
+	// Albums that MusicBrainz doesn't know, so they are not asked again on every start
+	string not_found_path() {
+		return Path.build_filename(App.settings.get_album_art_cache_dir(), "not-found-online.txt");
+	}
+	
+	void* fetch_online_thread() {
+		var not_found = new HashSet<string>();
 		try {
-			new Thread<void*>.try (null, fetch_remaining_album_art_thread);
-		} catch (Error err) {
-			warning ("Could not create last fm thread: %s", err.message);
+			string contents;
+			FileUtils.get_contents(not_found_path(), out contents);
+			foreach(var line in contents.split("\n"))
+				not_found.add(line);
+		} catch(Error err) {}
+		
+		var wanted = new HashMap<string, Media>();
+		foreach(var m in App.library.song_library.medias()) {
+			string key = get_media_coverart_key(m);
+			if(m.album.strip() == "" || wanted.has_key(key) || not_found.contains(key) || m_covers.get(key) != null)
+				continue;
+			wanted[key] = m;
+		}
+		if(wanted.size > 0)
+			message("Looking up %d missing album covers online", wanted.size);
+		
+		foreach(var entry in wanted.entries) {
+			if(!App.settings.main.download_covers)
+				break;
+			var m = entry.value;
+			var pix = download_cover(m.album_artist != "" ? m.album_artist : m.artist, m.album);
+			if(pix == null) {
+				try {
+					var stream = File.new_for_path(not_found_path()).append_to(FileCreateFlags.NONE);
+					stream.write((entry.key + "\n").data);
+				} catch(Error err) {}
+				continue;
+			}
+			save_album_art_in_cache(m, pix);
+			Idle.add(() => { set_album_art(m, pix, true); return false; });
+		}
+		fetching_online = false;
+		return null;
+	}
+	
+	static string quote(string s) {
+		return "\"" + s.replace("\\", "\\\\").replace("\"", "\\\"") + "\"";
+	}
+	
+	/** "Definitely Maybe (Remastered)" → "definitely maybe"; also drops " - Single" */
+	static string simplify(string s) {
+		try {
+			var plain = new Regex("""\s*[(\[][^)\]]*[)\]]|\s+-\s+(single|ep)$""", RegexCompileFlags.CASELESS).replace(s, -1, 0, "");
+			return plain.down().strip();
+		} catch(RegexError err) {
+			return s.down().strip();
 		}
 	}
 	
-	void* fetch_remaining_album_art_thread() {
-		var all_media = BeatBox.App.library.medias();
-		var remaining = new Gee.HashMap<string, BeatBox.Album>(); // hashmap of albums with no art
-		
-		int total_fetched = 0;
-		foreach(var m in all_media) {
-			string key = BeatBox.App.library.album_key(m);
-			
-			if (remaining.has_key (key)) // already known
-				continue;
-				
-			if(get_album_art_from_media(m) == null) {
-				var album = new BeatBox.Album(m.album_artist, m.album);
-				album.add_media(m);
-				remaining.set(key, album);
-			}
+	Gdk.Pixbuf? download_cover(string artist, string album) {
+		return cover_from_musicbrainz(artist, simplify(album)) ?? cover_from_itunes(artist, album);
+	}
+	
+	Gdk.Pixbuf? pixbuf_from_url(string url) {
+		var bytes = Http.fetch_bytes(url);
+		if(bytes == null)
+			return null;
+		try {
+			return new Gdk.Pixbuf.from_stream(new MemoryInputStream.from_bytes(bytes));
+		} catch(Error err) {
+			return null;
 		}
+	}
+	
+	Gdk.Pixbuf? cover_from_musicbrainz(string artist, string album) {
+		var query = "releasegroup:%s AND artist:%s".printf(quote(album), quote(artist));
+		var body = Http.fetch("https://musicbrainz.org/ws/2/release-group/?fmt=json&limit=3&query=" + Uri.escape_string(query, null, false));
+		Thread.usleep(1100000); // MusicBrainz rate limit
 		
-		// Go through remaining and fetch from last fm
-		foreach(var album in remaining.values) {
-			BeatBox.Media m = album.get_medias().to_array()[0];
-			
-			if(get_album_art_from_media(m) == null) {
-				if(++total_fetched <= 2) {
-					App.info.fetch_album_info(m.album_artist, m.album);
-				}
-				else {
-					remaining_art.set(m, 1);
-				}
+		try {
+			var parser = new Json.Parser();
+			parser.load_from_data(body);
+			foreach(var node in parser.get_root().get_object().get_array_member("release-groups").get_elements()) {
+				var group = node.get_object();
+				if(group.get_int_member("score") < 90)
+					continue;
+				var pix = pixbuf_from_url("https://coverartarchive.org/release-group/" + group.get_string_member("id") + "/front-500");
+				if(pix != null)
+					return pix;
 			}
-		}
+		} catch(Error err) {}
+		return null;
+	}
+	
+	/* The Apple Music catalogue knows most commercial releases MusicBrainz lacks */
+	Gdk.Pixbuf? cover_from_itunes(string artist, string album) {
+		var body = Http.fetch("https://itunes.apple.com/search?entity=album&limit=10&term=" + Uri.escape_string(artist + " " + simplify(album), null, false));
+		Thread.usleep(3000000); // Apple allows about 20 searches per minute
 		
+		try {
+			var parser = new Json.Parser();
+			parser.load_from_data(body);
+			foreach(var node in parser.get_root().get_object().get_array_member("results").get_elements()) {
+				var r = node.get_object();
+				string their_artist = r.get_string_member("artistName").down();
+				if(simplify(r.get_string_member("collectionName")) != simplify(album)
+				   || !(artist.down() in their_artist || their_artist in artist.down()))
+					continue;
+				var pix = pixbuf_from_url(r.get_string_member("artworkUrl100").replace("100x100bb", "600x600bb"));
+				if(pix != null)
+					return pix;
+			}
+		} catch(Error err) {}
 		return null;
 	}
 	
@@ -361,9 +444,5 @@ public class BeatBox.CoverManager : Object, BeatBox.CoverInterface {
 	}
 	
 	void album_info_updated(AlbumInfo album) {
-		if(remaining_art.size > 0) {
-			Media m = remaining_art.keys.to_array()[0];
-			App.info.fetch_album_info(m.album_artist, m.album);
-		}
 	}
 }

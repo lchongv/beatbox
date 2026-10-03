@@ -112,7 +112,7 @@ public class BeatBox.Icons : GLib.Object, BeatBox.IconsInterface {
 		MUSIC_FOLDER = new BeatBox.Icon ("folder-music", 128, Type.MIMETYPE, null, true);
 
 		// 22 x 22
-		HISTORY = new BeatBox.Icon ("document-open-recent", 22, Type.ACTION, null, false);
+		HISTORY = new BeatBox.Icon ("document-open-recent-symbolic", 16, Type.ACTION, null, false);
 
 		// 16 x 16
 		BEATBOX        = new BeatBox.Icon ("beatbox", 16, Type.APP, null, true);

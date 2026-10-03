@@ -42,7 +42,9 @@ public class BeatBox.StationSourceView : SourceView {
 		welcome_screen = new Granite.Widgets.Welcome(_("Turn up the Radio"), _("No Stations were found."));
 		welcome_screen_keys = new HashMap<int, Device>();
 		var station_icon = App.icons.STATION.render (IconSize.DIALOG, null);
-		welcome_screen.append_with_pixbuf(station_icon, _("Search"), _("Find radio stations online."));
+		welcome_screen.append_with_pixbuf(station_icon, _("Find Stations"), _("Search thousands of stations on radio-browser.info."));
+		welcome_screen.append("list-add", _("Add by Address"), _("Type the address of a station's stream."));
+		welcome_screen.append("document-open", _("Import File"), _("Add the stations of a .pls or .m3u file."));
 		welcome_screen.activated.connect(welcome_screen_activated);
 		
 		// Setup content widgets
@@ -50,8 +52,22 @@ public class BeatBox.StationSourceView : SourceView {
 		error_box = new EmbeddedAlert();
 		pack_widgets();
 		
+		var find = action_button ("system-search-symbolic", _("Find Stations…"));
+		var add = action_button ("list-add-symbolic", _("Add by Address…"));
+		var import = action_button ("document-open-symbolic", _("Import File…"));
+		find.clicked.connect (() => { new DirectoryDialog (DirectoryDialog.Kind.RADIO); });
+		add.clicked.connect (() => { DirectoryDialog.add_station_by_url (); });
+		import.clicked.connect (() => { App.actions.import_station.activate (); });
+		pack_action_bar ({ find, add, import });
+		
 		// Setup context menu
 		radioMenu = new Gtk.Menu();
+		var find_item = new Gtk.MenuItem.with_label (_("Find Stations…"));
+		find_item.activate.connect (() => { new DirectoryDialog (DirectoryDialog.Kind.RADIO); });
+		radioMenu.append(find_item);
+		var add_item = new Gtk.MenuItem.with_label (_("Add by Address…"));
+		add_item.activate.connect (() => { DirectoryDialog.add_station_by_url (); });
+		radioMenu.append(add_item);
 		radioMenu.append((Gtk.MenuItem)App.actions.import_station.create_menu_item());
 		radioMenu.show_all();
 		
@@ -69,31 +85,17 @@ public class BeatBox.StationSourceView : SourceView {
 	}
 	
 	protected override void set_default_warning () {
-		error_box.set_alert (_("No Internet Radio Stations Found"), _("To add a station, visit a website such as SomaFM to find PLS or M3U files.") + 
-		"\n" + _("You can then import the file to add the station."),
+		error_box.set_alert (_("No Internet Radio Stations Found"), _("Use “Find Stations…” above to search the radio-browser.info directory."),
 		null, true, Gtk.MessageType.INFO);
 	}
 	
 	void welcome_screen_activated(int index) {
-		if(index == 0) {
-			try {
-				new Thread<void*>.try (null, take_action);
-			}
-			catch(Error err) {
-				warning ("Could not create thread to have fun: %s", err.message);
-			}
-		}
-	}
-	
-	public void* take_action () {
-		try {
-			GLib.AppInfo.launch_default_for_uri ("http://somafm.com/", null);
-		}
-		catch(Error err) {
-			stdout.printf("Couldn't open soma.fm webpage: %s\n", err.message);
-		}
-		
-		return null;
+		if(index == 0)
+			new DirectoryDialog (DirectoryDialog.Kind.RADIO);
+		else if(index == 1)
+			DirectoryDialog.add_station_by_url ();
+		else
+			App.actions.import_station.activate ();
 	}
 	
 	/** Specific implementations for View interface **/
