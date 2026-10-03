@@ -79,6 +79,12 @@
       <summary>String of last search</summary>
       <description>String of last search</description>
     </key>
+    <key type="i" name="lcd-marker-size">
+      <range min="6" max="28"/>
+      <default>14</default>
+      <summary>Size of the LCD position marker</summary>
+      <description>Size in pixels of the diamond that marks the playback position in the LCD</description>
+    </key>
     <key type="as" name="plugins-enabled">
       <default>['azlyrics', 'lastfminfo']</default>
       <summary>List of enabled plugins</summary>

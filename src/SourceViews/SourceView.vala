@@ -204,7 +204,13 @@ public abstract class BeatBox.SourceView : Box, View {
 			var paned = new Paned(Orientation.VERTICAL);
 			paned.pack1(cover_flow, false, false);
 			paned.pack2(list_scroll, true, false);
-			paned.position = 300;
+			// Cover Flow gets half of the height until the user drags the divider
+			bool user_moved = false;
+			paned.size_allocate.connect((alloc) => {
+				if (!user_moved && alloc.height > 1)
+					paned.position = alloc.height / 2;
+			});
+			paned.button_press_event.connect(() => { user_moved = true; return false; });
 			list_page = paned;
 			cover_flow.no_show_all = true;
 		}

@@ -135,7 +135,7 @@ public class BeatBox.Icons : GLib.Object, BeatBox.IconsInterface {
 		REPEAT_ONCE        = new BeatBox.Icon ("media-playlist-repeat-one-symbolic", 16, Type.STATUS, null, true);
 		REPEAT_OFF         = new BeatBox.Icon ("media-playlist-no-repeat-symbolic", 16, Type.STATUS, null, true);
 		SHUFFLE_OFF        = new BeatBox.Icon ("media-playlist-no-shuffle-symbolic", 16, Type.STATUS, null, true);
-		EQ                 = new BeatBox.Icon ("media-eq-symbolic", 16, Type.STATUS, null, true);
+		EQ                 = new BeatBox.Icon ("media-eq-symbolic", 16, Type.ACTION, null, true);
 
 		MEDIA_PLAY_SYMBOLIC  = new BeatBox.Icon ("media-playback-start-symbolic", 16, Type.ACTION, null, false);
 		MEDIA_PAUSE_SYMBOLIC = new BeatBox.Icon ("media-playback-pause-symbolic", 16, Type.ACTION, null, false);
@@ -144,8 +144,8 @@ public class BeatBox.Icons : GLib.Object, BeatBox.IconsInterface {
 		PROCESS_COMPLETED    = new BeatBox.Icon ("process-completed-symbolic", 16, Type.STATUS, null, false);
 		PROCESS_ERROR        = new BeatBox.Icon ("process-error-symbolic", 16, Type.STATUS, null, false);
 		PROCESS_STOP         = new BeatBox.Icon ("process-stop-symbolic", 16, Type.ACTION, null, false);
-		SHUFFLE_ON           = new BeatBox.Icon ("media-playlist-shuffle-symbolic", 16, Type.STATUS, null, false);
-		REPEAT_ON            = new BeatBox.Icon ("media-playlist-repeat-symbolic", 16, Type.STATUS, null, false);
+		SHUFFLE_ON           = new BeatBox.Icon ("media-playlist-shuffle-symbolic", 16, Type.STATUS, null, true);
+		REPEAT_ON            = new BeatBox.Icon ("media-playlist-repeat-symbolic", 16, Type.STATUS, null, true);
 		VIEW_COLUMN          = new BeatBox.Icon ("view-column-symbolic", 16, Type.ACTION, null, false);
 		VIEW_DETAILS         = new BeatBox.Icon ("view-list-symbolic", 16, Type.ACTION, null, false);
 		VIEW_ICONS           = new BeatBox.Icon ("view-grid-symbolic", 16, Type.ACTION, null, false);

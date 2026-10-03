@@ -95,6 +95,7 @@ public class BeatBox.Settings {
     public class Settings : Granite.Services.Settings {
 
         public string music_mount_name { get; set; }
+        public int lcd_marker_size { get; set; }
         public string music_folder { get; set; }
         public string podcast_folder { get; set; }
         public bool update_folder_hierarchy { get; set; }

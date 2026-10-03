@@ -125,6 +125,18 @@ public class BeatBox.App : Granite.Application {
 						 null};
 	}
 
+	static Gtk.CssProvider marker_css = new Gtk.CssProvider ();
+	
+	/** Resizes the diamond position marker of the LCD (Preferences › General) */
+	public static void apply_lcd_marker_size (int size) {
+		try {
+			marker_css.load_from_data (".lcd scale slider { min-width: %dpx; min-height: %dpx; margin: %dpx %dpx; }"
+				.printf (size, size, -(size - 4) / 2, -(size - 8) / 2));
+		} catch (Error err) {
+			warning ("Could not resize the position marker: %s", err.message);
+		}
+	}
+	
 	public App () {
 		// Create settings
 		settings = new BeatBox.Settings ();
@@ -170,6 +182,8 @@ public class BeatBox.App : Granite.Application {
 		var css = new Gtk.CssProvider ();
 		css.load_from_resource ("/net/launchpad/beatbox/itunes.css");
 		Gtk.StyleContext.add_provider_for_screen (Gdk.Screen.get_default (), css, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION + 1);
+		Gtk.StyleContext.add_provider_for_screen (Gdk.Screen.get_default (), marker_css, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION + 2);
+		apply_lcd_marker_size (settings.main.lcd_marker_size);
 		
 		Gtk.IconTheme.get_default ().add_resource_path ("/net/launchpad/beatbox/icons");
 		icons = new Icons();
