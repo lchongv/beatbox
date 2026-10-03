@@ -1,0 +1,19 @@
+/* Native: the built-in look is dropped (Native=true in skin.ini).
+ * Only the colors BeatBox paints by hand follow the GTK theme here. */
+
+@define-color bb_row_a         @theme_base_color;
+@define-color bb_row_b         shade(@theme_base_color, 0.95);
+@define-color bb_detail_bg     @theme_base_color;
+@define-color bb_detail_border @borders;
+
+/* the window buttons are drawn by the built-in look: give them theme icons */
+button.traffic-light {
+  min-width: 24px;
+  min-height: 24px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 16px 16px;
+}
+button.traffic-light.close    { background-image: -gtk-icontheme("window-close-symbolic"); }
+button.traffic-light.minimize { background-image: -gtk-icontheme("window-minimize-symbolic"); }
+button.traffic-light.maximize { background-image: -gtk-icontheme("window-maximize-symbolic"); }

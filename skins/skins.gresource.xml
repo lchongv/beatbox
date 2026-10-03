@@ -6,5 +6,7 @@
     <file>graphite/skin.css</file>
     <file>midnight/skin.ini</file>
     <file>midnight/skin.css</file>
+    <file>native/skin.ini</file>
+    <file>native/skin.css</file>
   </gresource>
 </gresources>

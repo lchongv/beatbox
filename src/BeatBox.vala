@@ -201,10 +201,7 @@ public class BeatBox.App : Granite.Application {
 		else
 			Granite.Services.Logger.DisplayLevel = Granite.Services.LogLevel.INFO;
 		
-		var css = new Gtk.CssProvider ();
-		css.load_from_resource ("/net/launchpad/beatbox/theme.css");
-		Gtk.StyleContext.add_provider_for_screen (Gdk.Screen.get_default (), css, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION + 1);
-		Skins.apply (settings.main.skin); // optional skin, at APPLICATION + 2
+		Skins.apply (settings.main.skin); // base look at APPLICATION + 1, optional skin at + 2
 		Gtk.StyleContext.add_provider_for_screen (Gdk.Screen.get_default (), marker_css, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION + 3);
 		apply_lcd_style ();
 		
