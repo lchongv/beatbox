@@ -62,6 +62,9 @@ public static int main (string[] args) {
         var exe_dir = Path.get_dirname (FileUtils.read_link ("/proc/self/exe"));
         if (FileUtils.test (Path.build_filename (exe_dir, "build.ninja"), FileTest.EXISTS))
             langpack_dir = Path.build_filename (exe_dir, "po");
+        // portable bundle (the release tarball): translations in ./locale
+        else if (FileUtils.test (Path.build_filename (exe_dir, "locale"), FileTest.IS_DIR))
+            langpack_dir = Path.build_filename (exe_dir, "locale");
     } catch (FileError err) {}
     Intl.setlocale (LocaleCategory.ALL, "");
     BeatBox.App.locale_dir = langpack_dir;
