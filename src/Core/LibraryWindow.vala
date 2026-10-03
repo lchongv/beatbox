@@ -301,6 +301,7 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		
 		viewSelector.append(App.icons.VIEW_DETAILS.render_image (IconSize.MENU));
 		viewSelector.append(App.icons.VIEW_ICONS.render_image (IconSize.MENU));
+		viewSelector.append(new Image.from_resource ("/net/launchpad/beatbox/icons/16x16/actions/view-coverflow-symbolic.svg"));
 		viewSelector.valign = showSongInfo.valign = Gtk.Align.CENTER;
 		viewSelector.selected = App.settings.saved_state.view_mode;
 		

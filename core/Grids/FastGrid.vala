@@ -46,6 +46,9 @@ public class BeatBox.FastGrid : IconView {
 	public delegate void ViewSearchFunc (string search, HashTable<int, GLib.Object> table, ref HashTable<int, GLib.Object> showing);
 	private unowned ViewSearchFunc search_func;
 	
+	/** The visible (sorted, searched) objects changed */
+	public signal void visible_changed();
+	
 	public FastGrid (GLib.Object default_value) {
 		table = new HashTable<int, GLib.Object>(null, null);
 		showing = new HashTable<int, GLib.Object>(null, null);
@@ -175,6 +178,7 @@ public class BeatBox.FastGrid : IconView {
 		set_model(null);
 		fm.set_table(showing);
 		set_model(fm);
+		visible_changed();
 	}
 	
 	public void redraw_row (int row_index) {
