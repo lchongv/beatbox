@@ -27,77 +27,71 @@
 
 using Gtk;
 
-public class BeatBox.BehaviorPreferences : GLib.Object, PreferencesSection {
+/** Base for the simple General pages: a column of bold headings and indented rows */
+public abstract class BeatBox.SimplePreferences : GLib.Object, PreferencesSection {
 	public PreferencesSectionCategory category { get { return PreferencesSectionCategory.GENERAL; } }
-	public string title { get { return _("Behavior"); } }
+	public abstract string title { get; }
 	public Gdk.Pixbuf? icon { get { return null; } }
 	public Widget widget { get { return content; } }
 	
-	Box content;
-	CheckButton organizeFolders;
-	CheckButton writeMetadataToFile;
-	CheckButton copyImportedMusic;
-	CheckButton downloadCovers;
+	protected Box content = new Box(Orientation.VERTICAL, 10);
+	
+	protected void add_heading(string text) {
+		var label = new Label("");
+		label.xalign = 0.0f;
+		label.set_markup("<b>" + Markup.escape_text(text) + "</b>");
+		content.pack_start(label, false, true, 0);
+	}
+	
+	protected void add_row(Widget row) {
+		content.pack_start(UI.wrap_alignment(row, 0, 0, 0, 10), false, true, 0);
+	}
+	
+	protected CheckButton add_check(string text, bool active) {
+		var check = new CheckButton.with_label(text);
+		check.active = active;
+		add_row(check);
+		return check;
+	}
+	
+	protected static Box labelled(string text, Widget w, string? after = null) {
+		var box = new Box(Orientation.HORIZONTAL, 8);
+		box.pack_start(new Label(text), false, false, 0);
+		box.pack_start(w, false, false, 0);
+		if (after != null)
+			box.pack_start(new Label(after), false, false, 0);
+		return box;
+	}
+	
+	public void save() {
+	}
+	
+	public void cancel() {
+	}
+}
+
+/** How the library folder is managed */
+public class BeatBox.BehaviorPreferences : SimplePreferences {
+	public override string title { get { return _("Behavior"); } }
 	
 	public BehaviorPreferences() {
-		content = new Box(Orientation.VERTICAL, 0);
-		content.spacing = 10;
-		
-		var managementLabel = new Label(_("Library Management"));
-		organizeFolders = new CheckButton.with_label(_("Keep media folders organized"));
-		writeMetadataToFile = new CheckButton.with_label(_("Write metadata to file"));
-		copyImportedMusic = new CheckButton.with_label(_("Copy files to library folder when imported"));
-		downloadCovers = new CheckButton.with_label(_("Download missing album art from the internet (MusicBrainz, Apple Music)"));
-		
-		managementLabel.xalign = 0.0f;
-		managementLabel.set_markup("<b>" + _("Library Management") + "</b>");
-		
-		organizeFolders.set_active(App.settings.main.update_folder_hierarchy);
-		writeMetadataToFile.set_active(App.settings.main.write_metadata_to_file);
-		copyImportedMusic.set_active(App.settings.main.copy_imported_music);
-		downloadCovers.set_active(App.settings.main.download_covers);
-		
-		content.pack_start(managementLabel, false, true, 0);
-		content.pack_start(UI.wrap_alignment(organizeFolders, 0, 0, 0, 10), false, true, 0);
-		content.pack_start(UI.wrap_alignment(writeMetadataToFile, 0, 0, 0, 10), false, true, 0);
-		content.pack_start(UI.wrap_alignment(copyImportedMusic, 0, 0, 0, 10), false, true, 0);
-		content.pack_start(UI.wrap_alignment(downloadCovers, 0, 0, 0, 10), false, true, 0);
-		downloadCovers.toggled.connect(() => {
-			App.settings.main.download_covers = downloadCovers.active;
-			if (downloadCovers.active)
-				App.covers.fetch_remaining_album_art();
-		});
-		
-		// Appearance
-		var appearanceLabel = new Label("");
-		appearanceLabel.xalign = 0.0f;
-		appearanceLabel.set_markup("<b>" + _("Appearance") + "</b>");
-		var markerBox = new Box(Orientation.HORIZONTAL, 8);
-		var markerSize = new SpinButton.with_range(6, 28, 1);
-		markerSize.value = App.settings.main.lcd_marker_size;
-		markerBox.pack_start(new Label(_("Size of the position marker (diamond):")), false, false, 0);
-		markerBox.pack_start(markerSize, false, false, 0);
-		markerBox.pack_start(new Label(_("pixels")), false, false, 0);
-		content.pack_start(appearanceLabel, false, true, 0);
-		content.pack_start(UI.wrap_alignment(markerBox, 0, 0, 0, 10), false, true, 0);
-		markerSize.value_changed.connect(() => {
-			App.settings.main.lcd_marker_size = (int)markerSize.value;
-			App.apply_lcd_marker_size((int)markerSize.value); // live preview
-		});
-		
-		// Album grid: iTunes 11 inline band, or the popup window
-		var clickBox = new Box(Orientation.HORIZONTAL, 8);
-		var clickMode = new ComboBoxText();
-		clickMode.append("inline", _("Unfold it inline, under its row (iTunes 11)"));
-		clickMode.append("popup", _("Open it in a popup window"));
-		clickMode.active_id = App.settings.main.album_grid_inline ? "inline" : "popup";
-		clickMode.changed.connect(() => { App.settings.main.album_grid_inline = (clickMode.active_id == "inline"); });
-		clickBox.pack_start(new Label(_("Clicking an album in the cover grid:")), false, false, 0);
-		clickBox.pack_start(clickMode, false, false, 0);
-		content.pack_start(UI.wrap_alignment(clickBox, 0, 0, 0, 10), false, true, 0);
-		
+		add_heading(_("Library Management"));
+		var organize = add_check(_("Keep media folders organized"), App.settings.main.update_folder_hierarchy);
+		var write = add_check(_("Write metadata to file"), App.settings.main.write_metadata_to_file);
+		var copy = add_check(_("Copy files to library folder when imported"), App.settings.main.copy_imported_music);
+		organize.toggled.connect(() => { App.settings.main.update_folder_hierarchy = organize.active; });
+		write.toggled.connect(() => { App.settings.main.write_metadata_to_file = write.active; });
+		copy.toggled.connect(() => { App.settings.main.copy_imported_music = copy.active; });
+	}
+}
+
+/** Skins and the LCD position marker */
+public class BeatBox.AppearancePreferences : SimplePreferences {
+	public override string title { get { return _("Appearance"); } }
+	
+	public AppearancePreferences() {
 		// Skins (plugins: folders in ~/.local/share/beatbox/skins)
-		var skinBox = new Box(Orientation.HORIZONTAL, 8);
+		add_heading(_("Skin"));
 		var skinChooser = new ComboBoxText();
 		var skinInfo = new Label("");
 		skinInfo.xalign = 0.0f;
@@ -119,11 +113,10 @@ public class BeatBox.BehaviorPreferences : GLib.Object, PreferencesSection {
 				warning("Could not open %s: %s", Skins.user_dir(), err.message);
 			}
 		});
-		skinBox.pack_start(new Label(_("Skin:")), false, false, 0);
-		skinBox.pack_start(skinChooser, false, false, 0);
+		var skinBox = labelled(_("Skin:"), skinChooser);
 		skinBox.pack_start(openSkins, false, false, 0);
-		content.pack_start(UI.wrap_alignment(skinBox, 0, 0, 0, 10), false, true, 0);
-		content.pack_start(UI.wrap_alignment(skinInfo, 0, 0, 0, 10), false, true, 0);
+		add_row(skinBox);
+		add_row(skinInfo);
 		skinChooser.changed.connect(() => {
 			string id = skinChooser.active_id ?? "";
 			App.settings.main.skin = id;
@@ -135,28 +128,36 @@ public class BeatBox.BehaviorPreferences : GLib.Object, PreferencesSection {
 		});
 		skinChooser.changed();
 		
-		organizeFolders.toggled.connect(organize_folders_toggled);
-		writeMetadataToFile.toggled.connect(write_metadata_to_file_toggled);
-		copyImportedMusic.toggled.connect(copy_imported_music_toggled);
+		add_heading(_("Display"));
+		var markerSize = new SpinButton.with_range(6, 28, 1);
+		markerSize.value = App.settings.main.lcd_marker_size;
+		add_row(labelled(_("Size of the position marker (diamond):"), markerSize, _("pixels")));
+		markerSize.value_changed.connect(() => {
+			App.settings.main.lcd_marker_size = (int)markerSize.value;
+			App.apply_lcd_marker_size((int)markerSize.value); // live preview
+		});
 	}
+}
+
+/** The cover grid and where album art comes from */
+public class BeatBox.CoverPreferences : SimplePreferences {
+	public override string title { get { return _("Album Art"); } }
 	
-	void organize_folders_toggled() {
-		App.settings.main.update_folder_hierarchy = organizeFolders.get_active();
-	}
-	
-	void write_metadata_to_file_toggled() {
-		App.settings.main.write_metadata_to_file = writeMetadataToFile.get_active();
-	}
-	
-	void copy_imported_music_toggled() {
-		App.settings.main.copy_imported_music = copyImportedMusic.get_active();
-	}
-	
-	public void save() {
+	public CoverPreferences() {
+		add_heading(_("Cover Grid"));
+		var clickMode = new ComboBoxText();
+		clickMode.append("inline", _("Unfold it inline, under its row (iTunes 11)"));
+		clickMode.append("popup", _("Open it in a popup window"));
+		clickMode.active_id = App.settings.main.album_grid_inline ? "inline" : "popup";
+		clickMode.changed.connect(() => { App.settings.main.album_grid_inline = (clickMode.active_id == "inline"); });
+		add_row(labelled(_("Clicking an album in the cover grid:"), clickMode));
 		
-	}
-	
-	public void cancel() {
-		
+		add_heading(_("Missing Album Art"));
+		var download = add_check(_("Download missing album art from the internet (MusicBrainz, Apple Music)"), App.settings.main.download_covers);
+		download.toggled.connect(() => {
+			App.settings.main.download_covers = download.active;
+			if (download.active)
+				App.covers.fetch_remaining_album_art();
+		});
 	}
 }
