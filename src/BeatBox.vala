@@ -108,7 +108,7 @@ public class BeatBox.App : Granite.Application {
 		app_copyright = "2012";
 		application_id = "net.launchpad.beatbox";
 		app_icon = "beatbox";
-		app_launcher = "beatbox.desktop";
+		app_launcher = "net.launchpad.beatbox.desktop";
 		app_years = "2010-2012";
 
 		main_url = "https://launchpad.net/beat-box";

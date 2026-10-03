@@ -204,7 +204,7 @@ public class BeatBox.AboutPreferences : SimplePreferences {
 	
 	public AboutPreferences() {
 		var top = new Box(Orientation.HORIZONTAL, 14);
-		top.pack_start(new Image.from_pixbuf(App.icons.BEATBOX.render(IconSize.DIALOG, null)), false, false, 0);
+		top.pack_start(new Image.from_pixbuf(App.icons.BEATBOX.render(null, null, 112)), false, false, 0);
 		var name = new Label("");
 		name.xalign = 0.0f;
 		name.set_markup("<span size='x-large' weight='bold'>BeatBox</span>\n" + Markup.escape_text(_("Version %s").printf(Build.VERSION))
