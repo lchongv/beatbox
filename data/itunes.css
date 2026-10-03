@@ -155,9 +155,8 @@ paned > separator {
 }
 
 /* ===== Track lists: white / pale blue rows, blue selection ===== */
-treeview.view:not(.sidebar) { background-color: #ffffff; color: #1a1a1a; }
-treeview.view:not(.sidebar):nth-child(even) { background-color: @it7_row_b; }
-treeview.view:not(.sidebar):selected { background-color: @it7_accent; color: white; }
+treeview.tracklist, treeview.tracklist.view { background-color: transparent; color: #1a1a1a; }
+treeview.tracklist:selected, treeview.tracklist.view:selected { background-color: @it7_accent; color: white; }
 treeview.view header button {
   background-image: linear-gradient(to bottom, #fdfdfd, #dcdcdc);
   border-color: #a4a4a4;

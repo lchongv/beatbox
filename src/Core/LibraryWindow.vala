@@ -164,6 +164,10 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		App.playlists.playlist_removed.connect(playlist_removed);
 
 		this.destroy.connect (on_quit);
+		this.size_allocate.connect (() => {
+			if (!(window_maximized || window_fullscreen))
+				get_size (out last_width, out last_height);
+		});
 
 		object_to_view = new HashMap<Object, View>();
 	}
@@ -473,7 +477,7 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 	}
 	
 	public void focused_widget_changed(Widget? w) {
-		if (w != this.searchField) {
+		if (w != null && w != this.searchField) {
 			focusAfterSearch = w;
 			debug("Registered new widget to focus after search: %s", focusAfterSearch.name);
 		}
@@ -1004,6 +1008,9 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		return hide_on_close;
 	}
 
+	int last_width;
+	int last_height;
+	
 	void on_quit() {
 		// Stop listening to window state changes
 		this.window_state_event.disconnect(window_state_changed);
@@ -1022,13 +1029,19 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		if (window_maximized == true)
 		    App.settings.saved_state.window_state = Settings.WindowState.MAXIMIZED;
 		if(!(window_maximized || window_fullscreen)) {
-			App.settings.saved_state.window_width = get_allocated_width();
-			App.settings.saved_state.window_height = get_allocated_height();
+			// The allocation is already gone during destroy: use the last known size
+			App.settings.saved_state.window_width = last_width;
+			App.settings.saved_state.window_height = last_height;
 		}
 		
 		App.settings.main.search_string = searchField.get_text();
 		App.settings.saved_state.sidebar_width = sourcesToMedias.position;
 		App.settings.saved_state.view_mode = viewSelector.selected;
+		
+		// Periodic data is otherwise only written every 15 seconds, and
+		// GSettings writes are asynchronous: flush both before exiting.
+		App.database.flush();
+		GLib.Settings.sync();
 	}
 }
 

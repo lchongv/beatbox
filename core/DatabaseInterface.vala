@@ -38,4 +38,6 @@ public interface BeatBox.DatabaseInterface : GLib.Object {
 	public abstract SQLHeavy.QueryResult execute(string statement);
 	public abstract void queue_transaction(DatabaseTransactionFiller db_filler);
 	public abstract void add_periodic_transaction(DatabaseTransactionFiller periodic_filler);
+	/** Writes the periodic transactions now (e.g. on quit) */
+	public abstract void flush();
 }

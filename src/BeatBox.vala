@@ -193,6 +193,11 @@ public class BeatBox.App : Granite.Application {
 		
 		((CoverManager)covers).setup_signals();
 		
+		// Quit cleanly (saving state) on logout/kill as well
+		foreach (int sig in new int[] { Posix.Signal.TERM, Posix.Signal.INT }) {
+			Unix.signal_add (sig, () => { ((Gtk.Window)window).destroy (); return false; });
+		}
+		
 		// Start playing the last playing song. By waiting 1 second, we
 		// give everything time to finish initializing and avoid sending
 		// out media_updated signals during startup.
