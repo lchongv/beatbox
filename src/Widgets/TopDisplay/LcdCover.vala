@@ -1,17 +1,21 @@
 /*
- * Thumbnail of the playing album's cover, at the left edge of the LCD.
- * Shown only when Preferences ask for it and the playing media is a song.
+ * The playing album's cover at the left edge of the LCD, as tall as the LCD
+ * itself: it touches the top, bottom and left borders (its outer corners
+ * follow the LCD's rounded ones). Shown only when Preferences ask for it and
+ * the playing media is a song.
  */
 
 using Gtk;
 
 public class BeatBox.LcdCover : Image {
-	const int SIDE = 42;
+	const int CORNER = 7;  // inner radius of the LCD's rounded border
+
+	Gdk.Pixbuf? source = null;  // the cover, unscaled
+	int side = 0;               // current size of the rendered square
 
 	public LcdCover () {
 		no_show_all = true;
-		margin_right = 8;
-		valign = Align.CENTER;
+		valign = Align.FILL;  // the stylesheet pulls it over the LCD's padding (see .lcd-cover)
 		get_style_context ().add_class ("lcd-cover");
 
 		App.playback.media_played.connect ((m, old) => refresh ());
@@ -24,25 +28,60 @@ public class BeatBox.LcdCover : Image {
 	void refresh () {
 		var m = App.playback.media_active ? App.playback.current_media : null;
 		if (!App.settings.main.lcd_show_cover || m == null || m.media_type != MediaType.SONG) {
+			source = null;
 			hide ();
 			return;
 		}
 
 		// The original file in the cache looks better than the framed 180 px version
-		Gdk.Pixbuf? pix = null;
+		source = null;
 		try {
-			var path = App.covers.get_cached_album_art_path (App.covers.get_media_coverart_key (m));
-			pix = new Gdk.Pixbuf.from_file_at_scale (path, SIDE, SIDE, true);
+			source = new Gdk.Pixbuf.from_file (App.covers.get_cached_album_art_path (App.covers.get_media_coverart_key (m)));
 		} catch (Error err) {}
 
-		if (pix == null) {
+		if (source == null) {
 			var framed = App.covers.get_album_art_from_media (m) ?? App.covers.DEFAULT_COVER_SHADOW;
 			int crop = 6; // the shadow baked into the cached covers
 			if (framed.width > 2 * crop && framed.height > 2 * crop)
 				framed = new Gdk.Pixbuf.subpixbuf (framed, crop, crop, framed.width - 2 * crop, framed.height - 2 * crop);
-			pix = framed.scale_simple (SIDE, SIDE, Gdk.InterpType.BILINEAR);
+			source = framed;
 		}
-		set_from_pixbuf (pix);
+		side = 0;
+		render (side_for_now ());
 		show ();
+	}
+
+	int side_for_now () {
+		int h = get_allocated_height ();
+		return (h > 16) ? h : 54;  // until the first allocation
+	}
+
+	/** Scale the cover to a square of the given side, rounding its left corners */
+	void render (int new_side) {
+		if (source == null || new_side == side)
+			return;
+		side = new_side;
+		var scaled = source.scale_simple (side, side, Gdk.InterpType.BILINEAR);
+
+		var surface = new Cairo.ImageSurface (Cairo.Format.ARGB32, side, side);
+		var cr = new Cairo.Context (surface);
+		cr.new_sub_path ();
+		cr.arc (CORNER, CORNER, CORNER, Math.PI, 1.5 * Math.PI);
+		cr.line_to (side, 0);
+		cr.line_to (side, side);
+		cr.arc (CORNER, side - CORNER, CORNER, 0.5 * Math.PI, Math.PI);
+		cr.close_path ();
+		cr.clip ();
+		Gdk.cairo_set_source_pixbuf (cr, scaled, 0, 0);
+		cr.paint ();
+		set_from_pixbuf (Gdk.pixbuf_get_from_surface (surface, 0, 0, side, side));
+	}
+
+	public override void size_allocate (Allocation a) {
+		base.size_allocate (a);
+		if (source != null && a.height > 16 && a.height != side) {
+			int h = a.height;
+			Idle.add (() => { render (h); return Source.REMOVE; }); // resizing inside an allocation would loop
+		}
 	}
 }
