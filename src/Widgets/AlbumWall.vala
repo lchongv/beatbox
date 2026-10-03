@@ -18,7 +18,7 @@ public class BeatBox.AlbumWall : Layout {
 	const int GAP = 18;
 	const int ARROW_W = 28;
 	const int ARROW_H = 14;
-	const int DETAIL_COVER = 220;
+	const int DETAIL_TEXT_W = 220;  // width of the band's left column without a cover
 
 	GenericGrid grid;
 	SourceView wrapper;
@@ -30,6 +30,10 @@ public class BeatBox.AlbumWall : Layout {
 	Album? open_album = null;
 	Widget? detail = null;   // holder placed in the layout
 	Widget? content = null;  // its child, measured to size the holder
+	Gdk.Pixbuf? detail_source = null;  // full size cover of the open album
+	Image? detail_cover = null;
+	Box? detail_left = null;
+	int detail_side = -1;    // current side of detail_cover, from the settings' percentage
 	int detail_h = 0;        // height of the band (arrow included)
 	bool scroll_to_detail = false;
 
@@ -44,6 +48,7 @@ public class BeatBox.AlbumWall : Layout {
 
 		grid.visible_changed.connect (refresh);
 		App.covers.cover_changed.connect (() => queue_draw ());
+		App.settings.main.notify["album-detail-cover-percent"].connect (() => queue_resize ());
 		refresh ();
 	}
 
@@ -94,6 +99,7 @@ public class BeatBox.AlbumWall : Layout {
 
 		if (detail != null) {
 			// The band takes the whole width; its height is whatever its content needs
+			set_detail_side (width);
 			int min_h, nat_h;
 			content.get_preferred_height_for_width (width, out min_h, out nat_h);
 			detail.set_size_request (width, nat_h); // no-op (no relayout) when unchanged
@@ -267,6 +273,9 @@ public class BeatBox.AlbumWall : Layout {
 		if (detail != null)
 			detail.destroy ();
 		detail = content = null;
+		detail_cover = null;
+		detail_left = null;
+		detail_source = null;
 		open_album = null;
 		open_index = -1;
 		queue_resize ();
@@ -286,6 +295,24 @@ public class BeatBox.AlbumWall : Layout {
 		queue_resize ();
 	}
 
+	/** Cover side = band width × Preferences percentage (0 hides it). No-op when unchanged,
+	 * so calling it from size_allocate doesn't loop. */
+	void set_detail_side (int width) {
+		int side = width * App.settings.main.album_detail_cover_percent / 100;
+		if (side == detail_side || detail_cover == null)
+			return;
+		detail_side = side;
+		if (side < 16) {
+			detail_cover.hide ();
+			detail_left.set_size_request (DETAIL_TEXT_W, -1);
+			return;
+		}
+		var scaled = detail_source.scale_simple (side, side, Gdk.InterpType.BILINEAR);
+		detail_cover.pixbuf = App.covers.add_shadow_to_album_art (scaled, false);
+		detail_cover.show ();
+		detail_left.set_size_request (int.max (side, DETAIL_TEXT_W) + 20, -1);
+	}
+
 	Widget build_detail (Album album) {
 		var medias = album.get_medias_sorted ();
 		Media? first = null;
@@ -295,16 +322,19 @@ public class BeatBox.AlbumWall : Layout {
 			seconds += m.length;
 		}
 
-		// Big cover: the original file in the cache, if there is one
-		Gdk.Pixbuf? pix = null;
+		// Big cover: the original file in the cache, if there is one; sized by set_detail_side
+		detail_source = null;
 		if (first != null) {
 			try {
-				var path = App.covers.get_cached_album_art_path (App.covers.get_media_coverart_key (first));
-				pix = App.covers.add_shadow_to_album_art (new Gdk.Pixbuf.from_file_at_scale (path, DETAIL_COVER, DETAIL_COVER, false), false);
+				detail_source = new Gdk.Pixbuf.from_file (App.covers.get_cached_album_art_path (App.covers.get_media_coverart_key (first)));
 			} catch (Error err) {}
 		}
-		var cover = new Image.from_pixbuf (pix ?? App.covers.get_album_art_from_key (album.get_album_artist (), album.get_album ())
-		                                       ?? App.covers.DEFAULT_COVER_SHADOW);
+		detail_source = detail_source ?? App.covers.get_album_art_from_key (album.get_album_artist (), album.get_album ())
+		                              ?? App.covers.DEFAULT_COVER_SHADOW;
+		var cover = new Image ();
+		cover.no_show_all = true;
+		detail_cover = cover;
+		detail_side = -1;
 
 		var title = new Label (album.get_album ());
 		title.get_style_context ().add_class ("album-detail-title");
@@ -331,7 +361,7 @@ public class BeatBox.AlbumWall : Layout {
 
 		var left = new Box (Orientation.VERTICAL, 4);
 		left.valign = Align.START;
-		left.set_size_request (DETAIL_COVER + 20, -1);
+		detail_left = left;
 		left.pack_start (cover, false, false, 0);
 		left.pack_start (title, false, false, 2);
 		left.pack_start (artist, false, false, 0);
@@ -348,7 +378,7 @@ public class BeatBox.AlbumWall : Layout {
 			table.set ((int)table.size (), m);
 		list.set_table (table);
 		var list_scroll = new ScrolledWindow (null, null);
-		list_scroll.set_policy (PolicyType.NEVER, PolicyType.AUTOMATIC);
+		list_scroll.set_policy (PolicyType.AUTOMATIC, PolicyType.AUTOMATIC); // shrinks when the cover is big
 		list_scroll.propagate_natural_height = true;
 		list_scroll.max_content_height = 440;
 		list_scroll.valign = Align.START;

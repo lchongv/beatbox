@@ -85,6 +85,17 @@
       <summary>Size of the LCD position marker</summary>
       <description>Size in pixels of the diamond that marks the playback position in the LCD</description>
     </key>
+    <key type="b" name="lcd-two-lines">
+      <default>true</default>
+      <summary>Two-line LCD</summary>
+      <description>Show the title on the first line of the LCD and alternate the artist and the album on the second one (iTunes). When false, everything goes on one line.</description>
+    </key>
+    <key type="i" name="album-detail-cover-percent">
+      <range min="0" max="60"/>
+      <default>25</default>
+      <summary>Cover size in the inline album band</summary>
+      <description>Side of the cover in the band that unfolds in the cover grid, as a percentage of the band width; 0 hides it</description>
+    </key>
     <key type="b" name="album-grid-inline">
       <default>true</default>
       <summary>Open albums inline in the cover grid</summary>

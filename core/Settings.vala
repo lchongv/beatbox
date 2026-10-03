@@ -97,6 +97,8 @@ public class BeatBox.Settings {
         public string music_mount_name { get; set; }
         public int lcd_marker_size { get; set; }
         public bool album_grid_inline { get; set; }
+        public bool lcd_two_lines { get; set; }
+        public int album_detail_cover_percent { get; set; }
         public bool download_covers { get; set; }
         public string skin { get; set; }
         public string music_folder { get; set; }

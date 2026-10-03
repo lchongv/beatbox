@@ -327,7 +327,7 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		topControls.insert(playButton, -1);
 		topControls.insert(nextButton, -1);
 		topControls.insert(viewSelectorBin, -1);
-		topControls.insert(showSongInfoBin, -1);
+		// the "i" (now playing) toggle is gone: redundant; Ctrl+I still opens that view
 		topControls.insert(top_displayBin, -1);
 		topControls.insert(searchFieldBin, -1);
 		var appmenu_button = new Gtk.MenuButton ();
