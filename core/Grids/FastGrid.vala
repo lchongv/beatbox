@@ -56,8 +56,19 @@ public class BeatBox.FastGrid : IconView {
 		margin = 12;
 		item_width = IconsInterface.ALBUM_VIEW_IMAGE_SIZE;
 		
-		set_pixbuf_column(PIXBUF_COLUMN);
-		set_markup_column(MARKUP_COLUMN);
+		// Pack the cells by hand: with set_pixbuf_column()/set_markup_column()
+		// GTK3 reserves twice item_width per item, leaving huge gaps.
+		var pix_cell = new CellRendererPixbuf();
+		var text_cell = new CellRendererText();
+		text_cell.alignment = Pango.Alignment.CENTER;
+		text_cell.xalign = 0.5f;
+		text_cell.yalign = 0.0f;
+		text_cell.wrap_mode = Pango.WrapMode.WORD_CHAR;
+		text_cell.wrap_width = IconsInterface.ALBUM_VIEW_IMAGE_SIZE;
+		pack_start(pix_cell, false);
+		add_attribute(pix_cell, "pixbuf", PIXBUF_COLUMN);
+		pack_start(text_cell, false);
+		add_attribute(text_cell, "markup", MARKUP_COLUMN);
 		set_tooltip_column(TOOLTIP_COLUMN);
 		
 		set_table(table);
@@ -144,7 +155,6 @@ public class BeatBox.FastGrid : IconView {
 		if(search_func == null)
 			return;
 		
-		var old_size = showing.size();
 		
 		showing.remove_all();
 		if(search != null)
@@ -159,35 +169,12 @@ public class BeatBox.FastGrid : IconView {
 			search_func(last_search, table, ref showing);
 		//}
 		
-		if(showing.size() == old_size) {
-			fm.set_table(showing);
-			queue_draw();
-		}
-		else if(old_size == 0) { // if first population, just do normal
-			set_model(null);
-			fm.set_table(showing);
-			set_model(fm);
-		}
-		else if(old_size > showing.size()) { // removing
-			while(fm.iter_n_children(null) > showing.size()) {
-				TreeIter iter;
-				fm.iter_nth_child(out iter, null, fm.iter_n_children(null) - 1);
-				fm.remove(iter);
-			}
-			
-			fm.set_table(showing);
-			queue_draw();
-		}
-		else if(showing.size() > old_size) { // adding
-			TreeIter iter;
-			
-			while(fm.iter_n_children(null) < showing.size()) {
-				fm.append(out iter);
-			}
-			
-			fm.set_table(showing);
-			queue_draw();
-		}
+		// ponytail: always rebuild the whole model. The old incremental
+		// append/remove path left GtkIconView with stale rows (albums went
+		// missing); a full rebuild is cheap for the number of albums a grid shows.
+		set_model(null);
+		fm.set_table(showing);
+		set_model(fm);
 	}
 	
 	public void redraw_row (int row_index) {

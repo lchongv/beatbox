@@ -155,7 +155,7 @@ public class BeatBox.FastListModel : GLib.Object, TreeModel, TreeSortable, TreeD
 		TreePath path = new TreePath.from_string(((int)rows.size()).to_string());
 		rows.set((int)rows.size(), default_value);
 		iter.stamp = this.stamp;
-		iter.user_data = (void*)rows.size;
+		iter.user_data = (void*)(rows.size() - 1);
 		
 		row_inserted(path, iter);
 	}

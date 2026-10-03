@@ -39,35 +39,39 @@ namespace BeatBox.PixbufUtils {
         if (pixbuf == null)
             return null;
 
-        const int SHADOW_SIZE = 15;
+        // iTunes-style cover: rounded corners, thin dark frame, soft drop shadow
+        const int SHADOW_SIZE = 6;
+        const double RADIUS = 4;
 
         int S_WIDTH = (stretch)? surface_size: pixbuf.width;
         int S_HEIGHT = (stretch)? surface_size : pixbuf.height;
 
         var buffer_surface = new Granite.Drawing.BufferSurface (S_WIDTH, S_HEIGHT);
+        var cr = buffer_surface.context;
 
-        // paint shadow
-        buffer_surface.context.rectangle (0, 0, S_WIDTH, S_HEIGHT);
+        int width = S_WIDTH - 2 * SHADOW_SIZE;
+        int height = S_HEIGHT - 2 * SHADOW_SIZE;
 
-        if (stretch)
-            Gdk.cairo_set_source_pixbuf (buffer_surface.context,
-              App.icons.DEFAULT_ALBUM_SHADOW_PIXBUF.scale_simple (S_WIDTH, S_HEIGHT, Gdk.InterpType.BILINEAR), 0, 0);
-        else
-            Gdk.cairo_set_source_pixbuf (buffer_surface.context, App.icons.DEFAULT_ALBUM_SHADOW_PIXBUF, 0, 0);
+        Granite.Drawing.Utilities.cairo_rounded_rectangle (cr, SHADOW_SIZE, SHADOW_SIZE + 2, width, height, RADIUS);
+        cr.set_source_rgba (0, 0, 0, 0.45);
+        cr.fill ();
+        buffer_surface.fast_blur (2, 3);
 
-        buffer_surface.context.paint();
-
-        S_WIDTH -= 2 * SHADOW_SIZE;
-        S_HEIGHT -= 2 * SHADOW_SIZE;
-
-        // paint original pixbuf
         var source_pixbuf = pixbuf;
-        if (pixbuf.width != S_WIDTH || pixbuf.height != S_HEIGHT)
-            source_pixbuf = pixbuf.scale_simple (S_WIDTH, S_HEIGHT, Gdk.InterpType.BILINEAR);
+        if (pixbuf.width != width || pixbuf.height != height)
+            source_pixbuf = pixbuf.scale_simple (width, height, Gdk.InterpType.BILINEAR);
 
-        Gdk.cairo_set_source_pixbuf (buffer_surface.context, source_pixbuf,
-                                    SHADOW_SIZE, SHADOW_SIZE - 2); // 2px vertical offset
-        buffer_surface.context.paint();
+        cr.save ();
+        Granite.Drawing.Utilities.cairo_rounded_rectangle (cr, SHADOW_SIZE, SHADOW_SIZE, width, height, RADIUS);
+        cr.clip ();
+        Gdk.cairo_set_source_pixbuf (cr, source_pixbuf, SHADOW_SIZE, SHADOW_SIZE);
+        cr.paint ();
+        cr.restore ();
+
+        Granite.Drawing.Utilities.cairo_rounded_rectangle (cr, SHADOW_SIZE + 0.5, SHADOW_SIZE + 0.5, width - 1, height - 1, RADIUS);
+        cr.set_source_rgb (0.416, 0.416, 0.416); // #6a6a6a
+        cr.set_line_width (1);
+        cr.stroke ();
 
         return buffer_surface.load_to_pixbuf();
     }

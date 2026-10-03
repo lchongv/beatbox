@@ -44,10 +44,10 @@ public class BeatBox.SideBarRenderer : CellRenderer {
 	public override void get_size(Widget widget, Rectangle? cell_area, out int x_offset, out int y_offset, out int width, out int height) {
 		x_offset = 0;
 		y_offset = 0;
-		width = -1;
+		width = 1; // GTK3 ignores the height of a renderer that reports no width
 		int dumby;
 		widget.create_pango_layout("Test").get_pixel_size(out dumby, out height);
-		height += 4; // 1 px extra on each side for the text
+		height += 6; // 3 px extra on each side for the text
 	}
 	
 	public override void render(Cairo.Context context, Widget widget, Rectangle background_area, Rectangle cell_area, CellRendererState flags) {
@@ -78,7 +78,7 @@ public class BeatBox.SideBarRenderer : CellRenderer {
 		
 		// Draw a blank space for each level of indent
 		double start_x = depth * DEPTH_INDENT_SIZE;
-		double start_y = cell_area.y + 2;
+		double start_y = cell_area.y + 3;
 		if(rtl)
 			start_x = cell_area.width - start_x;
 		
@@ -98,7 +98,7 @@ public class BeatBox.SideBarRenderer : CellRenderer {
 		if(depth > 1)
 			layout.set_text(text, text.length);
 		else
-			layout.set_markup("<b>" + text + "</b>", -1);
+			layout.set_markup("<span size='small' weight='bold' foreground='#4a586d'>" + Markup.escape_text(text.up()) + "</span>", -1);
 			
 		if(rtl)
 			layout.set_alignment(Pango.Alignment.RIGHT);

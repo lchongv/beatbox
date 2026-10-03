@@ -136,7 +136,7 @@ public class BeatBox.AlbumGrid : GenericGrid {
 	/***********************************************
 	 * Grid value func. Returns markup and pix based on Album
 	 * ********************************************/
-	string TEXT_MARKUP = "%s\n%s";
+	string TEXT_MARKUP = "<b>%s</b>\n<span foreground='#4a4a4a'>%s</span>";
 	string TOOLTIP_MARKUP = "%s\n%s";
 	Value val_func (int row, int column, GLib.Object a_o) {
 		Album a = (Album)a_o;

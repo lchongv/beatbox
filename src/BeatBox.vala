@@ -168,6 +168,10 @@ public class BeatBox.App : Granite.Application {
 		else
 			Granite.Services.Logger.DisplayLevel = Granite.Services.LogLevel.INFO;
 		
+		var css = new Gtk.CssProvider ();
+		css.load_from_resource ("/net/launchpad/beatbox/itunes.css");
+		Gtk.StyleContext.add_provider_for_screen (Gdk.Screen.get_default (), css, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION + 1);
+		
 		icons = new Icons();
 		database = new DataBaseManager();
 		operations = new OperationsManager();

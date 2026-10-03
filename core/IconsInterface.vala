@@ -39,7 +39,7 @@ public interface BeatBox.IconsInterface : GLib.Object {
         PNG
     }
     
-    public const int ALBUM_VIEW_IMAGE_SIZE = 140;
+    public const int ALBUM_VIEW_IMAGE_SIZE = 180;
 	
 	// 128 x 128
 	public abstract BeatBox.Icon DEFAULT_ALBUM_ART { get; protected set; }
