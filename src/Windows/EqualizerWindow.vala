@@ -82,7 +82,7 @@ public class BeatBox.EqualizerWindow : Gtk.Window {
 		window_position = WindowPosition.CENTER;
 		type_hint = Gdk.WindowTypeHint.DIALOG;
 		set_transient_for(App.window);
-		set_size_request(-1, 224);
+		get_style_context().add_class("equalizer");
 		this.destroy_with_parent = true;
 		resizable = false;
 
@@ -109,6 +109,7 @@ public class BeatBox.EqualizerWindow : Gtk.Window {
 			v.add_mark(0, PositionType.LEFT, null);
 			v.draw_value = false;
 			v.inverted = true;
+			v.set_size_request(-1, 160);
 
 			var label = new Label(decibels[index]);
 

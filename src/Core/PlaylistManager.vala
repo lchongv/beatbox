@@ -56,7 +56,7 @@ public class BeatBox.PlaylistManager : GLib.Object, BeatBox.PlaylistInterface {
 				SmartPlaylist p = new SmartPlaylist();
 				
 				p.id = results.fetch_int(0);
-				p.name = results.fetch_string(1);
+				p.name = _(results.fetch_string(1)); // default playlists were saved untranslated
 				p.conditional = (SmartPlaylist.Conditional)results.fetch_int(2);
 				p.queries_from_string(results.fetch_string(3));
 				p.limit = ( results.fetch_int(4) == 1) ? true : false;

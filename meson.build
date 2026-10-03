@@ -6,14 +6,12 @@ i18n = import('i18n')
 prefix = get_option('prefix')
 datadir = prefix / get_option('datadir')
 pkgdatadir = datadir / meson.project_name()
-plugindir = prefix / get_option('libdir') / meson.project_name() / 'plugins'
 
 conf = configuration_data()
 conf.set('DATADIR', datadir)
 conf.set('PKG_DATADIR', pkgdatadir)
 conf.set('ICON_DIR', datadir / 'icons' / 'hicolor')
 conf.set('SCHEMA_DIR', pkgdatadir / 'database')
-conf.set('PLUGIN_DIR', plugindir)
 conf.set('GETTEXT_PACKAGE', meson.project_name())
 conf.set('RELEASE_NAME', 'Everlong')
 conf.set('VERSION', meson.project_version())
@@ -43,8 +41,6 @@ deps = [
   dependency('json-glib-1.0'),
   dependency('granite'),
   dependency('libgpod-1.0'),
-  dependency('libpeas-1.0'),
-  dependency('libpeas-gtk-1.0'),
   dependency('sqlite3'),
   valac.find_library('posix'),
   meson.get_compiler('c').find_library('m'),
@@ -52,7 +48,6 @@ deps = [
 
 core_sources = files(
   'core/SQLHeavy.vala',
-  'core/PluginManager.vala',
   'core/Settings.vala',
   'core/EqualizerPreset.vala',
   'core/SideTreeCategory.vala',
@@ -202,7 +197,6 @@ app_sources = files(
   'src/Preferences/BehaviorPreferences.vala',
   'src/Preferences/LastfmPreferences.vala',
   'src/Preferences/MusicPreferences.vala',
-  'src/Preferences/PluginPreferences.vala',
   'src/Preferences/PodcastPreferences.vala',
   'src/SourceViews/SourceView.vala',
   'src/SourceViews/DefaultSourceView.vala',
@@ -254,8 +248,9 @@ app_sources = files(
 )
 
 resources = gnome.compile_resources('beatbox-resources', 'data/beatbox.gresource.xml', source_dir: 'data')
+icon_resources = gnome.compile_resources('beatbox-icons', 'images/icons.gresource.xml', source_dir: 'images')
 
-executable('beatbox', app_sources, resources,
+executable('beatbox', app_sources, resources, icon_resources,
   dependencies: core_dep,
   install_rpath: prefix / get_option('libdir'),
   export_dynamic: true,

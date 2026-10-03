@@ -2,5 +2,6 @@
 <gresources>
   <gresource prefix="/net/launchpad/beatbox">
     <file>itunes.css</file>
+    <file>diamond.svg</file>
   </gresource>
 </gresources>

@@ -427,7 +427,10 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		var top_menu = new MenuBar.from_model(my_menu);
 		
 		verticalBox.pack_start(top_menu, false, true, 0);*/
-		verticalBox.pack_start(topControls, false, true, 0);
+		// The toolbar is the window's title bar: no separate system title bar,
+		// iTunes-style traffic lights on the left
+		topControls.insert(create_traffic_lights(), 0);
+		set_titlebar(topControls);
 		verticalBox.pack_start(sourcesToMedias, true, true, 0);
 		verticalBox.pack_end(statusBar, false, true, 0);
 		this.add(verticalBox);
@@ -440,6 +443,13 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		playButton.get_style_context().add_class("transport-button");
 		playButton.get_style_context().add_class("play");
 		nextButton.get_style_context().add_class("transport-button");
+		// Keep the toolbar from stretching them: square size => perfect circle
+		foreach (var item in new ToolButton[] { previousButton, playButton, nextButton }) {
+			var button = item.get_child ();
+			int size = (item == playButton) ? 48 : 36;
+			button.set_size_request (size, size);
+			button.valign = button.halign = Align.CENTER;
+		}
 		searchField.get_style_context().add_class("search-bar");
 		statusBar.get_style_context().add_class("itunes-statusbar");
 
@@ -461,6 +471,33 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		infoBar.hide();
 		update_sensitivities();
 		hide_video_mode();
+	}
+	
+	ToolItem create_traffic_lights() {
+		var box = new Box(Orientation.HORIZONTAL, 8);
+		box.valign = Align.CENTER;
+		box.margin_right = 14;
+		string[] names = { "close", "minimize", "maximize" };
+		string[] tips = { _("Close"), _("Minimize"), _("Maximize") };
+		for (int i = 0; i < 3; i++) {
+			var button = new Button();
+			button.get_style_context().add_class("traffic-light");
+			button.get_style_context().add_class(names[i]);
+			button.tooltip_text = tips[i];
+			button.can_focus = false;
+			button.valign = Align.CENTER;
+			box.pack_start(button, false, false, 0);
+			int which = i;
+			button.clicked.connect(() => {
+				if (which == 0) close();
+				else if (which == 1) iconify();
+				else if (window_maximized) unmaximize();
+				else maximize();
+			});
+		}
+		var item = new ToolItem();
+		item.add(box);
+		return item;
 	}
 	
 	public void setup_playback() {
