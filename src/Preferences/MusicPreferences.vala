@@ -29,7 +29,7 @@ using Gtk;
 
 public class BeatBox.MusicPreferences : GLib.Object, PreferencesSection {
 	public PreferencesSectionCategory category { get { return PreferencesSectionCategory.LIBRARIES; } }
-	public string title { get { return "Music"; } }
+	public string title { get { return _("Music"); } }
 	public Gdk.Pixbuf? icon { get { return null; } }
 	public Widget widget { get { return content; } }
 	

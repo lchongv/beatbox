@@ -68,9 +68,9 @@ iconview.albumgrid, iconview.albumgrid.view, .albumwall {
   border-bottom-color: #101113;
 }
 
-/* the status bar icons are dark, so this bar stays mid grey */
 actionbar.itunes-statusbar > revealer > box {
-  background-image: linear-gradient(to bottom, #9a9da2, #85888d);
+  background-image: linear-gradient(to bottom, #3a3d42, #2a2c30);
   border-top-color: #101113;
+  box-shadow: inset 0 1px 0 alpha(white, .08);
 }
-actionbar.itunes-statusbar label { color: #141517; text-shadow: none; }
+actionbar.itunes-statusbar label, actionbar.itunes-statusbar image { color: #dfe2e7; text-shadow: none; }

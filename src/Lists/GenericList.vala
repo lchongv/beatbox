@@ -136,6 +136,12 @@ public abstract class BeatBox.GenericList : FastList {
 	**/
 	protected abstract void updateTreeViewSetup();
 	
+	// Column titles are translated at runtime (see add_columns); listed here for xgettext
+	const string[] COLUMN_NAMES = { N_("Title"), N_("Length"), N_("Artist"), N_("Album"), N_("Genre"),
+		N_("Year"), N_("Track"), N_("Bitrate"), N_("Rating"), N_("Plays"), N_("Skips"), N_("Date Added"),
+		N_("Last Played"), N_("Episode"), N_("Name"), N_("Podcast"), N_("Date"), N_("Comment"),
+		N_("Category"), N_("Station") };
+	
 	protected void add_columns() {
 		int index = 0;
 		
@@ -244,6 +250,13 @@ public abstract class BeatBox.GenericList : FastList {
 				insert_column(tvc, index);
 			}
 
+			// Show the name translated; the title stays the English key the code matches on
+			if(tvc.title != " " && tvc.title != "id") {
+				var header = new Label(_(tvc.title));
+				header.show();
+				get_column(index).widget = header;
+			}
+			
 			get_column(index).get_button().button_press_event.connect(view_header_click);
 			get_column(index).notify["width"].connect(updateTreeViewSetup);
 

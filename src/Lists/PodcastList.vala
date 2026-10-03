@@ -112,15 +112,15 @@ public class BeatBox.PodcastList : GenericList {
 		button_release_event.connect(viewClickRelease);
 
 		// column chooser menu
-		columnEpisode = new CheckMenuItem.with_label("Episode");
-		columnName = new CheckMenuItem.with_label("Name");
-		columnLength = new CheckMenuItem.with_label("Length");
-		columnArtist = new CheckMenuItem.with_label("Artist");
-		columnPodcast = new CheckMenuItem.with_label("Podcast");
-		columnDate = new CheckMenuItem.with_label("Date");
-		columnRating = new CheckMenuItem.with_label("Rating");
-		columnComments = new CheckMenuItem.with_label("Comment");
-		columnCategory = new CheckMenuItem.with_label("Category");
+		columnEpisode = new CheckMenuItem.with_label(_("Episode"));
+		columnName = new CheckMenuItem.with_label(_("Name"));
+		columnLength = new CheckMenuItem.with_label(_("Length"));
+		columnArtist = new CheckMenuItem.with_label(_("Artist"));
+		columnPodcast = new CheckMenuItem.with_label(_("Podcast"));
+		columnDate = new CheckMenuItem.with_label(_("Date"));
+		columnRating = new CheckMenuItem.with_label(_("Rating"));
+		columnComments = new CheckMenuItem.with_label(_("Comment"));
+		columnCategory = new CheckMenuItem.with_label(_("Category"));
 		updateColumnVisibilities();
 		columnChooserMenu.append(columnEpisode);
 		columnChooserMenu.append(columnName);

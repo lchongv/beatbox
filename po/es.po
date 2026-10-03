@@ -2424,3 +2424,30 @@ msgid "%d minute"
 msgid_plural "%d minutes"
 msgstr[0] "%d minuto"
 msgstr[1] "%d minutos"
+
+msgid "Episode"
+msgstr "Episodio"
+
+msgid "Name"
+msgstr "Nombre"
+
+msgid "Date"
+msgstr "Fecha"
+
+msgid "Category"
+msgstr "Categoría"
+
+msgid "Skin"
+msgstr "Skin"
+
+msgid "Display"
+msgstr "Pantalla"
+
+msgid "Album Art"
+msgstr "Carátulas"
+
+msgid "Cover Grid"
+msgstr "Grilla de carátulas"
+
+msgid "Missing Album Art"
+msgstr "Carátulas que faltan"

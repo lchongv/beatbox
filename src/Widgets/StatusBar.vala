@@ -41,6 +41,21 @@ public class BeatBox.StatusBar : Gtk.ActionBar {
 	SimpleOptionChooser repeat_chooser;
 	Image show_eq_button;
 
+    static void follow_text_color (Image image) {
+        image.draw.connect ((cr) => {
+            if (image.storage_type != ImageType.PIXBUF)
+                return false;
+            var pix = image.pixbuf;
+            var color = image.get_style_context ().get_color (image.get_state_flags ());
+            Gdk.cairo_set_source_pixbuf (cr, pix, (image.get_allocated_width () - pix.width) / 2,
+                                         (image.get_allocated_height () - pix.height) / 2);
+            var icon = cr.get_source ();
+            Gdk.cairo_set_source_rgba (cr, color);
+            cr.mask (icon);
+            return true;
+        });
+    }
+
     public StatusBar () {
 		set_center_widget (status_label);
 		repeat_chooser = new SimpleOptionChooser();
@@ -52,6 +67,11 @@ public class BeatBox.StatusBar : Gtk.ActionBar {
         var repeat_on_image    = App.icons.REPEAT_ON.render_image (Gtk.IconSize.MENU);
         var repeat_once_image   = App.icons.REPEAT_ONCE.render_image (Gtk.IconSize.MENU);
         var repeat_off_image   = App.icons.REPEAT_OFF.render_image (Gtk.IconSize.MENU);
+        
+        // the dark "off" icons follow the bar's text color, so skins can recolor them;
+        // the blue "on" ones keep their color
+        foreach (var image in new Image[] { show_eq_button, shuffle_off_image, repeat_off_image })
+            follow_text_color (image);
         
         repeat_chooser.append_option (_("Off"), repeat_off_image, _("Repeat Off"));
         repeat_chooser.append_option (_("Song"), repeat_once_image, _("Repeat Song"));
