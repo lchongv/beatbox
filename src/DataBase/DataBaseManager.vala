@@ -310,6 +310,10 @@ CREATE TABLE IF NOT EXISTS list_setups (
 		periodic_transactions.add(periodic_filler);
 	}
 	
+	public void flush() {
+		periodic_save();
+	}
+	
 	bool periodic_save() {
 		debug("Doing periodic save");
 		

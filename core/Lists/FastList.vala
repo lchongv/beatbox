@@ -61,6 +61,39 @@ public class BeatBox.FastList : TreeView {
 		
 		set_table(table);
 		set_model(fm);
+		
+		get_style_context().add_class("tracklist");
+		draw.connect(draw_stripes);
+	}
+	
+	/** iTunes-style zebra rows (GTK3 no longer paints them). The tree's own
+	 * background is transparent (see itunes.css), so we paint white and pale
+	 * blue bands before GTK draws the rows on top. */
+	bool draw_stripes(Cairo.Context cr) {
+		int row_height = 18, first_y = 0;
+		Gdk.Rectangle area;
+		var first = new TreePath.first();
+		if(fm.iter_n_children(null) > 0) {
+			get_background_area(first, null, out area);
+			convert_bin_window_to_widget_coords(area.x, area.y, out area.x, out first_y);
+			row_height = int.max(area.height, 1);
+		}
+		else {
+			convert_bin_window_to_widget_coords(0, 0, null, out first_y);
+		}
+		
+		int height = get_allocated_height();
+		int width = get_allocated_width();
+		cr.set_source_rgb(1, 1, 1);
+		cr.paint();
+		cr.set_source_rgb(0xdd/255.0, 0xe8/255.0, 0xf5/255.0); // #dde8f5
+		int index = (first_y < 0) ? (-first_y / row_height) : 0;
+		for(int y = first_y + index * row_height; y < height; y += row_height, ++index) {
+			if(index % 2 == 1)
+				cr.rectangle(0, y, width, row_height);
+		}
+		cr.fill();
+		return false;
 	}
 	
 	/** Should not be manipulated by client */
