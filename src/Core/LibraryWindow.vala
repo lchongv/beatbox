@@ -336,9 +336,9 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		topControls.insert(top_displayBin, -1);
 		topControls.insert(searchFieldBin, -1);
 		var appmenu_button = new Gtk.MenuButton ();
-		appmenu_button.image = new Gtk.Image.from_pixbuf (App.icons.BEATBOX.render (null, null, 20));
+		appmenu_button.image = new Gtk.Image.from_pixbuf (App.icons.BEATBOX.render (null, null, 30));
 		appmenu_button.get_style_context ().add_class ("round-menu");
-		appmenu_button.set_size_request (30, 30);
+		appmenu_button.set_size_request (40, 40);
 		appmenu_button.valign = appmenu_button.halign = Gtk.Align.CENTER;
 		appmenu_button.popup = settingsMenu;
 		settingsMenu.show_all ();

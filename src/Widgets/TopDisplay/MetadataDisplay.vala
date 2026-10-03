@@ -78,6 +78,7 @@ public class BeatBox.MetadataDisplay : BeatBox.Display, Box {
 		App.playback.playback_stopped.connect(playback_stopped);
 		App.settings.main.notify["lcd-two-lines"].connect(update_metadata);
 		App.settings.main.notify["lcd-transition-ms"].connect(apply_transition);
+		App.settings.main.notify["lcd-alternate-seconds"].connect(update_metadata);
 		apply_transition();
 		
 		show_all();
@@ -141,7 +142,7 @@ public class BeatBox.MetadataDisplay : BeatBox.Display, Box {
 					second_line.show();
 				}
 				if(second_texts.length > 1)
-					alternate_id = Timeout.add_seconds(3, () => { show_next_second_line(); return Source.CONTINUE; });
+					alternate_id = Timeout.add_seconds(App.settings.main.lcd_alternate_seconds.clamp(1, 60), () => { show_next_second_line(); return Source.CONTINUE; });
 			}
 			
 			if(!App.playback.current_media.can_seek) {

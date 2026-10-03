@@ -30,6 +30,8 @@
 
 
 public static int main (string[] args) {
+	// The desktop shell matches windows to <application id>.desktop through this name
+	Environment.set_prgname ("net.launchpad.beatbox");
 	var context = new OptionContext ("- BeatBox help page.");
 	//context.add_main_entries (Beatbox.get_option_group (), "beatbox");
 	context.add_group (Gtk.get_option_group (true));
@@ -43,7 +45,6 @@ public static int main (string[] args) {
 	}
 
 	Gtk.init(ref args);
-	Environment.set_prgname ("beatbox");
 
 	try {
 		Gst.init_check (ref args);
@@ -55,7 +56,15 @@ public static int main (string[] args) {
     // Init internationalization support before anything else
     string package_name = Build.GETTEXT_PACKAGE;
     string langpack_dir = Path.build_filename (Build.DATADIR, "locale");
+    // Started from the build tree: use the translations built next to the program
+    // (build/po/<language>/LC_MESSAGES), which may be newer than the installed ones
+    try {
+        var exe_dir = Path.get_dirname (FileUtils.read_link ("/proc/self/exe"));
+        if (FileUtils.test (Path.build_filename (exe_dir, "build.ninja"), FileTest.EXISTS))
+            langpack_dir = Path.build_filename (exe_dir, "po");
+    } catch (FileError err) {}
     Intl.setlocale (LocaleCategory.ALL, "");
+    BeatBox.App.locale_dir = langpack_dir;
     Intl.bindtextdomain (package_name, langpack_dir);
     Intl.bind_textdomain_codeset (package_name, "UTF-8");
     Intl.textdomain (package_name);
@@ -125,6 +134,9 @@ public class BeatBox.App : Granite.Application {
 						 null};
 	}
 
+	/** Where the translations are read from (see main) */
+	public static string locale_dir;
+	
 	static Gtk.CssProvider marker_css = new Gtk.CssProvider ();
 	
 	/** Applies the size of the position diamond and the width of its track (Preferences › Appearance) */
@@ -176,6 +188,9 @@ public class BeatBox.App : Granite.Application {
 			window.present ();
 			return;
 		}
+		
+		// Granite.Application.run() binds our text domain to its own data dir: bind it back
+		Intl.bindtextdomain (Build.GETTEXT_PACKAGE, locale_dir);
 
 		// Setup debugger
 		if (DEBUG)
@@ -208,8 +223,9 @@ public class BeatBox.App : Granite.Application {
 		window = new LibraryWindow(this);
 		podcasts = new PodcastManager();
 		
+		window.set_application(this); // before the window shows, so it carries the application id
 		((LibraryWindow)window).build_ui ();
-		window.set_application(this);
+		Launcher.ensure ();
 		
 		((CoverManager)covers).setup_signals();
 		

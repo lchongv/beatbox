@@ -2,6 +2,7 @@
 <gresources>
   <gresource prefix="/net/launchpad/beatbox">
     <file>theme.css</file>
+    <file>beatbox.desktop</file>
     <file>diamond.svg</file>
   </gresource>
 </gresources>

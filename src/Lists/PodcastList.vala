@@ -90,7 +90,7 @@ public class BeatBox.PodcastList : GenericList {
 		}
 		else if(get_hint() == TreeViewSetup.Hint.DEVICE_PODCAST) {
 			mediaRemove.set_visible(false);
-			mediaRemove.set_label("TODO: Remove from device");
+			mediaRemove.set_label(_("Remove from Device"));
 			importToLibrary.set_visible(true);
 			mediaSaveLocally.set_visible(false);
 			mediaMenuAddToPlaylist.set_visible(false);
