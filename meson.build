@@ -231,6 +231,7 @@ app_sources = files(
   'src/Widgets/VolumeWidget.vala',
   'src/Widgets/EmbeddedAlert.vala',
   'src/Widgets/TopDisplay/TopDisplay.vala',
+  'src/Widgets/TopDisplay/LcdCover.vala',
   'src/Widgets/TopDisplay/TimeScale.vala',
   'src/Widgets/TopDisplay/MetadataDisplay.vala',
   'src/Widgets/TopDisplay/BufferDisplay.vala',
@@ -263,6 +264,5 @@ executable('beatbox', app_sources, resources, icon_resources, skin_resources,
 
 install_subdir('images/icons', install_dir: datadir / 'icons' / 'hicolor', strip_directory: true)
 install_data('data/beatbox.desktop', install_dir: datadir / 'applications')
-install_data('schemas/net.launchpad.beatbox.gschema.xml', install_dir: datadir / 'glib-2.0' / 'schemas')
-gnome.post_install(glib_compile_schemas: true, gtk_update_icon_cache: true)
+gnome.post_install(gtk_update_icon_cache: true)
 subdir('po')

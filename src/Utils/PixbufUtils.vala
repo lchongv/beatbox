@@ -39,7 +39,7 @@ namespace BeatBox.PixbufUtils {
         if (pixbuf == null)
             return null;
 
-        // iTunes-style cover: rounded corners, thin dark frame, soft drop shadow
+        // cover: rounded corners, thin dark frame, soft drop shadow
         const int SHADOW_SIZE = 6;
         const double RADIUS = 4;
 

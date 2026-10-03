@@ -64,7 +64,7 @@ public class BeatBox.SideBarRenderer : CellRenderer {
 	
 	static string heading_color(Widget widget) {
 		RGBA c;
-		if(!widget.get_style_context().lookup_color("it7_sidebar_heading", out c))
+		if(!widget.get_style_context().lookup_color("bb_sidebar_heading", out c))
 			return "#4a586d";
 		return "#%02x%02x%02x".printf((int)(c.red * 255), (int)(c.green * 255), (int)(c.blue * 255));
 	}

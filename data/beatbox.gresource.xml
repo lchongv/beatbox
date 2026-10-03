@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gresources>
   <gresource prefix="/net/launchpad/beatbox">
-    <file>itunes.css</file>
+    <file>theme.css</file>
     <file>diamond.svg</file>
   </gresource>
 </gresources>

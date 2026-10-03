@@ -121,19 +121,23 @@ public class BeatBox.App : Granite.Application {
 						 null};
 
 		about_artists = {"Scott Ringwelski <sgringwe@mtu.edu>",
-						 "Daniel Foré <daniel@elementaryos.org>", 
+						 "Danielle Foré", 
 						 null};
 	}
 
 	static Gtk.CssProvider marker_css = new Gtk.CssProvider ();
 	
-	/** Resizes the diamond position marker of the LCD (Preferences › Behavior) */
-	public static void apply_lcd_marker_size (int size) {
+	/** Applies the size of the position diamond and the width of its track (Preferences › Appearance) */
+	public static void apply_lcd_style () {
+		int size = settings.main.lcd_marker_size.clamp (6, 28);
+		int track = settings.main.lcd_track_width.clamp (2, 16);
 		try {
-			marker_css.load_from_data (".lcd scale slider { min-width: %dpx; min-height: %dpx; margin: %dpx %dpx; }"
-				.printf (size, size, -(size - 4) / 2, -(size - 8) / 2));
+			marker_css.load_from_data (
+				(".lcd scale trough, .lcd scale highlight { min-height: %dpx; }" +
+				 ".lcd scale slider { min-width: %dpx; min-height: %dpx; margin: %dpx %dpx; }")
+				.printf (track, size, size, -(size - track + 2) / 2, -(size - 8) / 2));
 		} catch (Error err) {
-			warning ("Could not resize the position marker: %s", err.message);
+			warning ("Could not restyle the position bar: %s", err.message);
 		}
 	}
 	
@@ -180,11 +184,11 @@ public class BeatBox.App : Granite.Application {
 			Granite.Services.Logger.DisplayLevel = Granite.Services.LogLevel.INFO;
 		
 		var css = new Gtk.CssProvider ();
-		css.load_from_resource ("/net/launchpad/beatbox/itunes.css");
+		css.load_from_resource ("/net/launchpad/beatbox/theme.css");
 		Gtk.StyleContext.add_provider_for_screen (Gdk.Screen.get_default (), css, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION + 1);
 		Skins.apply (settings.main.skin); // optional skin, at APPLICATION + 2
 		Gtk.StyleContext.add_provider_for_screen (Gdk.Screen.get_default (), marker_css, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION + 3);
-		apply_lcd_marker_size (settings.main.lcd_marker_size);
+		apply_lcd_style ();
 		
 		Gtk.IconTheme.get_default ().add_resource_path ("/net/launchpad/beatbox/icons");
 		icons = new Icons();

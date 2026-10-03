@@ -25,6 +25,142 @@
  * BeatBox is covered by.
  */
 
+/**
+ * Options live in ~/.config/beatbox/beatbox.conf (an ini file), so they don't
+ * depend on where the program was installed or started from.
+ *
+ * Every property of a ConfigSection is an option: it is read from the file when
+ * the section is created and written back, a moment later, when it changes. The
+ * property name is the key, with dashes (window_width is window-width).
+ */
+public abstract class BeatBox.ConfigSection : Object {
+    static KeyFile? file = null;
+    static string path = "";
+    static bool first_run = false;  // no file yet: import what older versions kept in GSettings
+    static uint save_id = 0;
+
+    string group = "";
+
+    public static string config_path () {
+        return Path.build_filename (Environment.get_user_config_dir (), "beatbox", "beatbox.conf");
+    }
+
+    /** Write pending changes now (called before exiting) */
+    public static void flush () {
+        if (save_id != 0) {
+            Source.remove (save_id);
+            save_id = 0;
+        }
+        if (file == null)
+            return;
+        try {
+            DirUtils.create_with_parents (Path.get_dirname (path), 0755);
+            FileUtils.set_contents (path, file.to_data ()); // atomic: written aside, then renamed
+        } catch (Error err) {
+            warning ("Could not save the options to %s: %s", path, err.message);
+        }
+    }
+
+    static void schedule_save () {
+        if (save_id == 0)
+            save_id = Timeout.add (400, () => { save_id = 0; flush (); return Source.REMOVE; });
+    }
+
+    /** Call at the end of the subclass constructor, once the defaults are set */
+    protected void init_config (string group, string old_schema) {
+        this.group = group;
+        if (file == null) {
+            path = config_path ();
+            file = new KeyFile ();
+            first_run = !FileUtils.test (path, FileTest.EXISTS);
+            try {
+                file.load_from_file (path, KeyFileFlags.NONE);
+            } catch (Error err) {
+                if (!first_run)
+                    warning ("Could not read %s, using the defaults: %s", path, err.message);
+            }
+        }
+
+        SettingsSchema? old = null;
+        if (first_run && SettingsSchemaSource.get_default () != null)
+            old = SettingsSchemaSource.get_default ().lookup (old_schema, true);
+
+        bool missing = false;
+        var klass = (ObjectClass) get_type ().class_ref ();
+        foreach (var pspec in klass.list_properties ()) {
+            try {
+                if (file.has_group (group) && file.has_key (group, pspec.name)) {
+                    read_from_file (pspec);
+                } else {
+                    missing = true;
+                    if (old != null && old.has_key (pspec.name))
+                        import_old_value (old, pspec);
+                }
+            } catch (Error err) {
+                warning ("Ignoring option %s/%s: %s", group, pspec.name, err.message);
+            }
+            store (pspec); // the file lists every option, with its current value
+        }
+
+        notify.connect ((pspec) => {
+            store (pspec);
+            schedule_save ();
+        });
+        if (missing)
+            schedule_save (); // first run, or options added by an update
+    }
+
+    void read_from_file (ParamSpec pspec) throws Error {
+        if (pspec is ParamSpecBoolean)
+            set (pspec.name, file.get_boolean (group, pspec.name), null);
+        else if (pspec is ParamSpecInt)
+            set (pspec.name, file.get_integer (group, pspec.name), null);
+        else if (pspec is ParamSpecEnum)
+            set (pspec.name, file.get_integer (group, pspec.name), null);
+        else if (pspec is ParamSpecString)
+            set (pspec.name, file.get_string (group, pspec.name), null);
+        else if (pspec.value_type == typeof (string[]))
+            set (pspec.name, file.get_string_list (group, pspec.name), null);
+    }
+
+    /** Values the user had set in the GSettings of older versions */
+    void import_old_value (SettingsSchema schema, ParamSpec pspec) {
+        var settings = new GLib.Settings.full (schema, null, null);
+        if (settings.get_user_value (pspec.name) == null)
+            return; // still the default
+        if (pspec is ParamSpecBoolean)
+            set (pspec.name, settings.get_boolean (pspec.name), null);
+        else if (pspec is ParamSpecInt)
+            set (pspec.name, settings.get_int (pspec.name), null);
+        else if (pspec is ParamSpecEnum)
+            set (pspec.name, settings.get_enum (pspec.name), null);
+        else if (pspec is ParamSpecString)
+            set (pspec.name, settings.get_string (pspec.name), null);
+        else if (pspec.value_type == typeof (string[]))
+            set (pspec.name, settings.get_strv (pspec.name), null);
+    }
+
+    void store (ParamSpec pspec) {
+        var v = Value (pspec.value_type);
+        get_property (pspec.name, ref v);
+        if (pspec is ParamSpecBoolean)
+            file.set_boolean (group, pspec.name, v.get_boolean ());
+        else if (pspec is ParamSpecInt)
+            file.set_integer (group, pspec.name, v.get_int ());
+        else if (pspec is ParamSpecEnum)
+            file.set_integer (group, pspec.name, v.get_enum ());
+        else if (pspec is ParamSpecString)
+            file.set_string (group, pspec.name, v.get_string () ?? "");
+        else if (pspec.value_type == typeof (string[])) {
+            string[] list = {};
+            char** items = (char**) v.get_boxed ();
+            for (int i = 0; items != null && items[i] != null; i++)
+                list += ((string) items[i]).dup ();
+            file.set_string_list (group, pspec.name, list);
+        }
+    }
+}
+
 public class BeatBox.Settings {
 
     public LastFM lastfm { get; set; }
@@ -59,18 +195,20 @@ public class BeatBox.Settings {
         FULLSCREEN = 2
     }
     
-    public class LastFM : Granite.Services.Settings {
+    public class LastFM : ConfigSection {
 
         public string session_key { get; set; }
         public bool is_subscriber { get; set; }
         public string username { get; set; }
         
         public LastFM () {
-            base ("net.launchpad.beatbox.LastFM");
+            session_key = "";
+            username = "";
+            init_config ("lastfm", "net.launchpad.beatbox.LastFM");
         }
     }
     
-    public class SavedState : Granite.Services.Settings {
+    public class SavedState : ConfigSection {
 
         public int window_width { get; set; }
         public int window_height { get; set; }
@@ -87,20 +225,25 @@ public class BeatBox.Settings {
         public Position miller_columns_position { get; set; }
 
         public SavedState () {
-            base ("net.launchpad.beatbox.SavedState");
+            window_width = 1100;
+            window_height = 600;
+            window_state = WindowState.NORMAL;
+            sidebar_width = 200;
+            more_width = 150;
+            view_mode = 1;
+            miller_width = 200;
+            miller_height = 200;
+            music_miller_visible_columns = { "2", "3", "4" };
+            generic_miller_visible_columns = { "2" };
+            miller_columns_position = Position.AUTOMATIC;
+            init_config ("savedstate", "net.launchpad.beatbox.SavedState");
         }
         
     }
 
-    public class Settings : Granite.Services.Settings {
+    public class Settings : ConfigSection {
 
         public string music_mount_name { get; set; }
-        public int lcd_marker_size { get; set; }
-        public bool album_grid_inline { get; set; }
-        public bool lcd_two_lines { get; set; }
-        public int album_detail_cover_percent { get; set; }
-        public bool download_covers { get; set; }
-        public string skin { get; set; }
         public string music_folder { get; set; }
         public string podcast_folder { get; set; }
         public bool update_folder_hierarchy { get; set; }
@@ -112,14 +255,36 @@ public class BeatBox.Settings {
         public int shuffle_mode { get; set; }
         public int repeat_mode { get; set; }
         public string search_string { get; set; }
-        public string[] plugins_enabled { get; set;}
+
+        // Appearance
+        public string skin { get; set; }
+        public bool lcd_two_lines { get; set; }
+        public bool lcd_show_cover { get; set; }
+        public int lcd_transition_ms { get; set; }   // second LCD line sliding up
+        public int lcd_track_width { get; set; }     // px, the groove of the position bar
+        public int lcd_marker_size { get; set; }     // px, the diamond
+        public bool album_grid_inline { get; set; }
+        public int album_detail_cover_percent { get; set; }
+        public bool download_covers { get; set; }
         
         public Settings ()  {
-            base ("net.launchpad.beatbox.Settings");
+            music_mount_name = "";
+            music_folder = "";
+            podcast_folder = "";
+            search_string = "";
+            skin = "";
+            lcd_two_lines = true;
+            lcd_transition_ms = 600;
+            lcd_track_width = 6;
+            lcd_marker_size = 14;
+            album_grid_inline = true;
+            album_detail_cover_percent = 25;
+            download_covers = true;
+            init_config ("settings", "net.launchpad.beatbox.Settings");
         }
     }
 
-    public class Equalizer : Granite.Services.Settings {
+    public class Equalizer : ConfigSection {
 
         public bool equalizer_enabled { get; set; }
         public bool auto_switch_preset { get; set; }
@@ -129,7 +294,22 @@ public class BeatBox.Settings {
         public int volume { get; set;}
         
         public Equalizer () {
-            base ("net.launchpad.beatbox.Equalizer");
+            auto_switch_preset = true;
+            selected_preset = "";
+            custom_presets = {};
+            default_presets = {
+                "Flat/0/0/0/0/0/0/0/0/0/0", "Classical/0/0/0/0/0/0/-40/-40/-40/-50",
+                "Club/0/0/20/30/30/30/20/0/0/0", "Dance/50/35/10/0/0/-30/-40/-40/0/0",
+                "Full Bass/70/70/70/40/20/-45/-50/-55/-55/-55", "Full Treble/-50/-50/-50/-25/15/55/80/80/80/80",
+                "Full Bass + Treble/35/30/0/-40/-25/10/45/55/60/60", "Headphones/25/50/25/-20/0/-30/-40/-40/0/0",
+                "Large Hall/50/50/30/30/0/-25/-25/-25/0/0", "Live/-25/0/20/25/30/30/20/15/15/10",
+                "Party/35/35/0/0/0/0/0/0/35/35", "Pop/-10/25/35/40/25/-5/-15/-15/-10/-10",
+                "Reggae/0/0/-5/-30/0/-35/-35/0/0/0", "Rock/40/25/-30/-40/-20/20/45/55/55/55",
+                "Soft/25/10/-5/-15/-5/20/45/50/55/60", "Ska/-15/-25/-25/-5/20/30/45/50/55/50",
+                "Soft Rock/20/20/10/-5/-25/-30/-20/-5/15/45", "Techno/40/30/0/-30/-25/0/40/50/50/45"
+            };
+            volume = 100;
+            init_config ("equalizer", "net.launchpad.beatbox.Equalizer");
         }
         
         public Gee.Collection<BeatBox.EqualizerPreset> getCustomPresets () {

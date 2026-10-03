@@ -99,7 +99,7 @@ public class BeatBox.AppearancePreferences : SimplePreferences {
 		skinInfo.max_width_chars = 60;
 		skinInfo.get_style_context().add_class("dim-label");
 		var skins = Skins.available();
-		skinChooser.append("", _("None (iTunes)"));
+		skinChooser.append("", _("None"));
 		foreach (var skin in skins)
 			skinChooser.append(skin.id, skin.name);
 		if (!skinChooser.set_active_id(App.settings.main.skin))
@@ -130,17 +130,34 @@ public class BeatBox.AppearancePreferences : SimplePreferences {
 		
 		add_heading(_("Display"));
 		var lcdLines = new ComboBoxText();
-		lcdLines.append("two", _("Two lines, artist and album taking turns (iTunes)"));
+		lcdLines.append("two", _("Two lines, artist and album taking turns"));
 		lcdLines.append("one", _("One line"));
 		lcdLines.active_id = App.settings.main.lcd_two_lines ? "two" : "one";
 		lcdLines.changed.connect(() => { App.settings.main.lcd_two_lines = (lcdLines.active_id == "two"); });
 		add_row(labelled(_("Song information in the LCD:"), lcdLines));
+		
+		var lcdCover = add_check(_("Show the album cover at the left edge of the LCD"), App.settings.main.lcd_show_cover);
+		lcdCover.toggled.connect(() => { App.settings.main.lcd_show_cover = lcdCover.active; });
+		
+		var transition = new SpinButton.with_range(0, 3000, 100);
+		transition.value = App.settings.main.lcd_transition_ms;
+		add_row(labelled(_("Time the artist and album take to slide:"), transition, _("milliseconds")));
+		transition.value_changed.connect(() => { App.settings.main.lcd_transition_ms = (int)transition.value; });
+		
+		add_heading(_("Position bar"));
+		var trackWidth = new SpinButton.with_range(2, 16, 1);
+		trackWidth.value = App.settings.main.lcd_track_width;
+		add_row(labelled(_("Width of the track:"), trackWidth, _("pixels")));
 		var markerSize = new SpinButton.with_range(6, 28, 1);
 		markerSize.value = App.settings.main.lcd_marker_size;
 		add_row(labelled(_("Size of the position marker (diamond):"), markerSize, _("pixels")));
+		trackWidth.value_changed.connect(() => {
+			App.settings.main.lcd_track_width = (int)trackWidth.value;
+			App.apply_lcd_style(); // live preview
+		});
 		markerSize.value_changed.connect(() => {
 			App.settings.main.lcd_marker_size = (int)markerSize.value;
-			App.apply_lcd_marker_size((int)markerSize.value); // live preview
+			App.apply_lcd_style();
 		});
 	}
 }
@@ -152,7 +169,7 @@ public class BeatBox.CoverPreferences : SimplePreferences {
 	public CoverPreferences() {
 		add_heading(_("Cover Grid"));
 		var clickMode = new ComboBoxText();
-		clickMode.append("inline", _("Unfold it inline, under its row (iTunes 11)"));
+		clickMode.append("inline", _("Unfold it inline, under its row"));
 		clickMode.append("popup", _("Open it in a popup window"));
 		clickMode.active_id = App.settings.main.album_grid_inline ? "inline" : "popup";
 		clickMode.changed.connect(() => { App.settings.main.album_grid_inline = (clickMode.active_id == "inline"); });
@@ -191,16 +208,16 @@ public class BeatBox.AboutPreferences : SimplePreferences {
 		var name = new Label("");
 		name.xalign = 0.0f;
 		name.set_markup("<span size='x-large' weight='bold'>BeatBox</span>\n" + Markup.escape_text(_("Version %s").printf(Build.VERSION))
-		                + "\n" + Markup.escape_text(_("A music player with the look of iTunes 7.")));
+		                + "\n" + Markup.escape_text(_("A music player for your collection, podcasts and internet radio.")));
 		top.pack_start(name, false, false, 0);
 		content.pack_start(top, false, false, 0);
 		
 		add_heading(_("Authors"));
 		add_row(text("Scott Ringwelski\nVictor Eduardo M."));
 		add_heading(_("Artwork"));
-		add_row(text("Scott Ringwelski\nDaniel Foré"));
+		add_row(text("Scott Ringwelski\nDanielle Foré"));
 		add_heading(_("2026 update"));
-		add_row(text(_("Ported to GTK 3, GStreamer 1.0 and libsoup 3, with the iTunes look, Cover Flow, the inline cover grid, internet radio and podcast directories, online album art and skins.")));
+		add_row(text(_("Ported to GTK 3, GStreamer 1.0 and libsoup 3, with a new look, Cover Flow, the inline cover grid, internet radio and podcast directories, online album art and skins.")));
 		
 		add_heading(_("Services"));
 		add_row(text(_("Internet radio stations: %s").printf(link("https://www.radio-browser.info", "radio-browser.info"))

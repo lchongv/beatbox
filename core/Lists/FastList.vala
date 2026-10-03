@@ -66,8 +66,8 @@ public class BeatBox.FastList : TreeView {
 		draw.connect(draw_stripes);
 	}
 	
-	/** iTunes-style zebra rows (GTK3 no longer paints them). The tree's own
-	 * background is transparent (see itunes.css), so we paint white and pale
+	/** Zebra rows (GTK3 no longer paints them). The tree's own
+	 * background is transparent (see theme.css), so we paint white and pale
 	 * blue bands before GTK draws the rows on top. */
 	bool draw_stripes(Cairo.Context cr) {
 		int row_height = 18, first_y = 0;
@@ -84,11 +84,11 @@ public class BeatBox.FastList : TreeView {
 		
 		int height = get_allocated_height();
 		int width = get_allocated_width();
-		// skins may recolor the stripes (see itunes.css)
+		// skins may recolor the stripes (see theme.css)
 		Gdk.RGBA row_a, row_b;
-		if(!get_style_context().lookup_color("it7_row_a", out row_a))
+		if(!get_style_context().lookup_color("bb_row_a", out row_a))
 			row_a = { 1, 1, 1, 1 };
-		if(!get_style_context().lookup_color("it7_row_b", out row_b))
+		if(!get_style_context().lookup_color("bb_row_b", out row_b))
 			row_b = { 0xdd/255.0, 0xe8/255.0, 0xf5/255.0, 1 };
 		Gdk.cairo_set_source_rgba(cr, row_a);
 		cr.paint();

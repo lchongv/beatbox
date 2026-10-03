@@ -32,7 +32,9 @@ public class BeatBox.MetadataDisplay : BeatBox.Display, Box {
 	public bool is_enabled { get { return _is_enabled; } }
 	
 	private Label label;
-	private Label second_line;   // two-line mode: artist and album, taking turns
+	private Stack second_line;    // two-line mode: artist and album, sliding up in turn
+	private Label[] second_labels;
+	private bool second_shows_b = false;
 	private Label station_label;
 	private string[] second_texts = {};
 	private int second_index = 0;
@@ -54,8 +56,15 @@ public class BeatBox.MetadataDisplay : BeatBox.Display, Box {
 		
 		station_label.set_no_show_all(true);
         
-		second_line = new Label("");
-		second_line.ellipsize = Pango.EllipsizeMode.END;
+		second_line = new Stack();
+		second_line.vhomogeneous = true;
+		second_labels = { new Label(""), new Label("") };
+		foreach(var l in second_labels) {
+			l.ellipsize = Pango.EllipsizeMode.END;
+			l.show();
+		}
+		second_line.add_named(second_labels[0], "a");
+		second_line.add_named(second_labels[1], "b");
 		second_line.set_no_show_all(true);
 		
         this.set_orientation(Orientation.VERTICAL);
@@ -68,6 +77,8 @@ public class BeatBox.MetadataDisplay : BeatBox.Display, Box {
 		App.playback.media_played.connect(media_played);
 		App.playback.playback_stopped.connect(playback_stopped);
 		App.settings.main.notify["lcd-two-lines"].connect(update_metadata);
+		App.settings.main.notify["lcd-transition-ms"].connect(apply_transition);
+		apply_transition();
 		
 		show_all();
 		set_no_show_all(true);
@@ -86,12 +97,25 @@ public class BeatBox.MetadataDisplay : BeatBox.Display, Box {
 		disabled();
 	}
 	
-	/* iTunes LCD: the title on top, and under it the artist and the album take turns */
+	void apply_transition() {
+		second_line.transition_duration = App.settings.main.lcd_transition_ms.clamp(0, 5000);
+	}
+	
+	/* The title on top, and under it the artist and the album take turns:
+	 * each new line pushes the previous one up and out of the LCD. */
+	void show_second_line(string text, bool animate) {
+		var next = second_shows_b ? second_labels[0] : second_labels[1];
+		next.label = text;
+		second_line.transition_type = animate ? StackTransitionType.SLIDE_UP : StackTransitionType.NONE;
+		second_shows_b = !second_shows_b;
+		second_line.visible_child_name = second_shows_b ? "b" : "a";
+	}
+	
 	void show_next_second_line() {
-		if(second_texts.length == 0)
+		if(second_texts.length < 2)
 			return;
 		second_index = (second_index + 1) % second_texts.length;
-		second_line.label = second_texts[second_index];
+		show_second_line(second_texts[second_index], true);
 	}
 	
 	void update_metadata() {
@@ -111,10 +135,11 @@ public class BeatBox.MetadataDisplay : BeatBox.Display, Box {
 					second_texts += m.artist;
 				if(m.album != "" && m.album != _("Unknown Album"))
 					second_texts += m.album;
-				second_index = -1;
-				show_next_second_line();
-				if(second_texts.length > 0)
+				second_index = 0;
+				if(second_texts.length > 0) {
+					show_second_line(second_texts[0], false);
 					second_line.show();
+				}
 				if(second_texts.length > 1)
 					alternate_id = Timeout.add_seconds(3, () => { show_next_second_line(); return Source.CONTINUE; });
 			}
