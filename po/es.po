@@ -2259,3 +2259,15 @@ msgstr "%s  por  %s"
 #~ msgid "You can then start playing those medias, or save them for later."
 #~ msgstr ""
 #~ "Luego podrá reproducir esos contenidos, o guardarlos para más adelante."
+
+msgid "Appearance"
+msgstr "Apariencia"
+
+msgid "Size of the position marker (diamond):"
+msgstr "Tamaño del indicador de posición (rombo):"
+
+msgid "pixels"
+msgstr "píxeles"
+
+msgid "Behavior"
+msgstr "Comportamiento"

@@ -32,7 +32,7 @@ public class BeatBox.CoverFlow : DrawingArea {
 	public CoverFlow(GenericGrid grid) {
 		this.grid = grid;
 		can_focus = true;
-		set_size_request(-1, 300);
+		set_size_request(-1, 200);
 		add_events(Gdk.EventMask.BUTTON_PRESS_MASK | Gdk.EventMask.SCROLL_MASK
 		           | Gdk.EventMask.SMOOTH_SCROLL_MASK | Gdk.EventMask.KEY_PRESS_MASK);
 		get_style_context().add_class("coverflow");
@@ -211,10 +211,10 @@ public class BeatBox.CoverFlow : DrawingArea {
 		if (albums.length == 0)
 			return true;
 
-		int size = int.min((int)(height * 0.56), (int)(width * 0.3));
+		int size = cover_size(width, height);
 		if (size < 16)
 			return true;
-		double floor_y = height * 0.08 + size;
+		double floor_y = height * 0.06 + size;
 		double center = width / 2.0;
 		double side_w = size * SIDE_SCALE;
 		double gap = size * 0.78;     // from the center cover to the first side cover
@@ -236,17 +236,19 @@ public class BeatBox.CoverFlow : DrawingArea {
 			double d = offset.abs();
 			double k = double.min(d, 1);             // 0 = facing, 1 = fully turned
 			double w = size + (side_w - size) * k;
-			double near_h = size * (1 - 0.06 * k);
-			double far_h = size * (1 - (1 - FAR_SCALE) * k);
+			// Side covers face the center: their outer edge is closer to the
+			// viewer (taller) and their inner edge farther away (shorter)
+			double outer_h = size * (1 - 0.04 * k);
+			double inner_h = size * (1 - (1 - FAR_SCALE) * k);
 
 			double cx = center + Math.copysign(gap * k + spacing * double.max(d - 1, 0), offset);
 			double x0 = cx - w / 2, x1 = cx + w / 2;
 			double alpha = (d > 8) ? double.max(0, 1 - (d - 8) / 4) : 1;
 			var surface = surface_for(albums[i], size);
 			if (offset < 0)
-				paint_cover(cr, surface, size, x0, x1, far_h, near_h, floor_y, alpha);
+				paint_cover(cr, surface, size, x0, x1, outer_h, inner_h, floor_y, alpha);
 			else
-				paint_cover(cr, surface, size, x0, x1, near_h, far_h, floor_y, alpha);
+				paint_cover(cr, surface, size, x0, x1, inner_h, outer_h, floor_y, alpha);
 		}
 
 		// caption of the centered album
@@ -265,11 +267,16 @@ public class BeatBox.CoverFlow : DrawingArea {
 		return true;
 	}
 
+	/** Cover edge in pixels: as big as the stage allows, like iTunes */
+	int cover_size(int width, int height) {
+		return int.min((int)(height * 0.64), (int)(width * 0.34));
+	}
+	
 	/** Which album is under x (center cover first, then the side ones) */
 	int index_at(double x) {
 		int width = get_allocated_width();
 		int height = get_allocated_height();
-		int size = int.min((int)(height * 0.56), (int)(width * 0.3));
+		int size = cover_size(width, height);
 		double center = width / 2.0;
 		if ((x - center).abs() <= size / 2.0)
 			return target;

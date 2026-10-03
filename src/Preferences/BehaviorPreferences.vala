@@ -29,7 +29,7 @@ using Gtk;
 
 public class BeatBox.BehaviorPreferences : GLib.Object, PreferencesSection {
 	public PreferencesSectionCategory category { get { return PreferencesSectionCategory.GENERAL; } }
-	public string title { get { return "Behavior"; } }
+	public string title { get { return _("Behavior"); } }
 	public Gdk.Pixbuf? icon { get { return null; } }
 	public Widget widget { get { return content; } }
 	
@@ -58,6 +58,23 @@ public class BeatBox.BehaviorPreferences : GLib.Object, PreferencesSection {
 		content.pack_start(UI.wrap_alignment(organizeFolders, 0, 0, 0, 10), false, true, 0);
 		content.pack_start(UI.wrap_alignment(writeMetadataToFile, 0, 0, 0, 10), false, true, 0);
 		content.pack_start(UI.wrap_alignment(copyImportedMusic, 0, 0, 0, 10), false, true, 0);
+		
+		// Appearance
+		var appearanceLabel = new Label("");
+		appearanceLabel.xalign = 0.0f;
+		appearanceLabel.set_markup("<b>" + _("Appearance") + "</b>");
+		var markerBox = new Box(Orientation.HORIZONTAL, 8);
+		var markerSize = new SpinButton.with_range(6, 28, 1);
+		markerSize.value = App.settings.main.lcd_marker_size;
+		markerBox.pack_start(new Label(_("Size of the position marker (diamond):")), false, false, 0);
+		markerBox.pack_start(markerSize, false, false, 0);
+		markerBox.pack_start(new Label(_("pixels")), false, false, 0);
+		content.pack_start(appearanceLabel, false, true, 0);
+		content.pack_start(UI.wrap_alignment(markerBox, 0, 0, 0, 10), false, true, 0);
+		markerSize.value_changed.connect(() => {
+			App.settings.main.lcd_marker_size = (int)markerSize.value;
+			App.apply_lcd_marker_size((int)markerSize.value); // live preview
+		});
 		
 		organizeFolders.toggled.connect(organize_folders_toggled);
 		writeMetadataToFile.toggled.connect(write_metadata_to_file_toggled);
