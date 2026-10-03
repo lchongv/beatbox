@@ -46,7 +46,6 @@ public class BeatBox.SpaceWidget : StyledContentBox {
     private const string WIDGET_STYLESHEET = """
 		.noBorder {
 			border: 0;
-			-unico-outer-stroke-style: none;
             padding: 0;
 		}
 		
@@ -57,7 +56,6 @@ public class BeatBox.SpaceWidget : StyledContentBox {
                                              to (shade (#e6e6e6, 1.04)));
 
             border: 0;
-            -unico-outer-stroke-style: none;
             padding: 0;
         }
 
@@ -65,14 +63,10 @@ public class BeatBox.SpaceWidget : StyledContentBox {
         .SpaceBarFullItem,
         .SpaceBarItem:nth-child(first),
         .SpaceBarItem:nth-child(last) {
-            -unico-inner-stroke-width: 0;
-            -unico-outer-stroke-width: 0;
 
-            -unico-border-gradient: -gtk-gradient (linear, left top, left bottom,
                                                    from (alpha (#fff, 0.5)),
                                                    to (alpha (#fff, 0.0)));
 
-            -unico-outer-stroke-gradient: -gtk-gradient (linear, left top, left bottom,
                                                          from (alpha (#000, 0.03)),
                                                          to (alpha (#000, 0.08)));
         }
@@ -94,22 +88,14 @@ public class BeatBox.SpaceWidget : StyledContentBox {
         }
 
         .LegendItem {
-            border-radius: 100 100 100 100;
-
-            -unico-inner-stroke-width: 0;
-            -unico-outer-stroke-width: 1px;
-
-            -GtkButton-default-border           : 0;
-            -GtkButton-image-spacing            : 0;
-            -GtkButton-inner-border             : 0;
-            -GtkButton-interior-focus           : false;
+            border-radius: 100px;
 
 
-            -unico-border-gradient: -gtk-gradient (linear, left top, left bottom,
+
+
                                                    from (alpha (#fff, 0.9)),
                                                    to (alpha (#fff, 0.5)));
 
-            -unico-outer-stroke-gradient: -gtk-gradient (linear, left top, left bottom,
                                                          from (alpha (#000, 0.04)),
                                                          to (alpha (#000, 0.12)));
         }

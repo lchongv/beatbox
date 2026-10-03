@@ -88,7 +88,7 @@ public class BeatBox.NowPlayingPage : ScrolledWindow {
 		
 		.white_text {
 			color: shade(#f0f0f0, 1.01);
-			text-shadow: 1 1 0 alpha(#f8f8f8, 0.3);
+			text-shadow: 1px 1px 0 alpha(#f8f8f8, 0.3);
 		}
 		""";
 	

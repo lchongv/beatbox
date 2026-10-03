@@ -34,10 +34,6 @@ public class BeatBox.StyledBox : Gtk.Box {
 	private const string WIDGET_STYLESHEET = """
         .borderButton{
 			-unico-inner-stroke-width: 0;
-			-GtkButton-default-border: 0;
-            -GtkButton-image-spacing: 0;
-            -GtkButton-inner-border: 0;
-            -GtkButton-interior-focus: false;
 			
 			background-image: -gtk-gradient (linear,
                                              left top, 
