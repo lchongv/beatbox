@@ -44,7 +44,7 @@ public class BeatBox.NavigationArrows : Gtk.Box {
 		}
 
 		.GraniteNavigationArrows .button:active,
-		.GraniteNavigationArrows .button:insensitive {
+		.GraniteNavigationArrows .button:disabled {
 			-unico-outer-stroke-width: 1px 0 1px 0;
 		}
 

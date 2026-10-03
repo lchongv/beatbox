@@ -34,7 +34,7 @@ public class BeatBox.TimeScale : Box {
 	
 	private const string WIDGET_STYLESHEET = """
         .scale.slider,
-        .scale.slider:insensitive {
+        .scale.slider:disabled {
 			background-image: none;
 			background: none;
 			margin: 0px;
@@ -43,7 +43,7 @@ public class BeatBox.TimeScale : Box {
 		.scale {
 			margin: 0px;
 			padding: 0px;
-			-GtkRange-slider-width: 6;
+			min-width: 6px; min-height: 6px;
 		}
     """;
 	

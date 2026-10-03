@@ -31,6 +31,9 @@ public class BeatBox.Video : GLib.Object {
 	public dynamic Gst.Element element;
 	
 	public Video() {
-		element = ElementFactory.make("xvimagesink", "videosink");
+		// ponytail: video output is disabled (playbin flags are audio-only) and
+		// xvimagesink fails on Wayland/without Xv, stalling the whole pipeline.
+		// Create a sink here (e.g. gtksink) if video playback is ever re-enabled.
+		element = null;
 	}
 }
