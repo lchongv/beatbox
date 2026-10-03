@@ -254,9 +254,12 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		sideTreeOptions = new ToolButton(null, "Options...");
 		settingsMenu = new Gtk.Menu();
 		topControls = new Toolbar();
-		previousButton = new ToolButton.from_stock(Gtk.Stock.MEDIA_PREVIOUS);
-		playButton = new ToolButton.from_stock(Gtk.Stock.MEDIA_PLAY);
-		nextButton = new ToolButton.from_stock(Gtk.Stock.MEDIA_NEXT);
+		previousButton = new ToolButton(null, null);
+		previousButton.icon_name = "media-skip-backward-symbolic";
+		playButton = new ToolButton(null, null);
+		playButton.icon_name = "media-playback-start-symbolic";
+		nextButton = new ToolButton(null, null);
+		nextButton.icon_name = "media-skip-forward-symbolic";
 		top_display = new TopDisplay();
 		viewSelector = new Granite.Widgets.ModeButton();
 		showSongInfo = new ToggleButton();
@@ -279,7 +282,16 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		showSongInfoBin.margin_left = 12;
 		showSongInfo.set_image(App.icons.INFO.render_image (IconSize.MENU, viewSelector.get_style_context()));
 		
-		top_displayBin.add(top_display);
+		// The LCD is always visible, like iTunes; the app name fills it when idle
+		var lcd = new Box(Orientation.HORIZONTAL, 0);
+		lcd.get_style_context().add_class("lcd");
+		var lcd_logo = new Label("BeatBox");
+		lcd_logo.get_style_context().add_class("lcd-logo");
+		lcd_logo.hexpand = true;
+		lcd.pack_start(lcd_logo, true, true, 0);
+		lcd.pack_start(top_display, true, true, 0);
+		top_display.notify["visible"].connect(() => { lcd_logo.visible = !top_display.visible; });
+		top_displayBin.add(lcd);
 		top_displayBin.set_expand(true);
 		top_displayBin.margin_left = 12;
 		
@@ -338,6 +350,7 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		// Side tree
 		sideTreeScroll = new ScrolledWindow(null, null);
 		sideTreeScroll.set_policy (PolicyType.AUTOMATIC, PolicyType.AUTOMATIC);
+		sideTreeScroll.get_style_context().add_class("sidebar-scroll");
 		sideTreeScroll.add(sideTree);
 		
 		var side_add_image = App.icons.render_image ("list-add-symbolic", Gtk.IconSize.MENU);
@@ -417,6 +430,14 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		
 		// Set theming
 		topControls.get_style_context().add_class(STYLE_CLASS_PRIMARY_TOOLBAR);
+		topControls.get_style_context().add_class("itunes-header");
+		get_style_context().add_class("beatbox");
+		previousButton.get_style_context().add_class("transport-button");
+		playButton.get_style_context().add_class("transport-button");
+		playButton.get_style_context().add_class("play");
+		nextButton.get_style_context().add_class("transport-button");
+		searchField.get_style_context().add_class("search-bar");
+		statusBar.get_style_context().add_class("itunes-statusbar");
 
 		/* Top toolbar events */
 		previousButton.clicked.connect(previousClicked);
@@ -432,6 +453,7 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		sideTreeOptions.clicked.connect(sideTreeOptionsClicked);
 		
 		show_all();
+		lcd_logo.visible = !top_display.visible;
 		infoBar.hide();
 		update_sensitivities();
 		hide_video_mode();
@@ -699,17 +721,17 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 	
 	void playback_changed() {
 		if(!App.playback.media_active || (App.library.media_count() > 0 && !App.playback.playing)) {
-			playButton.set_stock_id(Gtk.Stock.MEDIA_PLAY);
+			playButton.icon_name = "media-playback-start-symbolic";
 		}
 		else {
-			playButton.set_stock_id(Gtk.Stock.MEDIA_PAUSE);
+			playButton.icon_name = "media-playback-pause-symbolic";
 		}
 		
 		update_sensitivities();
 	}
 	
 	void playback_stopped(Media? was_playing) {
-		playButton.set_stock_id(Gtk.Stock.MEDIA_PLAY);
+		playButton.icon_name = "media-playback-start-symbolic";
 		
 		update_sensitivities();
 	}

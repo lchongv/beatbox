@@ -253,7 +253,9 @@ app_sources = files(
   'src/Windows/RemoveDuplicatesDialog.vala',
 )
 
-executable('beatbox', app_sources,
+resources = gnome.compile_resources('beatbox-resources', 'data/beatbox.gresource.xml', source_dir: 'data')
+
+executable('beatbox', app_sources, resources,
   dependencies: core_dep,
   install_rpath: prefix / get_option('libdir'),
   export_dynamic: true,

@@ -41,7 +41,7 @@ public class BeatBox.Icons : GLib.Object, BeatBox.IconsInterface {
     /**
      * Size of the cover art used in the album view
      **/
-    public const int ALBUM_VIEW_IMAGE_SIZE = 140;
+    public const int ALBUM_VIEW_IMAGE_SIZE = 180;
 
 	// 128 x 128
 	public BeatBox.Icon DEFAULT_ALBUM_ART { get; protected set; }
@@ -151,7 +151,7 @@ public class BeatBox.Icons : GLib.Object, BeatBox.IconsInterface {
 		VIEW_ICONS           = new BeatBox.Icon ("view-grid-symbolic", 16, Type.ACTION, null, false);
 		VIEW_VIDEO			 = new BeatBox.Icon ("view-video-symbolic", 16, Type.ACTION, null, false);
 		VIEWS                = new BeatBox.Icon ("view-grid-symbolic", 16, Type.ACTION, null, false);
-		INFO                 = new BeatBox.Icon ("info-symbolic", 16, Type.ACTION, null, false);
+		INFO                 = new BeatBox.Icon ("info-symbolic", 16, Type.ACTION, null, true);
 		GO_NEXT				 = new BeatBox.Icon ("go-next-symbolic", 16, Type.ACTION, null, false);
 		GO_HOME				 = new BeatBox.Icon ("go-home-symbolic", 16, Type.ACTION, null, false);
 

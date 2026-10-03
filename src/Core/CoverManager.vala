@@ -302,6 +302,9 @@ public class BeatBox.CoverManager : Object, BeatBox.CoverInterface {
 		message("Album art cached in memory.\n");
 		in_fetch_thread = false;
 		
+		// Views may have been drawn before the covers were ready
+		Idle.add(() => { App.window.queue_draw(); return false; });
+		
 		// TODO: Causes continous memory growth
 		//fetch_remaining_album_art();
 		

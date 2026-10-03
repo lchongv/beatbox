@@ -71,10 +71,9 @@ public abstract class BeatBox.GenericGrid : FastGrid {
 	
 	public signal void import_requested(LinkedList<Media> to_import);
 	
-	private const string WIDGET_STYLESHEET = "*:selected{background-color:@transparent;}";
 
 	private const int ITEM_PADDING = 0;
-	private const int MIN_SPACING = 12;
+	private const int MIN_SPACING = 24;
 	private const int ITEM_WIDTH = Icons.ALBUM_VIEW_IMAGE_SIZE;
 
 	protected GenericGrid(SourceView parent_wrapper, TreeViewSetup tvs, GLib.Object default_value) {
@@ -83,20 +82,13 @@ public abstract class BeatBox.GenericGrid : FastGrid {
         set_parent_wrapper (parent_wrapper);
 		this.tvs = tvs;
 		
-		// Change background color
-		var style_provider = new CssProvider();
-
-        try  {
-            style_provider.load_from_data (WIDGET_STYLESHEET, -1);
-        } catch (Error e) {
-            warning ("Couldn't load style provider: %s", e.message);
-        }
-
-        get_style_context ().add_provider (style_provider, STYLE_PROVIDER_PRIORITY_APPLICATION);
+		get_style_context ().add_class ("albumgrid");
 		
 		item_width = ITEM_WIDTH;
 		item_padding = ITEM_PADDING;
-        set_layout_spacing (MIN_SPACING);
+		columns = -1; // let GtkIconView fit as many columns as the width allows
+		set_column_spacing (MIN_SPACING);
+		set_row_spacing (MIN_SPACING);
 
 		// drag source
 		TargetEntry te = { "text/uri-list", TargetFlags.SAME_APP, 0};
@@ -127,7 +119,6 @@ public abstract class BeatBox.GenericGrid : FastGrid {
 
 	public void set_parent_wrapper(SourceView parent) {
 		this.parent_wrapper = parent;
-		hadjustment.changed.connect(on_resize);
 		//vadjustment.value_changed.connect(view_scroll);
 	}
 	
@@ -210,80 +201,4 @@ public abstract class BeatBox.GenericGrid : FastGrid {
 
 
 
-	/**
-	 * Smart spacing
-	 */
-
-	Mutex setting_size;
-	int last_width = 0;
-	int resize_priority_offset = 0;
-
-	private void on_resize () {
-		Timeout.add (200, () => {
-			compute_spacing (get_current_width());
-			resize_priority_offset = 0;
-			return false;
-		});
-	}
-	
-	private int get_current_width () {
-        return (int)get_hadjustment ().page_size;
-    }
-
-	private void compute_spacing (int new_width) {
-		if (new_width != get_current_width() || !visible || new_width == last_width)
-			return;
-		
-		last_width = new_width;
-		
-		int TOTAL_WIDTH = new_width;
-		int TOTAL_ITEM_WIDTH = ITEM_WIDTH + 2 * ITEM_PADDING;
-
-		// Calculate the number of columns
-		float n = (float)(TOTAL_WIDTH - MIN_SPACING) / (float)(TOTAL_ITEM_WIDTH + MIN_SPACING);
-		int n_columns = Numeric.lowest_int_from_float (n);
-
-		if (n_columns < 1) {
-			return;
-		}
-
-		this.set_columns (n_columns);
-
-		// We don't want to adjust the spacing if the row is not full
-		if (this.get_table ().size () < n_columns) {
-			return;
-		}
-
-		// You're not supposed to understand this.
-		float spacing = (float)(TOTAL_WIDTH - n_columns * (ITEM_WIDTH + 1) - 2 * n_columns * ITEM_PADDING) / (float)(n_columns + 1);
-		int new_spacing = Numeric.int_from_float (spacing);
-
-		if (new_spacing < 0) {
-			return;
-		}
-
-		if (TOTAL_WIDTH < 750)
-			-- new_spacing;
-
-		// apply new spacing
-		set_layout_spacing (new_spacing);
-	}
-
-    /**
-     * Sets the spacing between rows, columns, as well as the margin.
-     */
-	private void set_layout_spacing (int spacing) {
-        if (spacing < 0)
-            return;
-
-        int item_offset = ITEM_PADDING / columns;
-        int item_spacing = spacing - ((item_offset > 0) ? item_offset : 1);
-
-        set_column_spacing (item_spacing);
-        set_row_spacing (item_spacing);
-
-        int margin_width = spacing + ITEM_PADDING;
-        margin_left = margin_width;
-       // margin_right = 0;
-    }
 }
