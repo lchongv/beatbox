@@ -265,3 +265,4 @@ install_subdir('images/icons', install_dir: datadir / 'icons' / 'hicolor', strip
 install_data('data/beatbox.desktop', install_dir: datadir / 'applications')
 install_data('schemas/net.launchpad.beatbox.gschema.xml', install_dir: datadir / 'glib-2.0' / 'schemas')
 gnome.post_install(glib_compile_schemas: true, gtk_update_icon_cache: true)
+subdir('po')
