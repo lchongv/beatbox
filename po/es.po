@@ -2451,3 +2451,66 @@ msgstr "Grilla de carátulas"
 
 msgid "Missing Album Art"
 msgstr "Carátulas que faltan"
+
+msgid "Two lines, artist and album taking turns (iTunes)"
+msgstr "Dos líneas, alternando artista y álbum (iTunes)"
+
+msgid "One line"
+msgstr "Una línea"
+
+msgid "Song information in the LCD:"
+msgstr "Información de la canción en el LCD:"
+
+msgid "hidden"
+msgstr "oculta"
+
+msgid "Size of the cover in the unfolded album:"
+msgstr "Tamaño de la carátula en el álbum desplegado:"
+
+msgid "Share of the band's width; 0 shows no cover"
+msgstr "Porcentaje del ancho de la banda; con 0 no se muestra"
+
+msgid "About"
+msgstr "Acerca de"
+
+msgid "Version %s"
+msgstr "Versión %s"
+
+msgid "A music player with the look of iTunes 7."
+msgstr "Un reproductor de música con el aspecto de iTunes 7."
+
+msgid "Authors"
+msgstr "Autores"
+
+msgid "Artwork"
+msgstr "Arte"
+
+msgid "2026 update"
+msgstr "Actualización de 2026"
+
+msgid "Ported to GTK 3, GStreamer 1.0 and libsoup 3, with the iTunes look, Cover Flow, the inline cover grid, internet radio and podcast directories, online album art and skins."
+msgstr "Llevado a GTK 3, GStreamer 1.0 y libsoup 3, con el aspecto de iTunes, Cover Flow, la grilla de carátulas desplegable, directorios de radios y podcasts, carátulas desde internet y skins."
+
+msgid "Services"
+msgstr "Servicios"
+
+msgid "Internet radio stations: %s"
+msgstr "Emisoras de radio en internet: %s"
+
+msgid "Podcasts: %s"
+msgstr "Podcasts: %s"
+
+msgid "Album art: %s, with %s as fallback"
+msgstr "Carátulas: %s, y %s como respaldo"
+
+msgid "Scrobbling: %s"
+msgstr "Registro de escuchas: %s"
+
+msgid "License"
+msgstr "Licencia"
+
+msgid "Free software under the %s."
+msgstr "Software libre bajo la %s."
+
+msgid "GNU General Public License, version 3"
+msgstr "Licencia Pública General de GNU, versión 3"

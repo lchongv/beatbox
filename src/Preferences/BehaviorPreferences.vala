@@ -129,6 +129,12 @@ public class BeatBox.AppearancePreferences : SimplePreferences {
 		skinChooser.changed();
 		
 		add_heading(_("Display"));
+		var lcdLines = new ComboBoxText();
+		lcdLines.append("two", _("Two lines, artist and album taking turns (iTunes)"));
+		lcdLines.append("one", _("One line"));
+		lcdLines.active_id = App.settings.main.lcd_two_lines ? "two" : "one";
+		lcdLines.changed.connect(() => { App.settings.main.lcd_two_lines = (lcdLines.active_id == "two"); });
+		add_row(labelled(_("Song information in the LCD:"), lcdLines));
 		var markerSize = new SpinButton.with_range(6, 28, 1);
 		markerSize.value = App.settings.main.lcd_marker_size;
 		add_row(labelled(_("Size of the position marker (diamond):"), markerSize, _("pixels")));
@@ -152,6 +158,19 @@ public class BeatBox.CoverPreferences : SimplePreferences {
 		clickMode.changed.connect(() => { App.settings.main.album_grid_inline = (clickMode.active_id == "inline"); });
 		add_row(labelled(_("Clicking an album in the cover grid:"), clickMode));
 		
+		var coverSize = new Scale.with_range(Orientation.HORIZONTAL, 0, 60, 5);
+		coverSize.set_value(App.settings.main.album_detail_cover_percent);
+		coverSize.width_request = 260;
+		coverSize.value_pos = PositionType.RIGHT;
+		coverSize.format_value.connect((v) => ((int)v == 0) ? _("hidden") : "%d %%".printf((int)v));
+		coverSize.value_changed.connect(() => { App.settings.main.album_detail_cover_percent = (int)coverSize.get_value(); });
+		var coverBox = labelled(_("Size of the cover in the unfolded album:"), coverSize);
+		var coverHint = new Label(_("Share of the band's width; 0 shows no cover"));
+		coverHint.get_style_context().add_class("dim-label");
+		coverHint.xalign = 0.0f;
+		add_row(coverBox);
+		add_row(coverHint);
+		
 		add_heading(_("Missing Album Art"));
 		var download = add_check(_("Download missing album art from the internet (MusicBrainz, Apple Music)"), App.settings.main.download_covers);
 		download.toggled.connect(() => {
@@ -159,5 +178,54 @@ public class BeatBox.CoverPreferences : SimplePreferences {
 			if (download.active)
 				App.covers.fetch_remaining_album_art();
 		});
+	}
+}
+
+/** Credits, version and the services BeatBox talks to */
+public class BeatBox.AboutPreferences : SimplePreferences {
+	public override string title { get { return _("About"); } }
+	
+	public AboutPreferences() {
+		var top = new Box(Orientation.HORIZONTAL, 14);
+		top.pack_start(new Image.from_pixbuf(App.icons.BEATBOX.render(IconSize.DIALOG, null)), false, false, 0);
+		var name = new Label("");
+		name.xalign = 0.0f;
+		name.set_markup("<span size='x-large' weight='bold'>BeatBox</span>\n" + Markup.escape_text(_("Version %s").printf(Build.VERSION))
+		                + "\n" + Markup.escape_text(_("A music player with the look of iTunes 7.")));
+		top.pack_start(name, false, false, 0);
+		content.pack_start(top, false, false, 0);
+		
+		add_heading(_("Authors"));
+		add_row(text("Scott Ringwelski\nVictor Eduardo M."));
+		add_heading(_("Artwork"));
+		add_row(text("Scott Ringwelski\nDaniel Foré"));
+		add_heading(_("2026 update"));
+		add_row(text(_("Ported to GTK 3, GStreamer 1.0 and libsoup 3, with the iTunes look, Cover Flow, the inline cover grid, internet radio and podcast directories, online album art and skins.")));
+		
+		add_heading(_("Services"));
+		add_row(text(_("Internet radio stations: %s").printf(link("https://www.radio-browser.info", "radio-browser.info"))
+		             + "\n" + _("Podcasts: %s").printf(link("https://podcasts.apple.com", "Apple Podcasts"))
+		             + "\n" + _("Album art: %s, with %s as fallback").printf(link("https://musicbrainz.org", "MusicBrainz") + " / " + link("https://coverartarchive.org", "Cover Art Archive"), link("https://music.apple.com", "Apple Music"))
+		             + "\n" + _("Scrobbling: %s").printf(link("https://www.last.fm", "Last.fm")), true));
+		
+		add_heading(_("License"));
+		add_row(text(_("Free software under the %s.").printf(link("https://www.gnu.org/licenses/gpl-3.0.html", _("GNU General Public License, version 3")))
+		             + "\n" + link("https://launchpad.net/beat-box", "launchpad.net/beat-box"), true));
+	}
+	
+	static string link(string url, string label) {
+		return "<a href=\"%s\">%s</a>".printf(url, Markup.escape_text(label));
+	}
+	
+	static Label text(string s, bool markup = false) {
+		var label = new Label("");
+		label.xalign = 0.0f;
+		label.wrap = true;
+		label.max_width_chars = 64;
+		if (markup)
+			label.set_markup(s);
+		else
+			label.label = s;
+		return label;
 	}
 }

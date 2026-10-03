@@ -32,7 +32,11 @@ public class BeatBox.MetadataDisplay : BeatBox.Display, Box {
 	public bool is_enabled { get { return _is_enabled; } }
 	
 	private Label label;
+	private Label second_line;   // two-line mode: artist and album, taking turns
 	private Label station_label;
+	private string[] second_texts = {};
+	private int second_index = 0;
+	private uint alternate_id = 0;
 	private TimeScale time_scale;
 	
 	public MetadataDisplay() {
@@ -50,14 +54,20 @@ public class BeatBox.MetadataDisplay : BeatBox.Display, Box {
 		
 		station_label.set_no_show_all(true);
         
+		second_line = new Label("");
+		second_line.ellipsize = Pango.EllipsizeMode.END;
+		second_line.set_no_show_all(true);
+		
         this.set_orientation(Orientation.VERTICAL);
         pack_start(label, false, false, 0);
+        pack_start(second_line, false, false, 0);
         pack_start(time_scale, false, false, 0);
         pack_start(station_label, true, true, 0);
         
         App.library.medias_updated.connect(medias_updated);
 		App.playback.media_played.connect(media_played);
 		App.playback.playback_stopped.connect(playback_stopped);
+		App.settings.main.notify["lcd-two-lines"].connect(update_metadata);
 		
 		show_all();
 		set_no_show_all(true);
@@ -76,9 +86,38 @@ public class BeatBox.MetadataDisplay : BeatBox.Display, Box {
 		disabled();
 	}
 	
+	/* iTunes LCD: the title on top, and under it the artist and the album take turns */
+	void show_next_second_line() {
+		if(second_texts.length == 0)
+			return;
+		second_index = (second_index + 1) % second_texts.length;
+		second_line.label = second_texts[second_index];
+	}
+	
 	void update_metadata() {
+		if(alternate_id != 0)
+			Source.remove(alternate_id);
+		alternate_id = 0;
+		second_line.hide();
+		
 		if(App.playback.media_active) {
-			label.set_markup(App.playback.current_media.get_primary_display_text());
+			var m = App.playback.current_media;
+			label.set_markup(m.get_primary_display_text());
+			
+			if(App.settings.main.lcd_two_lines && m.can_seek) {
+				label.set_markup("<b>" + Markup.escape_text(m.title) + "</b>");
+				second_texts = {};
+				if(m.artist != "" && m.artist != _("Unknown Artist"))
+					second_texts += m.artist;
+				if(m.album != "" && m.album != _("Unknown Album"))
+					second_texts += m.album;
+				second_index = -1;
+				show_next_second_line();
+				if(second_texts.length > 0)
+					second_line.show();
+				if(second_texts.length > 1)
+					alternate_id = Timeout.add_seconds(3, () => { show_next_second_line(); return Source.CONTINUE; });
+			}
 			
 			if(!App.playback.current_media.can_seek) {
 				label.margin_top = 2;
