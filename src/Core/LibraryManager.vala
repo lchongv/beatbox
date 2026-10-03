@@ -141,16 +141,9 @@ public class BeatBox.LibraryManager : GLib.Object, BeatBox.LibraryInterface {
 				library.set_local_folder(library.default_folder);
 			}
 			
-			foreach(var playlist in library.get_default_smart_playlists()) {
-				App.playlists.add_playlist(playlist);
-			}
-			
-			DatabaseTransactionFiller db_filler = new DatabaseTransactionFiller();
-			db_filler.data = library;
-			db_filler.filler = add_known_lib_to_db_filler;
-			
-			App.database.queue_transaction(db_filler);
+			mark_known(library.key);
 		}
+		
 		
 		library.medias_added.connect(medias_added_to_sub_library);
 		library.medias_updated.connect(medias_updated_in_sub_library);
@@ -237,8 +230,36 @@ public class BeatBox.LibraryManager : GLib.Object, BeatBox.LibraryInterface {
 		return libraries.get(to_test.key);
 	}
 	
+	/**
+	 * Default smart playlists get their own marker: older builds marked
+	 * libraries as known without ever saving these playlists. Existing ones
+	 * (same name) are kept, and once created, deleting them sticks.
+	 * Must run after the playlists have been loaded from the database.
+	 */
+	public void add_default_smart_playlists() {
+		foreach(var library in libraries.values) {
+			string smart_key = "smart:" + library.key;
+			if(known_libraries.get(smart_key) != 0)
+				continue;
+			
+			known_libraries.set(smart_key, 1);
+			foreach(var playlist in library.get_default_smart_playlists()) {
+				if(App.playlists.playlist_from_name(playlist.name) == null)
+					App.playlists.add_playlist(playlist);
+			}
+			mark_known(smart_key);
+		}
+	}
+	
+	void mark_known(string key) {
+		DatabaseTransactionFiller db_filler = new DatabaseTransactionFiller();
+		db_filler.data = new KnownKey(key);
+		db_filler.filler = add_known_lib_to_db_filler;
+		App.database.queue_transaction(db_filler);
+	}
+	
 	void add_known_lib_to_db_filler(ref SQLHeavy.Transaction transaction, DatabaseTransactionFiller db_filler) {
-		Library added = (Library)db_filler.data;
+		var added = (KnownKey)db_filler.data;
 		
 		try {
 			Query query = transaction.prepare ("INSERT INTO 'known_libraries' ('key') VALUES (:key);");
@@ -532,3 +553,9 @@ public class BeatBox.LibraryManager : GLib.Object, BeatBox.LibraryInterface {
 	}
 }
 
+
+// Payload for the known_libraries transaction
+class BeatBox.KnownKey : Object {
+	public string key;
+	public KnownKey(string key) { this.key = key; }
+}

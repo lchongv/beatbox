@@ -58,6 +58,7 @@ public class BeatBox.Icon : GLib.Object {
 
     protected const string PNG_EXT = ".png";
     protected const string SVG_EXT = ".svg";
+    protected const string RESOURCE_DIR = "/net/launchpad/beatbox/icons";
 
 	/**
 	 * @param name icon name
@@ -126,9 +127,9 @@ public class BeatBox.Icon : GLib.Object {
 				actual_icon_name = name + SVG_EXT;
 			}
 
-			var icon_path = GLib.Path.build_path("/", Build.ICON_DIR, size_folder, type_folder);
-			IconTheme.get_default().append_search_path (icon_path);
-			this.backup = GLib.Path.build_filename("/", Build.ICON_DIR, size_folder, type_folder, actual_icon_name);
+			// Bundled icons live in the binary (GResource), so they work wherever
+			// BeatBox is installed or run from.
+			this.backup = GLib.Path.build_filename(RESOURCE_DIR, size_folder, type_folder, actual_icon_name);
 		}
 		else {
 			this.backup = null;
@@ -153,7 +154,7 @@ public class BeatBox.Icon : GLib.Object {
 		// to the project's folder.
 		if (file_type == IconsInterface.FileType.PNG && has_backup && size == null) {
 			try {
-				rv = new Gdk.Pixbuf.from_file(backup);
+				rv = new Gdk.Pixbuf.from_resource(backup);
 			}
 			catch (Error err) {
 				warning ("Could not load PNG image: %s\n", err.message);
@@ -175,8 +176,19 @@ public class BeatBox.Icon : GLib.Object {
 			height = width;
 		}
 
-		// Try to load icon from theme
-		if (IconTheme.get_default().has_icon(this.name)) {
+		// Prefer our own icon: theme lookups with generic fallback can return
+		// an unrelated (grey, symbolic) icon for BeatBox's custom names
+		if (has_backup) {
+			try {
+				rv = new Gdk.Pixbuf.from_resource_at_scale (this.backup, width, height, true);
+			}
+			catch (Error err) {
+				warning ("Couldn't load bundled icon: %s", err.message);
+			}
+		}
+		
+		// Otherwise load it from the theme
+		if (rv == null && IconTheme.get_default().has_icon(this.name)) {
 			try {
 				var icon_info = get_icon_info (height);
 				if (icon_info != null) {
@@ -188,17 +200,6 @@ public class BeatBox.Icon : GLib.Object {
 			}
 			catch (Error err) {
 				message ("%s, falling back to default.", err.message);
-			}
-		}
-
-		// If the above failed, use available backup
-		if (rv == null && has_backup) {
-			try {
-				message ("Loading backup icon for %s", this.name);
-				rv = new Gdk.Pixbuf.from_file_at_size (this.backup, width, height);
-			}
-			catch (Error err) {
-				warning ("Couldn't load backup icon: %s", err.message);
 			}
 		}
 
@@ -225,13 +226,10 @@ public class BeatBox.Icon : GLib.Object {
 			height = width;
 		}
 
-		if (IconTheme.get_default().has_icon (this.name) && size != null) {
-			// Try to load icon from theme
+		if (has_backup) {
+			rv = new Image.from_resource (this.backup);
+		} else if (IconTheme.get_default().has_icon (this.name) && size != null) {
 			rv = new Image.from_icon_name (this.name, size);
-		} else if (has_backup) {
-			// If the icon theme doesn't contain the icon, load backup
-			message ("Loading %s from backup", this.name);
-			rv = new Image.from_file (this.backup);
 		} else {
 			// And if there was no backup, use the default method
 			message ("Loading %s using default method", this.name);

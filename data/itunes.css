@@ -28,7 +28,7 @@ window.beatbox {
 }
 
 /* ===== Top strip: brushed aluminium ===== */
-toolbar.itunes-header {
+toolbar.itunes-header, toolbar.itunes-header.titlebar {
   background-image: linear-gradient(to bottom,
     @it7_chrome_top 0%, @it7_chrome_mid 50%, @it7_chrome_bottom 100%);
   border-bottom: 1px solid @it7_chrome_border;
@@ -37,7 +37,7 @@ toolbar.itunes-header {
 }
 
 /* Round glossy transport buttons */
-toolbutton.transport-button > button {
+toolbar.itunes-header toolbutton.transport-button > button {
   background-image: linear-gradient(to bottom, #f8f8f8 0%, #d4d4d4 50%, #b0b0b0 100%);
   border: 1px solid #5e5e5e;
   border-radius: 50%;
@@ -45,21 +45,22 @@ toolbutton.transport-button > button {
   margin: 0 3px;
   min-width: 34px;
   min-height: 34px;
+  -gtk-icon-shadow: none;
   color: #1a1a1a;
   box-shadow: inset 0 1px 0 alpha(white, .95),
               inset 0 -1px 1px alpha(black, .15),
               0 1px 1px alpha(black, .25);
 }
-toolbutton.transport-button > button:hover {
+toolbar.itunes-header toolbutton.transport-button > button:hover {
   background-image: linear-gradient(to bottom, white, #d8d8d8 50%, #b8b8b8);
 }
-toolbutton.transport-button > button:active {
+toolbar.itunes-header toolbutton.transport-button > button:active {
   background-image: linear-gradient(to bottom, @it7_accent_light, @it7_accent);
   color: white;
   box-shadow: inset 0 2px 3px alpha(black, .4);
 }
-toolbutton.transport-button > button:disabled { color: #8a8a8a; }
-toolbutton.transport-button.play > button {
+toolbar.itunes-header toolbutton.transport-button > button:disabled { color: #8a8a8a; }
+toolbar.itunes-header toolbutton.transport-button.play > button {
   min-width: 48px;
   min-height: 48px;
   margin: 0 4px;
@@ -96,24 +97,27 @@ toolbutton.transport-button.play > button {
   min-height: 6px;
 }
 .lcd scale slider {
-  background-image: none;
-  background-color: @it7_lcd_text;
+  /* iTunes-style diamond position marker */
+  background-image: url("resource:///net/launchpad/beatbox/diamond.svg");
+  background-color: transparent;
+  background-size: 100% 100%;
   border: none;
-  min-width: 7px;
-  min-height: 7px;
-  margin: -1px;
+  border-radius: 0;
+  min-width: 14px;
+  min-height: 14px;
+  margin: -5px -4px;
   box-shadow: none;
 }
 
 /* ===== View toggle (segmented) and generic header buttons ===== */
-toolbar.itunes-header button:not(.transport) {
+toolbar.itunes-header button:not(.traffic-light) {
   background-image: linear-gradient(to bottom, #fbfbfb, #d2d2d2);
   border: 1px solid #7a7a7a;
   box-shadow: inset 0 1px 0 alpha(white, .9);
   color: #2a2a2a;
 }
-toolbar.itunes-header button:checked,
-toolbar.itunes-header button:active {
+toolbar.itunes-header button:not(.traffic-light):checked,
+toolbar.itunes-header button:not(.traffic-light):active {
   background-image: linear-gradient(to bottom, @it7_accent_light, @it7_accent);
   border-color: shade(@it7_accent, .7);
   color: white;
@@ -184,3 +188,42 @@ actionbar.itunes-statusbar > revealer > box {
   padding: 3px 6px;
 }
 actionbar.itunes-statusbar label { color: #1a1a1a; text-shadow: 0 1px 0 alpha(white, .5); }
+
+/* ===== Equalizer: tall, clearly visible sliders ===== */
+window.equalizer scale.vertical trough {
+  min-width: 6px;
+  background-image: linear-gradient(to right, #8d8d8d, #c0c0c0);
+  border: 1px solid #5a5a5a;
+  border-radius: 3px;
+}
+window.equalizer scale.vertical highlight {
+  background-image: linear-gradient(to right, @it7_accent_light, @it7_accent);
+  border-radius: 3px;
+}
+window.equalizer scale.vertical slider {
+  min-width: 16px;
+  min-height: 16px;
+  margin: -6px;
+  border-radius: 50%;
+  border: 1px solid #5e5e5e;
+  background-image: linear-gradient(to bottom, #f8f8f8, #c8c8c8);
+  box-shadow: 0 1px 1px alpha(black, .3);
+}
+window.equalizer scale:disabled { opacity: .6; }
+window.equalizer scale mark indicator { min-width: 4px; color: #5a5a5a; }
+
+/* ===== Traffic lights (window controls in the merged title bar) ===== */
+button.traffic-light {
+  min-width: 13px;
+  min-height: 13px;
+  padding: 0;
+  margin: 0;
+  border-radius: 50%;
+  border: 1px solid alpha(black, .45);
+  box-shadow: inset 0 1px 1px alpha(white, .6), 0 1px 0 alpha(white, .5);
+}
+button.traffic-light.close    { background-image: radial-gradient(circle at 50% 35%, #ff8f87, #e0443a 60%, #b1281f); }
+button.traffic-light.minimize { background-image: radial-gradient(circle at 50% 35%, #ffe08a, #e9a91a 60%, #b97f09); }
+button.traffic-light.maximize { background-image: radial-gradient(circle at 50% 35%, #a6ec8f, #3fb52c 60%, #288a19); }
+button.traffic-light:hover    { box-shadow: inset 0 1px 1px alpha(white, .8), 0 0 0 1px alpha(black, .15); }
+button.traffic-light:active   { background-image: none; background-color: shade(#888, .9); }

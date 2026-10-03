@@ -32,7 +32,6 @@ public class BeatBox.PreferencesWindow : Gtk.Window {
 	HashMap<PreferencesSection, TreeIter?> sections;
 	TreeIter general_iter;
 	TreeIter libraries_iter;
-	TreeIter plugins_iter;
 	
 	SideBar side_bar;
 	Notebook notebook;
@@ -47,7 +46,6 @@ public class BeatBox.PreferencesWindow : Gtk.Window {
 		
 		show_all();
 		
-		App.plugins.hook_preferences_window (this);
 	}
 	
 	void build_ui () {
@@ -98,7 +96,6 @@ public class BeatBox.PreferencesWindow : Gtk.Window {
 		
 		general_iter = side_bar.addItem(null, null, null, null, null, _("General"), null, false, false, false);
 		libraries_iter = side_bar.addItem(null, null, null, null, null, _("Libraries"), null, false, false, false);
-		plugins_iter = side_bar.addItem(null, null, null, null, null, _("Plugins"), null, false, false, false);
 		
 		saveChanges.clicked.connect(saveClicked);
 		side_bar.true_selection_change.connect(side_bar_selection_change);
@@ -107,7 +104,6 @@ public class BeatBox.PreferencesWindow : Gtk.Window {
 	void add_sections() {
 		var behavior_pref = new BehaviorPreferences();
 		add_section(behavior_pref);
-		add_section(new PluginPreferences());
 		add_section(new LastfmPreferences());
 		
 		foreach(var library in App.library.all_libraries()) {
@@ -126,12 +122,10 @@ public class BeatBox.PreferencesWindow : Gtk.Window {
 		}
 		
 		TreeIter? parent = null;
-		if(section.category == PreferencesSectionCategory.GENERAL)
-			parent = general_iter;
-		else if(section.category == PreferencesSectionCategory.LIBRARIES)
+		if(section.category == PreferencesSectionCategory.LIBRARIES)
 			parent = libraries_iter;
 		else
-			parent = plugins_iter;
+			parent = general_iter;
 		
 		TreeIter? iter = side_bar.addItem(parent, null, section, section.widget, section.icon, Markup.escape_text(section.title), null, false, false, false);
 		sections.set(section, iter);

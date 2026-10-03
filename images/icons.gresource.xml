@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gresources>
+  <gresource prefix="/net/launchpad/beatbox">
+    <file>icons/128x128/apps/beatbox.svg</file>
+    <file>icons/128x128/mimetypes/drop-album.svg</file>
+    <file>icons/128x128/mimetypes/folder-music.svg</file>
+    <file>icons/128x128/mimetypes/media-audio.png</file>
+    <file>icons/138x138/mimetypes/albumart_2.svg</file>
+    <file>icons/138x138/mimetypes/albumart.svg</file>
+    <file>icons/168x168/other/albumart-shadow.png</file>
+    <file>icons/16x16/actions/go-home-symbolic.svg</file>
+    <file>icons/16x16/actions/go-next-symbolic.svg</file>
+    <file>icons/16x16/actions/info-symbolic.svg</file>
+    <file>icons/16x16/actions/lastfm-ban.svg</file>
+    <file>icons/16x16/actions/lastfm-love.svg</file>
+    <file>icons/16x16/actions/media-eq-symbolic.svg</file>
+    <file>icons/16x16/actions/pane-hide-symbolic.svg</file>
+    <file>icons/16x16/actions/pane-show-symbolic.svg</file>
+    <file>icons/16x16/actions/view-grid-symbolic.svg</file>
+    <file>icons/16x16/actions/view-list-symbolic.svg</file>
+    <file>icons/16x16/apps/beatbox.svg</file>
+    <file>icons/16x16/mimetypes/internet-radio.svg</file>
+    <file>icons/16x16/mimetypes/library-music.svg</file>
+    <file>icons/16x16/mimetypes/library-podcast.svg</file>
+    <file>icons/16x16/mimetypes/media-cdrom-audio.svg</file>
+    <file>icons/16x16/mimetypes/playlist-automatic.svg</file>
+    <file>icons/16x16/mimetypes/playlist.svg</file>
+    <file>icons/16x16/mimetypes/process-completed-symbolic.svg</file>
+    <file>icons/16x16/mimetypes/process-error-symbolic.svg</file>
+    <file>icons/16x16/status/media-playlist-no-repeat-symbolic.svg</file>
+    <file>icons/16x16/status/media-playlist-no-shuffle-symbolic.svg</file>
+    <file>icons/16x16/status/media-playlist-repeat-one-symbolic.svg</file>
+    <file>icons/16x16/status/media-playlist-repeat-symbolic.svg</file>
+    <file>icons/16x16/status/media-playlist-shuffle-symbolic.svg</file>
+    <file>icons/16x16/status/non-starred.svg</file>
+    <file>icons/16x16/status/podcast-new.svg</file>
+    <file>icons/16x16/status/starred.svg</file>
+    <file>icons/22x22/apps/beatbox.svg</file>
+    <file>icons/24x24/apps/beatbox.svg</file>
+    <file>icons/32x32/apps/beatbox.svg</file>
+    <file>icons/48x48/apps/beatbox.svg</file>
+    <file>icons/64x64/apps/beatbox.svg</file>
+  </gresource>
+</gresources>
