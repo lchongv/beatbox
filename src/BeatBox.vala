@@ -70,7 +70,6 @@ public static int main (string[] args) {
  */
 
 public class BeatBox.App : Granite.Application {
-	public static BeatBox.Plugins.Manager plugins { get; private set; }
 	public static BeatBox.LibraryInterface library { get; private set; }
 	public static BeatBox.PlaylistInterface playlists { get; private set; }
 	public static BeatBox.PodcastInterface podcasts { get; private set; }
@@ -172,6 +171,7 @@ public class BeatBox.App : Granite.Application {
 		css.load_from_resource ("/net/launchpad/beatbox/itunes.css");
 		Gtk.StyleContext.add_provider_for_screen (Gdk.Screen.get_default (), css, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION + 1);
 		
+		Gtk.IconTheme.get_default ().add_resource_path ("/net/launchpad/beatbox/icons");
 		icons = new Icons();
 		database = new DataBaseManager();
 		operations = new OperationsManager();
@@ -185,6 +185,7 @@ public class BeatBox.App : Granite.Application {
 		playlists = new PlaylistManager();
 		((LibraryManager)library).init_default_libraries();
 		((PlaylistManager)playlists).load_playlists_from_db();
+		((LibraryManager)library).add_default_smart_playlists();
 		window = new LibraryWindow(this);
 		podcasts = new PodcastManager();
 		
@@ -204,12 +205,6 @@ public class BeatBox.App : Granite.Application {
 		Timeout.add(500, () => {
 			((PlaybackManager)playback).load_and_play_last_playing(); return false;
 		});
-		
-		// Load plugins last so that we know that everything else is ready to go
-		plugins = new BeatBox.Plugins.Manager (Build.PLUGIN_DIR, exec_name, null);  
-		plugins.beatbox_app = this;
-		plugins.hook_app(this);
-		plugins.hook_main_window (window);
 		
 		// After everything settles down, load the covers that have been saved.
 		Idle.add(() => {
