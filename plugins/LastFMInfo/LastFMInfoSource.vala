@@ -77,25 +77,24 @@ public class BeatBox.LastFMInfoSource : GLib.Object, InfoSource {
 	
 	// TODO: Move this and Store's same function to a helper util.
 	private Xml.Node* query_for_xml(string url) {
-		var session = new Soup.SessionSync();
-		var message = new Soup.Message ("GET", url);
+		string body = BeatBox.Http.fetch (url, "GET");
 		
 		// send the HTTP GET request
-		session.send_message(message);
+
 		
 		if(message == null) {
 			warning("Failed to get response from url %s", url);
 			return null;
 		}
 		
-		Xml.Node* node = get_root_node(message);
+		Xml.Node* node = get_root_node(body);
 		
 		return node;
 	}
 	
-	private Xml.Node* get_root_node(Soup.Message message) {
+	private Xml.Node* get_root_node(string body) {
 		Xml.Parser.init();
-		Xml.Doc* doc = Xml.Parser.parse_memory((string)message.response_body.data, (int)message.response_body.length);
+		Xml.Doc* doc = Xml.Parser.parse_memory(body, body.length);
 		if(doc == null)
 			return null;
 		

@@ -39,7 +39,7 @@ public class BeatBox.NotImportedDialog : Window{
 	CheckButton trashAll;
 	ScrolledWindow filesScroll;
 	TreeView filesView;
-	ListStore filesModel;
+	Gtk.ListStore filesModel;
 	Button moveToTrash;
 	
 	public NotImportedDialog(Collection<string> files, string music) {
@@ -71,7 +71,7 @@ public class BeatBox.NotImportedDialog : Window{
 		trashAll = new CheckButton.with_label(_("Move all corrupted files to trash"));
 		filesScroll = new ScrolledWindow(null, null);
 		filesView = new TreeView();
-		filesModel = new ListStore(2, typeof(bool), typeof(string));
+		filesModel = new Gtk.ListStore(2, typeof(bool), typeof(string));
 		filesView.set_model(filesModel);
 		moveToTrash = new Button.with_label(_("Move to Trash"));
 		Button okButton = new Button.with_label(_("Ignore"));

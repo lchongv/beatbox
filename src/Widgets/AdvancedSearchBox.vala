@@ -27,7 +27,7 @@
 
 using Gtk;
 
-public class BeatBox.AdvancedSearchBox : Granite.Widgets.SearchBar {
+public class BeatBox.AdvancedSearchBox : Gtk.SearchEntry {
 	Gtk.Menu search_suggester;
 	bool listen_for_change;
 	string last_search;
@@ -36,7 +36,7 @@ public class BeatBox.AdvancedSearchBox : Granite.Widgets.SearchBar {
 	HashTable<View, string> views_search;
 	
 	public AdvancedSearchBox() {
-		base(_("Search..."));
+		placeholder_text = _("Search...");
 		
 		search_suggester = new Gtk.Menu();
 		search_suggester.attach_to_widget(this, null);

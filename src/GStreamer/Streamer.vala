@@ -54,7 +54,7 @@ public class BeatBox.Streamer : GLib.Object {
 		
 		pipe.bus.enable_sync_message_emission();
 		
-		pipe.bus.add_watch(busCallback);
+		pipe.bus.add_watch(GLib.Priority.DEFAULT, busCallback);
 		pipe.bus.sync_message.connect(sync_message);
 		pipe.playbin.about_to_finish.connect(about_to_finish);
 		
@@ -144,8 +144,8 @@ public class BeatBox.Streamer : GLib.Object {
 		doing_gapless = false;
 		
 		if(pipe.video.element != null && is_video_enabled) {
-			var xoverlay = pipe.video.element as XOverlay;
-			xoverlay.set_window_handle((uint)App.window.video_area_xid);
+			var xoverlay = pipe.video.element as Gst.Video.Overlay;
+			xoverlay.set_window_handle((uint*)App.window.video_area_xid);
 		}
 	}
 	
@@ -160,18 +160,14 @@ public class BeatBox.Streamer : GLib.Object {
 	
 	public int64 getPosition() {
 		int64 rv = (int64)0;
-		Format f = Format.TIME;
-		
-		pipe.playbin.query_position(ref f, out rv);
+		pipe.playbin.query_position(Format.TIME, out rv);
 		
 		return rv;
 	}
 	
 	public int64 getDuration() {
 		int64 rv = (int64)0;
-		Format f = Format.TIME;
-		
-		pipe.playbin.query_duration(ref f, out rv);
+		pipe.playbin.query_duration(Format.TIME, out rv);
 		
 		return rv;
 	}
@@ -207,8 +203,8 @@ public class BeatBox.Streamer : GLib.Object {
 		if(val) {
 			flags = (flags | Gst.PlayFlag.VIDEO);
 			if(pipe.video.element != null) {
-				var xoverlay = pipe.video.element as XOverlay;
-				xoverlay.set_window_handle((uint)App.window.video_area_xid);
+				var xoverlay = pipe.video.element as Gst.Video.Overlay;
+				xoverlay.set_window_handle((uint*)App.window.video_area_xid);
 				message("Video enabled. Videos will now be output to proper area in app.\n");
 			}
 		}
@@ -233,13 +229,13 @@ public class BeatBox.Streamer : GLib.Object {
 		
 			// This is where we 'make it official' that the next media is
 			// playing, during gapless playback transition.
-			if (message.src == pipe.playbin && message.get_structure().has_name("playbin2-stream-changed")) {
-				next_track_starting();
-            }
-			else if(message.get_structure() != null && is_missing_plugin_message(message) && (dialog == null || !dialog.visible)) {
+			if(message.get_structure() != null && Gst.PbUtils.is_missing_plugin_message(message) && (dialog == null || !dialog.visible)) {
 				dialog = new InstallGstreamerPluginsDialog(message);
 			}
 			
+			break;
+		case Gst.MessageType.STREAM_START:
+			next_track_starting();
 			break;
 		case Gst.MessageType.EOS:
 			if(!doing_gapless) {
@@ -269,8 +265,8 @@ public class BeatBox.Streamer : GLib.Object {
 						checked_video = true;
 						
 						if(pipe.video.element != null) {
-							var xoverlay = pipe.video.element as XOverlay;
-							xoverlay.set_window_handle((uint)App.window.video_area_xid);
+							var xoverlay = pipe.video.element as Gst.Video.Overlay;
+							xoverlay.set_window_handle((uint*)App.window.video_area_xid);
 						}
 						
 						if(pipe.videoStreamCount() > 0) {
@@ -298,9 +294,9 @@ public class BeatBox.Streamer : GLib.Object {
             
             message.parse_tag (out tag_list);
             if(tag_list != null) {
-				if(tag_list.get_tag_size(TAG_TITLE) > 0) {
+				if(tag_list.get_tag_size(Gst.Tags.TITLE) > 0) {
 					string title = "";
-					tag_list.get_string(TAG_TITLE, out title);
+					tag_list.get_string(Gst.Tags.TITLE, out title);
 					
 					/// TODO: Put this in a better spot. Abstract it somehow. Translate it.
 					if(App.playback.current_media.media_type == MediaType.STATION && title != "") { // is radio
@@ -361,12 +357,12 @@ public class BeatBox.Streamer : GLib.Object {
 		}
 		
 		string message_type = message.get_structure().get_name();
-		if(message_type == "prepare-xwindow-id") {
+		if(Gst.Video.is_video_overlay_prepare_window_handle_message(message)) {
 			
 			message.src.set_property("force-aspect-ratio", true);
 			if(pipe.video.element != null && App.window.video_area_xid != 0) {
-				var xoverlay = pipe.video.element as XOverlay;
-				xoverlay.set_window_handle((uint)App.window.video_area_xid);
+				var xoverlay = pipe.video.element as Gst.Video.Overlay;
+				xoverlay.set_window_handle((uint*)App.window.video_area_xid);
 			}
 			else {
 				warning("Video area should have been realized by now");

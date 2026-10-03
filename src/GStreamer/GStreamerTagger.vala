@@ -31,8 +31,8 @@
 public class BeatBox.GStreamerTagger : GLib.Object {
 	int size;
 	static int DISCOVER_SET_SIZE = 50;
-	Gst.Discoverer d;
-	Gst.Discoverer art_d;
+	Gst.PbUtils.Discoverer d;
+	Gst.PbUtils.Discoverer art_d;
 	Gee.HashMap<string, int> uri_to_id;
 	Gee.LinkedList<string> uri_queue;
 	
@@ -42,7 +42,7 @@ public class BeatBox.GStreamerTagger : GLib.Object {
 	
 	public GStreamerTagger() {
 		try {
-			d = new Gst.Discoverer((Gst.ClockTime)(10*Gst.SECOND));
+			d = new Gst.PbUtils.Discoverer((Gst.ClockTime)(10*Gst.SECOND));
 		}
 		catch(Error err) {
 			critical("Metadata reader could not create discoverer object: %s\n", err.message);
@@ -51,7 +51,7 @@ public class BeatBox.GStreamerTagger : GLib.Object {
 		d.finished.connect(finished);
 		
 		try {
-			art_d = new Gst.Discoverer((Gst.ClockTime)(10*Gst.SECOND));
+			art_d = new Gst.PbUtils.Discoverer((Gst.ClockTime)(10*Gst.SECOND));
 		}
 		catch(Error err) {
 			critical("Metadata reader could not create discoverer object: %s\n", err.message);
@@ -64,7 +64,7 @@ public class BeatBox.GStreamerTagger : GLib.Object {
 	void finished() {
 		if(!App.operations.operation_cancelled && uri_queue.size > 0) {
 			try {
-				d = new Gst.Discoverer((Gst.ClockTime)(10*Gst.SECOND));
+				d = new Gst.PbUtils.Discoverer((Gst.ClockTime)(10*Gst.SECOND));
 			}
 			catch(Error err) {
 				critical("Metadata reader could not create discoverer object: %s\n", err.message);
@@ -133,7 +133,7 @@ public class BeatBox.GStreamerTagger : GLib.Object {
 		}
 	}
 	
-	void import_media(Gst.DiscovererInfo info, Error err) {
+	void import_media(Gst.PbUtils.Discoverer d, Gst.PbUtils.DiscovererInfo info, Error? err) {
 		uri_queue.remove(info.get_uri());
 		--size;
 		

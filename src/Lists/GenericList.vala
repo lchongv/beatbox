@@ -62,7 +62,7 @@ public abstract class BeatBox.GenericList : FastList {
 	
 	public signal void import_requested(LinkedList<Media> to_import);
 	
-	public GenericList(GLib.List<Type> types, TreeViewSetup tvs, Media default_value) {
+	protected GenericList(GLib.List<Type> types, TreeViewSetup tvs, Media default_value) {
 		base(types, default_value);
 		
 		this.tvs = tvs;

@@ -87,15 +87,12 @@ public class LastFM.TopArtistSongs : Object {
 		var artist_fixed = BeatBox.LastFMCore.fix_for_url(artist);
 		var url = "http://ws.audioscrobbler.com/2.0/?method=artist.gettoptracks&artist=" + artist_fixed + "&api_key=" + BeatBox.LastFMCore.api;
 		
-		Soup.SessionSync session = new Soup.SessionSync();
-		Soup.Message message = new Soup.Message ("GET", url);
-		
-		session.timeout = 30;// after 30 seconds, give up
+		string body = BeatBox.Http.fetch (url, "GET");
 		
 		/* send the HTTP request */
-		session.send_message(message);
+
 		
-		Xml.Doc* doc = Xml.Parser.parse_memory((string)message.response_body.data, (int)message.response_body.length);
+		Xml.Doc* doc = Xml.Parser.parse_memory(body, body.length);
 		
 		if(doc == null)
 			GLib.message("Could not load top artist songs information for %s", artist);

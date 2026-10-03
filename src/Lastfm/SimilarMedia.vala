@@ -57,8 +57,8 @@ public class LastFM.SimilarMedias : Object {
 		params.set("artist", s.artist);
 		params.set("track", s.title);
 		
-		BeatBox.App.info.lastfm.query("GET", params, false, (sess, msg) => {
-			Xml.Doc* doc = Xml.Parser.parse_memory((string)msg.response_body.data, (int)msg.response_body.length);
+		BeatBox.App.info.lastfm.query("GET", params, false, (body) => {
+			Xml.Doc* doc = Xml.Parser.parse_memory(body, body.length);
 			if(doc == null) {
 				GLib.message("Could not load similar artist information for %s by %s\n", base_media.title, base_media.artist);
 				

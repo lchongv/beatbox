@@ -36,7 +36,7 @@ public class BeatBox.SourceViewSearchSuggestions : GLib.Object {
 		TOP_GENRES
 	}
 	
-	public static GLib.List<Gtk.MenuItem> get_suggestions(SourceView source_view, GLib.List<Media> medias, string given_search) {
+	public static GLib.List<Gtk.MenuItem> get_suggestions(SourceView source_view, GLib.List<weak Media> medias, string given_search) {
 		var rv = new GLib.List<Gtk.MenuItem>();
 		var search = given_search.down();
 		

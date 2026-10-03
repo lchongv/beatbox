@@ -27,7 +27,9 @@
 
 using Gtk;
 
-public class BeatBox.StatusBar : Granite.Widgets.StatusBar {
+public class BeatBox.StatusBar : Gtk.ActionBar {
+    Label status_label = new Label ("");
+
     public uint total_items {get; private set; default = 0;}
     public uint64 total_size {get; private set; default = 0;}
     public uint total_secs {get; private set; default = 0;}
@@ -40,6 +42,7 @@ public class BeatBox.StatusBar : Granite.Widgets.StatusBar {
 	Image show_eq_button;
 
     public StatusBar () {
+		set_center_widget (status_label);
 		repeat_chooser = new SimpleOptionChooser();
 		shuffle_chooser = new SimpleOptionChooser();
 		show_eq_button = App.icons.EQ.render_image (Gtk.IconSize.MENU);
@@ -79,6 +82,10 @@ public class BeatBox.StatusBar : Granite.Widgets.StatusBar {
         eq_eventbox.button_press_event.connect(show_eq_button_clicked);
     }
 
+    public void insert_widget (Widget w, bool left) {
+        if (left) pack_start (w); else pack_end (w);
+    }
+
     public void set_files_size (uint64 total_size) {
         this.total_size = total_size;
         update_label ();
@@ -97,21 +104,20 @@ public class BeatBox.StatusBar : Granite.Widgets.StatusBar {
 
     private void update_label () {
         if (total_items == 0) {
-            // status_label.set_text ("");
-            warning("TODO: FIXME");
+            status_label.set_text ("");
             return;
         }
 
         string time_text = "", media_description = "", medias_text = "", size_text = "";
 
         if(total_secs < 3600) { // less than 1 hour show in minute units
-            time_text = ngettext("%d minutes", "%d minutes", total_secs/60).printf(total_secs/60);
+            time_text = ngettext("%d minutes", "%d minutes", (ulong) (total_secs/60)).printf((int) total_secs/60);
         }
         else if(total_secs < (24 * 3600)) { // less than 1 day show in hour units
-            time_text = ngettext("%d hour", "%d hours", total_secs/3600).printf(total_secs/3600);
+            time_text = ngettext("%d hour", "%d hours", (ulong) (total_secs/3600)).printf((int) total_secs/3600);
         }
         else { // units in days
-            time_text = ngettext("%d day", "%d days", total_secs/(24 * 3600)).printf(total_secs/(24 * 3600));
+            time_text = ngettext("%d day", "%d days", (ulong) (total_secs/(24 * 3600))).printf((int) (total_secs/(24 * 3600)));
         }
 
         size_text = GLib.format_size (total_size);
@@ -136,8 +142,7 @@ public class BeatBox.StatusBar : Granite.Widgets.StatusBar {
 
         medias_text = "%i %s".printf ((int)total_items, media_description);
 
-        warning("TODO: FIXME");
-        // status_label.set_text (STATUS_TEXT_FORMAT.printf (medias_text, time_text, size_text));
+        status_label.set_text (STATUS_TEXT_FORMAT.printf (medias_text, time_text, size_text));
     }
     
     

@@ -31,7 +31,7 @@ using Gtk;
 public class BeatBox.DeviceSummaryWidget : Box {
 	Device dev;
 	
-	Granite.Widgets.HintedEntry deviceName;
+	Gtk.Entry deviceName;
 	Switch syncAtStart;
 	
 	CheckButton syncMusic;
@@ -40,9 +40,9 @@ public class BeatBox.DeviceSummaryWidget : Box {
 	ComboBox musicDropdown;
 	ComboBox podcastDropdown;
 	//ComboBox audiobookDropdown;
-	ListStore musicList;
-	ListStore podcastList;
-	//ListStore audiobookList;
+	Gtk.ListStore musicList;
+	Gtk.ListStore podcastList;
+	//Gtk.ListStore audiobookList;
 	
 	StyledContentBox top_portion;
 	Gtk.Image deviceImage;
@@ -61,7 +61,7 @@ public class BeatBox.DeviceSummaryWidget : Box {
 	
 	public void buildUI() {
 		// options at top
-		deviceName = new Granite.Widgets.HintedEntry(_("Device Name"));
+		deviceName = new Gtk.Entry() { placeholder_text = _("Device Name") };
 		syncAtStart = new Gtk.Switch();
 		syncMusic = new CheckButton();
 		syncPodcasts = new CheckButton();
@@ -69,9 +69,9 @@ public class BeatBox.DeviceSummaryWidget : Box {
 		musicDropdown = new ComboBox();
 		podcastDropdown = new ComboBox();
 		//audiobookDropdown = new ComboBox();
-		musicList = new ListStore(3, typeof(GLib.Object), typeof(string), typeof(Gdk.Pixbuf));
-		podcastList = new ListStore(3, typeof(GLib.Object), typeof(string), typeof(Gdk.Pixbuf));
-		//audiobookList = new ListStore(3, typeof(GLib.Object), typeof(string), typeof(Gdk.Pixbuf));
+		musicList = new Gtk.ListStore(3, typeof(GLib.Object), typeof(string), typeof(Gdk.Pixbuf));
+		podcastList = new Gtk.ListStore(3, typeof(GLib.Object), typeof(string), typeof(Gdk.Pixbuf));
+		//audiobookList = new Gtk.ListStore(3, typeof(GLib.Object), typeof(string), typeof(Gdk.Pixbuf));
 		
 		//get_style_context().add_class (Granite.STYLE_CLASS_CONTENT_VIEW);
 		

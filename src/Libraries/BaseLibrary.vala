@@ -42,7 +42,7 @@ public abstract class BeatBox.BaseLibrary : GLib.Object, BeatBox.Library {
 	public abstract Type media_type { get; }
 	public abstract PreferencesSection? preferences_section { get; }
 	
-	public abstract Media import_tags_to_media(Gst.DiscovererInfo info);
+	public abstract Media import_tags_to_media(Gst.PbUtils.DiscovererInfo info);
 	
 	public abstract Collection<SmartPlaylist> get_default_smart_playlists();
 	

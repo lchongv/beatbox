@@ -291,7 +291,7 @@ public class BeatBox.TreeViewSetup : GLib.Object {
 		return rv;
 	}
 	
-	public void set_columns(GLib.List<TreeViewColumn> cols) {
+	public void set_columns(GLib.List<weak TreeViewColumn> cols) {
 		_columns = new GLib.List<TreeViewColumn>();
 		foreach(var tvc in cols)
 			_columns.append(tvc);

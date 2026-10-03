@@ -31,7 +31,7 @@ public class BeatBox.AddPodcastWindow : Window {
 	Box content;
 	Box padding;
 	
-	Granite.Widgets.HintedEntry _source;
+	Gtk.Entry _source;
 	Gtk.Image _is_valid;
 	Gtk.Spinner _is_working;
 	Button _save;
@@ -74,7 +74,7 @@ public class BeatBox.AddPodcastWindow : Window {
 		
 		/* start out by creating all category labels */
 		Label sourceLabel = new Label(_("Podcast RSS Source"));
-		_source = new Granite.Widgets.HintedEntry(_("Podcast Source..."));
+		_source = new Gtk.Entry() { placeholder_text = _("Podcast Source...") };
 		_is_valid = new Gtk.Image.from_pixbuf(not_valid);
 		_is_working = new Gtk.Spinner();
 		_save = new Button.with_label(_("Add"));

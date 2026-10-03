@@ -26,7 +26,7 @@ public class Store.IconView : Gtk.ScrolledWindow {
 	Store.StoreView storeView;
 	
 	Gtk.IconView icons;
-	ListStore store;
+	Gtk.ListStore store;
 	public Gdk.Pixbuf defaultPix;
 	
 	public signal void itemClicked(string artist, string album);
@@ -45,7 +45,7 @@ public class Store.IconView : Gtk.ScrolledWindow {
 		
 		v.set_shadow_type(ShadowType.NONE);
 		icons = new Gtk.IconView();
-		store = new ListStore(3, typeof(GLib.Object), typeof(Gdk.Pixbuf), typeof(string));
+		store = new Gtk.ListStore(3, typeof(GLib.Object), typeof(Gdk.Pixbuf), typeof(string));
 		icons.set_model(store);
 		
 		icons.set_pixbuf_column(1);

@@ -54,7 +54,7 @@ namespace BeatBox.String {
     /** Removes unwanted html formatting text and keeps only the content.
      * Example: '<b>Test</b>' becomes 'Test'
     */
-    string remove_html(string s) {
+    public string remove_html(string s) {
 		if(s == null || s == "")
 			return "";
 		

@@ -29,6 +29,194 @@ using SQLHeavy;
 using Gee;
 
 public class BeatBox.DataBaseManager : GLib.Object, BeatBox.DatabaseInterface {
+	const string SCHEMA = """
+CREATE TABLE IF NOT EXISTS known_libraries (
+	'key' TEXT
+);
+
+CREATE TABLE IF NOT EXISTS songs (
+	'uri' TEXT,
+	'file_size' INT,
+	'title' TEXT,
+	'artist' TEXT,
+	'composer' TEXT,
+	'album_artist' TEXT,
+	'album' TEXT,
+	'grouping' TEXT,
+	'genre' TEXT,
+	'comment' TEXT,
+	'lyrics' TEXT,
+	'album_path' TEXT,
+	'has_embedded' INT,
+	'year' INT,
+	'track' INT,
+	'track_count' INT,
+	'album_number' INT,
+	'album_count' INT,
+	'bitrate' INT,
+	'length' INT,
+	'samplerate' INT,
+	'rating' INT,
+	'playcount' INT,
+	'skipcount' INT,
+	'dateadded' INT,
+	'lastplayed' INT,
+	'lastmodified' INT,
+	'mediatype' INT,
+	'podcast_rss' TEXT,
+	'podcast_url' TEXT,
+	'podcast_date' INT,
+	'is_new_podcast' INT,
+	'resume_pos' INT,
+	'is_video' INT
+);
+
+CREATE TABLE IF NOT EXISTS podcasts (
+	'uri' TEXT,
+	'file_size' INT,
+	'title' TEXT,
+	'artist' TEXT,
+	'composer' TEXT,
+	'album_artist' TEXT,
+	'album' TEXT,
+	'grouping' TEXT,
+	'genre' TEXT,
+	'comment' TEXT,
+	'lyrics' TEXT,
+	'album_path' TEXT,
+	'has_embedded' INT,
+	'year' INT,
+	'track' INT,
+	'track_count' INT,
+	'album_number' INT,
+	'album_count' INT,
+	'bitrate' INT,
+	'length' INT,
+	'samplerate' INT,
+	'rating' INT,
+	'playcount' INT,
+	'skipcount' INT,
+	'dateadded' INT,
+	'lastplayed' INT,
+	'lastmodified' INT,
+	'mediatype' INT,
+	'podcast_rss' TEXT,
+	'podcast_url' TEXT,
+	'podcast_date' INT,
+	'is_new_podcast' INT,
+	'resume_pos' INT,
+	'is_video' INT
+);
+
+CREATE TABLE IF NOT EXISTS stations (
+	'uri' TEXT,
+	'file_size' INT,
+	'title' TEXT,
+	'artist' TEXT,
+	'composer' TEXT,
+	'album_artist' TEXT,
+	'album' TEXT,
+	'grouping' TEXT,
+	'genre' TEXT,
+	'comment' TEXT,
+	'lyrics' TEXT,
+	'album_path' TEXT,
+	'has_embedded' INT,
+	'year' INT,
+	'track' INT,
+	'track_count' INT,
+	'album_number' INT,
+	'album_count' INT,
+	'bitrate' INT,
+	'length' INT,
+	'samplerate' INT,
+	'rating' INT,
+	'playcount' INT,
+	'skipcount' INT,
+	'dateadded' INT,
+	'lastplayed' INT,
+	'lastmodified' INT,
+	'mediatype' INT,
+	'podcast_rss' TEXT,
+	'podcast_url' TEXT,
+	'podcast_date' INT,
+	'is_new_podcast' INT,
+	'resume_pos' INT,
+	'is_video' INT
+);
+
+CREATE TABLE IF NOT EXISTS playlists (
+	'name' TEXT,
+	'medias' TEXT
+);
+
+CREATE TABLE IF NOT EXISTS smart_playlists (
+	'name' TEXT,
+	'and_or' INT,
+	'queries' TEXT,
+	'limit_results' INT,
+	'limit_amount' INT
+);
+				
+CREATE TABLE IF NOT EXISTS devices (
+	'unique_id' TEXT,
+	'sync_when_mounted' INT,
+	'sync_music' INT,
+	'sync_podcasts' INT,
+	'sync_audiobooks' INT,
+	'sync_all_music' INT,
+	'sync_all_podcasts' INT,
+	'sync_all_audiobooks' INT,
+	'music_playlist' TEXT,
+	'podcast_playlist' TEXT,
+	'audiobook_playlist' TEXT,
+	'last_sync_time' INT
+);
+				
+CREATE TABLE IF NOT EXISTS artists (
+	'artist' TEXT,
+	'full_desc' TEXT,
+	'short_desc' TEXT,
+	'merged_desc' TEXT,
+	'tags' TEXT,
+	'more_info_urls' TEXT,
+	'similar_artists' TEXT,
+	'photo_uri' TEXT
+);
+
+CREATE TABLE IF NOT EXISTS albums (
+	'album' TEXT,
+	'album_artist' TEXT,
+	'full_desc' TEXT,
+	'short_desc' TEXT,
+	'merged_desc' TEXT,
+	'tags' TEXT,
+	'more_info_urls' TEXT,
+	'release_date' TEXT,
+	'similar_albums' TEXT,
+	'art_uri' TEXT
+);
+
+CREATE TABLE IF NOT EXISTS tracks (
+	'title' TEXT,
+	'artist' TEXT,
+	'full_desc' TEXT,
+	'short_desc' TEXT,
+	'merged_desc' TEXT,
+	'tags' TEXT,
+	'more_info_urls' TEXT,
+	'lyrics' TEXT
+);
+
+CREATE TABLE IF NOT EXISTS list_setups (
+	'key' TEXT,
+	'hint' INT,
+	'sort_column_id' INT,
+	'sort_direction' TEXT,
+	'columns' TEXT
+);
+""";
+
 	SQLHeavy.Database _db;
 	
 	LinkedList<DatabaseTransactionFiller> periodic_transactions;
@@ -52,19 +240,15 @@ public class BeatBox.DataBaseManager : GLib.Object, BeatBox.DatabaseInterface {
 			}
 		}
 		
-		// Open the database
+		// Open the database and create any missing table
 		try {
-			_db = new VersionedDatabase (GLib.Path.build_filename(user_database_folder.get_path(), "beatbox.db"), Build.SCHEMA_DIR);
+			_db = new SQLHeavy.Database (GLib.Path.build_filename(user_database_folder.get_path(), "beatbox.db"));
+			_db.execute (SCHEMA);
 		}
 		catch (SQLHeavy.Error err) {
 			critical("Could not load database: %s", err.message);
 		}
 		
-		// Some settings
-        // disable synchronized commits for performance reasons ... this is not vital
-        _db.synchronous = SQLHeavy.SynchronousMode.from_string("OFF");
-        //_db.sql_executed.connect ((sql) => { stdout.printf("SQL: %s \n", sql); });
-        
 		// Every 15 seconds, do the periodic saves
 		Timeout.add(15000, periodic_save);
 	}

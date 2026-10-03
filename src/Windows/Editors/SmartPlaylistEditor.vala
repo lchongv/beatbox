@@ -39,7 +39,7 @@ public class BeatBox.SmartPlaylistEditor : Window {
 	private Label rulesLabel;
 	private Label optionsLabel;
 	
-	Granite.Widgets.HintedEntry nameEntry;
+	Gtk.Entry nameEntry;
 	ComboBoxText comboMatch;
 	
 	bool is_in_scroll;
@@ -84,7 +84,7 @@ public class BeatBox.SmartPlaylistEditor : Window {
 		optionsLabel.set_markup("<b>%s</b>".printf(_("Options")));
 		
 		/* add the name entry */
-		nameEntry = new Granite.Widgets.HintedEntry(_("Playlist Title"));
+		nameEntry = new Gtk.Entry() { placeholder_text = _("Playlist Title") };
 		if(sp.name != "")
 			nameEntry.set_text(sp.name);
 		
@@ -269,14 +269,14 @@ public class BeatBox.SmartPlaylistEditor : Window {
 public class BeatBox.SmartPlaylistEditorQuery : Box {
 	SmartQuery q;
 	
-	ListStore field_model;
+	Gtk.ListStore field_model;
 	ComboBox field;
 	
-	ListStore comparator_model;
+	Gtk.ListStore comparator_model;
 	TreeModelFilter comparator_filter;
 	ComboBox comparator;
 	
-	ListStore media_option_model;
+	Gtk.ListStore media_option_model;
 	TreeModelFilter media_option_filter;
 	ComboBox media_option;
 	Entry entry;
@@ -291,7 +291,7 @@ public class BeatBox.SmartPlaylistEditorQuery : Box {
 		this.q = q;
 		
 		// Create drop downs
-		field_model = new ListStore(2, typeof(int), typeof(string));
+		field_model = new Gtk.ListStore(2, typeof(int), typeof(string));
 		field = new ComboBox.with_model(field_model);
 		var cell = new CellRendererText();
 		field.pack_start(cell, true);
@@ -304,7 +304,7 @@ public class BeatBox.SmartPlaylistEditorQuery : Box {
 			field_model.set(iter, 0, (int)field, 1, field.to_string());
 		}
 		
-		comparator_model = new ListStore(2, typeof(int), typeof(string));
+		comparator_model = new Gtk.ListStore(2, typeof(int), typeof(string));
 		comparator_filter = new TreeModelFilter(comparator_model, null);
 		comparator = new ComboBox.with_model(comparator_filter);
 		cell = new CellRendererText();
@@ -322,7 +322,7 @@ public class BeatBox.SmartPlaylistEditorQuery : Box {
 		entry = new Entry();
 		spinbutton =  new SpinButton.with_range(0, 9999, 1);
 		
-		media_option_model = new ListStore(2, typeof(int), typeof(string));
+		media_option_model = new Gtk.ListStore(2, typeof(int), typeof(string));
 		media_option_filter = new TreeModelFilter(media_option_model, null);
 		media_option = new ComboBox.with_model(media_option_filter);
 		cell = new CellRendererText();

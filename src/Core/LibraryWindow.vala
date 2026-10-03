@@ -61,7 +61,7 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 	Box verticalBox;
 	Notebook all_views { get; private set; } // mainViews, songInfo, possibly video later on
 	public Notebook mainViews { get; private set; }
-	public Granite.Widgets.ThinPaned sourcesToMedias { get; private set; } //allows for draggable
+	public Gtk.Paned sourcesToMedias { get; private set; } //allows for draggable
 	Box contentBox;
 	Box sideBox;
 	
@@ -240,7 +240,7 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		/* Initialize all components */
 		all_views = new Notebook();
 		verticalBox = new Box(Orientation.VERTICAL, 0);
-		sourcesToMedias = new Granite.Widgets.ThinPaned();
+		sourcesToMedias = new Gtk.Paned(Orientation.HORIZONTAL);
 		contentBox = new Box(Orientation.VERTICAL, 0);
 		mainViews = new Notebook ();
 		now_playing = new NowPlayingView();
@@ -312,7 +312,13 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		topControls.insert(showSongInfoBin, -1);
 		topControls.insert(top_displayBin, -1);
 		topControls.insert(searchFieldBin, -1);
-		topControls.insert(app.create_appmenu(settingsMenu), -1);
+		var appmenu_button = new Gtk.MenuButton ();
+		appmenu_button.image = new Gtk.Image.from_icon_name ("open-menu-symbolic", Gtk.IconSize.LARGE_TOOLBAR);
+		appmenu_button.popup = settingsMenu;
+		settingsMenu.show_all ();
+		var appmenu = new Gtk.ToolItem ();
+		appmenu.add (appmenu_button);
+		topControls.insert(appmenu, -1);
 		
 		// Info bar to give notices about file not found errors
 		infoBar.set_message_type(Gtk.MessageType.ERROR);

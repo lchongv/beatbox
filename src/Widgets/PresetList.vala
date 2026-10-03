@@ -46,7 +46,7 @@ public class BeatBox.PresetList : ComboBox {
 	private bool modifying_list;
 	private bool automatic_selected;
 
-	private ListStore store;
+	private Gtk.ListStore store;
 
 	private const string SEPARATOR_NAME = "<separator_item_unique_name>";
 	private const string AUTOMATIC_MODE = _("Automatic");
@@ -57,7 +57,7 @@ public class BeatBox.PresetList : ComboBox {
 		modifying_list = false;
 		automatic_selected = false;
 
-		store = new ListStore(2, typeof(GLib.Object), typeof(string));
+		store = new Gtk.ListStore(2, typeof(GLib.Object), typeof(string));
 
 		buildUI();
 
@@ -137,7 +137,7 @@ public class BeatBox.PresetList : ComboBox {
 			if(o != null && o is EqualizerPreset && ((EqualizerPreset)o) == last_selected_preset) {
 				if (!((EqualizerPreset)o).is_default) {
 					ncustompresets--;
-					store.remove(iter);
+					store.remove(ref iter);
 					break;
 				}
 			}
@@ -255,7 +255,7 @@ public class BeatBox.PresetList : ComboBox {
 			store.get(iter, 1, out text);
 
 			if(text != null && text == DELETE_PRESET) {
-				store.remove(iter);
+				store.remove(ref iter);
 				// Also remove the separator ...
 				remove_separator_item(1);
 			}
@@ -272,7 +272,7 @@ public class BeatBox.PresetList : ComboBox {
 			store.get(iter, 1, out text);
 
 			if((nitems - index == count || index == -1) && text != null && text == SEPARATOR_NAME) {
-				store.remove(iter);
+				store.remove(ref iter);
 				break;
 			}
 		}

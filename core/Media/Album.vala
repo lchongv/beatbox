@@ -75,7 +75,7 @@ public class BeatBox.Album : GLib.Object {
 	public Collection<Media> get_medias_sorted() {
 		Gee.List<Media> ordered_media = new Gee.LinkedList<Media>();
 		ordered_media.add_all(media.keys);
-		ordered_media.sort((GLib.CompareFunc)compare_func);
+		ordered_media.sort(compare_func);
 		return ordered_media;
 	}
 		

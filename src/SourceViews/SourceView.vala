@@ -137,7 +137,7 @@ public abstract class BeatBox.SourceView : Box, View {
 		}
 	}
 	
-	public SourceView (Collection<Media> the_medias, TreeViewSetup tvs) {
+	protected SourceView (Collection<Media> the_medias, TreeViewSetup tvs) {
 		initialized = false;
 		
 		this.hint = tvs.get_hint();

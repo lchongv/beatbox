@@ -26,7 +26,7 @@ public class Store.TrackList : Gtk.ScrolledWindow {
 	Store.StoreView storeView;
 	
 	private TreeView view;
-	private ListStore store; // (-1, Store.Track, title, artist/album, length, price
+	private Gtk.ListStore store; // (-1, Store.Track, title, artist/album, length, price
 	string secondaryText; // Either 'Artist' or 'Album'
 	bool headersVisible;
 	
@@ -46,7 +46,7 @@ public class Store.TrackList : Gtk.ScrolledWindow {
 	
 	public void buildUI() {
 		view = new TreeView();
-		store = new ListStore(5, typeof(Store.Track), typeof(string), typeof(string), typeof(string), typeof(string));
+		store = new Gtk.ListStore(5, typeof(Store.Track), typeof(string), typeof(string), typeof(string), typeof(string));
 		view.set_model(store);
 		
 		// setup the columns

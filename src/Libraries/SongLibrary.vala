@@ -282,7 +282,7 @@ podcast_date=:podcast_date, is_new_podcast=:is_new_podcast, resume_pos=:resume_p
 		}
 	}
 	
-	public override Media import_tags_to_media(Gst.DiscovererInfo info) {
+	public override Media import_tags_to_media(Gst.PbUtils.DiscovererInfo info) {
 		Song s = new Song(info.get_uri());
 			
 		try {
@@ -293,53 +293,53 @@ podcast_date=:podcast_date, is_new_podcast=:is_new_podcast, resume_pos=:resume_p
 			GLib.Date? date = GLib.Date();
 			
 			// get title, artist, album artist, album, genre, comment, lyrics strings
-			if(info.get_tags().get_string(Gst.TAG_TITLE, out title))
+			if(info.get_tags().get_string(Gst.Tags.TITLE, out title))
 				s.title = title;
-			if(info.get_tags().get_string(Gst.TAG_ARTIST, out artist))
+			if(info.get_tags().get_string(Gst.Tags.ARTIST, out artist))
 				s.artist = artist;
-			if(info.get_tags().get_string(Gst.TAG_COMPOSER, out composer))
+			if(info.get_tags().get_string(Gst.Tags.COMPOSER, out composer))
 				s.composer = composer;
 			
-			if(info.get_tags().get_string(Gst.TAG_ALBUM_ARTIST, out album_artist))
+			if(info.get_tags().get_string(Gst.Tags.ALBUM_ARTIST, out album_artist))
 				s.album_artist = album_artist;
 			else
 				s.album_artist = s.artist;
 			
-			if(info.get_tags().get_string(Gst.TAG_ALBUM, out album))
+			if(info.get_tags().get_string(Gst.Tags.ALBUM, out album))
 				s.album = album;
-			if(info.get_tags().get_string(Gst.TAG_GROUPING, out grouping))
+			if(info.get_tags().get_string(Gst.Tags.GROUPING, out grouping))
 				s.grouping = grouping;
-			if(info.get_tags().get_string(Gst.TAG_GENRE, out genre))
+			if(info.get_tags().get_string(Gst.Tags.GENRE, out genre))
 				s.genre = genre;
-			if(info.get_tags().get_string(Gst.TAG_COMMENT, out comment))
+			if(info.get_tags().get_string(Gst.Tags.COMMENT, out comment))
 				s.comment = comment;
-			if(info.get_tags().get_string(Gst.TAG_LYRICS, out lyrics))
+			if(info.get_tags().get_string(Gst.Tags.LYRICS, out lyrics))
 				s.lyrics = lyrics;
 			
 			// get the year
-			if(info.get_tags().get_date(Gst.TAG_DATE, out date)) {
+			if(info.get_tags().get_date(Gst.Tags.DATE, out date)) {
 				if(date != null)
 					s.year = (int)date.get_year();
 			}
 			// get track/album number/count, bitrating, rating, bpm
-			if(info.get_tags().get_uint(Gst.TAG_TRACK_NUMBER, out track))
+			if(info.get_tags().get_uint(Gst.Tags.TRACK_NUMBER, out track))
 				s.track = (int)track;
-			if(info.get_tags().get_uint(Gst.TAG_TRACK_COUNT, out track_count))
+			if(info.get_tags().get_uint(Gst.Tags.TRACK_COUNT, out track_count))
 				s.track_count = track_count;
 				
-			if(info.get_tags().get_uint(Gst.TAG_ALBUM_VOLUME_NUMBER, out album_number))
+			if(info.get_tags().get_uint(Gst.Tags.ALBUM_VOLUME_NUMBER, out album_number))
 				s.album_number = album_number;
-			if(info.get_tags().get_uint(Gst.TAG_ALBUM_VOLUME_COUNT, out album_count))
+			if(info.get_tags().get_uint(Gst.Tags.ALBUM_VOLUME_COUNT, out album_count))
 				s.album_count = album_count;
 			
-			if(info.get_tags().get_uint(Gst.TAG_BITRATE, out bitrate))
+			if(info.get_tags().get_uint(Gst.Tags.BITRATE, out bitrate))
 				s.bitrate = (int)(bitrate/1000);
-			if(info.get_tags().get_uint(Gst.TAG_USER_RATING, out rating))
+			if(info.get_tags().get_uint(Gst.Tags.USER_RATING, out rating))
 				s.rating = (int)((rating > 0 && rating <= 5) ? rating : 0);
-			if(info.get_tags().get_double(Gst.TAG_BEATS_PER_MINUTE, out bpm))
+			if(info.get_tags().get_double(Gst.Tags.BEATS_PER_MINUTE, out bpm))
 				s.bpm = (int)bpm;
 			if(info.get_audio_streams().length() > 0)
-				s.samplerate = info.get_audio_streams().nth_data(0).get_sample_rate();
+				s.samplerate = ((Gst.PbUtils.DiscovererAudioInfo) info.get_audio_streams().nth_data(0)).get_sample_rate();
 			
 			s.length = get_length(s.uri);
 			
@@ -377,7 +377,7 @@ podcast_date=:podcast_date, is_new_podcast=:is_new_podcast, resume_pos=:resume_p
 		return s;
 	}
 	
-	void import_art(Gst.DiscovererInfo info, Media s) {
+	void import_art(Gst.PbUtils.DiscovererInfo info, Media s) {
 		if(App.covers.get_album_art_from_key(s.album_artist, s.album) != null) {
 			debug("not loading embedded art since album already has art (%s)\n", s.album);
 			return;
@@ -391,35 +391,23 @@ podcast_date=:podcast_date, is_new_podcast=:is_new_podcast, resume_pos=:resume_p
 				
 				// choose the best image based on image type
 				for(i = 0; ; ++i) {
-					Gst.Buffer buffer;
-					Gst.Value? value = null;
-					string media_type;
-					Gst.Structure caps_struct;
-					int imgtype;
-					
-					value = info.get_tags().get_value_index(Gst.TAG_IMAGE, i);
-					if(value == null)
+					Gst.Sample sample;
+					if(!info.get_tags().get_sample_index(Gst.Tags.IMAGE, i, out sample))
 						break;
 					
-					buffer = value.get_buffer();
-					if (buffer == null) {
-						//stdout.printf("apparently couldn't get image buffer\n");
+					Gst.Buffer buffer = sample.get_buffer();
+					if (buffer == null || sample.get_caps() == null)
 						continue;
-					}
 					
-					caps_struct = buffer.caps.get_structure(0);
-					media_type = caps_struct.get_name();
-					if (media_type == "text/uri-list") {
-						//stdout.printf("ignoring text/uri-list image tag\n");
+					if (sample.get_caps().get_structure(0).get_name() == "text/uri-list")
 						continue;
-					}
 					
-					caps_struct.get_enum ("image-type", typeof(Gst.TagImageType), out imgtype);
-					if (imgtype == Gst.TagImageType.UNDEFINED) {
-						if (buf == null) {
-							buf = buffer;
-						}
-					} else if (imgtype == Gst.TagImageType.FRONT_COVER) {
+					int imgtype = Gst.Tag.ImageType.UNDEFINED;
+					unowned Gst.Structure? sinfo = sample.get_info();
+					if (sinfo != null)
+						sinfo.get_enum ("image-type", typeof(Gst.Tag.ImageType), out imgtype);
+					
+					if (imgtype == Gst.Tag.ImageType.FRONT_COVER) {
 						buf = buffer;
 						break;
 					} else if(buf == null) {
@@ -435,7 +423,9 @@ podcast_date=:podcast_date, is_new_podcast=:is_new_podcast, resume_pos=:resume_p
 				// now that we have the buffer we want, load it into the pixbuf
 				Gdk.PixbufLoader loader = new Gdk.PixbufLoader();
 				try {
-					if (!loader.write(buf.data)) {
+					uint8[] data;
+					buf.extract_dup(0, buf.get_size(), out data);
+					if (!loader.write(data)) {
 						debug("Pixbuf loader doesn't like the data");
 						loader.close();
 						return;

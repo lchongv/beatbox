@@ -39,7 +39,7 @@ public class BeatBox.TransferFromDeviceDialog : Window {
 	CheckButton transferAll;
 	ScrolledWindow mediasScroll;
 	TreeView mediasView;
-	ListStore mediasModel;
+	Gtk.ListStore mediasModel;
 	Button transfer;
 	
 	Gtk.Menu viewMenu;
@@ -78,7 +78,7 @@ public class BeatBox.TransferFromDeviceDialog : Window {
 		transferAll = new CheckButton.with_label(_("Import all medias"));
 		mediasScroll = new ScrolledWindow(null, null);
 		mediasView = new TreeView();
-		mediasModel = new ListStore(5, typeof(bool), typeof(Media), typeof(string), typeof(string), typeof(string));
+		mediasModel = new Gtk.ListStore(5, typeof(bool), typeof(Media), typeof(string), typeof(string), typeof(string));
 		mediasView.set_model(mediasModel);
 		transfer = new Button.with_label(_("Import"));
 		Button cancel = new Button.with_label(_("Don't Import"));

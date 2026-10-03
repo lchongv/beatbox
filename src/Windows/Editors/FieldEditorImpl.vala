@@ -46,7 +46,7 @@ public class BeatBox.FieldEditorImpl : Box, FieldEditor {
 	Widget edit_widget;
 	
 	public FieldEditorImpl.for_integer(string field_name, int original, int min, int max) {
-		FieldEditorImpl.basic(field_name);
+		this.basic(field_name);
 		
 		this.original = Value(typeof(int));
 		this.original.set_int(original);
@@ -64,7 +64,7 @@ public class BeatBox.FieldEditorImpl : Box, FieldEditor {
 	}
 	
 	public FieldEditorImpl.for_string(string field_name, string original) {
-		FieldEditorImpl.basic(field_name);
+		this.basic(field_name);
 		
 		this.original = Value(typeof(string));
 		this.original.set_string(original);
@@ -81,7 +81,7 @@ public class BeatBox.FieldEditorImpl : Box, FieldEditor {
 	}
 	
 	public FieldEditorImpl.for_long_string(string field_name, string original) {
-		FieldEditorImpl.basic(field_name);
+		this.basic(field_name);
 		
 		this.original = Value(typeof(string));
 		this.original.set_string(original);
@@ -106,7 +106,7 @@ public class BeatBox.FieldEditorImpl : Box, FieldEditor {
 	}
 	
 	public FieldEditorImpl.for_rating(string field_name, int original) {
-		FieldEditorImpl.basic(field_name);
+		this.basic(field_name);
 		
 		this.original = Value(typeof(int));
 		this.original.set_int(original);

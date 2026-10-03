@@ -35,7 +35,7 @@ public class BeatBox.DuplicateSourceView : SourceView {
 	Gtk.Button remove_checked;
 	Gtk.ComboBoxText priority;
 	
-	GLib.CompareFunc<Media> first_priority;
+	GLib.CompareDataFunc<Media> first_priority;
 	
 	// For View implementation
 	Gtk.Menu duplicatesMenu;
@@ -54,7 +54,7 @@ public class BeatBox.DuplicateSourceView : SourceView {
 		priority.append("bitrate", _("Keep highest bitrate"));
 		priority.append("file", _("Keep largest file"));
 		priority.set_active(0);
-		first_priority = (GLib.CompareFunc)highest_bitrate;
+		first_priority = highest_bitrate;
 		top_bar.pack_start(priority, false, false, 0);
 		top_bar.pack_end(remove_checked, false, false, 0);
 		pack_end(top_bar, false, true, 0);
@@ -129,9 +129,9 @@ public class BeatBox.DuplicateSourceView : SourceView {
 	void priority_changed() {
 		int a = priority.get_active();
 		if(a == 1)
-			first_priority = (GLib.CompareFunc)largest_file;
+			first_priority = largest_file;
 		else if(a == 2)
-			first_priority = (GLib.CompareFunc)highest_bitrate;
+			first_priority = highest_bitrate;
 		
 		autocheck_medias();
 	}

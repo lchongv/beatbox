@@ -26,7 +26,7 @@ public class Store.SearchList : Gtk.ScrolledWindow {
 	Store.StoreView storeView;
 	
 	private TreeView view;
-	private ListStore store; // (-1, Object,  #, track/release/artist, extra[1,2,3,4], ...
+	private Gtk.ListStore store; // (-1, Object,  #, track/release/artist, extra[1,2,3,4], ...
 	private SearchListType type;
 	
 	bool alreadyResized;
@@ -50,7 +50,7 @@ public class Store.SearchList : Gtk.ScrolledWindow {
 	
 	public void buildUI() {
 		view = new TreeView();
-		store = new ListStore(6, typeof(GLib.Object), typeof(string), typeof(string), typeof(string), typeof(string), typeof(string));
+		store = new Gtk.ListStore(6, typeof(GLib.Object), typeof(string), typeof(string), typeof(string), typeof(string), typeof(string));
 		view.set_model(store);
 		
 		// setup the columns

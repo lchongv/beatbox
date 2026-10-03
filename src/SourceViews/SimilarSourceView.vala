@@ -80,7 +80,7 @@ public class BeatBox.SimilarSourceView : SourceView {
 		
 		if(!list_view.get_is_current_list()) {
 			base_media = m;
-			set_media(new LinkedList<int>());
+			set_media(new LinkedList<Media>());
 		}
 	}
 	

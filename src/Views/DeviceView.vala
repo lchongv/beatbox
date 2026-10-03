@@ -32,7 +32,7 @@ public class BeatBox.DeviceView : Box, View {
 	Device d;
 	DeviceSummaryWidget summary;
 	
-	GLib.List<View> sub_views; // will be different depending on what device supports
+	GLib.List<View> sub_views = new GLib.List<View> (); // will be different depending on what device supports
 	View songs_view;
 	View podcasts_view;
 	//View audiobooks_view;
@@ -159,7 +159,7 @@ public class BeatBox.DeviceView : Box, View {
 	}
 	
 	public GLib.List<View> get_sub_views() {
-		return sub_views.copy(); // Does that mean our views will be duplicated to? if so, we'll have 2 versions floating around
+		return sub_views.copy_deep((v) => v); // Does that mean our views will be duplicated to? if so, we'll have 2 versions floating around
 	}
 	
 	public void set_as_current_view () {

@@ -68,7 +68,7 @@ public class BeatBox.Pipeline : GLib.Object {
 		gapless = new ReplayGain();
 		
 		pipe = new Gst.Pipeline("pipeline");
-		playbin = ElementFactory.make("playbin2", null);
+		playbin = ElementFactory.make("playbin", null);
 		
 		audiosink = ElementFactory.make("autoaudiosink", null);
 		//audiosink.set("profile", 1); // says we handle music and movies
@@ -89,7 +89,7 @@ public class BeatBox.Pipeline : GLib.Object {
 		
 		((Gst.Bin)audiobin).add_many(audiotee, audiosinkqueue, audiosink);
 		
-		audiobin.add_pad(new GhostPad("sink", audiotee.get_pad("sink")));
+		audiobin.add_pad(new GhostPad("sink", audiotee.get_static_pad("sink")));
 		
 		if (eq.element != null)
 			audiosinkqueue.link_many(eq_audioconvert, preamp, eq.element, eq_audioconvert2, audiosink);
@@ -100,9 +100,8 @@ public class BeatBox.Pipeline : GLib.Object {
 		bus = playbin.get_bus();
 		
 		// Link the first tee pad to the primary audio sink queue
-		Gst.Pad sinkpad = audiosinkqueue.get_pad("sink");
-		pad = audiotee.get_request_pad("src%d");
-		audiotee.set("alloc-pad", pad);
+		Gst.Pad sinkpad = audiosinkqueue.get_static_pad("sink");
+		pad = audiotee.request_pad_simple("src_%u");
 		pad.link(sinkpad);
 		
 		// now add CDDA and Video

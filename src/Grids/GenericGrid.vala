@@ -77,7 +77,7 @@ public abstract class BeatBox.GenericGrid : FastGrid {
 	private const int MIN_SPACING = 12;
 	private const int ITEM_WIDTH = Icons.ALBUM_VIEW_IMAGE_SIZE;
 
-	public GenericGrid(SourceView parent_wrapper, TreeViewSetup tvs, GLib.Object default_value) {
+	protected GenericGrid(SourceView parent_wrapper, TreeViewSetup tvs, GLib.Object default_value) {
 		base(default_value);
 
         set_parent_wrapper (parent_wrapper);

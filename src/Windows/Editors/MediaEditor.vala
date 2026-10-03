@@ -36,7 +36,7 @@ public class BeatBox.MediaEditor : Window {
 	//for padding around notebook mostly
 	Box content;
 	Box padding;
-	Granite.Widgets.StaticNotebook notebook;
+	Gtk.Notebook notebook;
 	
 	Collection<int> extra_views;
 	bool have_added_extra_views;
@@ -75,7 +75,7 @@ public class BeatBox.MediaEditor : Window {
 		// Assume all medias are of same type
 		editor = medias.get(0).get_editor_widget();
 		
-		notebook = new Granite.Widgets.StaticNotebook();
+		notebook = new Gtk.Notebook();
 		editor_container = new EventBox();
 		editor_widget = editor.get_metadata_view(current_medias);
 		

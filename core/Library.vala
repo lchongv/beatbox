@@ -47,11 +47,11 @@ public interface BeatBox.Library : GLib.Object {
 	public abstract Collection<Media> medias();
 	
 	public abstract void set_local_folder(File folder);
-	public abstract void add_files(Collection<string> files, bool from_command_line);
-	public abstract void add_folders(Collection<string> folders);
+	public abstract void add_files(Collection<File> files, bool from_command_line);
+	public abstract void add_folders(Collection<File> folders);
 	public abstract void rescan_local_folder();
 	
-	public abstract Media import_tags_to_media(Gst.DiscovererInfo info);
+	public abstract Media import_tags_to_media(Gst.PbUtils.DiscovererInfo info);
 	
 	public abstract Collection<SmartPlaylist> get_default_smart_playlists();
 }

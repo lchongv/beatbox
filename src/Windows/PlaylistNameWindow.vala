@@ -33,9 +33,9 @@ public class BeatBox.PlaylistNameWindow : Window {
 	Box content;
 	Box padding;
 	
-	public Entry _name {get; private set;}
-	public Button _save {get; private set;}
-	public Button _cancel {get; private set;}
+	public Entry name_widget {get; private set;}
+	public Button save_widget {get; private set;}
+	public Button cancel_widget {get; private set;}
 
 	public signal void playlist_saved(StaticPlaylist p);
 	
@@ -59,25 +59,25 @@ public class BeatBox.PlaylistNameWindow : Window {
 		
 		/* start out by creating all category labels */
 		Label nameLabel = new Label(_("Name of Playlist"));
-		_name = new Entry();
-		_save = new Button.with_label(_("Done"));
-		_cancel = new Button.with_label (_("Cancel"));
+		name_widget = new Entry();
+		save_widget = new Button.with_label(_("Done"));
+		cancel_widget = new Button.with_label (_("Cancel"));
 
 		/* set up controls */
 		nameLabel.xalign = 0.0f;
 		nameLabel.set_markup("<b>%s</b>".printf(_("Name of Playlist")));
 		
-		_name.text = original.name;
+		name_widget.text = original.name;
 		
 		/* add controls to form */
 		HButtonBox bottomButtons = new HButtonBox();
 		bottomButtons.set_spacing (6);
 		bottomButtons.set_layout(ButtonBoxStyle.END);
-		bottomButtons.pack_end(_cancel, false, false, 0);
-		bottomButtons.pack_end(_save, false, false, 0);
+		bottomButtons.pack_end(cancel_widget, false, false, 0);
+		bottomButtons.pack_end(save_widget, false, false, 0);
 		
 		content.pack_start(wrap_alignment(nameLabel, 12, 0, 0, 0), false, true, 0);
-		content.pack_start(wrap_alignment(_name, 0, 12, 0, 12), false, true, 0);
+		content.pack_start(wrap_alignment(name_widget, 0, 12, 0, 12), false, true, 0);
 		content.pack_start(bottomButtons, false, false, 12);
 		
 		padding.pack_start(content, true, true, 12);
@@ -86,10 +86,10 @@ public class BeatBox.PlaylistNameWindow : Window {
 		
 		show_all();
 
-		_save.clicked.connect(saveClicked);
-		_cancel.clicked.connect (cancel_clicked);
-		_name.activate.connect(nameActivate);
-		_name.changed.connect(nameChanged);
+		save_widget.clicked.connect(saveClicked);
+		cancel_widget.clicked.connect (cancel_clicked);
+		name_widget.activate.connect(nameActivate);
+		name_widget.changed.connect(nameChanged);
 	}
 
 	void cancel_clicked () {
@@ -108,7 +108,7 @@ public class BeatBox.PlaylistNameWindow : Window {
 	}
 	
 	void saveClicked() {
-		_original.name = _name.text;
+		_original.name = name_widget.text;
 		playlist_saved(_original);
 		
 		this.destroy();
@@ -119,19 +119,19 @@ public class BeatBox.PlaylistNameWindow : Window {
 	}
 	
 	void nameChanged() {
-		if(_name.get_text() == "") {
-			_save.set_sensitive(false);
+		if(name_widget.get_text() == "") {
+			save_widget.set_sensitive(false);
 			return;
 		}
 		else {
 			foreach(var p in App.playlists.playlists()) {
-				if((_original == null || _original.id != p.id) && _name.get_text() == p.name) {
-					_save.set_sensitive(false);
+				if((_original == null || _original.id != p.id) && name_widget.get_text() == p.name) {
+					save_widget.set_sensitive(false);
 					return;
 				}
 			}
 		}
 		
-		_save.set_sensitive(true);
+		save_widget.set_sensitive(true);
 	}
 }

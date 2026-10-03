@@ -335,7 +335,7 @@ public class BeatBox.SpaceWidget : StyledContentBox {
         int total_visible_items = item_list_size;
         int last_visible_id = 0;
 
-        foreach (var item in items) {
+        foreach (var item in items.values) {
             if (item.size <= 0.0) {
                 total_visible_items --;
 			}
@@ -361,7 +361,7 @@ public class BeatBox.SpaceWidget : StyledContentBox {
         // Resizing items and calculating free space
         free_space_size = total_size;
 
-        foreach (var item in items) {
+        foreach (var item in items.values) {
             if (item.ID > 0) {
                 int width = (int) ((item.size/total_size) * bar_width);
                 free_space_size -= (uint64) item.size;

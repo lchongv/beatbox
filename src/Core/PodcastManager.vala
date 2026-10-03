@@ -82,14 +82,12 @@ public class BeatBox.PodcastManager : GLib.Object, BeatBox.PodcastInterface {
 			App.operations.current_status = FETCHING_NEW_SPECIFIC.printf("<b>" + Markup.escape_text(rss_names.get(rss)) + "</b>");
 			
 			// create an HTTP session to twitter
-			var session = new Soup.SessionSync();
-			var message = new Soup.Message ("GET", rss);
-			session.timeout = 30;
+			string body = BeatBox.Http.fetch (rss, "GET");
 			
 			// send the HTTP request
-			session.send_message(message);
+
 			
-			Xml.Node* node = getRootNode(message);
+			Xml.Node* node = getRootNode(body);
 			if(node != null) {
 				findNewItems(rss, node, mp3_urls, ref new_podcasts);
 			}
@@ -118,13 +116,12 @@ public class BeatBox.PodcastManager : GLib.Object, BeatBox.PodcastInterface {
 	
 	public bool is_valid_rss(string url) {
 		// create an HTTP session to twitter
-		var session = new Soup.SessionSync();
-		var message = new Soup.Message ("GET", url);
+		string body = BeatBox.Http.fetch (url, "GET");
 		
 		// send the HTTP request
-		session.send_message(message);
+
 		
-		Xml.Node* node = getRootNode(message);
+		Xml.Node* node = getRootNode(body);
 		stdout.printf("got root node\n");
 		if(node == null)
 			return false;
@@ -156,14 +153,12 @@ public class BeatBox.PodcastManager : GLib.Object, BeatBox.PodcastInterface {
 		debug("podcast_rss: %s", rss);
 		
 		// create an HTTP session to twitter
-		var session = new Soup.SessionSync();
-		var message = new Soup.Message ("GET", rss);
-		session.timeout = 30;
+		string body = BeatBox.Http.fetch (rss, "GET");
 		
 		// send the HTTP request
-		session.send_message(message);
+
 		
-		Xml.Node* node = getRootNode(message);
+		Xml.Node* node = getRootNode(body);
 		if(node == null) {
 			warning("Failed to find root xml node for new rss feed. Cannot add feed");
 			App.operations.finish_operation();
@@ -194,9 +189,9 @@ public class BeatBox.PodcastManager : GLib.Object, BeatBox.PodcastInterface {
 		warning("TODO: Implement me");
 	}
 	
-	Xml.Node* getRootNode(Soup.Message message) {
+	Xml.Node* getRootNode(string body) {
 		Xml.Parser.init();
-		Xml.Doc* doc = Xml.Parser.parse_memory((string)message.response_body.data, (int)message.response_body.length);
+		Xml.Doc* doc = Xml.Parser.parse_memory(body, body.length);
 		if(doc == null)
 			return null;
 		//stdout.printf("%s", (string)message.response_body.data);

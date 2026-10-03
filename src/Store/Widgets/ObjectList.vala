@@ -27,7 +27,7 @@ public class Store.ObjectList : ScrolledWindow {
 	string title;
 	
 	TreeView view;
-	ListStore store;
+	Gtk.ListStore store;
 	
 	public ObjectList(Store.StoreView view, string title) {
 		storeView = view;
@@ -38,7 +38,7 @@ public class Store.ObjectList : ScrolledWindow {
 	
 	public void buildUI() {
 		view = new TreeView();
-		store = new ListStore(3, typeof(GLib.Object), typeof(string), typeof(string));
+		store = new Gtk.ListStore(3, typeof(GLib.Object), typeof(string), typeof(string));
 		view.set_model(store);
 		
 		// setup the columns

@@ -133,7 +133,7 @@ public abstract class BeatBox.Media : GLib.Object {
 	public abstract MediaEditorInterface? get_editor_widget();
 	
 	//core stuff
-	public Media(string uri) {
+	protected Media(string uri) {
 		this.uri = uri;
 	}
 	

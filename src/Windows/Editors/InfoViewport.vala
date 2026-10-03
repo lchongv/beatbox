@@ -203,14 +203,14 @@ public class BeatBox.InfoViewport : Viewport {
 			bitrate.set_label(_("Unknown Bitrate"));
 		}
 		else {
-			bitrate.set_label(_("%d kbps").printf(m.bitrate));
+			bitrate.set_label(_("%d kbps").printf((int) m.bitrate));
 		}
 		
 		if(m.samplerate == 0) {
 			samplerate.set_label(_("Unknown Sample Rate"));
 		}
 		else {
-			samplerate.set_label(_("%d Hz").printf(m.samplerate));
+			samplerate.set_label(_("%d Hz").printf((int) m.samplerate));
 		}
 	}
 }

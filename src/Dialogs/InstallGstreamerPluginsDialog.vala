@@ -40,7 +40,7 @@ public class BeatBox.InstallGstreamerPluginsDialog : Window {
 	
 	public InstallGstreamerPluginsDialog(Gst.Message message) {
 		this.message = message;
-		this.detail = Gst.missing_plugin_message_get_description(message);
+		this.detail = Gst.PbUtils.missing_plugin_message_get_description(message);
 		
 		this.set_title("BeatBox");
 		
@@ -109,16 +109,14 @@ public class BeatBox.InstallGstreamerPluginsDialog : Window {
 	}
 	
 	public void installPluginClicked() {
-		var installer = Gst.missing_plugin_message_get_installer_detail(message);
-		var context = new Gst.InstallPluginsContext();
-		context.set_xid((uint)Gdk.X11Window.get_xid(App.window.get_window()));
-			
-		Gst.install_plugins_async({installer}, context, (Gst.InstallPluginsResultFunc)install_plugins_finished);
+		var installer = Gst.PbUtils.missing_plugin_message_get_installer_detail(message);
+		var context = new Gst.PbUtils.InstallPluginsContext();
+		Gst.PbUtils.install_plugins_async({installer}, context, install_plugins_finished);
 		
 		this.hide();
 	}
 	
-	public void install_plugins_finished(Gst.InstallPluginsReturn result) {
+	public void install_plugins_finished(Gst.PbUtils.InstallPluginsReturn result) {
 		stdout.printf("install of plugins finished.. updating registry\n");
 		Gst.update_registry();
 	}

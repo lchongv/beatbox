@@ -41,7 +41,7 @@ namespace BeatBox.TimeUtils {
             if (seconds < 1)
                 return "";
             
-            return ngettext("%d second", "%d seconds", seconds).printf(seconds);
+            return ngettext("%d second", "%d seconds", (ulong) seconds).printf((int) seconds);
         }
 
         double secs = (double)seconds; // WARNING: this cast is dangerous

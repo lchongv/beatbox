@@ -282,7 +282,7 @@ podcast_date=:podcast_date, is_new_podcast=:is_new_podcast, resume_pos=:resume_p
 		}
 	}
 	
-	public override Media import_tags_to_media(Gst.DiscovererInfo info) {
+	public override Media import_tags_to_media(Gst.PbUtils.DiscovererInfo info) {
 		Podcast p = new Podcast(info.get_uri());
 		
 		try {
@@ -293,20 +293,20 @@ podcast_date=:podcast_date, is_new_podcast=:is_new_podcast, resume_pos=:resume_p
 			GLib.Date? date = GLib.Date();
 			
 			// get title, artist, album artist, album, genre, comment, lyrics strings
-			if(info.get_tags().get_string(Gst.TAG_TITLE, out title))
+			if(info.get_tags().get_string(Gst.Tags.TITLE, out title))
 				p.title = title;
-			if(info.get_tags().get_string(Gst.TAG_ARTIST, out artist))
+			if(info.get_tags().get_string(Gst.Tags.ARTIST, out artist))
 				p.artist = artist;
 			
-			if(info.get_tags().get_string(Gst.TAG_ALBUM, out album))
+			if(info.get_tags().get_string(Gst.Tags.ALBUM, out album))
 				p.album = album;
-			if(info.get_tags().get_string(Gst.TAG_GENRE, out genre))
+			if(info.get_tags().get_string(Gst.Tags.GENRE, out genre))
 				p.genre = genre;
-			if(info.get_tags().get_string(Gst.TAG_COMMENT, out comment))
+			if(info.get_tags().get_string(Gst.Tags.COMMENT, out comment))
 				p.comment = comment;
 			
 			
-			if(info.get_tags().get_uint(Gst.TAG_USER_RATING, out rating))
+			if(info.get_tags().get_uint(Gst.Tags.USER_RATING, out rating))
 				p.rating = (int)((rating > 0 && rating <= 5) ? rating : 0);
 			
 			p.length = get_length(p.uri);
@@ -344,7 +344,7 @@ podcast_date=:podcast_date, is_new_podcast=:is_new_podcast, resume_pos=:resume_p
 		return p;
 	}
 	
-	void import_art(Gst.DiscovererInfo info, Media s) {
+	void import_art(Gst.PbUtils.DiscovererInfo info, Media s) {
 		if(App.covers.get_album_art_from_key(s.album_artist, s.album) != null) {
 			debug("not loading embedded art since album already has art (%s)\n", s.album);
 			return;
@@ -358,35 +358,23 @@ podcast_date=:podcast_date, is_new_podcast=:is_new_podcast, resume_pos=:resume_p
 				
 				// choose the best image based on image type
 				for(i = 0; ; ++i) {
-					Gst.Buffer buffer;
-					Gst.Value? value = null;
-					string media_type;
-					Gst.Structure caps_struct;
-					int imgtype;
-					
-					value = info.get_tags().get_value_index(Gst.TAG_IMAGE, i);
-					if(value == null)
+					Gst.Sample sample;
+					if(!info.get_tags().get_sample_index(Gst.Tags.IMAGE, i, out sample))
 						break;
 					
-					buffer = value.get_buffer();
-					if (buffer == null) {
-						//stdout.printf("apparently couldn't get image buffer\n");
+					Gst.Buffer buffer = sample.get_buffer();
+					if (buffer == null || sample.get_caps() == null)
 						continue;
-					}
 					
-					caps_struct = buffer.caps.get_structure(0);
-					media_type = caps_struct.get_name();
-					if (media_type == "text/uri-list") {
-						//stdout.printf("ignoring text/uri-list image tag\n");
+					if (sample.get_caps().get_structure(0).get_name() == "text/uri-list")
 						continue;
-					}
 					
-					caps_struct.get_enum ("image-type", typeof(Gst.TagImageType), out imgtype);
-					if (imgtype == Gst.TagImageType.UNDEFINED) {
-						if (buf == null) {
-							buf = buffer;
-						}
-					} else if (imgtype == Gst.TagImageType.FRONT_COVER) {
+					int imgtype = Gst.Tag.ImageType.UNDEFINED;
+					unowned Gst.Structure? sinfo = sample.get_info();
+					if (sinfo != null)
+						sinfo.get_enum ("image-type", typeof(Gst.Tag.ImageType), out imgtype);
+					
+					if (imgtype == Gst.Tag.ImageType.FRONT_COVER) {
 						buf = buffer;
 						break;
 					} else if(buf == null) {
@@ -402,7 +390,9 @@ podcast_date=:podcast_date, is_new_podcast=:is_new_podcast, resume_pos=:resume_p
 				// now that we have the buffer we want, load it into the pixbuf
 				Gdk.PixbufLoader loader = new Gdk.PixbufLoader();
 				try {
-					if (!loader.write(buf.data)) {
+					uint8[] data;
+					buf.extract_dup(0, buf.get_size(), out data);
+					if (!loader.write(data)) {
 						debug("Pixbuf loader doesn't like the data");
 						loader.close();
 						return;

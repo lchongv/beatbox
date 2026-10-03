@@ -267,7 +267,7 @@ podcast_date=:podcast_date, is_new_podcast=:is_new_podcast, resume_pos=:resume_p
 		}
 	}
 	
-	public override Media import_tags_to_media(Gst.DiscovererInfo info) {
+	public override Media import_tags_to_media(Gst.PbUtils.DiscovererInfo info) {
 		Station s = new Station(info.get_uri());
 		
 		return s;

@@ -70,7 +70,7 @@ public class BeatBox.CDRipper : GLib.Object {
 			return false;
 		}
 		
-		pipeline.bus.add_watch(busCallback);
+		pipeline.bus.add_watch(GLib.Priority.DEFAULT, busCallback);
 		
 		Timeout.add(500, doPositionUpdate);
 		
@@ -88,18 +88,14 @@ public class BeatBox.CDRipper : GLib.Object {
 	
 	public int64 getPosition() {
 		int64 rv = (int64)0;
-		Format f = Format.TIME;
-		
-		src.query_position(ref f, out rv);
+		src.query_position(Format.TIME, out rv);
 		
 		return rv;
 	}
 	
 	public int64 getDuration() {
 		int64 rv = (int64)0;
-		Format f = Format.TIME;
-		
-		src.query_duration(ref f, out rv);
+		src.query_duration(Format.TIME, out rv);
 		
 		return rv;
 	}
@@ -160,7 +156,7 @@ public class BeatBox.CDRipper : GLib.Object {
 		tagger.foreach( (el) => {
 			
 			((Gst.TagSetter)el).add_tags(Gst.TagMergeMode.REPLACE_ALL,
-										Gst.TAG_ENCODER, "BeatBox");
+										Gst.Tags.ENCODER, "BeatBox");
 			
 		});*/
 		

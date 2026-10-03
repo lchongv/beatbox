@@ -66,7 +66,7 @@ public class BeatBox.LastFMCore : GLib.Object, BeatBox.LastFMInterface {
 	
 	/** Last.FM Api functions **/
 	// for now, assume always use https
-	public void query(string type, HashMap<string, string> params, bool requires_sk, Soup.SessionCallback call_back) {
+	public void query(string type, HashMap<string, string> params, bool requires_sk, BeatBox.LastFMCallback call_back) {
 		if(requires_sk && BeatBox.String.is_empty(session_key)) {
 			warning("User must authenticate before calling method %s", params.get("method"));
 			return;
@@ -98,13 +98,9 @@ public class BeatBox.LastFMCore : GLib.Object, BeatBox.LastFMInterface {
 				headers = new Soup.MessageHeaders(Soup.MessageHeadersType.REQUEST);
 				generate_url_md5_headers(params, ref url, ref md5_arg, ref headers);
 				
-				var session = new Soup.SessionSync();
-				var message = new Soup.Message (type, url);
-				message.request_headers = headers;
-		
-				session.send_message(message);
+				string body = BeatBox.Http.fetch (url, type);
                 
-                call_back(session, message);
+                call_back(body);
                 
                 return null;
 			});
@@ -152,12 +148,12 @@ public class BeatBox.LastFMCore : GLib.Object, BeatBox.LastFMInterface {
 		params.set("username", username);
 		params.set("password", password);
 		
-		query("POST", params, false, (sess, msg) => {
+		query("POST", params, false, (body) => {
 			string user = "";
 			string key = "";
 			bool subsc = false;;
 			
-			Xml.Doc* doc = Xml.Parser.parse_memory((string)msg.response_body.data, (int)msg.response_body.length);
+			Xml.Doc* doc = Xml.Parser.parse_memory(body, body.length);
 			if(doc == null) return;
 			
 			Xml.Node* root = doc->get_root_element();
@@ -208,7 +204,7 @@ public class BeatBox.LastFMCore : GLib.Object, BeatBox.LastFMInterface {
 		params.set("artist", artist);
 		params.set("track", title);
 		
-		query("POST", params, true, (sess, msg) => {
+		query("POST", params, true, (body) => {
 			
 		});
 	}
@@ -219,7 +215,7 @@ public class BeatBox.LastFMCore : GLib.Object, BeatBox.LastFMInterface {
 		params.set("artist", artist);
 		params.set("track", title);
 		
-		query("POST", params, true, (sess, msg) => {
+		query("POST", params, true, (body) => {
 			
 		});
 	}
@@ -244,12 +240,10 @@ public class BeatBox.LastFMCore : GLib.Object, BeatBox.LastFMInterface {
 		params.set("album", album);
 		params.set("duration", BeatBox.App.playback.current_media.length.to_string());
 		
-		query("POST", params, true, (sess, msg) => {
+		query("POST", params, true, (body) => {
 			// TODO: Use corrections. Be careful though, because 
 			// corrections should not be used in the scrobble() POST.
-			debug("Now playing Message length: %lld\n%s\n",
-                   msg.response_body.length,
-                   msg.response_body.data);
+			debug("Now playing response: %s", body);
 		});
 	}
 	
@@ -276,7 +270,7 @@ public class BeatBox.LastFMCore : GLib.Object, BeatBox.LastFMInterface {
 		params.set("album", album);
 		params.set("timestamp", timestamp.to_string());
 		
-		query("POST", params, true, (sess, msg) => {
+		query("POST", params, true, (body) => {
 			// TODO: Use the corrections returned
 		});
 	}

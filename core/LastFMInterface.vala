@@ -25,6 +25,8 @@
  * BeatBox is covered by.
  */
 
+public delegate void BeatBox.LastFMCallback (string body);
+
 public interface BeatBox.LastFMInterface : GLib.Object {
 	public abstract string session_key { get; set; }
 	public abstract bool is_subscriber { get; set; }
@@ -36,7 +38,7 @@ public interface BeatBox.LastFMInterface : GLib.Object {
 	public signal void top_artist_songs_retrieved(HashTable<int, BeatBox.Media> songs);
 	public signal void top_artist_albums_retrieved(HashTable<int, BeatBox.ExternalAlbum> albums);
 	
-	public abstract void query(string type, Gee.HashMap<string, string> params, bool requires_sk, Soup.SessionCallback call_back);
+	public abstract void query(string type, Gee.HashMap<string, string> params, bool requires_sk, BeatBox.LastFMCallback call_back);
 	
 	public abstract void authenticate_user(string username, string password);
 	public abstract void logout_user();

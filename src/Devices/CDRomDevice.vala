@@ -199,7 +199,7 @@ public class BeatBox.CDRomDevice : GLib.Object, BeatBox.Device {
 		return false;
 	}
 	
-	public void transfer_to_library(LinkedList<File> list) {
+	public void transfer_to_library(LinkedList<Media> list) {
 		if(!GLib.File.new_for_path(App.settings.main.music_folder).query_exists()) {
 			App.window.doAlert("Could not find Music Folder", "Please make sure that your music folder is accessible and mounted before importing the CD.");
 			return;
