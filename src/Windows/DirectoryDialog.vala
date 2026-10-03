@@ -1,7 +1,7 @@
 /*
  * Finds internet radio stations and podcasts in public directories:
  *  - radio-browser.info (community database of ~50k stations, no API key)
- *  - the Apple Podcasts directory (iTunes Search API, no API key)
+ *  - the Apple Podcasts directory (Apple's search service, no API key)
  */
 
 using Gtk;

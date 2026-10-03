@@ -286,9 +286,10 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		showSongInfoBin.margin_left = 12;
 		showSongInfo.set_image(App.icons.INFO.render_image (IconSize.MENU, viewSelector.get_style_context()));
 		
-		// The LCD is always visible, like iTunes; the app name fills it when idle
+		// The LCD is always visible; the app name fills it when idle
 		var lcd = new Box(Orientation.HORIZONTAL, 0);
 		lcd.get_style_context().add_class("lcd");
+		lcd.pack_start(new LcdCover(), false, false, 0); // thumbnail at the left edge (optional)
 		var lcd_logo = new Label("BeatBox");
 		lcd_logo.get_style_context().add_class("lcd-logo");
 		lcd_logo.hexpand = true;
@@ -331,7 +332,7 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		topControls.insert(top_displayBin, -1);
 		topControls.insert(searchFieldBin, -1);
 		var appmenu_button = new Gtk.MenuButton ();
-		appmenu_button.image = new Gtk.Image.from_icon_name ("open-menu-symbolic", Gtk.IconSize.MENU);
+		appmenu_button.image = new Gtk.Image.from_pixbuf (App.icons.BEATBOX.render (null, null, 20));
 		appmenu_button.get_style_context ().add_class ("round-menu");
 		appmenu_button.set_size_request (30, 30);
 		appmenu_button.valign = appmenu_button.halign = Gtk.Align.CENTER;
@@ -433,7 +434,7 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		
 		verticalBox.pack_start(top_menu, false, true, 0);*/
 		// The toolbar is the window's title bar: no separate system title bar,
-		// iTunes-style traffic lights on the left
+		// traffic lights on the left
 		topControls.insert(create_traffic_lights(), 0);
 		set_titlebar(topControls);
 		verticalBox.pack_start(sourcesToMedias, true, true, 0);
@@ -442,7 +443,7 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		
 		// Set theming
 		topControls.get_style_context().add_class(STYLE_CLASS_PRIMARY_TOOLBAR);
-		topControls.get_style_context().add_class("itunes-header");
+		topControls.get_style_context().add_class("app-header");
 		get_style_context().add_class("beatbox");
 		previousButton.get_style_context().add_class("transport-button");
 		playButton.get_style_context().add_class("transport-button");
@@ -456,7 +457,7 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 			button.valign = button.halign = Align.CENTER;
 		}
 		searchField.get_style_context().add_class("search-bar");
-		statusBar.get_style_context().add_class("itunes-statusbar");
+		statusBar.get_style_context().add_class("app-statusbar");
 
 		/* Top toolbar events */
 		previousButton.clicked.connect(previousClicked);
@@ -1081,9 +1082,9 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		App.settings.saved_state.view_mode = viewSelector.selected;
 		
 		// Periodic data is otherwise only written every 15 seconds, and
-		// GSettings writes are asynchronous: flush both before exiting.
+		// Both are otherwise written a little later: flush them before exiting.
 		App.database.flush();
-		GLib.Settings.sync();
+		ConfigSection.flush();
 	}
 }
 

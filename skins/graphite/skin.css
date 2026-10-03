@@ -1,14 +1,14 @@
-/* Graphite: Mac OS X's grey appearance applied to the iTunes 7 look.
+/* Graphite: Mac OS X's grey appearance applied to the default look.
  * Only the palette changes; every rule of the base theme picks it up. */
 
-@define-color it7_accent          #6b7480;
-@define-color it7_accent_light    #9aa2ad;
-@define-color it7_sidebar_top     #e4e6e9;
-@define-color it7_sidebar_bottom  #c3c7cc;
-@define-color it7_sidebar_border  #868a90;
-@define-color it7_sidebar_text    #202326;
-@define-color it7_row_b           #edeff2;
-@define-color it7_lcd_top         #e7e9eb;
-@define-color it7_lcd_mid         #f0f2f3;
-@define-color it7_lcd_bottom      #d2d5d9;
-@define-color theme_selected_bg_color @it7_accent;
+@define-color bb_accent          #6b7480;
+@define-color bb_accent_light    #9aa2ad;
+@define-color bb_sidebar_top     #e4e6e9;
+@define-color bb_sidebar_bottom  #c3c7cc;
+@define-color bb_sidebar_border  #868a90;
+@define-color bb_sidebar_text    #202326;
+@define-color bb_row_b           #edeff2;
+@define-color bb_lcd_top         #e7e9eb;
+@define-color bb_lcd_mid         #f0f2f3;
+@define-color bb_lcd_bottom      #d2d5d9;
+@define-color theme_selected_bg_color @bb_accent;

@@ -1,7 +1,7 @@
 /*
  * Optional skins, installed like plugins: a folder holding
  *   skin.ini  — [Skin] Name=, Description=, Author=
- *   skin.css  — GTK CSS laid over the built-in iTunes look
+ *   skin.css  — GTK CSS laid over the built-in look
  * A skin can be as small as a few @define-color lines (see skins/README.md).
  *
  * Bundled skins live in the GResource; anyone can drop more into
@@ -83,7 +83,7 @@ namespace BeatBox.Skins {
 		return skin;
 	}
 
-	/** Lay the skin over the base look; "" (or an unknown skin) goes back to plain iTunes */
+	/** Lay the skin over the base look; "" (or an unknown skin) goes back to the built-in look */
 	public void apply (string id) {
 		var screen = Gdk.Screen.get_default ();
 		if (provider != null)

@@ -1,7 +1,6 @@
 /*
  * Cover grid where clicking a cover unfolds the album INLINE, as a full-width
- * band under its row that pushes the rows below down (iTunes 11). GTK3 port of
- * the itunes7 clone's It7Albumwall.
+ * band under its row that pushes the rows below down.
  *
  * The covers are painted by hand on a Gtk.Layout (hundreds of albums, no
  * widget per cell); the only child widget is the detail band, moved into the
@@ -157,7 +156,7 @@ public class BeatBox.AlbumWall : Layout {
 
 			if (i == open_index) {
 				Gdk.RGBA accent;
-				if (!get_style_context ().lookup_color ("it7_accent", out accent))
+				if (!get_style_context ().lookup_color ("bb_accent", out accent))
 					accent = { 0.24, 0.43, 0.79, 1 };
 				cr.set_source_rgba (accent.red, accent.green, accent.blue, 0.18);
 				rounded_rect (cr, x - 4, y - 4, CELL_W + 8, CELL_H + 8, 6);
@@ -209,11 +208,11 @@ public class BeatBox.AlbumWall : Layout {
 		cr.line_to (width, bottom);
 		cr.line_to (0, bottom);
 		cr.close_path ();
-		// skins may recolor the band (see itunes.css)
+		// skins may recolor the band (see theme.css)
 		Gdk.RGBA bg, edge;
-		if (!get_style_context ().lookup_color ("it7_detail_bg", out bg))
+		if (!get_style_context ().lookup_color ("bb_detail_bg", out bg))
 			bg = { 1, 1, 1, 1 };
-		if (!get_style_context ().lookup_color ("it7_detail_border", out edge))
+		if (!get_style_context ().lookup_color ("bb_detail_border", out edge))
 			edge = { 0.74, 0.74, 0.74, 1 };
 		Gdk.cairo_set_source_rgba (cr, bg);
 		cr.fill_preserve ();

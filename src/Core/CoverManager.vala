@@ -381,7 +381,7 @@ public class BeatBox.CoverManager : Object, BeatBox.CoverInterface {
 	}
 	
 	Gdk.Pixbuf? download_cover(string artist, string album) {
-		return cover_from_musicbrainz(artist, simplify(album)) ?? cover_from_itunes(artist, album);
+		return cover_from_musicbrainz(artist, simplify(album)) ?? cover_from_apple(artist, album);
 	}
 	
 	Gdk.Pixbuf? pixbuf_from_url(string url) {
@@ -416,7 +416,7 @@ public class BeatBox.CoverManager : Object, BeatBox.CoverInterface {
 	}
 	
 	/* The Apple Music catalogue knows most commercial releases MusicBrainz lacks */
-	Gdk.Pixbuf? cover_from_itunes(string artist, string album) {
+	Gdk.Pixbuf? cover_from_apple(string artist, string album) {
 		var body = Http.fetch("https://itunes.apple.com/search?entity=album&limit=10&term=" + Uri.escape_string(artist + " " + simplify(album), null, false));
 		Thread.usleep(3000000); // Apple allows about 20 searches per minute
 		

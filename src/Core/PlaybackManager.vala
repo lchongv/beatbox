@@ -57,7 +57,8 @@ public class BeatBox.PlaybackManager : GLib.Object, BeatBox.PlaybackInterface {
 	
 	private bool queriedlastfm; // whether or not we have queried last fm for the current media info
 	private bool media_considered_played; // whether or not we have updated last played and added to already played list
-	private bool added_to_play_count; // whether or not we have added one to play count on playing media
+	private bool added_to_play_count; // the listener got through (most of) the media, so skipping it later doesn't count as a skip
+	private bool play_counted;        // whether or not this play was already added to the play count
 	private bool scrobbled_track;
 	
 	// TODO: Save queue list on app close
@@ -88,8 +89,10 @@ public class BeatBox.PlaybackManager : GLib.Object, BeatBox.PlaybackInterface {
 			play_media(restore_song, true);
 			
 			// make sure we don't re-count stats
-			if((int)App.settings.main.last_media_position > 5)
+			if((int)App.settings.main.last_media_position > 5) {
 				queriedlastfm = true;
+				play_counted = true; // resuming, not a new play
+			}
 			if((int)App.settings.main.last_media_position > 30)
 				media_considered_played = true;
 			if((double)((int)App.settings.main.last_media_position/(double)restore_song.length) > 0.90)
@@ -562,6 +565,7 @@ public class BeatBox.PlaybackManager : GLib.Object, BeatBox.PlaybackInterface {
 		queriedlastfm = false;
 		media_considered_played = false;
 		added_to_play_count = false;
+		play_counted = false;
 		scrobbled_track = false;
 		
 		// if radio, we can't depend on current_position_update. do that stuff now.
@@ -635,6 +639,7 @@ public class BeatBox.PlaybackManager : GLib.Object, BeatBox.PlaybackInterface {
 		queriedlastfm = false;
 		media_considered_played = false;
 		added_to_play_count = false;
+		play_counted = false;
 		
 		playback_stopped(was_playing);
 	}
@@ -649,6 +654,14 @@ public class BeatBox.PlaybackManager : GLib.Object, BeatBox.PlaybackInterface {
 			return;
 
 		double sec = ((double)position/1000000000);
+
+		// the moment it really starts playing (not merely loaded, paused) it counts as a play
+		if(playing && !play_counted) {
+			play_counted = true;
+			current_media.play_count++;
+			current_media.last_played = (int)time_t();
+			App.library.update_media(current_media, false, false, true);
+		}
 
 		// at about 3 seconds, update last fm. we wait to avoid excessive querying last.fm for info
 		if(position > 3000000000 && !queriedlastfm) {
@@ -666,7 +679,6 @@ public class BeatBox.PlaybackManager : GLib.Object, BeatBox.PlaybackInterface {
 			// TODO: This should be abstracted out
 			if(current_media is Podcast) { //podcast
 				added_to_play_count = true;
-				++current_media.play_count;
 			}
 
 			App.library.update_media(current_media, false, false, true);
@@ -693,12 +705,9 @@ public class BeatBox.PlaybackManager : GLib.Object, BeatBox.PlaybackInterface {
 			App.info.lastfm.scrobble();
 		}
 
-		// at 80% done with media, add 1 to play count
-		if((double)(sec/(double)current_media.length) > 0.80 && !added_to_play_count) {
+		// past 80%, skipping to the next one is no longer a skip
+		if((double)(sec/(double)current_media.length) > 0.80 && !added_to_play_count)
 			added_to_play_count = true;
-			current_media.play_count++;
-			App.library.update_media(current_media, false, false, true);
-		}
 	}
 	
 	/********************* Equalizer ************************/

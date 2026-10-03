@@ -1,47 +1,47 @@
-/* BeatBox — iTunes 7 look (GTK3). Palette taken from the itunes7 clone. */
+/* BeatBox theme (GTK3). Colors are defined once below; skins can redefine them. */
 
-@define-color it7_chrome_top      #ededed;
-@define-color it7_chrome_mid      #d6d6d6;
-@define-color it7_chrome_bottom   #b6b6b6;
-@define-color it7_chrome_border   #6b6b6b;
-@define-color it7_accent          #3d6dca;
-@define-color it7_accent_light    #6f8fc8;
-@define-color it7_sidebar_top     #d8e0ec;
-@define-color it7_sidebar_bottom  #b9c4d4;
-@define-color it7_sidebar_border  #7e8a9b;
-@define-color it7_sidebar_text    #1a2230;
-@define-color it7_sidebar_heading #4a586d;
-@define-color it7_row_a           #ffffff;
-@define-color it7_row_b           #dde8f5;
-@define-color it7_detail_bg       #ffffff;
-@define-color it7_detail_border   #bdbdbd;
-@define-color it7_lcd_top         #e8eed4;
-@define-color it7_lcd_mid         #eef3dd;
-@define-color it7_lcd_bottom      #d8e0c2;
-@define-color it7_lcd_border      #4a4a4a;
-@define-color it7_lcd_text        #1c1f25;
-@define-color it7_lcd_dim         #5a6371;
+@define-color bb_chrome_top      #ededed;
+@define-color bb_chrome_mid      #d6d6d6;
+@define-color bb_chrome_bottom   #b6b6b6;
+@define-color bb_chrome_border   #6b6b6b;
+@define-color bb_accent          #3d6dca;
+@define-color bb_accent_light    #6f8fc8;
+@define-color bb_sidebar_top     #d8e0ec;
+@define-color bb_sidebar_bottom  #b9c4d4;
+@define-color bb_sidebar_border  #7e8a9b;
+@define-color bb_sidebar_text    #1a2230;
+@define-color bb_sidebar_heading #4a586d;
+@define-color bb_row_a           #ffffff;
+@define-color bb_row_b           #dde8f5;
+@define-color bb_detail_bg       #ffffff;
+@define-color bb_detail_border   #bdbdbd;
+@define-color bb_lcd_top         #e8eed4;
+@define-color bb_lcd_mid         #eef3dd;
+@define-color bb_lcd_bottom      #d8e0c2;
+@define-color bb_lcd_border      #4a4a4a;
+@define-color bb_lcd_text        #1c1f25;
+@define-color bb_lcd_dim         #5a6371;
 
-@define-color theme_selected_bg_color @it7_accent;
+@define-color theme_selected_bg_color @bb_accent;
 @define-color theme_selected_fg_color #ffffff;
 
 window.beatbox {
-  background-color: @it7_chrome_bottom;
+  background-color: @bb_chrome_bottom;
   color: #1a1a1a;
   font-family: "Inter", "Lucida Grande", "Helvetica Neue", "Cantarell", sans-serif;
 }
 
 /* ===== Top strip: brushed aluminium ===== */
-toolbar.itunes-header, toolbar.itunes-header.titlebar {
+toolbar.app-header, toolbar.app-header.titlebar {
   background-image: linear-gradient(to bottom,
-    @it7_chrome_top 0%, @it7_chrome_mid 50%, @it7_chrome_bottom 100%);
-  border-bottom: 1px solid @it7_chrome_border;
+    @bb_chrome_top 0%, @bb_chrome_mid 50%, @bb_chrome_bottom 100%);
+  border-bottom: 1px solid @bb_chrome_border;
   box-shadow: inset 0 1px 0 alpha(white, .85), inset 0 -1px 0 alpha(black, .18);
   padding: 8px 10px;
 }
 
 /* Round glossy transport buttons */
-toolbar.itunes-header toolbutton.transport-button > button {
+toolbar.app-header toolbutton.transport-button > button {
   background-image: linear-gradient(to bottom, #f8f8f8 0%, #d4d4d4 50%, #b0b0b0 100%);
   border: 1px solid #5e5e5e;
   border-radius: 50%;
@@ -55,24 +55,24 @@ toolbar.itunes-header toolbutton.transport-button > button {
               inset 0 -1px 1px alpha(black, .15),
               0 1px 1px alpha(black, .25);
 }
-toolbar.itunes-header toolbutton.transport-button > button:hover {
+toolbar.app-header toolbutton.transport-button > button:hover {
   background-image: linear-gradient(to bottom, white, #d8d8d8 50%, #b8b8b8);
 }
-toolbar.itunes-header toolbutton.transport-button > button:active {
-  background-image: linear-gradient(to bottom, @it7_accent_light, @it7_accent);
+toolbar.app-header toolbutton.transport-button > button:active {
+  background-image: linear-gradient(to bottom, @bb_accent_light, @bb_accent);
   color: white;
   box-shadow: inset 0 2px 3px alpha(black, .4);
 }
-toolbar.itunes-header toolbutton.transport-button > button:disabled { color: #8a8a8a; }
-toolbar.itunes-header toolbutton.transport-button.play > button {
+toolbar.app-header toolbutton.transport-button > button:disabled { color: #8a8a8a; }
+toolbar.app-header toolbutton.transport-button.play > button {
   min-width: 56px;
   min-height: 56px;
 }
-toolbar.itunes-header toolbutton.transport-button { padding: 0; margin: 0; }
-toolbar.itunes-header toolbutton.transport-button image { -gtk-icon-transform: scale(1.25); }
+toolbar.app-header toolbutton.transport-button { padding: 0; margin: 0; }
+toolbar.app-header toolbutton.transport-button image { -gtk-icon-transform: scale(1.25); }
 
 /* Round app menu button, same glossy look as the transport buttons */
-toolbar.itunes-header toolitem button.round-menu {
+toolbar.app-header toolitem button.round-menu {
   background-image: linear-gradient(to bottom, #f8f8f8 0%, #d4d4d4 50%, #b0b0b0 100%);
   border: 1px solid #5e5e5e;
   border-radius: 50%;
@@ -85,35 +85,35 @@ toolbar.itunes-header toolitem button.round-menu {
 /* ===== Sunken yellow-green LCD ===== */
 .lcd {
   background-image: linear-gradient(to bottom,
-    @it7_lcd_top 0%, @it7_lcd_mid 50%, @it7_lcd_bottom 100%);
-  border: 1px solid @it7_lcd_border;
+    @bb_lcd_top 0%, @bb_lcd_mid 50%, @bb_lcd_bottom 100%);
+  border: 1px solid @bb_lcd_border;
   border-radius: 8px;
   box-shadow: inset 0 1px 2px alpha(black, .35),
               inset 0 -1px 0 alpha(white, .35),
               0 1px 0 alpha(white, .55);
   padding: 2px 8px;
   min-height: 50px;
-  color: @it7_lcd_text;
+  color: @bb_lcd_text;
 }
-.lcd label { color: @it7_lcd_text; }
-.lcd .lcd-logo { color: @it7_lcd_dim; font-weight: bold; font-size: 13pt; }
+.lcd label { color: @bb_lcd_text; }
+.lcd .lcd-logo { color: @bb_lcd_dim; font-weight: bold; font-size: 13pt; }
 .lcd button { background: none; border: none; box-shadow: none; }
 .lcd progressbar trough, .lcd scale trough {
   background-image: none;
-  background-color: alpha(@it7_lcd_text, .12);
-  border: 1px solid alpha(@it7_lcd_text, .45);
+  background-color: alpha(@bb_lcd_text, .12);
+  border: 1px solid alpha(@bb_lcd_text, .45);
   border-radius: 2px;
   min-height: 6px;
 }
 .lcd progressbar progress, .lcd scale highlight {
   background-image: none;
-  background-color: @it7_lcd_dim;
+  background-color: @bb_lcd_dim;
   border: none;
   border-radius: 1px;
   min-height: 6px;
 }
 .lcd scale slider {
-  /* iTunes-style diamond position marker */
+  /* diamond position marker */
   background-image: url("resource:///net/launchpad/beatbox/diamond.svg");
   background-color: transparent;
   background-size: 100% 100%;
@@ -126,16 +126,16 @@ toolbar.itunes-header toolitem button.round-menu {
 }
 
 /* ===== View toggle (segmented) and generic header buttons ===== */
-toolbar.itunes-header button:not(.traffic-light) {
+toolbar.app-header button:not(.traffic-light) {
   background-image: linear-gradient(to bottom, #fbfbfb, #d2d2d2);
   border: 1px solid #7a7a7a;
   box-shadow: inset 0 1px 0 alpha(white, .9);
   color: #2a2a2a;
 }
-toolbar.itunes-header button:not(.traffic-light):checked,
-toolbar.itunes-header button:not(.traffic-light):active {
-  background-image: linear-gradient(to bottom, @it7_accent_light, @it7_accent);
-  border-color: shade(@it7_accent, .7);
+toolbar.app-header button:not(.traffic-light):checked,
+toolbar.app-header button:not(.traffic-light):active {
+  background-image: linear-gradient(to bottom, @bb_accent_light, @bb_accent);
+  border-color: shade(@bb_accent, .7);
   color: white;
 }
 
@@ -150,33 +150,33 @@ entry.search-bar {
   min-height: 22px;
 }
 entry.search-bar:focus {
-  border-color: @it7_accent;
-  box-shadow: inset 0 1px 2px alpha(black, .25), 0 0 0 2px alpha(@it7_accent, .45);
+  border-color: @bb_accent;
+  box-shadow: inset 0 1px 2px alpha(black, .25), 0 0 0 2px alpha(@bb_accent, .45);
 }
 
 /* ===== Source list ===== */
 /* GTK3 paints a treeview's background once per row, so the gradient lives on
  * the scrolled window and the tree itself stays transparent. */
 scrolledwindow.sidebar-scroll {
-  background-image: linear-gradient(to bottom, @it7_sidebar_top 0%, @it7_sidebar_bottom 100%);
+  background-image: linear-gradient(to bottom, @bb_sidebar_top 0%, @bb_sidebar_bottom 100%);
 }
 treeview.sidebar, treeview.sidebar.view {
   background-color: transparent;
-  color: @it7_sidebar_text;
+  color: @bb_sidebar_text;
 }
 treeview.sidebar:selected, treeview.sidebar.view:selected {
-  background-image: linear-gradient(to bottom, shade(@it7_accent, 1.18), @it7_accent);
+  background-image: linear-gradient(to bottom, shade(@bb_accent, 1.18), @bb_accent);
   color: white;
 }
 paned > separator {
   background-image: none;
-  background-color: @it7_sidebar_border;
+  background-color: @bb_sidebar_border;
   min-width: 1px;
 }
 
 /* ===== Track lists: white / pale blue rows, blue selection ===== */
 treeview.tracklist, treeview.tracklist.view { background-color: transparent; color: #1a1a1a; }
-treeview.tracklist:selected, treeview.tracklist.view:selected { background-color: @it7_accent; color: white; }
+treeview.tracklist:selected, treeview.tracklist.view:selected { background-color: @bb_accent; color: white; }
 treeview.view header button {
   background-image: linear-gradient(to bottom, #fdfdfd, #dcdcdc);
   border-color: #a4a4a4;
@@ -184,18 +184,18 @@ treeview.view header button {
   font-weight: normal;
 }
 
-/* ===== Album grid (same look as the itunes7 clone) ===== */
+/* ===== Album grid ===== */
 iconview.albumgrid, iconview.albumgrid.view {
   background-color: #f0f1f4;
   color: #1a1a1a;
 }
 iconview.albumgrid:selected, iconview.albumgrid.view:selected {
-  background-color: alpha(@it7_accent, .18);
+  background-color: alpha(@bb_accent, .18);
   color: #1a1a1a;
   border-radius: 6px;
 }
 
-/* Inline album grid (iTunes 11) */
+/* Inline album grid */
 .albumwall { background-color: #f0f1f4; color: #1a1a1a; }
 .album-detail-title { font-weight: bold; font-size: 13pt; }
 .album-detail-artist { font-size: 11pt; }
@@ -208,14 +208,14 @@ iconview.albumgrid:selected, iconview.albumgrid.view:selected {
 }
 
 /* ===== Bottom status bar ===== */
-actionbar.itunes-statusbar > revealer > box {
+actionbar.app-statusbar > revealer > box {
   background-image: linear-gradient(to bottom, #bdbdbd, #acacac);
-  border-top: 1px solid @it7_chrome_border;
+  border-top: 1px solid @bb_chrome_border;
   box-shadow: inset 0 1px 0 alpha(white, .5);
   color: #1a1a1a;
   padding: 3px 6px;
 }
-actionbar.itunes-statusbar label { color: #1a1a1a; text-shadow: 0 1px 0 alpha(white, .5); }
+actionbar.app-statusbar label { color: #1a1a1a; text-shadow: 0 1px 0 alpha(white, .5); }
 
 /* ===== Equalizer: tall, clearly visible sliders ===== */
 window.equalizer scale.vertical trough {
@@ -225,7 +225,7 @@ window.equalizer scale.vertical trough {
   border-radius: 3px;
 }
 window.equalizer scale.vertical highlight {
-  background-image: linear-gradient(to right, @it7_accent_light, @it7_accent);
+  background-image: linear-gradient(to right, @bb_accent_light, @bb_accent);
   border-radius: 3px;
 }
 window.equalizer scale.vertical slider {

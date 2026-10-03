@@ -1,42 +1,42 @@
 /* Midnight: dark chrome and lists with a blue LCD. */
 
-@define-color it7_chrome_top      #55585e;
-@define-color it7_chrome_mid      #3b3e43;
-@define-color it7_chrome_bottom   #2a2c30;
-@define-color it7_chrome_border   #101113;
-@define-color it7_accent          #3f74d6;
-@define-color it7_accent_light    #6f97e0;
-@define-color it7_sidebar_top     #30343a;
-@define-color it7_sidebar_bottom  #22252a;
-@define-color it7_sidebar_border  #0e0f11;
-@define-color it7_sidebar_text    #dde1e7;
-@define-color it7_sidebar_heading #8e9aac;
-@define-color it7_row_a           #1f2124;
-@define-color it7_row_b           #27292d;
-@define-color it7_detail_bg       #2b2e33;
-@define-color it7_detail_border   #121315;
-@define-color it7_lcd_top         #1c2a3b;
-@define-color it7_lcd_mid         #22354a;
-@define-color it7_lcd_bottom      #15202d;
-@define-color it7_lcd_border      #050607;
-@define-color it7_lcd_text        #d4e8ff;
-@define-color it7_lcd_dim         #86aed3;
-@define-color theme_selected_bg_color @it7_accent;
+@define-color bb_chrome_top      #55585e;
+@define-color bb_chrome_mid      #3b3e43;
+@define-color bb_chrome_bottom   #2a2c30;
+@define-color bb_chrome_border   #101113;
+@define-color bb_accent          #3f74d6;
+@define-color bb_accent_light    #6f97e0;
+@define-color bb_sidebar_top     #30343a;
+@define-color bb_sidebar_bottom  #22252a;
+@define-color bb_sidebar_border  #0e0f11;
+@define-color bb_sidebar_text    #dde1e7;
+@define-color bb_sidebar_heading #8e9aac;
+@define-color bb_row_a           #1f2124;
+@define-color bb_row_b           #27292d;
+@define-color bb_detail_bg       #2b2e33;
+@define-color bb_detail_border   #121315;
+@define-color bb_lcd_top         #1c2a3b;
+@define-color bb_lcd_mid         #22354a;
+@define-color bb_lcd_bottom      #15202d;
+@define-color bb_lcd_border      #050607;
+@define-color bb_lcd_text        #d4e8ff;
+@define-color bb_lcd_dim         #86aed3;
+@define-color theme_selected_bg_color @bb_accent;
 
 window.beatbox, window.beatbox label { color: #e4e6ea; }
 
-toolbar.itunes-header button:not(.traffic-light),
-toolbar.itunes-header toolbutton.transport-button > button,
-toolbar.itunes-header toolitem button.round-menu {
+toolbar.app-header button:not(.traffic-light),
+toolbar.app-header toolbutton.transport-button > button,
+toolbar.app-header toolitem button.round-menu {
   background-image: linear-gradient(to bottom, #6a6e75, #45484e 50%, #33363a);
   border-color: #141517;
   color: #eceef1;
   box-shadow: inset 0 1px 0 alpha(white, .25), 0 1px 1px alpha(black, .4);
 }
-toolbar.itunes-header toolbutton.transport-button > button:hover {
+toolbar.app-header toolbutton.transport-button > button:hover {
   background-image: linear-gradient(to bottom, #7a7e85, #50545a 50%, #3b3e43);
 }
-toolbar.itunes-header toolbutton.transport-button > button:disabled { color: #8b8f96; }
+toolbar.app-header toolbutton.transport-button > button:disabled { color: #8b8f96; }
 
 window.beatbox .album-detail button, window.beatbox .source-actions button, window.beatbox dialog button {
   background-image: linear-gradient(to bottom, #5a5e65, #3d4045);
@@ -68,9 +68,9 @@ iconview.albumgrid, iconview.albumgrid.view, .albumwall {
   border-bottom-color: #101113;
 }
 
-actionbar.itunes-statusbar > revealer > box {
+actionbar.app-statusbar > revealer > box {
   background-image: linear-gradient(to bottom, #3a3d42, #2a2c30);
   border-top-color: #101113;
   box-shadow: inset 0 1px 0 alpha(white, .08);
 }
-actionbar.itunes-statusbar label, actionbar.itunes-statusbar image { color: #dfe2e7; text-shadow: none; }
+actionbar.app-statusbar label, actionbar.app-statusbar image { color: #dfe2e7; text-shadow: none; }

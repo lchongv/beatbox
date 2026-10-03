@@ -1,5 +1,5 @@
 /*
- * iTunes-style Cover Flow drawn with Cairo (GTK3, no OpenGL).
+ * Cover Flow drawn with Cairo (GTK3, no OpenGL).
  *
  * Side covers are faked into perspective by painting them as thin vertical
  * strips whose height shrinks towards the far edge. Each cover is
@@ -200,7 +200,7 @@ public class BeatBox.CoverFlow : DrawingArea {
 		int width = get_allocated_width();
 		int height = get_allocated_height();
 
-		// black stage with a subtle glow, like iTunes
+		// black stage with a subtle glow
 		var bg = new Cairo.Pattern.linear(0, 0, 0, height);
 		bg.add_color_stop_rgb(0, 0.16, 0.16, 0.18);
 		bg.add_color_stop_rgb(0.6, 0, 0, 0);
@@ -267,7 +267,7 @@ public class BeatBox.CoverFlow : DrawingArea {
 		return true;
 	}
 
-	/** Cover edge in pixels: as big as the stage allows, like iTunes */
+	/** Cover edge in pixels: as big as the stage allows */
 	int cover_size(int width, int height) {
 		return int.min((int)(height * 0.64), (int)(width * 0.34));
 	}

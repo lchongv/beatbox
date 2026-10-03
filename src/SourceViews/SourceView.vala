@@ -196,7 +196,7 @@ public abstract class BeatBox.SourceView : Box, View {
 			album_scroll.set_policy(PolicyType.AUTOMATIC, PolicyType.AUTOMATIC);
 			album_scroll.add(album_view);
 			
-			// iTunes 11 grid: albums unfold inline instead of in a popup
+			// albums unfold inline instead of in a popup
 			wall = new AlbumWall(album_view, this);
 			wall.album_activated.connect(play_album);
 			wall_scroll = new ScrolledWindow(null, null);
@@ -216,7 +216,7 @@ public abstract class BeatBox.SourceView : Box, View {
 			
 			popup = new PopupListView(this);
 			
-			// Cover Flow lives above the track list, like in iTunes
+			// Cover Flow lives above the track list
 			cover_flow = new CoverFlow(album_view);
 			cover_flow.album_selected.connect(scroll_list_to_album);
 			cover_flow.album_activated.connect(play_album);

@@ -2389,8 +2389,8 @@ msgstr "Usa «Buscar emisoras…» arriba para buscar en el directorio de radio-
 msgid "Download missing album art from the internet (MusicBrainz, Apple Music)"
 msgstr "Descargar de internet las carátulas que falten (MusicBrainz, Apple Music)"
 
-msgid "Unfold it inline, under its row (iTunes 11)"
-msgstr "Desplegarlo bajo su fila (iTunes 11)"
+msgid "Unfold it inline, under its row"
+msgstr "Desplegarlo bajo su fila"
 
 msgid "Open it in a popup window"
 msgstr "Abrirlo en una ventana emergente"
@@ -2398,8 +2398,8 @@ msgstr "Abrirlo en una ventana emergente"
 msgid "Clicking an album in the cover grid:"
 msgstr "Al pulsar un álbum en la grilla de carátulas:"
 
-msgid "None (iTunes)"
-msgstr "Ninguna (iTunes)"
+msgid "None"
+msgstr "Ninguna"
 
 msgid "Open Skins Folder"
 msgstr "Abrir carpeta de skins"
@@ -2452,8 +2452,8 @@ msgstr "Grilla de carátulas"
 msgid "Missing Album Art"
 msgstr "Carátulas que faltan"
 
-msgid "Two lines, artist and album taking turns (iTunes)"
-msgstr "Dos líneas, alternando artista y álbum (iTunes)"
+msgid "Two lines, artist and album taking turns"
+msgstr "Dos líneas, alternando artista y álbum"
 
 msgid "One line"
 msgstr "Una línea"
@@ -2476,8 +2476,8 @@ msgstr "Acerca de"
 msgid "Version %s"
 msgstr "Versión %s"
 
-msgid "A music player with the look of iTunes 7."
-msgstr "Un reproductor de música con el aspecto de iTunes 7."
+msgid "A music player for your collection, podcasts and internet radio."
+msgstr "Un reproductor de música para tu colección, podcasts y radio en internet."
 
 msgid "Authors"
 msgstr "Autores"
@@ -2488,8 +2488,8 @@ msgstr "Arte"
 msgid "2026 update"
 msgstr "Actualización de 2026"
 
-msgid "Ported to GTK 3, GStreamer 1.0 and libsoup 3, with the iTunes look, Cover Flow, the inline cover grid, internet radio and podcast directories, online album art and skins."
-msgstr "Llevado a GTK 3, GStreamer 1.0 y libsoup 3, con el aspecto de iTunes, Cover Flow, la grilla de carátulas desplegable, directorios de radios y podcasts, carátulas desde internet y skins."
+msgid "Ported to GTK 3, GStreamer 1.0 and libsoup 3, with a new look, Cover Flow, the inline cover grid, internet radio and podcast directories, online album art and skins."
+msgstr "Llevado a GTK 3, GStreamer 1.0 y libsoup 3, con un aspecto nuevo, Cover Flow, la grilla de carátulas desplegable, directorios de radios y podcasts, carátulas desde internet y skins."
 
 msgid "Services"
 msgstr "Servicios"
@@ -2514,3 +2514,18 @@ msgstr "Software libre bajo la %s."
 
 msgid "GNU General Public License, version 3"
 msgstr "Licencia Pública General de GNU, versión 3"
+
+msgid "Show the album cover at the left edge of the LCD"
+msgstr "Mostrar la carátula del álbum en el borde izquierdo del LCD"
+
+msgid "Time the artist and album take to slide:"
+msgstr "Tiempo que tarda en deslizarse el artista y el álbum:"
+
+msgid "milliseconds"
+msgstr "milisegundos"
+
+msgid "Position bar"
+msgstr "Barra de posición"
+
+msgid "Width of the track:"
+msgstr "Ancho del camino:"
