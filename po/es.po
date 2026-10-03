@@ -2271,3 +2271,156 @@ msgstr "píxeles"
 
 msgid "Behavior"
 msgstr "Comportamiento"
+
+msgid "Find Radio Stations"
+msgstr "Buscar emisoras de radio"
+
+msgid "Find Podcasts"
+msgstr "Buscar podcasts"
+
+msgid "Station name, city or genre (jazz, news, rock…)"
+msgstr "Nombre, ciudad o género de la emisora (jazz, noticias, rock…)"
+
+msgid "Podcast name, author or topic"
+msgstr "Nombre, autor o tema del podcast"
+
+msgid "Country"
+msgstr "País"
+
+msgid "Stations from radio-browser.info, a free community directory."
+msgstr "Emisoras de radio-browser.info, un directorio comunitario y libre."
+
+msgid "Podcasts from the Apple Podcasts directory."
+msgstr "Podcasts del directorio de Apple Podcasts."
+
+msgid "Close"
+msgstr "Cerrar"
+
+msgid "Add Station"
+msgstr "Añadir emisora"
+
+msgid "Subscribe"
+msgstr "Suscribirse"
+
+msgid "Type a name or topic and press Enter."
+msgstr "Escribe un nombre o un tema y pulsa Intro."
+
+msgid "Searching…"
+msgstr "Buscando…"
+
+msgid "Could not reach the directory. Check your internet connection."
+msgstr "No se pudo contactar con el directorio. Revisa tu conexión a internet."
+
+msgid "Nothing found for “%s”."
+msgstr "No se encontró nada para «%s»."
+
+msgid "Most popular stations in your country. Double click one to add it."
+msgstr "Las emisoras más populares de tu país. Haz doble clic en una para añadirla."
+
+msgid "“%s” is already in your library."
+msgstr "«%s» ya está en tu colección."
+
+msgid "Added “%s” to Internet Radio."
+msgstr "«%s» se añadió a Radio en Internet."
+
+msgid "Subscribing to “%s”… its episodes will appear in Podcasts."
+msgstr "Suscribiéndose a «%s»… sus episodios aparecerán en Podcasts."
+
+msgid "My favourite station"
+msgstr "Mi emisora favorita"
+
+msgid "Name:"
+msgstr "Nombre:"
+
+msgid "Stream address:"
+msgstr "Dirección de la transmisión:"
+
+msgid "The address of the audio stream itself (often ending in .mp3, .aac or /stream).\nTo add a .pls or .m3u file use “Import File…”."
+msgstr "La dirección de la transmisión de audio en sí (suele terminar en .mp3, .aac o /stream).\nPara añadir un archivo .pls o .m3u usa «Importar archivo…»."
+
+msgid "Search the Apple Podcasts directory."
+msgstr "Busca en el directorio de Apple Podcasts."
+
+msgid "Subscribe by Address"
+msgstr "Suscribirse por dirección"
+
+msgid "Paste the address of a podcast RSS feed."
+msgstr "Pega la dirección del canal RSS de un podcast."
+
+msgid "Find Podcasts…"
+msgstr "Buscar podcasts…"
+
+msgid "Subscribe by Address…"
+msgstr "Suscribirse por dirección…"
+
+msgid "Use “Find Podcasts…” above to search the directory, or “Subscribe by Address…” to paste an RSS feed."
+msgstr "Usa «Buscar podcasts…» arriba para buscar en el directorio, o «Suscribirse por dirección…» para pegar un canal RSS."
+
+msgid "Find Stations"
+msgstr "Buscar emisoras"
+
+msgid "Search thousands of stations on radio-browser.info."
+msgstr "Busca entre miles de emisoras en radio-browser.info."
+
+msgid "Add by Address"
+msgstr "Añadir por dirección"
+
+msgid "Type the address of a station's stream."
+msgstr "Escribe la dirección de la transmisión de una emisora."
+
+msgid "Import File"
+msgstr "Importar archivo"
+
+msgid "Add the stations of a .pls or .m3u file."
+msgstr "Añade las emisoras de un archivo .pls o .m3u."
+
+msgid "Find Stations…"
+msgstr "Buscar emisoras…"
+
+msgid "Add by Address…"
+msgstr "Añadir por dirección…"
+
+msgid "Import File…"
+msgstr "Importar archivo…"
+
+msgid "Use “Find Stations…” above to search the radio-browser.info directory."
+msgstr "Usa «Buscar emisoras…» arriba para buscar en el directorio de radio-browser.info."
+
+msgid "Download missing album art from the internet (MusicBrainz, Apple Music)"
+msgstr "Descargar de internet las carátulas que falten (MusicBrainz, Apple Music)"
+
+msgid "Unfold it inline, under its row (iTunes 11)"
+msgstr "Desplegarlo bajo su fila (iTunes 11)"
+
+msgid "Open it in a popup window"
+msgstr "Abrirlo en una ventana emergente"
+
+msgid "Clicking an album in the cover grid:"
+msgstr "Al pulsar un álbum en la grilla de carátulas:"
+
+msgid "None (iTunes)"
+msgstr "Ninguna (iTunes)"
+
+msgid "Open Skins Folder"
+msgstr "Abrir carpeta de skins"
+
+msgid "Skin:"
+msgstr "Skin:"
+
+msgid "Add more skins by copying them into %s"
+msgstr "Añade más skins copiándolas en %s"
+
+msgid "%d result. Double click to add."
+msgid_plural "%d results. Double click to add."
+msgstr[0] "%d resultado. Doble clic para añadir."
+msgstr[1] "%d resultados. Doble clic para añadir."
+
+msgid "%d song"
+msgid_plural "%d songs"
+msgstr[0] "%d canción"
+msgstr[1] "%d canciones"
+
+msgid "%d minute"
+msgid_plural "%d minutes"
+msgstr[0] "%d minuto"
+msgstr[1] "%d minutos"

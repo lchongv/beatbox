@@ -41,6 +41,34 @@ public class BeatBox.SideBarRenderer : CellRenderer {
 		expanded = false;
 	}
 	
+	static HashTable<Pixbuf, bool> monochrome = new HashTable<Pixbuf, bool>(direct_hash, direct_equal);
+	
+	/** True for symbolic icons: every visible pixel is a shade of grey */
+	static bool is_monochrome(Pixbuf pix) {
+		if(monochrome.contains(pix))
+			return monochrome[pix];
+		bool result = pix.has_alpha && pix.n_channels == 4;
+		unowned uint8[] px = pix.get_pixels_with_length();
+		for(int y = 0; result && y < pix.height; y++) {
+			for(int x = 0; x < pix.width; x++) {
+				int i = y * pix.rowstride + x * 4;
+				if(px[i + 3] > 64 && (((int)px[i] - px[i + 1]).abs() > 12 || ((int)px[i + 1] - px[i + 2]).abs() > 12)) {
+					result = false;
+					break;
+				}
+			}
+		}
+		monochrome[pix] = result;
+		return result;
+	}
+	
+	static string heading_color(Widget widget) {
+		RGBA c;
+		if(!widget.get_style_context().lookup_color("it7_sidebar_heading", out c))
+			return "#4a586d";
+		return "#%02x%02x%02x".printf((int)(c.red * 255), (int)(c.green * 255), (int)(c.blue * 255));
+	}
+	
 	public override void get_size(Widget widget, Rectangle? cell_area, out int x_offset, out int y_offset, out int width, out int height) {
 		x_offset = 0;
 		y_offset = 0;
@@ -87,7 +115,15 @@ public class BeatBox.SideBarRenderer : CellRenderer {
 			context.move_to(start_x, start_y);
 			int image_y = (cell_area.height - pix.height > 0) ? ((cell_area.height - pix.height)/2) : 0;
 			Gdk.cairo_set_source_pixbuf(context, pix, (int)start_x, cell_area.y + image_y);
-			context.paint();
+			if(is_monochrome(pix)) {
+				// symbolic icon: paint it in the text color (white when selected, light on dark skins)
+				var icon = context.get_source();
+				context.set_source_rgba(rgba.red, rgba.green, rgba.blue, rgba.alpha);
+				context.mask(icon);
+			}
+			else {
+				context.paint();
+			}
 			
 			start_x += rtl ? -20.0 : 20.0; // for rtl, move to the left. otherwise move to right
 		}
@@ -98,7 +134,7 @@ public class BeatBox.SideBarRenderer : CellRenderer {
 		if(depth > 1)
 			layout.set_text(text, text.length);
 		else
-			layout.set_markup("<span size='small' weight='bold' foreground='#4a586d'>" + Markup.escape_text(text.up()) + "</span>", -1);
+			layout.set_markup("<span size='small' weight='bold' foreground='%s'>".printf(heading_color(widget)) + Markup.escape_text(text.up()) + "</span>", -1);
 			
 		if(rtl)
 			layout.set_alignment(Pango.Alignment.RIGHT);

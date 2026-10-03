@@ -149,7 +149,7 @@ public class BeatBox.AddPodcastWindow : Window {
 		string url = _source.get_text();
 		
 		// simple quick validation
-		if(!url.has_prefix("http://") || url.contains(" ") || existing_rss.contains(url)) {
+		if(!(url.has_prefix("http://") || url.has_prefix("https://")) || url.contains(" ") || existing_rss.contains(url)) {
 			_is_valid.set_from_pixbuf(not_valid);
 			_is_valid.show();
 			_is_working.hide();

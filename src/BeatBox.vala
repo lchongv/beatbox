@@ -127,7 +127,7 @@ public class BeatBox.App : Granite.Application {
 
 	static Gtk.CssProvider marker_css = new Gtk.CssProvider ();
 	
-	/** Resizes the diamond position marker of the LCD (Preferences › General) */
+	/** Resizes the diamond position marker of the LCD (Preferences › Behavior) */
 	public static void apply_lcd_marker_size (int size) {
 		try {
 			marker_css.load_from_data (".lcd scale slider { min-width: %dpx; min-height: %dpx; margin: %dpx %dpx; }"
@@ -182,7 +182,8 @@ public class BeatBox.App : Granite.Application {
 		var css = new Gtk.CssProvider ();
 		css.load_from_resource ("/net/launchpad/beatbox/itunes.css");
 		Gtk.StyleContext.add_provider_for_screen (Gdk.Screen.get_default (), css, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION + 1);
-		Gtk.StyleContext.add_provider_for_screen (Gdk.Screen.get_default (), marker_css, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION + 2);
+		Skins.apply (settings.main.skin); // optional skin, at APPLICATION + 2
+		Gtk.StyleContext.add_provider_for_screen (Gdk.Screen.get_default (), marker_css, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION + 3);
 		apply_lcd_marker_size (settings.main.lcd_marker_size);
 		
 		Gtk.IconTheme.get_default ().add_resource_path ("/net/launchpad/beatbox/icons");

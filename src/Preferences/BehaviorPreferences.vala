@@ -37,6 +37,7 @@ public class BeatBox.BehaviorPreferences : GLib.Object, PreferencesSection {
 	CheckButton organizeFolders;
 	CheckButton writeMetadataToFile;
 	CheckButton copyImportedMusic;
+	CheckButton downloadCovers;
 	
 	public BehaviorPreferences() {
 		content = new Box(Orientation.VERTICAL, 0);
@@ -46,6 +47,7 @@ public class BeatBox.BehaviorPreferences : GLib.Object, PreferencesSection {
 		organizeFolders = new CheckButton.with_label(_("Keep media folders organized"));
 		writeMetadataToFile = new CheckButton.with_label(_("Write metadata to file"));
 		copyImportedMusic = new CheckButton.with_label(_("Copy files to library folder when imported"));
+		downloadCovers = new CheckButton.with_label(_("Download missing album art from the internet (MusicBrainz, Apple Music)"));
 		
 		managementLabel.xalign = 0.0f;
 		managementLabel.set_markup("<b>" + _("Library Management") + "</b>");
@@ -53,11 +55,18 @@ public class BeatBox.BehaviorPreferences : GLib.Object, PreferencesSection {
 		organizeFolders.set_active(App.settings.main.update_folder_hierarchy);
 		writeMetadataToFile.set_active(App.settings.main.write_metadata_to_file);
 		copyImportedMusic.set_active(App.settings.main.copy_imported_music);
+		downloadCovers.set_active(App.settings.main.download_covers);
 		
 		content.pack_start(managementLabel, false, true, 0);
 		content.pack_start(UI.wrap_alignment(organizeFolders, 0, 0, 0, 10), false, true, 0);
 		content.pack_start(UI.wrap_alignment(writeMetadataToFile, 0, 0, 0, 10), false, true, 0);
 		content.pack_start(UI.wrap_alignment(copyImportedMusic, 0, 0, 0, 10), false, true, 0);
+		content.pack_start(UI.wrap_alignment(downloadCovers, 0, 0, 0, 10), false, true, 0);
+		downloadCovers.toggled.connect(() => {
+			App.settings.main.download_covers = downloadCovers.active;
+			if (downloadCovers.active)
+				App.covers.fetch_remaining_album_art();
+		});
 		
 		// Appearance
 		var appearanceLabel = new Label("");
@@ -75,6 +84,56 @@ public class BeatBox.BehaviorPreferences : GLib.Object, PreferencesSection {
 			App.settings.main.lcd_marker_size = (int)markerSize.value;
 			App.apply_lcd_marker_size((int)markerSize.value); // live preview
 		});
+		
+		// Album grid: iTunes 11 inline band, or the popup window
+		var clickBox = new Box(Orientation.HORIZONTAL, 8);
+		var clickMode = new ComboBoxText();
+		clickMode.append("inline", _("Unfold it inline, under its row (iTunes 11)"));
+		clickMode.append("popup", _("Open it in a popup window"));
+		clickMode.active_id = App.settings.main.album_grid_inline ? "inline" : "popup";
+		clickMode.changed.connect(() => { App.settings.main.album_grid_inline = (clickMode.active_id == "inline"); });
+		clickBox.pack_start(new Label(_("Clicking an album in the cover grid:")), false, false, 0);
+		clickBox.pack_start(clickMode, false, false, 0);
+		content.pack_start(UI.wrap_alignment(clickBox, 0, 0, 0, 10), false, true, 0);
+		
+		// Skins (plugins: folders in ~/.local/share/beatbox/skins)
+		var skinBox = new Box(Orientation.HORIZONTAL, 8);
+		var skinChooser = new ComboBoxText();
+		var skinInfo = new Label("");
+		skinInfo.xalign = 0.0f;
+		skinInfo.wrap = true;
+		skinInfo.max_width_chars = 60;
+		skinInfo.get_style_context().add_class("dim-label");
+		var skins = Skins.available();
+		skinChooser.append("", _("None (iTunes)"));
+		foreach (var skin in skins)
+			skinChooser.append(skin.id, skin.name);
+		if (!skinChooser.set_active_id(App.settings.main.skin))
+			skinChooser.active_id = "";
+		var openSkins = new Button.with_label(_("Open Skins Folder"));
+		openSkins.clicked.connect(() => {
+			DirUtils.create_with_parents(Skins.user_dir(), 0755);
+			try {
+				AppInfo.launch_default_for_uri(File.new_for_path(Skins.user_dir()).get_uri(), null);
+			} catch (Error err) {
+				warning("Could not open %s: %s", Skins.user_dir(), err.message);
+			}
+		});
+		skinBox.pack_start(new Label(_("Skin:")), false, false, 0);
+		skinBox.pack_start(skinChooser, false, false, 0);
+		skinBox.pack_start(openSkins, false, false, 0);
+		content.pack_start(UI.wrap_alignment(skinBox, 0, 0, 0, 10), false, true, 0);
+		content.pack_start(UI.wrap_alignment(skinInfo, 0, 0, 0, 10), false, true, 0);
+		skinChooser.changed.connect(() => {
+			string id = skinChooser.active_id ?? "";
+			App.settings.main.skin = id;
+			Skins.apply(id); // live preview
+			skinInfo.label = _("Add more skins by copying them into %s").printf(Skins.user_dir());
+			foreach (var skin in skins)
+				if (skin.id == id)
+					skinInfo.label = skin.description + (skin.author != "" ? "  —  " + skin.author : "");
+		});
+		skinChooser.changed();
 		
 		organizeFolders.toggled.connect(organize_folders_toggled);
 		writeMetadataToFile.toggled.connect(write_metadata_to_file_toggled);

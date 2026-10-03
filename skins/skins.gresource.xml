@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Skins bundled with BeatBox (more can be dropped into ~/.local/share/beatbox/skins) -->
+<gresources>
+  <gresource prefix="/net/launchpad/beatbox/skins">
+    <file>graphite/skin.ini</file>
+    <file>graphite/skin.css</file>
+    <file>midnight/skin.ini</file>
+    <file>midnight/skin.css</file>
+  </gresource>
+</gresources>

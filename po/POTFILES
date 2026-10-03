@@ -73,3 +73,5 @@ src/Windows/EqualizerWindow.vala
 src/Windows/PlaylistNameWindow.vala
 src/Windows/PreferencesWindow.vala
 src/Windows/RemoveDuplicatesDialog.vala
+src/Windows/DirectoryDialog.vala
+src/Widgets/AlbumWall.vala

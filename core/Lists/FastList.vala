@@ -84,9 +84,15 @@ public class BeatBox.FastList : TreeView {
 		
 		int height = get_allocated_height();
 		int width = get_allocated_width();
-		cr.set_source_rgb(1, 1, 1);
+		// skins may recolor the stripes (see itunes.css)
+		Gdk.RGBA row_a, row_b;
+		if(!get_style_context().lookup_color("it7_row_a", out row_a))
+			row_a = { 1, 1, 1, 1 };
+		if(!get_style_context().lookup_color("it7_row_b", out row_b))
+			row_b = { 0xdd/255.0, 0xe8/255.0, 0xf5/255.0, 1 };
+		Gdk.cairo_set_source_rgba(cr, row_a);
 		cr.paint();
-		cr.set_source_rgb(0xdd/255.0, 0xe8/255.0, 0xf5/255.0); // #dde8f5
+		Gdk.cairo_set_source_rgba(cr, row_b);
 		int index = (first_y < 0) ? (-first_y / row_height) : 0;
 		for(int y = first_y + index * row_height; y < height; y += row_height, ++index) {
 			if(index % 2 == 1)

@@ -149,9 +149,10 @@ public class BeatBox.AdvancedSearchBox : Gtk.SearchEntry {
 	}
 	
 	bool keyPressed(Gdk.EventKey event) {
+		// Handled here: letting the menu pass the key on typed every letter twice
 		if(event.keyval == 0xff08) { //backspace
 			backspace ();
-			return false;
+			return true;
 		}
 		else if(Regex.match_simple("[a-zA-Z0-9]", event.str) || 
 				event.str == "-" || event.str == "-" || event.str == "&" ||
@@ -159,7 +160,7 @@ public class BeatBox.AdvancedSearchBox : Gtk.SearchEntry {
 				event.str == "." || event.str == "!" || event.str == "?" ||
 				event.str == " ") {
 			insert_at_cursor(event.str);
-			return false;
+			return true;
 		}
 
 		return false;
