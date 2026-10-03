@@ -29,8 +29,8 @@ using GLib;
 
 [DBus (name = "org.gnome.SettingsDaemon.MediaKeys")]
 public interface GnomeMediaKeys : GLib.Object {
-    public abstract void GrabMediaPlayerKeys (string application, uint32 time) throws GLib.IOError;
-    public abstract void ReleaseMediaPlayerKeys (string application) throws GLib.IOError;
+    public abstract void GrabMediaPlayerKeys (string application, uint32 time) throws GLib.Error;
+    public abstract void ReleaseMediaPlayerKeys (string application) throws GLib.Error;
     public signal void MediaPlayerKeyPressed (string application, string key);
 }
 
@@ -41,7 +41,7 @@ public class BeatBox.MediaKeyListener : GLib.Object {
 	public MediaKeyListener() {
         try {
             media_object = Bus.get_proxy_sync (BusType.SESSION, "org.gnome.SettingsDaemon", "/org/gnome/SettingsDaemon/MediaKeys");
-        } catch (IOError e) {
+        } catch (GLib.Error e) {
             stderr.printf ("Mediakeys error: %s\n", e.message);
         }
 		
@@ -50,7 +50,7 @@ public class BeatBox.MediaKeyListener : GLib.Object {
             try {
 				media_object.GrabMediaPlayerKeys("beatbox", (uint32)0);
 			}
-			catch(IOError err) {
+			catch(GLib.Error err) {
 				stdout.printf("Could not grab media player keys: %s\n", err.message);
 			}
         }
@@ -60,7 +60,7 @@ public class BeatBox.MediaKeyListener : GLib.Object {
 		try {
 			media_object.ReleaseMediaPlayerKeys("beatbox");
 		}
-		catch(IOError err) {
+		catch(GLib.Error err) {
 			stdout.printf("Could not release media player keys: %s\n", err.message);
 		}
 	}

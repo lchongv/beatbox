@@ -62,7 +62,7 @@ public class BeatBox.SongLibrary : BaseLibrary {
 	}
 	
 	public SongLibrary() {
-		_default_folder = File.new_for_path(Environment.get_user_special_dir(UserDirectory.MUSIC));
+		_default_folder = File.new_for_path(Environment.get_user_special_dir(UserDirectory.MUSIC) ?? Path.build_filename(Environment.get_home_dir(), "Music"));
 		_folder = File.new_for_path(App.settings.main.music_folder);
 		
 		load_from_database();
