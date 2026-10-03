@@ -119,7 +119,7 @@ public class BeatBox.MprisRoot : GLib.Object {
 	}
 	public string DesktopEntry { 
 		owned get {
-			return "beatbox";
+			return "net.launchpad.beatbox";
 		} 
 	}
 	

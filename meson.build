@@ -1,4 +1,4 @@
-project('beatbox', 'vala', 'c', version: '0.7')
+project('beatbox', 'vala', 'c', version: '0.8')
 
 gnome = import('gnome')
 i18n = import('i18n')
@@ -263,6 +263,7 @@ executable('beatbox', app_sources, resources, icon_resources, skin_resources,
   install: true)
 
 install_subdir('images/icons', install_dir: datadir / 'icons' / 'hicolor', strip_directory: true)
-install_data('data/beatbox.desktop', install_dir: datadir / 'applications')
+# Wayland shells match the window to <application id>.desktop
+install_data('data/beatbox.desktop', install_dir: datadir / 'applications', rename: 'net.launchpad.beatbox.desktop')
 gnome.post_install(gtk_update_icon_cache: true)
 subdir('po')

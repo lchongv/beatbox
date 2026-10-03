@@ -226,7 +226,11 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		}
 
         this.set_title ("BeatBox");
-        this.set_icon (App.icons.BEATBOX.render (IconSize.MENU, null));
+        // several sizes, for window lists that take the icon from the window itself (X11)
+        var icons = new GLib.List<Gdk.Pixbuf> ();
+        foreach (int px in new int[] { 16, 32, 48, 64, 128 })
+            icons.append (App.icons.BEATBOX.render (null, null, px));
+        this.set_icon_list (icons);
 
         // set up drag dest stuff
         Gtk.drag_dest_set (this, DestDefaults.ALL, {}, Gdk.DragAction.MOVE);
