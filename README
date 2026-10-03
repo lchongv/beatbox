@@ -1,2 +1,13 @@
 This project was recently moved to github. The original location was at launchpad.net/beat-box.
 
+Building (2026 port: meson, GTK3, GStreamer 1.0, libgee-0.8, libsoup-3, Granite 6, sqlite3)
+
+  Dependencies (Arch): vala meson gtk3 granite libgee gstreamer gst-plugins-base
+  gst-plugins-good taglib libxml2 libnotify libsoup3 json-glib libgpod libpeas sqlite
+
+  meson setup build --prefix=$HOME/.local
+  ninja -C build install
+  beatbox
+
+The library lives in ~/.local/share/beatbox/beatbox.db and is kept between runs.
+The iTunes-style theme is data/itunes.css (embedded in the binary).
