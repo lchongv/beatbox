@@ -12,6 +12,8 @@ A skin is a folder with two files:
   Author=You
   ```
 
+  `Native=true` drops the built-in look so only the system's GTK theme and `skin.css` apply (see `skins/native`).
+
 - `skin.css`: GTK 3 CSS loaded on top of the built-in look (`data/theme.css`).
 
 To install a skin, copy its folder to `~/.local/share/beatbox/skins/`, then pick it in Preferences › Behavior › Appearance. "Open Skins Folder" in that section creates and opens the folder.

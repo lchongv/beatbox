@@ -1,6 +1,7 @@
 /*
  * Optional skins, installed like plugins: a folder holding
- *   skin.ini  — [Skin] Name=, Description=, Author=
+ *   skin.ini  — [Skin] Name=, Description=, Author=, Native=true
+ *               (Native drops the built-in look and keeps only the GTK theme)
  *   skin.css  — GTK CSS laid over the built-in look
  * A skin can be as small as a few @define-color lines (see skins/README.md).
  *
@@ -15,10 +16,12 @@ namespace BeatBox.Skins {
 		public string description;
 		public string author;
 		public File css;
+		public bool native;
 	}
 
 	const string RESOURCE = "/net/launchpad/beatbox/skins";
 	Gtk.CssProvider? provider = null;
+	Gtk.CssProvider? base_look = null;
 
 	public string user_dir () {
 		return Path.build_filename (Environment.get_user_data_dir (), "beatbox", "skins");
@@ -77,6 +80,8 @@ namespace BeatBox.Skins {
 			skin.name = ini.get_locale_string ("Skin", "Name");
 			if (ini.has_key ("Skin", "Description"))
 				skin.description = ini.get_locale_string ("Skin", "Description");
+			if (ini.has_key ("Skin", "Native"))
+				skin.native = ini.get_boolean ("Skin", "Native");
 			if (ini.has_key ("Skin", "Author"))
 				skin.author = ini.get_string ("Skin", "Author");
 		} catch (Error err) {}
@@ -89,6 +94,17 @@ namespace BeatBox.Skins {
 		if (provider != null)
 			Gtk.StyleContext.remove_provider_for_screen (screen, provider);
 		provider = null;
+		if (base_look == null) {
+			base_look = new Gtk.CssProvider ();
+			base_look.load_from_resource ("/net/launchpad/beatbox/theme.css");
+		}
+		Skin? found = null;
+		foreach (var skin in available ())
+			if (skin.id == id)
+				found = skin;
+		Gtk.StyleContext.remove_provider_for_screen (screen, base_look);
+		if (found == null || !found.native)
+			Gtk.StyleContext.add_provider_for_screen (screen, base_look, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION + 1);
 		if (id == "")
 			return;
 
