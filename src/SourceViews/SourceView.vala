@@ -35,6 +35,8 @@ using Gee;
 public abstract class BeatBox.SourceView : Box, View {
 	/* MAIN WIDGETS (VIEWS) */
 	ScrolledWindow 		 list_scroll    { get; private set; }
+	Widget               list_page;     // list_scroll, or Cover Flow above it
+	CoverFlow?           cover_flow;
 	ScrolledWindow		 album_scroll	{ get; private set; }
 	public GenericList	 list_view      { get; protected set; }
 	public GenericGrid	 album_view		{ get; protected set; }
@@ -175,7 +177,7 @@ public abstract class BeatBox.SourceView : Box, View {
 			list_scroll = new ScrolledWindow(null, null);
 			list_scroll.set_policy(PolicyType.AUTOMATIC, PolicyType.AUTOMATIC);
 			list_scroll.add(list_view);
-			view_container.append_page (list_scroll);
+			list_page = list_scroll;
 			
 			// Must do this after, so genericlist can setup vadjustment listeners
 			list_view.set_parent_wrapper (this);
@@ -194,7 +196,21 @@ public abstract class BeatBox.SourceView : Box, View {
 			album_view.set_parent_wrapper (this);
 			
 			popup = new PopupListView(this);
+			
+			// Cover Flow lives above the track list, like in iTunes
+			cover_flow = new CoverFlow(album_view);
+			cover_flow.album_selected.connect(scroll_list_to_album);
+			cover_flow.album_activated.connect(play_album);
+			var paned = new Paned(Orientation.VERTICAL);
+			paned.pack1(cover_flow, false, false);
+			paned.pack2(list_scroll, true, false);
+			paned.position = 300;
+			list_page = paned;
+			cover_flow.no_show_all = true;
 		}
+		
+		if (have_list_view)
+			view_container.append_page (list_page);
 	}
 
 	// We only check for white space at the moment
@@ -227,7 +243,7 @@ public abstract class BeatBox.SourceView : Box, View {
 		switch (type) {
 			case SourceViewType.LIST:
 				if (have_list_view)
-					view_index = view_container.page_num (list_scroll);
+					view_index = view_container.page_num (list_page);
 				break;
 			case SourceViewType.GRID:
 				if (have_album_view) {
@@ -252,6 +268,8 @@ public abstract class BeatBox.SourceView : Box, View {
 
 		// Set view as current
 		view_container.set_current_page (view_index);
+		if (cover_flow != null)
+			cover_flow.visible = (type == SourceViewType.LIST && App.window.get_current_view_selection() == 2);
 
 		// Update BeatBox's toolbar widgets
 		if(visible)
@@ -283,11 +301,11 @@ public abstract class BeatBox.SourceView : Box, View {
 	protected void check_have_media () {
 		if(have_media) {
 			if(list_view.get_visible_table().size() > 0) {
-				if(App.window.get_current_view_selection() == 0 || !have_album_view) {
-					set_active_view(SourceViewType.LIST);
+				if(App.window.get_current_view_selection() == 1 && have_album_view) {
+					set_active_view(SourceViewType.GRID);
 				}
 				else {
-					set_active_view(SourceViewType.GRID);
+					set_active_view(SourceViewType.LIST);
 				}
 			}
 			else {
@@ -773,12 +791,41 @@ public abstract class BeatBox.SourceView : Box, View {
 	}
 	
 	public void view_selection_changed(int option) {
-		if(option == 0) {
-			set_active_view(SourceViewType.LIST);
-		}
-		else if(option == 1) {
+		if(option == 1) {
 			set_active_view(SourceViewType.GRID);
 		}
+		else {
+			set_active_view(SourceViewType.LIST); // 0 = list, 2 = Cover Flow + list
+			if (option == 2 && cover_flow != null)
+				cover_flow.grab_focus(); // arrow keys browse the covers right away
+		}
+	}
+	
+	/** Index (in the visible list) of the first track of an album */
+	int first_row_of(Album album) {
+		var table = list_view.get_visible_table();
+		for (int i = 0; i < table.size(); i++) {
+			var m = table.get(i);
+			if (m.album == album.get_album() && m.album_artist == album.get_album_artist())
+				return i;
+		}
+		return -1;
+	}
+	
+	void scroll_list_to_album(Album album) {
+		int row = first_row_of(album);
+		if (row < 0)
+			return;
+		var path = new TreePath.from_indices(row);
+		list_view.scroll_to_cell(path, null, true, 0.0f, 0.0f);
+		list_view.get_selection().unselect_all();
+		list_view.get_selection().select_path(path);
+	}
+	
+	void play_album(Album album) {
+		int row = first_row_of(album);
+		if (row >= 0)
+			list_view.row_activated(new TreePath.from_indices(row), list_view.get_column(0));
 	}
 	
 	// Playback

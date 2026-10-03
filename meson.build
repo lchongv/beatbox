@@ -221,6 +221,7 @@ app_sources = files(
   'src/Widgets/RatingWidget.vala',
   'src/Widgets/SpaceWidget.vala',
   'src/Widgets/StatusBar.vala',
+  'src/Widgets/CoverFlow.vala',
   'src/Widgets/AdvancedSearchBox.vala',
   'src/Widgets/SourceViewSearchSuggestions.vala',
   'src/Widgets/OptionChooser.vala',
