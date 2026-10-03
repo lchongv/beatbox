@@ -172,6 +172,22 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		object_to_view = new HashMap<Object, View>();
 	}
 
+	/* The app icon cut into a circle that fills the round menu button.
+	 * The icon is a rounded square with ~8 % margin, so it is drawn
+	 * larger and its middle is clipped. */
+	static Gdk.Pixbuf? round_app_icon (int size) {
+		var big = App.icons.BEATBOX.render (null, null, (int)(size / 0.84));
+		if (big == null)
+			return null;
+		var surface = new Cairo.ImageSurface (Cairo.Format.ARGB32, size, size);
+		var cr = new Cairo.Context (surface);
+		cr.arc (size / 2.0, size / 2.0, size / 2.0, 0, 2 * Math.PI);
+		cr.clip ();
+		Gdk.cairo_set_source_pixbuf (cr, big, (size - big.width) / 2.0, (size - big.height) / 2.0);
+		cr.paint ();
+		return Gdk.pixbuf_get_from_surface (surface, 0, 0, size, size);
+	}
+
 	public void build_ui() {
 		message ("Building user interface\n");
 		
@@ -336,9 +352,23 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		topControls.insert(top_displayBin, -1);
 		topControls.insert(searchFieldBin, -1);
 		var appmenu_button = new Gtk.MenuButton ();
-		appmenu_button.image = new Gtk.Image.from_pixbuf (App.icons.BEATBOX.render (null, null, 30));
+		var appmenu_icon = new Gtk.Image.from_pixbuf (round_app_icon (38));
+		appmenu_button.image = appmenu_icon;
 		appmenu_button.get_style_context ().add_class ("round-menu");
 		appmenu_button.set_size_request (40, 40);
+		// the round button is 80 % of the LCD's height
+		int appmenu_size = 0;
+		lcd.size_allocate.connect ((alloc) => {
+			int size = (int)(alloc.height * 0.8);
+			if (size == appmenu_size || size < 16)
+				return;
+			appmenu_size = size;
+			Idle.add (() => {
+				appmenu_icon.pixbuf = round_app_icon (size - 2); // minus the 1px border
+				appmenu_button.set_size_request (size, size);
+				return false;
+			});
+		});
 		appmenu_button.valign = appmenu_button.halign = Gtk.Align.CENTER;
 		appmenu_button.popup = settingsMenu;
 		settingsMenu.show_all ();
