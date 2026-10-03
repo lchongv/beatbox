@@ -139,9 +139,14 @@ public class BeatBox.AppearancePreferences : SimplePreferences {
 		var lcdCover = add_check(_("Show the album cover at the left edge of the LCD"), App.settings.main.lcd_show_cover);
 		lcdCover.toggled.connect(() => { App.settings.main.lcd_show_cover = lcdCover.active; });
 		
+		var interval = new SpinButton.with_range(1, 60, 1);
+		interval.value = App.settings.main.lcd_alternate_seconds;
+		add_row(labelled(_("Switch between artist and album every:"), interval, _("seconds")));
+		interval.value_changed.connect(() => { App.settings.main.lcd_alternate_seconds = (int)interval.value; });
+		
 		var transition = new SpinButton.with_range(0, 3000, 100);
 		transition.value = App.settings.main.lcd_transition_ms;
-		add_row(labelled(_("Time the artist and album take to slide:"), transition, _("milliseconds")));
+		add_row(labelled(_("Duration of the slide:"), transition, _("milliseconds")));
 		transition.value_changed.connect(() => { App.settings.main.lcd_transition_ms = (int)transition.value; });
 		
 		add_heading(_("Position bar"));

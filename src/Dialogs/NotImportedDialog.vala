@@ -49,7 +49,7 @@ public class BeatBox.NotImportedDialog : Window{
 		_files = files;
 		this.music_folder = music;
 		
-		this.set_title("Not Imported Files");
+		this.set_title(_("Not Imported Files"));
 		
 		// set the size based on saved gconf settings
 		//this.window_position = WindowPosition.CENTER;
