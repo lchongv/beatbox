@@ -1,17 +1,48 @@
-This project was recently moved to github. The original location was at launchpad.net/beat-box.
+BeatBox
+=======
 
-Building (2026 port: meson, GTK3, GStreamer 1.0, libgee-0.8, libsoup-3, Granite 6, sqlite3)
+A music player for GNOME/GTK: library, playlists and smart playlists,
+Cover Flow and a cover grid, podcasts, internet radio and iPod sync.
 
-  Dependencies (Arch): vala meson gtk3 granite libgee gstreamer gst-plugins-base
-  gst-plugins-good taglib libxml2 libnotify libsoup3 json-glib libgpod sqlite
+This is a fork of BeatBox by Scott Ringwelski and contributors
+(originally at https://launchpad.net/beat-box, later continued as Noise).
+The original project is no longer maintained. In 2026 it was ported to
+meson, GTK3, GStreamer 1.0, libgee-0.8, libsoup-3 and Granite 6, and given
+a new look, Cover Flow, an inline cover grid, podcast and radio directories,
+online album art and skins.
 
-  meson setup build --prefix=$HOME/.local
-  ninja -C build install
-  beatbox
+License: GPL version 3 (see COPYING); the sources are "GPL version 2 or
+later". Original authors and the fork's changes are listed in AUTHORS.
 
-The library lives in ~/.local/share/beatbox/beatbox.db and is kept between runs.
-The look is data/theme.css (embedded in the binary).
-Options are kept in ~/.config/beatbox/beatbox.conf.
-Optional skins are folders dropped into ~/.local/share/beatbox/skins; see skins/README.md.
-Missing album art is looked up in MusicBrainz / the Cover Art Archive and the Apple Music
-catalogue (Preferences > Behavior); internet radio stations come from radio-browser.info.
+Building
+--------
+
+Dependencies (Arch): vala meson gtk3 granite libgee gstreamer gst-plugins-base
+gst-plugins-good taglib libxml2 libnotify libsoup3 json-glib libgpod sqlite
+
+    meson setup build
+    ninja -C build
+    ./build/beatbox
+
+It runs straight from the build directory (translations included); on first
+start it registers a launcher in ~/.local/share/applications so the desktop
+shows its icon. `ninja -C build install` installs it system-wide instead.
+
+Files
+-----
+
+- Library: ~/.local/share/beatbox/beatbox.db
+- Options: ~/.config/beatbox/beatbox.conf
+- Skins: folders in ~/.local/share/beatbox/skins (see skins/README.md)
+- Look: data/theme.css (embedded in the binary)
+
+Missing album art is looked up in MusicBrainz / the Cover Art Archive and the
+Apple Music catalogue (Preferences > Covers); internet radio stations come
+from radio-browser.info.
+
+Versioning
+----------
+
+Each commit after the v0.8 tag is 0.8.N. To bump it automatically:
+
+    ln -s ../../tools/pre-commit .git/hooks/pre-commit
