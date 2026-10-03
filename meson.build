@@ -1,4 +1,4 @@
-project('beatbox', 'vala', 'c', version: '0.8.2')
+project('beatbox', 'vala', 'c', version: '0.8.3')
 
 gnome = import('gnome')
 i18n = import('i18n')
@@ -17,7 +17,7 @@ conf.set('RELEASE_NAME', 'Everlong')
 conf.set('VERSION', meson.project_version())
 conf.set('VERSION_INFO', 'Pre-Release')
 conf.set('CMAKE_INSTALL_PREFIX', prefix)
-config_vala = configure_file(input: 'config.vala.cmake', output: 'config.vala', configuration: conf)
+config_vala = configure_file(input: 'config.vala.in', output: 'config.vala', configuration: conf)
 
 add_project_arguments('-DGETTEXT_PACKAGE="beatbox"', '-w', language: 'c')
 add_project_arguments('--vapidir=' + meson.current_source_dir() / 'vapi', '--target-glib=2.56', language: 'vala')
