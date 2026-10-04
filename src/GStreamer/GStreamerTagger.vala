@@ -133,11 +133,34 @@ public class BeatBox.GStreamerTagger : GLib.Object {
 		}
 	}
 	
+	/** The tags of the container and of every stream merged, as the deprecated
+	 *  DiscovererInfo.get_tags() did (MP4 keeps them all in the container) */
+	public static Gst.TagList? all_tags(Gst.PbUtils.DiscovererInfo info) {
+		Gst.TagList? all = null;
+		merge_stream_tags(info.get_stream_info(), ref all);
+		return all;
+	}
+	
+	static void merge_stream_tags(Gst.PbUtils.DiscovererStreamInfo? stream, ref Gst.TagList? all) {
+		for(var s = stream; s != null; s = s.get_next()) {
+			unowned Gst.TagList? t = s.get_tags();
+			Gst.TagList?[] lists = { t };
+			if(s is Gst.PbUtils.DiscovererContainerInfo)
+				lists += ((Gst.PbUtils.DiscovererContainerInfo)s).get_tags();
+			foreach(var l in lists)
+				if(l != null)
+					all = (all == null) ? l.copy() : all.merge(l, Gst.TagMergeMode.APPEND);
+			if(s is Gst.PbUtils.DiscovererContainerInfo)
+				foreach(var child in ((Gst.PbUtils.DiscovererContainerInfo)s).get_streams())
+					merge_stream_tags(child, ref all);
+		}
+	}
+	
 	void import_media(Gst.PbUtils.Discoverer d, Gst.PbUtils.DiscovererInfo info, Error? err) {
 		uri_queue.remove(info.get_uri());
 		--size;
 		
-		if(info != null && info.get_tags() != null) {
+		if(info != null && all_tags(info) != null) {
 			Media s = ((FilesOperation)App.operations.current_op).library.import_tags_to_media(info);
 			
 			media_imported(s);

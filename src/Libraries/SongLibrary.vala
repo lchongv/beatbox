@@ -283,6 +283,7 @@ podcast_date=:podcast_date, is_new_podcast=:is_new_podcast, resume_pos=:resume_p
 	}
 	
 	public override Media import_tags_to_media(Gst.PbUtils.DiscovererInfo info) {
+		Gst.TagList? tags = (info != null) ? GStreamerTagger.all_tags(info) : null;
 		Song s = new Song(info.get_uri());
 			
 		try {
@@ -293,50 +294,52 @@ podcast_date=:podcast_date, is_new_podcast=:is_new_podcast, resume_pos=:resume_p
 			GLib.Date? date = GLib.Date();
 			
 			// get title, artist, album artist, album, genre, comment, lyrics strings
-			if(info.get_tags().get_string(Gst.Tags.TITLE, out title))
+			if(tags.get_string(Gst.Tags.TITLE, out title))
 				s.title = title;
-			if(info.get_tags().get_string(Gst.Tags.ARTIST, out artist))
+			if(tags.get_string(Gst.Tags.ARTIST, out artist))
 				s.artist = artist;
-			if(info.get_tags().get_string(Gst.Tags.COMPOSER, out composer))
+			if(tags.get_string(Gst.Tags.COMPOSER, out composer))
 				s.composer = composer;
 			
-			if(info.get_tags().get_string(Gst.Tags.ALBUM_ARTIST, out album_artist))
+			if(tags.get_string(Gst.Tags.ALBUM_ARTIST, out album_artist))
 				s.album_artist = album_artist;
 			else
 				s.album_artist = s.artist;
 			
-			if(info.get_tags().get_string(Gst.Tags.ALBUM, out album))
+			if(tags.get_string(Gst.Tags.ALBUM, out album))
 				s.album = album;
-			if(info.get_tags().get_string(Gst.Tags.GROUPING, out grouping))
+			if(tags.get_string(Gst.Tags.GROUPING, out grouping))
 				s.grouping = grouping;
-			if(info.get_tags().get_string(Gst.Tags.GENRE, out genre))
+			if(tags.get_string(Gst.Tags.GENRE, out genre))
 				s.genre = genre;
-			if(info.get_tags().get_string(Gst.Tags.COMMENT, out comment))
+			if(tags.get_string(Gst.Tags.COMMENT, out comment))
 				s.comment = comment;
-			if(info.get_tags().get_string(Gst.Tags.LYRICS, out lyrics))
+			if(tags.get_string(Gst.Tags.LYRICS, out lyrics))
 				s.lyrics = lyrics;
 			
 			// get the year
-			if(info.get_tags().get_date(Gst.Tags.DATE, out date)) {
-				if(date != null)
-					s.year = (int)date.get_year();
-			}
+			// GStreamer reports the year as DATE_TIME nowadays; DATE only for old demuxers
+			Gst.DateTime? date_time;
+			if(tags.get_date_time(Gst.Tags.DATE_TIME, out date_time) && date_time != null && date_time.has_year())
+				s.year = date_time.get_year();
+			else if(tags.get_date(Gst.Tags.DATE, out date) && date.valid())
+				s.year = (int)date.get_year();
 			// get track/album number/count, bitrating, rating, bpm
-			if(info.get_tags().get_uint(Gst.Tags.TRACK_NUMBER, out track))
+			if(tags.get_uint(Gst.Tags.TRACK_NUMBER, out track))
 				s.track = (int)track;
-			if(info.get_tags().get_uint(Gst.Tags.TRACK_COUNT, out track_count))
+			if(tags.get_uint(Gst.Tags.TRACK_COUNT, out track_count))
 				s.track_count = track_count;
 				
-			if(info.get_tags().get_uint(Gst.Tags.ALBUM_VOLUME_NUMBER, out album_number))
+			if(tags.get_uint(Gst.Tags.ALBUM_VOLUME_NUMBER, out album_number))
 				s.album_number = album_number;
-			if(info.get_tags().get_uint(Gst.Tags.ALBUM_VOLUME_COUNT, out album_count))
+			if(tags.get_uint(Gst.Tags.ALBUM_VOLUME_COUNT, out album_count))
 				s.album_count = album_count;
 			
-			if(info.get_tags().get_uint(Gst.Tags.BITRATE, out bitrate))
+			if(tags.get_uint(Gst.Tags.BITRATE, out bitrate))
 				s.bitrate = (int)(bitrate/1000);
-			if(info.get_tags().get_uint(Gst.Tags.USER_RATING, out rating))
+			if(tags.get_uint(Gst.Tags.USER_RATING, out rating))
 				s.rating = (int)((rating > 0 && rating <= 5) ? rating : 0);
-			if(info.get_tags().get_double(Gst.Tags.BEATS_PER_MINUTE, out bpm))
+			if(tags.get_double(Gst.Tags.BEATS_PER_MINUTE, out bpm))
 				s.bpm = (int)bpm;
 			if(info.get_audio_streams().length() > 0)
 				s.samplerate = ((Gst.PbUtils.DiscovererAudioInfo) info.get_audio_streams().nth_data(0)).get_sample_rate();
@@ -378,12 +381,13 @@ podcast_date=:podcast_date, is_new_podcast=:is_new_podcast, resume_pos=:resume_p
 	}
 	
 	void import_art(Gst.PbUtils.DiscovererInfo info, Media s) {
+		Gst.TagList? tags = (info != null) ? GStreamerTagger.all_tags(info) : null;
 		if(App.covers.get_album_art_from_key(s.album_artist, s.album) != null) {
 			debug("not loading embedded art since album already has art (%s)\n", s.album);
 			return;
 		}
 		
-		if(info != null && info.get_tags() != null) {
+		if(info != null && tags != null) {
 			try {
 				Gst.Buffer buf = null;
 				Gdk.Pixbuf? rv = null;
@@ -392,7 +396,7 @@ podcast_date=:podcast_date, is_new_podcast=:is_new_podcast, resume_pos=:resume_p
 				// choose the best image based on image type
 				for(i = 0; ; ++i) {
 					Gst.Sample sample;
-					if(!info.get_tags().get_sample_index(Gst.Tags.IMAGE, i, out sample))
+					if(!tags.get_sample_index(Gst.Tags.IMAGE, i, out sample))
 						break;
 					
 					Gst.Buffer buffer = sample.get_buffer();

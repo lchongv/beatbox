@@ -283,6 +283,7 @@ podcast_date=:podcast_date, is_new_podcast=:is_new_podcast, resume_pos=:resume_p
 	}
 	
 	public override Media import_tags_to_media(Gst.PbUtils.DiscovererInfo info) {
+		Gst.TagList? tags = (info != null) ? GStreamerTagger.all_tags(info) : null;
 		Podcast p = new Podcast(info.get_uri());
 		
 		try {
@@ -293,20 +294,20 @@ podcast_date=:podcast_date, is_new_podcast=:is_new_podcast, resume_pos=:resume_p
 			GLib.Date? date = GLib.Date();
 			
 			// get title, artist, album artist, album, genre, comment, lyrics strings
-			if(info.get_tags().get_string(Gst.Tags.TITLE, out title))
+			if(tags.get_string(Gst.Tags.TITLE, out title))
 				p.title = title;
-			if(info.get_tags().get_string(Gst.Tags.ARTIST, out artist))
+			if(tags.get_string(Gst.Tags.ARTIST, out artist))
 				p.artist = artist;
 			
-			if(info.get_tags().get_string(Gst.Tags.ALBUM, out album))
+			if(tags.get_string(Gst.Tags.ALBUM, out album))
 				p.album = album;
-			if(info.get_tags().get_string(Gst.Tags.GENRE, out genre))
+			if(tags.get_string(Gst.Tags.GENRE, out genre))
 				p.genre = genre;
-			if(info.get_tags().get_string(Gst.Tags.COMMENT, out comment))
+			if(tags.get_string(Gst.Tags.COMMENT, out comment))
 				p.comment = comment;
 			
 			
-			if(info.get_tags().get_uint(Gst.Tags.USER_RATING, out rating))
+			if(tags.get_uint(Gst.Tags.USER_RATING, out rating))
 				p.rating = (int)((rating > 0 && rating <= 5) ? rating : 0);
 			
 			p.length = get_length(p.uri);
@@ -345,12 +346,13 @@ podcast_date=:podcast_date, is_new_podcast=:is_new_podcast, resume_pos=:resume_p
 	}
 	
 	void import_art(Gst.PbUtils.DiscovererInfo info, Media s) {
+		Gst.TagList? tags = (info != null) ? GStreamerTagger.all_tags(info) : null;
 		if(App.covers.get_album_art_from_key(s.album_artist, s.album) != null) {
 			debug("not loading embedded art since album already has art (%s)\n", s.album);
 			return;
 		}
 		
-		if(info != null && info.get_tags() != null) {
+		if(info != null && tags != null) {
 			try {
 				Gst.Buffer buf = null;
 				Gdk.Pixbuf? rv = null;
@@ -359,7 +361,7 @@ podcast_date=:podcast_date, is_new_podcast=:is_new_podcast, resume_pos=:resume_p
 				// choose the best image based on image type
 				for(i = 0; ; ++i) {
 					Gst.Sample sample;
-					if(!info.get_tags().get_sample_index(Gst.Tags.IMAGE, i, out sample))
+					if(!tags.get_sample_index(Gst.Tags.IMAGE, i, out sample))
 						break;
 					
 					Gst.Buffer buffer = sample.get_buffer();
