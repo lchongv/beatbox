@@ -26,22 +26,28 @@
  */
 
 public abstract class BeatBox.ActionsInterface : GLib.Object {
-	public Gtk.Action create_playlist { get; protected set; }
-	public Gtk.Action create_smart_playlist { get; protected set; }
-	public Gtk.Action import_playlist { get; protected set; }
-	public Gtk.Action import_station { get; protected set; }
-	public Gtk.Action add_podcast_feed { get; protected set; }
-	public Gtk.Action refresh_podcasts { get; protected set; }
-	public Gtk.Action show_preferences { get; protected set; }
-	public Gtk.Action show_equalizer { get; protected set; }
-	public Gtk.Action next { get; protected set; }
-	public Gtk.Action play_pause { get; protected set; }
-	public Gtk.Action previous { get; protected set; }
-	public Gtk.Action lastfm_ban { get; protected set; }
-	public Gtk.Action lastfm_love { get; protected set; }
-	public Gtk.Action show_duplicates { get; protected set; }
-	public Gtk.Action hide_duplicates { get; protected set; }
-	public Gtk.Action exit { get; protected set; }
+	public SimpleAction create_playlist { get; protected set; }
+	public SimpleAction create_smart_playlist { get; protected set; }
+	public SimpleAction import_playlist { get; protected set; }
+	public SimpleAction import_station { get; protected set; }
+	public SimpleAction add_podcast_feed { get; protected set; }
+	public SimpleAction refresh_podcasts { get; protected set; }
+	public SimpleAction show_preferences { get; protected set; }
+	public SimpleAction show_equalizer { get; protected set; }
+	public SimpleAction next { get; protected set; }
+	public SimpleAction play_pause { get; protected set; }
+	public SimpleAction previous { get; protected set; }
+	public SimpleAction lastfm_ban { get; protected set; }
+	public SimpleAction lastfm_love { get; protected set; }
+	public SimpleAction show_duplicates { get; protected set; }
+	public SimpleAction hide_duplicates { get; protected set; }
+	public SimpleAction exit { get; protected set; }
+	
+	/** All the actions, as "bb.<name>" */
+	public SimpleActionGroup group { get; protected set; }
+	
+	/** A menu item labelled for the action, greyed out (or hidden, for some) while it is disabled */
+	public abstract Gtk.MenuItem menu_item(SimpleAction action);
 	
 	public abstract void destroy_equalizer();
 	public abstract void show_set_library_folder_dialog(Library library);

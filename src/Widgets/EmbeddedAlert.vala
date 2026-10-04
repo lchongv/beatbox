@@ -69,7 +69,7 @@ public class BeatBox.EmbeddedAlert : Gtk.EventBox {
         image.margin_end = 12;
 
         // Init stuff
-        set_alert ("", "", null, false);
+        set_alert ("", "", false);
 
         var message_vbox = new Gtk.Box (Gtk.Orientation.VERTICAL, 0);
         message_vbox.pack_start (primary_text_label, false, false, 0);
@@ -88,7 +88,7 @@ public class BeatBox.EmbeddedAlert : Gtk.EventBox {
     }
 
 
-    public void set_alert (string primary_text, string secondary_text, Gtk.Action[] ? actions = null,
+    public void set_alert (string primary_text, string secondary_text,
                              bool show_icon = true, Gtk.MessageType type = Gtk.MessageType.WARNING)
     {
         // Reset size request
@@ -123,44 +123,7 @@ public class BeatBox.EmbeddedAlert : Gtk.EventBox {
 
         set_icon_visible (show_icon);
 
-        // clear button box
-        foreach (var button in action_button_box.get_children ()) {
-            action_button_box.remove (button);
-        }
-
-        // Add a button for each action
-        if (actions != null && actions.length > 0) {
-            for (int i = 0; i < actions.length; i++) {
-                var action_item = actions[i];
-                if (action_item != null) {
-                    var action_button = new_button_from_action (action_item);
-                    if (action_button != null) {
-                        // Pack into the button box
-                        action_button_box.pack_start (action_button, false, false, 0);
-
-                        action_button.button_release_event.connect ( () => {
-                            action_item.activate ();
-                            return false;
-                        });
-                    }
-                }
-            }
-
-            if (show_icon) {
-                action_button_box.set_layout (Gtk.ButtonBoxStyle.END);
-                action_button_box.halign = Gtk.Align.END;
-            }
-            else {
-                action_button_box.set_layout (Gtk.ButtonBoxStyle.CENTER);
-                action_button_box.halign = Gtk.Align.CENTER;
-            }
-
-            set_buttons_visible (true);
-        }
-        else {
-            action_button_box.set_no_show_all (true);
-            set_buttons_visible (false);
-        }
+        set_buttons_visible (false); // ponytail: no caller ever passed action buttons
 
         primary_text_label.set_markup (PRIMARY_TEXT_MARKUP.printf (Markup.escape_text (primary_text, -1)));
         secondary_text_label.set_markup (secondary_text);
@@ -206,36 +169,5 @@ public class BeatBox.EmbeddedAlert : Gtk.EventBox {
     private static void set_widget_visible (Gtk.Widget widget, bool visible) {
         widget.set_no_show_all (!visible);
         widget.set_visible (visible);
-    }
-
-    private static Gtk.Button? new_button_from_action (Gtk.Action action) {
-        if (action == null)
-            return null;
-
-        bool has_label = action.label != null;
-        bool has_stock = action.stock_id != null;
-        bool has_gicon = action.gicon != null;
-        bool has_tooltip = action.tooltip != null;
-
-        Gtk.Button? action_button = null;
-
-        // Prefer label over stock_id
-        if (has_label)
-            action_button = new Gtk.Button.with_label (action.label);
-        else if (has_stock)
-            action_button = new Gtk.Button.from_stock (action.stock_id);
-        else
-            action_button = new Gtk.Button ();
-
-        // Prefer stock_id over gicon
-        if (has_stock)
-            action_button.set_image (new Gtk.Image.from_stock (action.stock_id, Gtk.IconSize.BUTTON));
-        else if (has_gicon)
-            action_button.set_image (new Gtk.Image.from_gicon (action.gicon, Gtk.IconSize.BUTTON));
-
-        if (has_tooltip)
-            action_button.set_tooltip_text (action.tooltip);
-
-        return action_button;
     }
 }

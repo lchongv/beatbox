@@ -57,7 +57,7 @@ public class BeatBox.StationSourceView : SourceView {
 		var import = action_button ("document-open-symbolic", _("Import File…"));
 		find.clicked.connect (() => { new DirectoryDialog (DirectoryDialog.Kind.RADIO); });
 		add.clicked.connect (() => { DirectoryDialog.add_station_by_url (); });
-		import.clicked.connect (() => { App.actions.import_station.activate (); });
+		import.clicked.connect (() => { App.actions.import_station.activate(null); });
 		pack_action_bar ({ find, add, import });
 		
 		// Setup context menu
@@ -68,7 +68,7 @@ public class BeatBox.StationSourceView : SourceView {
 		var add_item = new Gtk.MenuItem.with_label (_("Add by Address…"));
 		add_item.activate.connect (() => { DirectoryDialog.add_station_by_url (); });
 		radioMenu.append(add_item);
-		radioMenu.append((Gtk.MenuItem)App.actions.import_station.create_menu_item());
+		radioMenu.append(App.actions.menu_item(App.actions.import_station));
 		radioMenu.show_all();
 		
 		// Populate views
@@ -85,8 +85,7 @@ public class BeatBox.StationSourceView : SourceView {
 	}
 	
 	protected override void set_default_warning () {
-		error_box.set_alert (_("No Internet Radio Stations Found"), _("Use “Find Stations…” above to search the radio-browser.info directory."),
-		null, true, Gtk.MessageType.INFO);
+		error_box.set_alert (_("No Internet Radio Stations Found"), _("Use “Find Stations…” above to search the radio-browser.info directory."), true, Gtk.MessageType.INFO);
 	}
 	
 	void welcome_screen_activated(int index) {
@@ -95,7 +94,7 @@ public class BeatBox.StationSourceView : SourceView {
 		else if(index == 1)
 			DirectoryDialog.add_station_by_url ();
 		else
-			App.actions.import_station.activate ();
+			App.actions.import_station.activate(null);
 	}
 	
 	/** Specific implementations for View interface **/

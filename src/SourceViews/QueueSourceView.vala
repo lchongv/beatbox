@@ -65,8 +65,7 @@ public class BeatBox.QueueSourceView : SourceView {
 	
 	protected override void set_default_warning () {
 		error_box.set_alert (_("No songs in Queue"), _("To queue a song, drag and drop a song from a list onto the queue sidebar item.") + 
-		"\n" + _("When a song finishes, the queued songs will be played first before the next song in the currently playing list."),
-		null, true, Gtk.MessageType.INFO);
+		"\n" + _("When a song finishes, the queued songs will be played first before the next song in the currently playing list."), true, Gtk.MessageType.INFO);
 	}
 	
 	void queue_changed () {

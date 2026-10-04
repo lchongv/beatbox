@@ -65,13 +65,13 @@ public class BeatBox.SideTreeView : BeatBox.SideBar {
 	
 	public void buildUI() {
 		libraryMenu = new Gtk.Menu();
-		libraryMenu.append((Gtk.MenuItem)App.actions.show_duplicates.create_menu_item());
+		libraryMenu.append(App.actions.menu_item(App.actions.show_duplicates));
 		libraryMenu.show_all();
 		
 		playlistMenu = new Gtk.Menu();
-		playlistMenu.append((Gtk.ImageMenuItem)App.actions.create_playlist.create_menu_item());
-		playlistMenu.append((Gtk.ImageMenuItem)App.actions.create_smart_playlist.create_menu_item());
-		playlistMenu.append((Gtk.ImageMenuItem)App.actions.import_playlist.create_menu_item());
+		playlistMenu.append(App.actions.menu_item(App.actions.create_playlist));
+		playlistMenu.append(App.actions.menu_item(App.actions.create_smart_playlist));
+		playlistMenu.append(App.actions.menu_item(App.actions.import_playlist));
 		playlistMenu.show_all();
 		
 		this.button_press_event.connect(sideListClick);
@@ -281,7 +281,7 @@ public class BeatBox.SideTreeView : BeatBox.SideBar {
 			View view = (View)w;
 			if(event.type == Gdk.EventType.BUTTON_PRESS && event.button == 3) {
 				if(view.get_context_menu() != null) {
-					view.get_context_menu().popup (null, null, null, 3, get_current_event_time());
+					view.get_context_menu().popup_at_pointer(null);
 				}
 			}
 			else if(event.type == Gdk.EventType.BUTTON_PRESS && event.button == 2) {
@@ -293,10 +293,10 @@ public class BeatBox.SideTreeView : BeatBox.SideBar {
 		else {
 			if(event.type == Gdk.EventType.BUTTON_PRESS && event.button == 3) {
 				if(iter == convertToFilter(library_iter)) {
-					libraryMenu.popup (null, null, null, 3, get_current_event_time());
+					libraryMenu.popup_at_pointer(null);
 				}
 				else if(iter == convertToFilter(playlists_iter)) {
-					playlistMenu.popup (null, null, null, 3, get_current_event_time());
+					playlistMenu.popup_at_pointer(null);
 				}
 			}
 		}

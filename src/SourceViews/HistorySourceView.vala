@@ -65,8 +65,7 @@ public class BeatBox.HistorySourceView : SourceView {
 	
 	protected override void set_default_warning () {
 		error_box.set_alert (_("No songs in History"), _("After a part of a song has been played, it is added to the history list.") + 
-		"\n" + _("You can use this list to see all the songs you have played during the current session."),
-		null, true, Gtk.MessageType.INFO);
+		"\n" + _("You can use this list to see all the songs you have played during the current session."), true, Gtk.MessageType.INFO);
 
 	}
 	

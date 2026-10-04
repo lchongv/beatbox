@@ -80,8 +80,7 @@ public class BeatBox.PlaylistSourceView : SourceView {
 	}
 	
 	protected override void set_default_warning () {
-		error_box.set_alert (_("No Media"), _("To add to this playlist, drag and drop songs from a list onto the sidebar item or\nright click on an item and choose \"Add to Playlist\"."),
-		null, true, Gtk.MessageType.INFO);
+		error_box.set_alert (_("No Media"), _("To add to this playlist, drag and drop songs from a list onto the sidebar item or\nright click on an item and choose \"Add to Playlist\"."), true, Gtk.MessageType.INFO);
 	}
 	
 	void playlist_changed (BasePlaylist p) {

@@ -255,11 +255,11 @@ public class BeatBox.SongSummarySection : Box {
 	}
 	
 	void loveButtonClicked() {
-		App.actions.lastfm_love.activate();
+		App.actions.lastfm_love.activate(null);
 	}
 	
 	void banButtonClicked() {
-		App.actions.lastfm_ban.activate();
+		App.actions.lastfm_ban.activate(null);
 		
 		// Clearly we should skip this song...
 		App.playback.request_next();

@@ -265,7 +265,7 @@ public abstract class BeatBox.GenericList : FastList {
 	
 	protected bool view_header_click(Gtk.Widget w, Gdk.EventButton e) {
 		if(e.button == 3) {
-			columnChooserMenu.popup (null, null, null, 3, get_current_event_time());
+			columnChooserMenu.popup_at_pointer(null);
 			return true;
 		}
 		else if(e.button == 1) {

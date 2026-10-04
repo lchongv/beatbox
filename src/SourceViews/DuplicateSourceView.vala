@@ -66,7 +66,7 @@ public class BeatBox.DuplicateSourceView : SourceView {
 		
 		// Setup context menu
 		duplicatesMenu = new Gtk.Menu();
-		duplicatesMenu.append((Gtk.MenuItem)App.actions.hide_duplicates.create_menu_item());
+		duplicatesMenu.append(App.actions.menu_item(App.actions.hide_duplicates));
 		duplicatesMenu.show_all();
 		
 		priority.changed.connect(priority_changed);
@@ -82,7 +82,7 @@ public class BeatBox.DuplicateSourceView : SourceView {
 	}
 	
 	protected override void set_default_warning () {
-		error_box.set_alert (_("Victory! No Duplicates!"), _("Your library has no duplicates."), null, true, Gtk.MessageType.INFO);
+		error_box.set_alert (_("Victory! No Duplicates!"), _("Your library has no duplicates."), true, Gtk.MessageType.INFO);
 	}
 	
 	public void set_dups(HashMap<Media, Collection<Media>> dups) {
@@ -144,7 +144,7 @@ public class BeatBox.DuplicateSourceView : SourceView {
 			App.library.remove_medias (checked, delete_files);
 			
 			// Close me
-			App.actions.hide_duplicates.activate();
+			App.actions.hide_duplicates.activate(null);
 		});
 	}
 	

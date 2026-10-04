@@ -254,11 +254,7 @@ public class BeatBox.OptionChooser : ToggleButton {
 			fetch_menu ();
 
 		try {
-			menu.popup (null,
-						null,
-						get_menu_position,
-						(ev == null) ? 0 : ev.button,
-						(ev == null) ? get_current_event_time () : ev.time);
+			menu.popup_at_widget (menu.attach_widget ?? this, Gdk.Gravity.SOUTH_WEST, Gdk.Gravity.NORTH_WEST, ev);
 		} finally {
 			// Highlight the parent
 			if (menu.attach_widget != null)
@@ -278,68 +274,5 @@ public class BeatBox.OptionChooser : ToggleButton {
 
 	private void fetch_menu () {
 		update_menu_properties ();
-	}
-
-	private void get_menu_position (Gtk.Menu menu, out int x, out int y, out bool push_in) {
-		Allocation menu_allocation;
-		menu.get_allocation (out menu_allocation);
-		if (menu.attach_widget == null ||
-			menu.attach_widget.get_window () == null) {
-			// Prevent null exception in weird cases
-			x = 0;
-			y = 0;
-			push_in = true;
-			return;
-		}
-
-		menu.attach_widget.get_window ().get_origin (out x, out y);
-		Allocation allocation;
-		menu.attach_widget.get_allocation (out allocation);
-
-		/*if (menu_position == MenuPosition.RIGHT) {
-			x += allocation.x;
-			x -= menu_allocation.width;
-			x += allocation.width;
-		}
-		else if (menu_position != MenuPosition.LEFT) {
-			/* Centered menu */
-			x += allocation.x;
-			//x -= menu_allocation.width / 2;
-			//x += allocation.width / 2;
-		//}
-
-		int width, height;
-		menu.get_size_request (out width, out height);
-
-		/*if (menu_position == MenuPosition.INSIDE_WINDOW) {
-			/* Get window geometry *
-			var parent_widget = get_toplevel ();
-
-			Gtk.Allocation window_allocation;
-			parent_widget.get_allocation (out window_allocation);
-
-			parent_widget.get_window ().get_origin (out x, out y);
-			int parent_window_x0 = x;
-			int parent_window_xf = parent_window_x0 + window_allocation.width;
-
-			// Now check if the menu is outside the window and un-center it
-			// if that's the case
-
-			if (x + menu_allocation.width > parent_window_xf)
-				x = parent_window_xf - menu_allocation.width; // Move to left
-
-			if (x < parent_window_x0)
-				x = parent_window_x0; // Move to right
-		}*/
-
-		y += allocation.y;
-
-		var mon = menu.attach_widget.get_display ().get_monitor_at_window (menu.attach_widget.get_window ());
-		if (y + height >= mon.get_geometry ().height)
-			y -= height;
-		else
-			y += allocation.height;
-
-		push_in = true;
 	}
 }

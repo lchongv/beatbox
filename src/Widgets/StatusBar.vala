@@ -195,8 +195,8 @@ public class BeatBox.StatusBar : Gtk.ActionBar {
     }
     
     bool show_eq_button_clicked(Gdk.EventButton event) {
-		if(App.actions.show_equalizer.get_sensitive()) {
-			App.actions.show_equalizer.activate();
+		if(App.actions.show_equalizer.get_enabled()) {
+			App.actions.show_equalizer.activate(null);
 		}
 		
 		return false;

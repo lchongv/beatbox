@@ -145,7 +145,7 @@ public class BeatBox.SimilarSourceView : SourceView {
 			if(base_media != null) {
 				if(!fetched) { // still fetching similar media
 					var text = _("BeatBox is finding songs similar to <b>%s</b> by <b>%s</b>").printf(Markup.escape_text(base_media.title), Markup.escape_text(base_media.artist));
-					error_box.set_alert(_("Fetching similar songs"), text, null, false, Gtk.MessageType.INFO);
+					error_box.set_alert(_("Fetching similar songs"), text, false, Gtk.MessageType.INFO);
 					set_active_view (SourceViewType.ERROR);
 
 					return;
@@ -155,7 +155,7 @@ public class BeatBox.SimilarSourceView : SourceView {
 						if (have_error_box) {
 							var text = _("BeatBox could not find songs similar to <b>%s</b> by <b>%s</b>. ").printf(Markup.escape_text(base_media.title), Markup.escape_text(base_media.artist)) + 
 								_("Make sure all song info is correct and you are connected to the Internet. Some songs may not have matches.");
-							error_box.set_alert(_("No similar songs found"), text, null, true, Gtk.MessageType.ERROR);
+							error_box.set_alert(_("No similar songs found"), text, true, Gtk.MessageType.ERROR);
 							// Show the error box
 							set_active_view (SourceViewType.ERROR);
 						}

@@ -56,8 +56,8 @@ public class BeatBox.PodcastSourceView : SourceView {
 		var subscribe = action_button ("list-add-symbolic", _("Subscribe by Address…"));
 		var refresh = action_button ("view-refresh-symbolic", _("Download new Episodes"));
 		find.clicked.connect (() => { new DirectoryDialog (DirectoryDialog.Kind.PODCAST); });
-		subscribe.clicked.connect (() => { App.actions.add_podcast_feed.activate (); });
-		refresh.clicked.connect (() => { App.actions.refresh_podcasts.activate (); });
+		subscribe.clicked.connect (() => { App.actions.add_podcast_feed.activate(null); });
+		refresh.clicked.connect (() => { App.actions.refresh_podcasts.activate(null); });
 		pack_action_bar ({ find, subscribe, refresh });
 		
 		// Setup context menu
@@ -65,8 +65,8 @@ public class BeatBox.PodcastSourceView : SourceView {
 		var find_item = new Gtk.MenuItem.with_label (_("Find Podcasts…"));
 		find_item.activate.connect (() => { new DirectoryDialog (DirectoryDialog.Kind.PODCAST); });
 		podcastMenu.append(find_item);
-		podcastMenu.append((Gtk.MenuItem)App.actions.add_podcast_feed.create_menu_item());
-		podcastMenu.append((Gtk.MenuItem)App.actions.refresh_podcasts.create_menu_item());
+		podcastMenu.append(App.actions.menu_item(App.actions.add_podcast_feed));
+		podcastMenu.append(App.actions.menu_item(App.actions.refresh_podcasts));
 		podcastMenu.show_all();
 		
 		// Populate views
@@ -83,15 +83,14 @@ public class BeatBox.PodcastSourceView : SourceView {
 	}
 	
 	protected override void set_default_warning () {
-		error_box.set_alert (_("No Podcasts Found"), _("Use “Find Podcasts…” above to search the directory, or “Subscribe by Address…” to paste an RSS feed."),
-		null, true, Gtk.MessageType.INFO);
+		error_box.set_alert (_("No Podcasts Found"), _("Use “Find Podcasts…” above to search the directory, or “Subscribe by Address…” to paste an RSS feed."), true, Gtk.MessageType.INFO);
 	}
 	
 	void welcome_screen_activated(int index) {
 		if(index == 0)
 			new DirectoryDialog (DirectoryDialog.Kind.PODCAST);
 		else
-			App.actions.add_podcast_feed.activate ();
+			App.actions.add_podcast_feed.activate(null);
 	}
 	
 	/** Specific implementations for View interface **/

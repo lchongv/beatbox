@@ -340,15 +340,15 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		searchFieldBin.margin_start = 12;
 		searchFieldBin.margin_end = 6;
 		
-		//settingsMenu.append((Gtk.MenuItem)App.actions.import_folder.create_menu_item());
-		//settingsMenu.append((Gtk.MenuItem)App.actions.rescan_music_folder.create_menu_item());
+		//settingsMenu.append(App.actions.menu_item(App.actions.import_folder));
+		//settingsMenu.append(App.actions.menu_item(App.actions.rescan_music_folder));
 		//settingsMenu.append(new SeparatorMenuItem());
 		var miniItem = new Gtk.MenuItem.with_mnemonic(_("_Mini Player"));
 		miniItem.activate.connect(toggle_mini);
 		settingsMenu.append(miniItem);
-		settingsMenu.append((Gtk.MenuItem)App.actions.show_equalizer.create_menu_item());
-		settingsMenu.append((Gtk.MenuItem)App.actions.show_preferences.create_menu_item());
-		settingsMenu.append((Gtk.MenuItem)App.actions.exit.create_menu_item());
+		settingsMenu.append(App.actions.menu_item(App.actions.show_equalizer));
+		settingsMenu.append(App.actions.menu_item(App.actions.show_preferences));
+		settingsMenu.append(App.actions.menu_item(App.actions.exit));
 		
 		topControls.set_vexpand (false);
 		topControls.set_hexpand (true);
@@ -431,19 +431,19 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		//sideBox.pack_end(sideTreeBar, false, false, 0);
 		
 		sideTreeAddMenu = new Gtk.Menu();
-		sideTreeAddMenu.append((Gtk.ImageMenuItem)App.actions.create_playlist.create_menu_item());
-		sideTreeAddMenu.append((Gtk.ImageMenuItem)App.actions.create_smart_playlist.create_menu_item());
-		sideTreeAddMenu.append((Gtk.ImageMenuItem)App.actions.import_playlist.create_menu_item());
+		sideTreeAddMenu.append(App.actions.menu_item(App.actions.create_playlist));
+		sideTreeAddMenu.append(App.actions.menu_item(App.actions.create_smart_playlist));
+		sideTreeAddMenu.append(App.actions.menu_item(App.actions.import_playlist));
 		sideTreeAddMenu.append(new SeparatorMenuItem());
-		sideTreeAddMenu.append((Gtk.ImageMenuItem)App.actions.add_podcast_feed.create_menu_item());
+		sideTreeAddMenu.append(App.actions.menu_item(App.actions.add_podcast_feed));
 		sideTreeAddMenu.append(new SeparatorMenuItem());
-		sideTreeAddMenu.append((Gtk.ImageMenuItem)App.actions.import_station.create_menu_item());
+		sideTreeAddMenu.append(App.actions.menu_item(App.actions.import_station));
 		
 		sideTreeMenu = new Gtk.Menu();
-		sideTreeMenu.append((Gtk.MenuItem)App.actions.show_duplicates.create_menu_item());
-		sideTreeMenu.append((Gtk.MenuItem)App.actions.hide_duplicates.create_menu_item());
+		sideTreeMenu.append(App.actions.menu_item(App.actions.show_duplicates));
+		sideTreeMenu.append(App.actions.menu_item(App.actions.hide_duplicates));
 		sideTreeMenu.append(new SeparatorMenuItem());
-		sideTreeMenu.append((Gtk.MenuItem)App.actions.refresh_podcasts.create_menu_item());
+		sideTreeMenu.append(App.actions.menu_item(App.actions.refresh_podcasts));
 		
 		// Hide notebook tabs and border
 		mainViews.show_tabs = false;
@@ -1087,7 +1087,7 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 	
 	void sideTreeAddClicked() {
 		sideTreeAddMenu.show_all();
-		sideTreeAddMenu.popup (null, null, null, 3, get_current_event_time());
+		sideTreeAddMenu.popup_at_pointer(null);
 	}
 	
 	void sideTreeRemoveClicked() {
@@ -1097,7 +1097,7 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 	
 	void sideTreeOptionsClicked() {
 		sideTreeMenu.show_all();
-		sideTreeMenu.popup (null, null, null, 3, get_current_event_time());
+		sideTreeMenu.popup_at_pointer(null);
 	}
 	
 	public void set_search_string(string search) {

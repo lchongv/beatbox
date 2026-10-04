@@ -37,36 +37,37 @@ public class BeatBox.Actions : BeatBox.ActionsInterface {
 		initialize_actions();
 	}
 	
+	// name, label; the tooltips of the old Gtk.Actions were never shown
+	SimpleAction add(string name, string label) {
+		var action = new SimpleAction(name, null);
+		action.set_data<string>("label", label);
+		group.add_action(action);
+		return action;
+	}
+	
 	private void initialize_actions() {
-		create_playlist = new Gtk.Action("create_playlist", _("Create Playlist"), _("Create a new Playlist"), null);
-		create_smart_playlist = new Gtk.Action("create_smart_playlist", _("Create Smart Playlist"), _("Create a new Smart Playlist"), null);
-		import_playlist = new Gtk.Action("import_playlist", _("Import Playlist"), _("Import playlist from file"), null);
-		import_station = new Gtk.Action("import_station", _("Import Station"), _("Import station from file"), null);
-		add_podcast_feed = new Gtk.Action("add_podcast_feed", _("Add RSS Feed"), _("Add a new RSS Podcast Feed to your library"), null);
-		refresh_podcasts = new Gtk.Action("refresh_podcasts", _("Download new Episodes"), _("Download new Podcast Episodes"), null);
-		show_preferences = new Gtk.Action("show_preferences", _("Preferences"), _("Preferences"), null);
-		show_equalizer = new Gtk.Action("show_equalizer", _("Equalizer"), _("Equalizer"), null);
-		next = new Gtk.Action("next", _("Next"), _("Next"), null);
-		play_pause = new Gtk.Action("play_pause", _("Play/Pause"), _("Play/Pause"), null);
-		previous = new Gtk.Action("previous", _("Previous"), _("Previous"), null);
-		lastfm_ban = new Gtk.Action("lastfm_ban", _("Ban"), _("Love"), null);
-		lastfm_love = new Gtk.Action("lastfm_love", _("Love"), _("Love"), null);
-		show_duplicates = new Gtk.Action("show_duplicates", _("Show Duplicates"), _("Show Duplicates"), null);
-		hide_duplicates = new Gtk.Action("hide_duplicates", _("Hide Duplicates"), _("Hide Duplicates"), null);
-		exit = new Gtk.Action("exit", _("Exit"), _("Exit"), null);
+		group = new SimpleActionGroup();
+		create_playlist = add("create_playlist", _("Create Playlist"));
+		create_smart_playlist = add("create_smart_playlist", _("Create Smart Playlist"));
+		import_playlist = add("import_playlist", _("Import Playlist"));
+		import_station = add("import_station", _("Import Station"));
+		add_podcast_feed = add("add_podcast_feed", _("Add RSS Feed"));
+		refresh_podcasts = add("refresh_podcasts", _("Download new Episodes"));
+		show_preferences = add("show_preferences", _("Preferences"));
+		show_equalizer = add("show_equalizer", _("Equalizer"));
+		next = add("next", _("Next"));
+		play_pause = add("play_pause", _("Play/Pause"));
+		previous = add("previous", _("Previous"));
+		lastfm_ban = add("lastfm_ban", _("Ban"));
+		lastfm_love = add("lastfm_love", _("Love"));
+		show_duplicates = add("show_duplicates", _("Show Duplicates"));
+		hide_duplicates = add("hide_duplicates", _("Hide Duplicates"));
+		exit = add("exit", _("Exit"));
 		
-		create_playlist.set_gicon(App.icons.PLAYLIST.get_gicon());
-		create_smart_playlist.set_gicon(App.icons.SMART_PLAYLIST.get_gicon());
-		show_preferences.set_icon_name("preferences-system");
-		show_duplicates.set_icon_name("edit-copy");
-		hide_duplicates.set_icon_name("edit-copy");
-		lastfm_ban.set_gicon(App.icons.LASTFM_BAN.get_gicon());
-		lastfm_love.set_gicon(App.icons.LASTFM_LOVE.get_gicon());
-		
-		show_equalizer.set_sensitive(true);
-		
-		show_duplicates.set_visible(true);
-		hide_duplicates.set_visible(false);
+		// these two take turns: only the enabled one is shown
+		show_duplicates.set_data<bool>("hide-when-disabled", true);
+		hide_duplicates.set_data<bool>("hide-when-disabled", true);
+		hide_duplicates.set_enabled(false);
 		
 		create_playlist.activate.connect(create_playlist_activate);
 		create_smart_playlist.activate.connect(create_smart_playlist_activate);
@@ -86,11 +87,16 @@ public class BeatBox.Actions : BeatBox.ActionsInterface {
 		exit.activate.connect(exit_activate);
 		
 		App.playback.media_played.connect(media_played);
-		App.playback.playback_played.connect(playback_played);
-		App.playback.playback_paused.connect(playback_paused);
 		App.playback.playback_stopped.connect(playback_stopped);
 		App.operations.operation_started.connect(operation_started);
 		App.operations.operation_finished.connect(operation_finished);
+	}
+	
+	public override Gtk.MenuItem menu_item(SimpleAction action) {
+		var item = new Gtk.MenuItem.with_label(action.get_data<string>("label"));
+		item.activate.connect(() => action.activate(null));
+		action.bind_property("enabled", item, action.get_data<bool>("hide-when-disabled") ? "visible" : "sensitive", BindingFlags.SYNC_CREATE);
+		return item;
 	}
 	
 	private void create_playlist_activate() {
@@ -238,16 +244,16 @@ public class BeatBox.Actions : BeatBox.ActionsInterface {
 		App.window.add_view(duplicates_view);
 		App.window.set_active_view(duplicates_view);
 		
-		show_duplicates.set_visible(false);
-		hide_duplicates.set_visible(true);
+		show_duplicates.set_enabled(false);
+		hide_duplicates.set_enabled(true);
 	}
 	
 	private void hide_duplicates_activate() {
 		App.window.remove_view(duplicates_view);
 		
 		duplicates_view = null;
-		show_duplicates.set_visible(true);
-		hide_duplicates.set_visible(false);
+		show_duplicates.set_enabled(true);
+		hide_duplicates.set_enabled(false);
 	}
 	
 	private void exit_activate() {
@@ -258,39 +264,29 @@ public class BeatBox.Actions : BeatBox.ActionsInterface {
 	void media_played(Media m, Media? old) {
 		var lastfm_elements_visible = App.settings.lastfm.session_key != "";
 		// TODO: Listen to lastfm login event
-		lastfm_ban.set_sensitive(lastfm_elements_visible);
-		lastfm_love.set_sensitive(lastfm_elements_visible);
-	}
-	
-	void playback_played() {
-		play_pause.set_label(_("Pause")); // TODO: Set image, description
-	}
-	
-	void playback_paused() {
-		play_pause.set_label(_("Play")); // TODO Set image, description
+		lastfm_ban.set_enabled(lastfm_elements_visible);
+		lastfm_love.set_enabled(lastfm_elements_visible);
 	}
 	
 	void playback_stopped(Media? was_playing) {
-		playback_paused();
-		
-		lastfm_ban.set_sensitive(false);
-		lastfm_love.set_sensitive(false);
+		lastfm_ban.set_enabled(false);
+		lastfm_love.set_enabled(false);
 	}
 	
 	void operation_started() {
-		import_playlist.set_sensitive(false);
-		import_station.set_sensitive(false);
-		add_podcast_feed.set_sensitive(false);
-		refresh_podcasts.set_sensitive(false);
+		import_playlist.set_enabled(false);
+		import_station.set_enabled(false);
+		add_podcast_feed.set_enabled(false);
+		refresh_podcasts.set_enabled(false);
 	}
 	
 	void operation_finished() {
 		bool folderSet = (App.settings.main.music_folder != "");
 		
-		import_playlist.set_sensitive(folderSet);
-		import_station.set_sensitive(true);
-		add_podcast_feed.set_sensitive(true);
-		refresh_podcasts.set_sensitive(true);
+		import_playlist.set_enabled(folderSet);
+		import_station.set_enabled(true);
+		add_podcast_feed.set_enabled(true);
+		refresh_podcasts.set_enabled(true);
 	}
 	
 	private void import_playlist_or_station(string to_import) {

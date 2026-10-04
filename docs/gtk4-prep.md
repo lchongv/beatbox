@@ -65,8 +65,11 @@ Total fases 1–8: ~20–25 h. Fase 9: +8 h.
 
 ## Estado
 - [x] Fases 1, 2, 3 y 6 (commit 00e5fd9): 214 → 121 avisos.
-- [ ] Fase 4 (Gtk.Action, 51 avisos) — siguiente.
-- [ ] Fase 5 (Menu.popup, 13).
+- [x] Fases 4 y 5: 121 → 56 avisos. Las acciones son `SimpleAction` en
+      `App.actions.group` ("bb.<nombre>"); `App.actions.menu_item(a)` crea la
+      entrada de menú (gris si la acción está deshabilitada; los duplicados se
+      ocultan). EmbeddedAlert perdió los botones de acción (nadie los usaba).
+      Menús con `popup_at_pointer`/`popup_at_widget`. Queda pasar a `GMenu` + `Popover`.
 - [ ] Fase 7: pospuesta. Cambiar `info.get_tags()` por las etiquetas de cada
       stream puede perder metadatos al importar; probar con una biblioteca real primero.
 - [ ] Fase 8, 9.

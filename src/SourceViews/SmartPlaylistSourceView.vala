@@ -131,7 +131,7 @@ public class BeatBox.SmartPlaylistSourceView : SourceView {
 	}
 	
 	protected override void set_default_warning () {
-		error_box.set_alert (_("No Media"), _("No media fits this smart playlist's rules. To edit its rules, right click on it in the sidebar and choose \"Edit\"."), null, true, Gtk.MessageType.INFO);
+		error_box.set_alert (_("No Media"), _("No media fits this smart playlist's rules. To edit its rules, right click on it in the sidebar and choose \"Edit\"."), true, Gtk.MessageType.INFO);
 	}
 	
 	/** Specific implementations for View interface **/
