@@ -106,6 +106,7 @@ public class BeatBox.PreferencesWindow : Gtk.Window {
 		add_section(behavior_pref);
 		add_section(new AppearancePreferences());
 		add_section(new CoverPreferences());
+		add_section(new ShortcutsPreferences());
 		add_section(new LastfmPreferences());
 		add_section(new AboutPreferences());
 		
