@@ -224,6 +224,7 @@ public class BeatBox.Settings {
         public string[] generic_miller_visible_columns { get; set; }
         public Position miller_columns_position { get; set; }
         public string[] queue { get; set; }  // media ids, restored at startup
+        public bool mini_player { get; set; } // the window was in mini player mode
 
         public SavedState () {
             window_width = 1100;
@@ -263,6 +264,7 @@ public class BeatBox.Settings {
         public string skin { get; set; }
         public bool lcd_two_lines { get; set; }
         public bool lcd_show_cover { get; set; }
+        public bool mini_keep_above { get; set; }    // the mini player stays above other windows
         public bool lcd_lyrics { get; set; }         // synced lyrics from lrclib.net on the second line
         public int lcd_alternate_seconds { get; set; } // artist, then album, then artist...
         public int lcd_transition_ms { get; set; }   // second LCD line sliding up

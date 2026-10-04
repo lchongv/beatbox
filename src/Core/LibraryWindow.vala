@@ -62,6 +62,7 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 	ToolItem viewSelectorBin;
 	ToolItem searchFieldBin;
 	bool mini = false; // mini player: only the toolbar (controls and LCD) is left
+	bool maximized_before_mini = false;
 	Notebook all_views { get; private set; } // mainViews, songInfo, possibly video later on
 	public Notebook mainViews { get; private set; }
 	public Gtk.Paned sourcesToMedias { get; private set; } //allows for draggable
@@ -202,6 +203,12 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		
 		App.devices.load_pre_existing_devices();
 		
+		App.settings.main.notify["mini-keep-above"].connect(apply_keep_above);
+		if (App.settings.saved_state.mini_player) {
+			toggle_mini();
+			maximized_before_mini = App.settings.saved_state.window_state == Settings.WindowState.MAXIMIZED;
+		}
+		
 		// Now that the important views are loaded and all widgets are
 		// initialized, we can see that initialization is finished.
 		initializationFinished = true;
@@ -232,7 +239,8 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 
         // set the size based on saved settings
         this.set_default_size (App.settings.saved_state.window_width, App.settings.saved_state.window_height);
-		if(App.settings.saved_state.window_state == Settings.WindowState.MAXIMIZED) {
+		// (starting as mini player: maximized again only when it is left)
+		if(App.settings.saved_state.window_state == Settings.WindowState.MAXIMIZED && !App.settings.saved_state.mini_player) {
 			window_maximized = true;
 			this.maximize();
 		}
@@ -557,15 +565,27 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 	/** Shrinks the window to its toolbar, and back to the saved size */
 	public void toggle_mini() {
 		mini = !mini;
+		App.settings.saved_state.mini_player = mini;
 		verticalBox.visible = viewSelectorBin.visible = searchFieldBin.visible = !mini;
 		height_request = mini ? -1 : 440;
 		if (mini) {
+			maximized_before_mini = window_maximized;
 			if (window_maximized)
 				unmaximize();
 			resize(1, 1); // the toolbar's natural size
 		} else {
-			resize(last_width, last_height);
+			// last_width is only 0 when BeatBox started in mini mode
+			resize(last_width > 0 ? last_width : App.settings.saved_state.window_width,
+			       last_height > 0 ? last_height : App.settings.saved_state.window_height);
+			if (maximized_before_mini)
+				maximize();
 		}
+		apply_keep_above();
+	}
+	
+	/** On Wayland GTK can't do it: there the compositor's window menu offers "Always on Top" */
+	public void apply_keep_above() {
+		set_keep_above(mini && App.settings.main.mini_keep_above);
 	}
 	
 	public void setup_playback() {
@@ -1135,9 +1155,9 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		Notify.uninit ();
 		
 		// Save UI Information
-		if (window_maximized == true)
-		    App.settings.saved_state.window_state = Settings.WindowState.MAXIMIZED;
-		if(!(window_maximized || window_fullscreen)) {
+		bool maximized = mini ? maximized_before_mini : window_maximized;
+		App.settings.saved_state.window_state = maximized ? Settings.WindowState.MAXIMIZED : Settings.WindowState.NORMAL;
+		if(!(window_maximized || window_fullscreen) && last_width > 0) {
 			// The allocation is already gone during destroy: use the last known size
 			App.settings.saved_state.window_width = last_width;
 			App.settings.saved_state.window_height = last_height;
