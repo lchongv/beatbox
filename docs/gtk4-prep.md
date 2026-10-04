@@ -62,3 +62,24 @@ TreeView/CellRenderer → ColumnView, IconView → GridView, drag & drop,
 Granite 6 → 7, revisión de CSS de skins.
 
 Total fases 1–8: ~20–25 h. Fase 9: +8 h.
+
+## Estado
+- [x] Fases 1, 2, 3 y 6 (commit 00e5fd9): 214 → 121 avisos.
+- [ ] Fase 4 (Gtk.Action, 51 avisos) — siguiente.
+- [ ] Fase 5 (Menu.popup, 13).
+- [ ] Fase 7: pospuesta. Cambiar `info.get_tags()` por las etiquetas de cada
+      stream puede perder metadatos al importar; probar con una biblioteca real primero.
+- [ ] Fase 8, 9.
+- Quedan además: Granite.Application (se va con Granite 7), Gdk.X11Window del
+  video (en GTK4 se usa gtk4paintablesink), CDRipper `format_get_by_nick`.
+
+# Hoja de ruta 0.9
+1. Reproducción sin cortes (gapless) + ReplayGain + crossfade.
+2. Letras sincronizadas (LRCLIB) en el LCD.
+3. Mini reproductor.
+4. Cola de reproducción visible y editable.
+5. Vigilar carpetas (importar/mover automáticamente), duplicados, edición por lotes, portada embebida.
+6. Scrobbling Last.fm / ListenBrainz.
+7. Atajos configurables, notificaciones con portada.
+8. Ecualizador revisado.
+9. Paquete Flatpak/AppImage.
