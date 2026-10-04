@@ -2291,3 +2291,9 @@ msgstr "Normalizar el volumen (ReplayGain):"
 
 msgid "from the next song"
 msgstr "desde la próxima canción"
+
+msgid "Show synced lyrics on the second line when available (lrclib.net)"
+msgstr "Mostrar la letra sincronizada en la segunda línea cuando exista (lrclib.net)"
+
+msgid "Lyrics: %s"
+msgstr "Letras: %s"

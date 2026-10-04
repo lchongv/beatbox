@@ -145,6 +145,9 @@ public class BeatBox.AppearancePreferences : SimplePreferences {
 		lcdLines.changed.connect(() => { App.settings.main.lcd_two_lines = (lcdLines.active_id == "two"); });
 		add_row(labelled(_("Song information in the LCD:"), lcdLines));
 		
+		var lyrics = add_check(_("Show synced lyrics on the second line when available (lrclib.net)"), App.settings.main.lcd_lyrics);
+		lyrics.toggled.connect(() => { App.settings.main.lcd_lyrics = lyrics.active; });
+		
 		var lcdCover = add_check(_("Show the album cover at the left edge of the LCD"), App.settings.main.lcd_show_cover);
 		lcdCover.toggled.connect(() => { App.settings.main.lcd_show_cover = lcdCover.active; });
 		
@@ -237,6 +240,7 @@ public class BeatBox.AboutPreferences : SimplePreferences {
 		add_row(text(_("Internet radio stations: %s").printf(link("https://www.radio-browser.info", "radio-browser.info"))
 		             + "\n" + _("Podcasts: %s").printf(link("https://podcasts.apple.com", "Apple Podcasts"))
 		             + "\n" + _("Album art: %s, with %s as fallback").printf(link("https://musicbrainz.org", "MusicBrainz") + " / " + link("https://coverartarchive.org", "Cover Art Archive"), link("https://music.apple.com", "Apple Music"))
+		             + "\n" + _("Lyrics: %s").printf(link("https://lrclib.net", "LRCLIB"))
 		             + "\n" + _("Scrobbling: %s").printf(link("https://www.last.fm", "Last.fm")), true));
 		
 		add_heading(_("License"));

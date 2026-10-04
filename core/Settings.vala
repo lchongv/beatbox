@@ -260,6 +260,7 @@ public class BeatBox.Settings {
         public string skin { get; set; }
         public bool lcd_two_lines { get; set; }
         public bool lcd_show_cover { get; set; }
+        public bool lcd_lyrics { get; set; }         // synced lyrics from lrclib.net on the second line
         public int lcd_alternate_seconds { get; set; } // artist, then album, then artist...
         public int lcd_transition_ms { get; set; }   // second LCD line sliding up
         public int lcd_track_width { get; set; }     // px, the groove of the position bar
@@ -275,6 +276,7 @@ public class BeatBox.Settings {
             search_string = "";
             skin = "";
             lcd_two_lines = true;
+            lcd_lyrics = true;
             lcd_alternate_seconds = 3;
             lcd_transition_ms = 600;
             lcd_track_width = 6;

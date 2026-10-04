@@ -75,7 +75,7 @@ Total fases 1–8: ~20–25 h. Fase 9: +8 h.
 
 # Hoja de ruta 0.9
 1. [x] Reproducción sin cortes (ya existía; verificada) + ReplayGain (Preferencias › Comportamiento). Crossfade: pendiente, requiere dos playbin.
-2. Letras sincronizadas (LRCLIB) en el LCD.
+2. [x] Letras sincronizadas (LRCLIB) en la segunda línea del LCD; caché en ~/.cache/beatbox/lyrics (Preferencias › Apariencia).
 3. Mini reproductor.
 4. Cola de reproducción visible y editable.
 5. Vigilar carpetas (importar/mover automáticamente), duplicados, edición por lotes, portada embebida.

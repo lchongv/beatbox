@@ -2,9 +2,9 @@ namespace BeatBox.Http {
 	Soup.Session new_session (string url) {
 		var session = new Soup.Session ();
 		session.timeout = 30;
-		// MusicBrainz and radio-browser.info ask clients to identify themselves;
+		// MusicBrainz, radio-browser.info and lrclib.net ask clients to identify themselves;
 		// Apple, on the other hand, answers ~5 s later to unknown user agents
-		if ("musicbrainz.org" in url || "radio-browser.info" in url)
+		if ("musicbrainz.org" in url || "radio-browser.info" in url || "lrclib.net" in url)
 			session.user_agent = "BeatBox/" + Build.VERSION + " ( https://launchpad.net/beat-box )";
 		return session;
 	}
