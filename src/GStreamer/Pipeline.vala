@@ -147,4 +147,19 @@ public class BeatBox.Pipeline : GLib.Object {
 	public int videoStreamCount() {
 		return playbin.n_video;
 	}
+	
+	// set by Streamer, which listens to this pipeline (two of them during a crossfade)
+	public uint bus_watch = 0;
+	public ulong about_to_finish_handler = 0;
+	
+	/** The same equalizer settings as other (the next song in a crossfade) */
+	public void copy_equalizer_from(Pipeline other) {
+		if(eq.element == null || other.eq.element == null)
+			return;
+		for(int i = 0; i < 10; i++) {
+			double gain;
+			((Gst.ChildProxy)other.eq.element).get_child_by_index(i).get("gain", out gain);
+			((Gst.ChildProxy)eq.element).get_child_by_index(i).set("gain", gain);
+		}
+	}
 }

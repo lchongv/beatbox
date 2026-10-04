@@ -93,6 +93,11 @@ public class BeatBox.BehaviorPreferences : SimplePreferences {
 		rg.active_id = App.settings.equalizer.replaygain.to_string();
 		rg.changed.connect(() => { App.settings.equalizer.replaygain = int.parse(rg.active_id); });
 		add_row(labelled(_("Volume normalization (ReplayGain):"), rg, _("from the next song")));
+		
+		var crossfade = new SpinButton.with_range(0, 12, 1);
+		crossfade.value = App.settings.main.crossfade_seconds;
+		crossfade.value_changed.connect(() => { App.settings.main.crossfade_seconds = (int)crossfade.value; });
+		add_row(labelled(_("Crossfade between songs:"), crossfade, _("seconds (0: none, songs follow without a gap)")));
 	}
 }
 

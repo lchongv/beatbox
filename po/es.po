@@ -2495,3 +2495,9 @@ msgstr "Rock suave"
 
 msgid "Techno"
 msgstr "Techno"
+
+msgid "Crossfade between songs:"
+msgstr "Fundido entre canciones:"
+
+msgid "seconds (0: none, songs follow without a gap)"
+msgstr "segundos (0: sin fundido, una canción sigue a la otra sin pausa)"
