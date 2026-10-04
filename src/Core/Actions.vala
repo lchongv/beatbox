@@ -201,8 +201,11 @@ public class BeatBox.Actions : BeatBox.ActionsInterface {
 	}
 	
 	public override void destroy_equalizer() {
-		eq.destroy();
+		if(eq == null)
+			return;
+		var window = eq;
 		eq = null;
+		window.destroy();
 	}
 	
 	private void next_activate() {

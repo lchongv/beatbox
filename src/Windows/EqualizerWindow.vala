@@ -324,7 +324,7 @@ public class BeatBox.EqualizerWindow : Gtk.Window {
 			in_transition = true;
 			Timeout.add (ANIMATION_TIMEOUT, transition_scales);
 			save_presets ();
-			App.playback.change_gains_thread ();
+			App.playback.apply_equalizer_preset ();
 		}
 		else {
 			set_target_levels ();
@@ -448,6 +448,8 @@ public class BeatBox.EqualizerWindow : Gtk.Window {
 	}
 
 	void on_quit () {
+		if (closing) // "Done" destroys the window, and destroying it calls this again
+			return;
 		closing = true;
 
 		if (in_transition)

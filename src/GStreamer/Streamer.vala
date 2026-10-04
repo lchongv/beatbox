@@ -181,14 +181,6 @@ public class BeatBox.Streamer : GLib.Object {
 	}
 	
 	/* Extra stuff */
-	public void enableEqualizer() {
-		pipe.enableEqualizer();
-	}
-	
-	public void disableEqualizer() {
-		pipe.disableEqualizer();
-	}
-	
 	public void setEqualizerGain(int index, int val) {
 		pipe.eq.setGain(index, val);
 	}

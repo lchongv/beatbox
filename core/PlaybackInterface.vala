@@ -113,6 +113,6 @@ public interface BeatBox.PlaybackInterface : GLib.Object {
 	public abstract LinkedList<Media> history();
 	
 	// Equalizer
-	public abstract void* change_gains_thread();
+	public abstract void apply_equalizer_preset();
 	public abstract void setEqualizerGain(int index, int val);
 }

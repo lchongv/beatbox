@@ -631,12 +631,7 @@ public class BeatBox.PlaybackManager : GLib.Object, BeatBox.PlaybackInterface {
 		if(media_active) {
 			Media m = current_media;
 			
-			try {
-				new Thread<void*>.try (null, change_gains_thread);
-			}
-			catch(Error err) {
-				warning("Could not create thread to change gains: %s\n", err.message);
-			}
+			apply_equalizer_preset();
 			
 			// potentially fix media length 
 			int player_duration = (int)(player.getDuration()/1000000000);
@@ -744,53 +739,29 @@ public class BeatBox.PlaybackManager : GLib.Object, BeatBox.PlaybackInterface {
 	}
 	
 	/********************* Equalizer ************************/
-	// Currently, this is public because EqualizerWindow needs it
-	public void* change_gains_thread () {
-		if(App.settings.equalizer.equalizer_enabled) {
-			bool automatic_enabled = App.settings.equalizer.auto_switch_preset;
-			string selected_preset = App.settings.equalizer.selected_preset;
-
-			foreach(var p in App.settings.equalizer.getDefaultPresets ()) {
-				if(p != null && media_active)  {
-					var preset_name = p.name.down ();
-					var media_genre = current_media.genre.down();
-
-					bool match_genre = (preset_name in media_genre) || (media_genre in preset_name);
-
-					if ( (automatic_enabled && match_genre) ||
-					     (!automatic_enabled && p.name == selected_preset))
-					{
-						for(int i = 0; i < 10; ++i)
-							player.setEqualizerGain(i, p.getGain(i));
-					
-						return null;
-					}
-				}
-			}
-
-			foreach(var p in App.settings.equalizer.getCustomPresets ()) {
-				if(p != null && media_active)  {
-					var preset_name = p.name.down ();
-					var media_genre = current_media.genre.down();
-
-					bool match_genre = (preset_name in media_genre) || (media_genre in preset_name);
-
-					if ( (automatic_enabled && match_genre) ||
-					     (!automatic_enabled && p.name == selected_preset))
-					{
-						for(int i = 0; i < 10; ++i)
-							player.setEqualizerGain(i, p.getGain(i));
-					
-						return null;
-					}
+	/** The chosen preset, or in automatic mode the one named like the song's genre (else flat) */
+	public void apply_equalizer_preset() {
+		EqualizerPreset? chosen = null;
+		if(App.settings.equalizer.equalizer_enabled && media_active) {
+			bool automatic = App.settings.equalizer.auto_switch_preset;
+			string genre = current_media.genre.down().strip();
+			var presets = new LinkedList<EqualizerPreset>();
+			presets.add_all(App.settings.equalizer.getDefaultPresets());
+			presets.add_all(App.settings.equalizer.getCustomPresets());
+			foreach(var p in presets) {
+				if(p == null)
+					continue;
+				string name = p.name.down();
+				// (an empty genre is "in" every name: it must not pick the first preset)
+				bool genre_matches = genre != "" && (name in genre || genre in name);
+				if(automatic ? genre_matches : p.name == App.settings.equalizer.selected_preset) {
+					chosen = p;
+					break;
 				}
 			}
 		}
-
-		for (int i = 0; i < 10; ++i)
-			player.setEqualizerGain(i, 0);		
-		
-		return null;
+		for(int i = 0; i < 10; ++i)
+			player.setEqualizerGain(i, chosen != null ? chosen.getGain(i) : 0);
 	}
 	
 	public void setEqualizerGain(int index, int val) {

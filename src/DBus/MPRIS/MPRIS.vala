@@ -575,7 +575,10 @@ public class BeatBox.MprisPlayer : GLib.Object {
 	}
 	
 	public void OpenUri(string Uri) throws GLib.Error {
-		
+		var file = File.new_for_uri(Uri);
+		if(!file.is_native() || !file.query_exists())
+			throw new DBusError.INVALID_ARGS("BeatBox can only open local files: %s", Uri);
+		GLib.Application.get_default().open({ file }, ""); // as if given on the command line
 	}
 }
 
