@@ -1,4 +1,4 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12">
-  <!-- wide rounded top tapering to a point, like the playhead of old players -->
-  <path d="M2.2 0.5 H9.8 Q11.5 0.5 11.5 2.2 V5.2 L6 11.5 L0.5 5.2 V2.2 Q0.5 0.5 2.2 0.5 Z" fill="#1c1f25"/>
+  <!-- a goblet: the bowl above the track, the stem on it, the foot below -->
+  <path d="M1.5 0.3 H10.5 Q10.5 4.6 6.8 5.3 V9.6 Q9.2 10.1 9.6 11.7 H2.4 Q2.8 10.1 5.2 9.6 V5.3 Q1.5 4.6 1.5 0.3 Z" fill="#1c1f25"/>
 </svg>

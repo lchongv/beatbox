@@ -97,6 +97,10 @@ public interface BeatBox.PlaybackInterface : GLib.Object {
 	public abstract void clear_queue();
 	public abstract void queue_medias(Collection<Media> medias);
 	public abstract void unqueue_media(Media m);
+	/** Puts the medias at the front of the queue, in their order */
+	public abstract void queue_medias_next(Collection<Media> medias);
+	/** Moves a queued media by delta places (negative: towards the front) */
+	public abstract void move_in_queue(Media m, int delta);
 	public abstract Media peek_queue();
 	public abstract Media poll_queue();
 	public abstract LinkedList<Media> queue();

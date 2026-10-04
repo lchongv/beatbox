@@ -52,6 +52,10 @@ public class BeatBox.MusicList : GenericList {
 	Gtk.MenuItem mediaEditMedia;
 	Gtk.MenuItem mediaFileBrowse;
 	Gtk.MenuItem mediaMenuQueue;
+	Gtk.MenuItem mediaMenuPlayNext;
+	Gtk.MenuItem queueMoveUp;
+	Gtk.MenuItem queueMoveDown;
+	Gtk.MenuItem queueClear;
 	Gtk.MenuItem mediaMenuNewPlaylist;
 	Gtk.MenuItem mediaMenuAddToPlaylist; // make menu on fly
 	RatingMenuItem mediaRateMedia;
@@ -95,6 +99,8 @@ public class BeatBox.MusicList : GenericList {
 
 	public override void update_sensitivities() {
 		mediaMenuActionMenu.show_all();
+		bool in_queue = get_hint() == TreeViewSetup.Hint.QUEUE;
+		queueMoveUp.visible = queueMoveDown.visible = queueClear.visible = in_queue;
 
 		if(get_hint() == TreeViewSetup.Hint.MUSIC) {
 			mediaRemove.set_visible(true);
@@ -111,6 +117,7 @@ public class BeatBox.MusicList : GenericList {
 			mediaRemove.set_visible(true);
 			mediaRemove.set_label(_("Remove from Queue"));
 			mediaMenuQueue.set_visible(false);
+			mediaMenuPlayNext.set_visible(false);
 			importToLibrary.set_visible(false);
 		}
 		else if(get_hint() == TreeViewSetup.Hint.HISTORY) {
@@ -130,6 +137,7 @@ public class BeatBox.MusicList : GenericList {
 			mediaRemove.set_visible(true);
 			mediaRemove.set_label(_("Remove from Device"));
 			mediaMenuQueue.set_visible(false);
+			mediaMenuPlayNext.set_visible(false);
 			importToLibrary.set_visible(true);
 			mediaMenuAddToPlaylist.set_visible(false);
 			mediaMenuNewPlaylist.set_visible(false);
@@ -210,6 +218,10 @@ public class BeatBox.MusicList : GenericList {
 		mediaEditMedia = new Gtk.MenuItem.with_label(_("Edit Song Info"));
 		mediaFileBrowse = new Gtk.MenuItem.with_label(_("Show in File Browser"));
 		mediaMenuQueue = new Gtk.MenuItem.with_label(_("Queue"));
+		mediaMenuPlayNext = new Gtk.MenuItem.with_label(_("Play Next"));
+		queueMoveUp = new Gtk.MenuItem.with_label(_("Move Up"));
+		queueMoveDown = new Gtk.MenuItem.with_label(_("Move Down"));
+		queueClear = new Gtk.MenuItem.with_label(_("Clear Queue"));
 		mediaMenuNewPlaylist = new Gtk.MenuItem.with_label(_("New Playlist"));
 		mediaMenuAddToPlaylist = new Gtk.MenuItem.with_label(_("Add to Playlist"));
 		mediaRemove = new Gtk.MenuItem.with_label(_("Remove Song"));
@@ -221,12 +233,16 @@ public class BeatBox.MusicList : GenericList {
 		mediaMenuActionMenu.append(mediaRateMedia);
 		mediaMenuActionMenu.append(new SeparatorMenuItem());
 		mediaMenuActionMenu.append(mediaMenuQueue);
+		mediaMenuActionMenu.append(mediaMenuPlayNext);
+		mediaMenuActionMenu.append(queueMoveUp);
+		mediaMenuActionMenu.append(queueMoveDown);
 		mediaMenuActionMenu.append(mediaMenuNewPlaylist);
 		mediaMenuActionMenu.append(mediaMenuAddToPlaylist);
 		if(tvs.get_hint() != TreeViewSetup.Hint.DEVICE_AUDIO && tvs.get_hint() != TreeViewSetup.Hint.SMART_PLAYLIST) {
 			mediaMenuActionMenu.append(new SeparatorMenuItem());
 		}
 		mediaMenuActionMenu.append(mediaRemove);
+		mediaMenuActionMenu.append(queueClear);
 		mediaMenuActionMenu.append(importToLibrary);
 		if(tvs.get_hint() != TreeViewSetup.Hint.CDROM) {
 			mediaMenuActionMenu.append(new SeparatorMenuItem());
@@ -235,6 +251,10 @@ public class BeatBox.MusicList : GenericList {
 		mediaEditMedia.activate.connect(mediaMenuEditClicked);
 		mediaFileBrowse.activate.connect(mediaFileBrowseClicked);
 		mediaMenuQueue.activate.connect(mediaMenuQueueClicked);
+		mediaMenuPlayNext.activate.connect(() => { App.playback.queue_medias_next(selected_list()); });
+		queueMoveUp.activate.connect(() => move_selected_in_queue(-1));
+		queueMoveDown.activate.connect(() => move_selected_in_queue(1));
+		queueClear.activate.connect(() => App.playback.clear_queue());
 		mediaMenuNewPlaylist.activate.connect(mediaMenuNewPlaylistClicked);
 		mediaRemove.activate.connect(mediaRemoveClicked);
 		importToLibrary.activate.connect(importToLibraryClicked);
@@ -586,6 +606,24 @@ public class BeatBox.MusicList : GenericList {
 		App.library.update_medias(los, false, true, true);
 	}
 
+	Gee.ArrayList<Media> selected_list() {
+		var selected = new Gee.ArrayList<Media>();
+		foreach(Media m in get_selected_medias())
+			selected.add(m);
+		return selected;
+	}
+	
+	void move_selected_in_queue(int delta) {
+		var selected = selected_list();
+		// moving down: the last one first, so they don't jump over each other
+		if(delta > 0)
+			for(int i = selected.size - 1; i >= 0; i--)
+				App.playback.move_in_queue(selected[i], delta);
+		else
+			foreach(var m in selected)
+				App.playback.move_in_queue(m, delta);
+	}
+	
 	void mediaRemoveClicked() {
 		LinkedList<Media> toRemove = new LinkedList<Media>();
 		
