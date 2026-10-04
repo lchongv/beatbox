@@ -1,4 +1,4 @@
-project('beatbox', 'vala', 'c', version: '0.9.12')
+project('beatbox', 'vala', 'c', version: '0.9.13')
 
 gnome = import('gnome')
 i18n = import('i18n')
@@ -23,6 +23,7 @@ add_project_arguments('-DGETTEXT_PACKAGE="beatbox"', '-w', language: 'c')
 add_project_arguments('--vapidir=' + meson.current_source_dir() / 'vapi', '--target-glib=2.56', language: 'vala')
 
 valac = meson.get_compiler('vala')
+taglib_dep = dependency('taglib_c')
 deps = [
   dependency('glib-2.0'),
   dependency('gio-2.0'),
@@ -34,7 +35,7 @@ deps = [
   dependency('gstreamer-pbutils-1.0'),
   dependency('gstreamer-video-1.0'),
   dependency('gstreamer-tag-1.0'),
-  dependency('taglib_c'),
+  taglib_dep,
   dependency('libxml-2.0'),
   dependency('libnotify'),
   dependency('libsoup-3.0'),
@@ -147,6 +148,7 @@ app_sources = files(
   'src/Core/LyricsManager.vala',
   'src/Core/Skins.vala',
   'src/Core/FolderWatcher.vala',
+  'src/Core/CoverEmbedder.vala',
   'src/Core/Launcher.vala',
   'src/CellRenderers/SideBarRenderer.vala',
   'src/CellRenderers/SmartAlbumDataFunc.vala',
@@ -260,8 +262,17 @@ resources = gnome.compile_resources('beatbox-resources', 'data/beatbox.gresource
 icon_resources = gnome.compile_resources('beatbox-icons', 'images/icons.gresource.xml', source_dir: 'images')
 skin_resources = gnome.compile_resources('beatbox-skins', 'skins/skins.gresource.xml', source_dir: 'skins')
 
-executable('beatbox', app_sources, resources, icon_resources, skin_resources,
+# Writing album art into files needs TagLib's complex properties (TagLib 2.0)
+embed_cover_sources = []
+app_vala_args = []
+if taglib_dep.version().version_compare('>= 2.0')
+  embed_cover_sources = files('src/C/embed-cover.c')
+  app_vala_args += ['-D', 'HAVE_EMBED_COVER']
+endif
+
+executable('beatbox', app_sources, embed_cover_sources, resources, icon_resources, skin_resources,
   dependencies: core_dep,
+  vala_args: app_vala_args,
   install_rpath: prefix / get_option('libdir'),
   export_dynamic: true,
   install: true)

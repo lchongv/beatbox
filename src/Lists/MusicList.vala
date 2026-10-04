@@ -56,6 +56,7 @@ public class BeatBox.MusicList : GenericList {
 	Gtk.MenuItem queueMoveUp;
 	Gtk.MenuItem queueMoveDown;
 	Gtk.MenuItem queueClear;
+	Gtk.MenuItem saveArtInFiles;
 	Gtk.MenuItem mediaMenuNewPlaylist;
 	Gtk.MenuItem mediaMenuAddToPlaylist; // make menu on fly
 	RatingMenuItem mediaRateMedia;
@@ -100,6 +101,8 @@ public class BeatBox.MusicList : GenericList {
 	public override void update_sensitivities() {
 		mediaMenuActionMenu.show_all();
 		bool in_queue = get_hint() == TreeViewSetup.Hint.QUEUE;
+		// files on a device or a CD aren't BeatBox's to change
+		saveArtInFiles.visible = CoverEmbedder.available() && get_hint() != TreeViewSetup.Hint.DEVICE_AUDIO && get_hint() != TreeViewSetup.Hint.CDROM;
 		queueMoveUp.visible = queueMoveDown.visible = queueClear.visible = in_queue;
 
 		if(get_hint() == TreeViewSetup.Hint.MUSIC) {
@@ -222,6 +225,7 @@ public class BeatBox.MusicList : GenericList {
 		queueMoveUp = new Gtk.MenuItem.with_label(_("Move Up"));
 		queueMoveDown = new Gtk.MenuItem.with_label(_("Move Down"));
 		queueClear = new Gtk.MenuItem.with_label(_("Clear Queue"));
+		saveArtInFiles = new Gtk.MenuItem.with_label(_("Save Album Art into the Files"));
 		mediaMenuNewPlaylist = new Gtk.MenuItem.with_label(_("New Playlist"));
 		mediaMenuAddToPlaylist = new Gtk.MenuItem.with_label(_("Add to Playlist"));
 		mediaRemove = new Gtk.MenuItem.with_label(_("Remove Song"));
@@ -230,6 +234,7 @@ public class BeatBox.MusicList : GenericList {
 		mediaRateMedia = new RatingMenuItem();
 		mediaMenuActionMenu.append(mediaEditMedia);
 		mediaMenuActionMenu.append(mediaFileBrowse);
+		mediaMenuActionMenu.append(saveArtInFiles);
 		mediaMenuActionMenu.append(mediaRateMedia);
 		mediaMenuActionMenu.append(new SeparatorMenuItem());
 		mediaMenuActionMenu.append(mediaMenuQueue);
@@ -257,6 +262,7 @@ public class BeatBox.MusicList : GenericList {
 		queueMoveUp.activate.connect(() => move_selected_in_queue(-1));
 		queueMoveDown.activate.connect(() => move_selected_in_queue(1));
 		queueClear.activate.connect(() => App.playback.clear_queue());
+		saveArtInFiles.activate.connect(save_art_in_files);
 		mediaMenuNewPlaylist.activate.connect(mediaMenuNewPlaylistClicked);
 		mediaRemove.activate.connect(mediaRemoveClicked);
 		importToLibrary.activate.connect(importToLibraryClicked);
@@ -613,6 +619,16 @@ public class BeatBox.MusicList : GenericList {
 		foreach(Media m in get_selected_medias())
 			selected.add(m);
 		return selected;
+	}
+	
+	void save_art_in_files() {
+		CoverEmbedder.embed(selected_list(), (written, failed) => {
+			if(failed > 0)
+				App.window.doAlert(_("Album art not saved"), ngettext("%d file could not be changed (it may be read-only, or of a kind that has no room for pictures).",
+				                                                       "%d files could not be changed (they may be read-only, or of a kind that has no room for pictures).", failed).printf(failed));
+			else if(written > 0)
+				App.window.show_notification(_("Album art saved"), ngettext("Written into %d file", "Written into %d files", written).printf(written), null);
+		});
 	}
 	
 	void move_selected_in_queue(int delta) {
