@@ -171,6 +171,24 @@ public class BeatBox.PlaybackManager : GLib.Object, BeatBox.PlaybackInterface {
 		queue_changed();
 	}
 	
+	public void queue_medias_next(Collection<Media> medias) {
+		int i = 0;
+		foreach(Media m in medias) {
+			_queue.remove(m);
+			_queue.insert(i++, m);
+		}
+		queue_changed();
+	}
+	
+	public void move_in_queue(Media m, int delta) {
+		int i = _queue.index_of(m);
+		if(i < 0)
+			return;
+		_queue.remove_at(i);
+		_queue.insert((i + delta).clamp(0, _queue.size), m);
+		queue_changed();
+	}
+	
 	public void unqueue_media(Media m) {
 		_queue.remove(m);
 		queue_changed();

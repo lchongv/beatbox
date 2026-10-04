@@ -2318,3 +2318,15 @@ msgstr "Forma del marcador de posición:"
 
 msgid "Size of the position marker:"
 msgstr "Tamaño del marcador de posición:"
+
+msgid "Play Next"
+msgstr "Reproducir a continuación"
+
+msgid "Move Up"
+msgstr "Subir"
+
+msgid "Move Down"
+msgstr "Bajar"
+
+msgid "Clear Queue"
+msgstr "Vaciar la cola"
