@@ -115,15 +115,19 @@ public class BeatBox.App : Gtk.Application {
 	
 	static Gtk.CssProvider marker_css = new Gtk.CssProvider ();
 	
-	/** Applies the size of the position diamond and the width of its track (Preferences › Appearance) */
+	/** Applies the shape and size of the position marker and the width of its track (Preferences › Appearance) */
 	public static void apply_lcd_style () {
 		int size = settings.main.lcd_marker_size.clamp (6, 28);
+		string shape = settings.main.lcd_marker_shape;
+		if (!(shape in new string[] { "diamond", "circle", "cup" }))
+			shape = "diamond";
 		int track = settings.main.lcd_track_width.clamp (2, 16);
 		try {
 			marker_css.load_from_data (
 				(".lcd scale trough, .lcd scale highlight { min-height: %dpx; }" +
-				 ".lcd scale slider { min-width: %dpx; min-height: %dpx; margin: %dpx %dpx; }")
-				.printf (track, size, size, -(size - track + 2) / 2, -(size - 8) / 2));
+				 ".lcd scale slider { min-width: %dpx; min-height: %dpx; margin: %dpx %dpx;" +
+				 " background-image: url(\"resource:///net/launchpad/beatbox/%s.svg\"); }")
+				.printf (track, size, size, -(size - track + 2) / 2, -(size - 8) / 2, shape));
 		} catch (Error err) {
 			warning ("Could not restyle the position bar: %s", err.message);
 		}

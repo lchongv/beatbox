@@ -165,9 +165,20 @@ public class BeatBox.AppearancePreferences : SimplePreferences {
 		var trackWidth = new SpinButton.with_range(2, 16, 1);
 		trackWidth.value = App.settings.main.lcd_track_width;
 		add_row(labelled(_("Width of the track:"), trackWidth, _("pixels")));
+		var markerShape = new ComboBoxText();
+		markerShape.append("diamond", _("Diamond"));
+		markerShape.append("circle", _("Circle"));
+		markerShape.append("cup", _("Cup"));
+		if (!markerShape.set_active_id(App.settings.main.lcd_marker_shape))
+			markerShape.active_id = "diamond";
+		add_row(labelled(_("Shape of the position marker:"), markerShape));
+		markerShape.changed.connect(() => {
+			App.settings.main.lcd_marker_shape = markerShape.active_id;
+			App.apply_lcd_style(); // live preview
+		});
 		var markerSize = new SpinButton.with_range(6, 28, 1);
 		markerSize.value = App.settings.main.lcd_marker_size;
-		add_row(labelled(_("Size of the position marker (diamond):"), markerSize, _("pixels")));
+		add_row(labelled(_("Size of the position marker:"), markerSize, _("pixels")));
 		trackWidth.value_changed.connect(() => {
 			App.settings.main.lcd_track_width = (int)trackWidth.value;
 			App.apply_lcd_style(); // live preview
