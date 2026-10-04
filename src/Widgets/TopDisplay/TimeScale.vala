@@ -62,6 +62,13 @@ public class BeatBox.TimeScale : Box {
 		
 		left_time.margin_right = 6;
 		right_time.margin_left = 6;
+		// equal-width digits and a width fixed by the song's length, so the
+		// diamond's track doesn't shrink and grow as the seconds tick
+		var digits = new Pango.AttrList ();
+		digits.insert (new Pango.AttrFontFeatures ("tnum"));
+		left_time.attributes = right_time.attributes = digits;
+		left_time.xalign = 1;
+		right_time.xalign = 0;
 		
 		//get_style_context().add_class(Gtk.STYLE_CLASS_PRIMARY_TOOLBAR);
 		//scale.get_style_context().add_provider(style_provider, STYLE_PROVIDER_PRIORITY_APPLICATION);
@@ -176,6 +183,8 @@ public class BeatBox.TimeScale : Box {
 		
 		total_time = minute.to_string() + ":" + ((seconds < 10 ) ? "0" + seconds.to_string() : seconds.to_string());
 		
+		int length = (int)App.playback.current_media.length;
+		left_time.width_chars = right_time.width_chars = "%d:00".printf(length / 60).length + 2; // two spare digits: glyph widths vary
 		left_time.set_text(current_time);
 		right_time.set_text(total_time);
 	}
