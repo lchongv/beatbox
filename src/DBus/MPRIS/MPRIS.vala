@@ -189,11 +189,11 @@ public class BeatBox.MprisRoot : GLib.Object {
 		}
 	}
 
-	public void Quit() {
+	public void Quit() throws GLib.Error {
 		App.window.destroy();
 	}
 	
-	public void Raise() {
+	public void Raise() throws GLib.Error {
 		App.window.present();
 	}
 }
@@ -504,31 +504,31 @@ public class BeatBox.MprisPlayer : GLib.Object {
 	
 	public signal void Seeked(int64 Position);
 	
-	public void Next() {
+	public void Next() throws GLib.Error {
 		App.playback.request_next();
 	}
 	
-	public void Previous() {
+	public void Previous() throws GLib.Error {
 		App.playback.request_previous();
 	}
 	
-	public void Pause() {
+	public void Pause() throws GLib.Error {
 		if(App.playback.playing)
 			App.playback.pause();
 	}
 	
-	public void PlayPause() {
+	public void PlayPause() throws GLib.Error {
 		if(App.playback.playing)
 			App.playback.pause();
 		else
 			App.playback.play();
 	}
 	
-	public void Stop() {
+	public void Stop() throws GLib.Error {
 		App.playback.stop_playback();
 	}
 	
-	public void Play() {
+	public void Play() throws GLib.Error {
 		if(!App.playback.playing)
 			App.playback.play();
 	}
@@ -541,7 +541,7 @@ public class BeatBox.MprisPlayer : GLib.Object {
 	 * 
 	 * @arg Offset		The number of microseconds to seek forward.
 	 */
-	public void Seek(int64 Offset) {
+	public void Seek(int64 Offset) throws GLib.Error {
 		int64 Position = App.playback.get_position() / 1000;
 		Position += Offset;
 		if (Position < 0) {
@@ -567,14 +567,14 @@ public class BeatBox.MprisPlayer : GLib.Object {
 	 * 					call is ignored as "stale". /org/mpris/MediaPlayer2/TrackList/NoTrack is not a valid value for this argument.
 	 * @args Position	Track position in microseconds. This must be between 0 and <track_length>.
 	 */
-	public void SetPosition(string TrackId, int64 Position) {
+	public void SetPosition(string TrackId, int64 Position) throws GLib.Error {
 		debug ("Setting position fro track %s", TrackId);
 		if ((Position > 0) && (Position < App.playback.get_duration() / 1000)) {
 			App.playback.set_position(Position * 1000);
 		}
 	}
 	
-	public void OpenUri(string Uri) {
+	public void OpenUri(string Uri) throws GLib.Error {
 		
 	}
 }
@@ -666,7 +666,7 @@ public class BeatBox.MprisPlaylists : GLib.Object {
 		return false;
 	}
 	
-	public void ActivatePlaylist(ObjectPath path) {
+	public void ActivatePlaylist(ObjectPath path) throws GLib.Error {
 		string playlist_id_prefix = PLAYLIST_ID.replace("%d", "");
 		string id_s = path.replace(playlist_id_prefix, "");
 		int id = int.parse(id_s);
@@ -689,7 +689,7 @@ public class BeatBox.MprisPlaylists : GLib.Object {
 		}
 	}
 	
-	public MprisPlaylist?[] GetPlaylists(uint index, uint maxcount, string playlist_ordering, bool reversed) {
+	public MprisPlaylist?[] GetPlaylists(uint index, uint maxcount, string playlist_ordering, bool reversed) throws GLib.Error {
 		debug("Get Playlist called with index %u and maxcount %u\n", index, maxcount);
 		var playlists = new GLib.List<BasePlaylist>();
 		

@@ -214,6 +214,8 @@ public class BeatBox.SideTreeView : BeatBox.SideBar {
 				} while(true);
 				
 				break;
+			default:
+				break;
 		}
 
 		return before_iter;

@@ -243,8 +243,4 @@ public class BeatBox.NotImportedDialog : Window{
 		filesModel.foreach(deleteSelectedItems);
 		this.destroy();
 	}
-	
-	 void ignoreClick() {
-		this.destroy();
-	}
 }

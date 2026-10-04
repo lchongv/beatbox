@@ -696,7 +696,7 @@ public class BeatBox.iPodDevice : GLib.Object, BeatBox.Device {
 		db.playlist_mpl().remove_track(t);
 		db.playlist_podcasts().remove_track(t);
 		foreach(unowned GPod.Playlist p in db.playlists) {
-			if(p.contains_track(t));
+			if(p.contains_track(t))
 				p.remove_track(t);
 		}
 		

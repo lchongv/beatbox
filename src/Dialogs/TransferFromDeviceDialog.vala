@@ -288,10 +288,6 @@ public class BeatBox.TransferFromDeviceDialog : Window {
 		}
 	}
 	
-	 void cancelClick() {
-		this.destroy();
-	}
-	
 	void operation_started() {
 		transfer.set_sensitive(false);
 	}

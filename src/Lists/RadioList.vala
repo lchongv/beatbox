@@ -133,33 +133,6 @@ public class BeatBox.RadioList : GenericList {
 		cellTitle.editable = false; */
 	}
 
-	 void sortColumnChanged() {
-		updateTreeViewSetup();
-	}
-
-	 void modelRowsReordered(TreePath path, TreeIter? iter, void* new_order) {
-		/*if(TreeViewSetup.Hint == "queue") {
-			App.library.clear_queue();
-
-			TreeIter item;
-			for(int i = 0; list_model.get_iter_from_string(out item, i.to_string()); ++i) {
-				int id;
-				list_model.get(item, 0, out id);
-
-				App.library.queue_media_by_id(id);
-			}
-		}*/
-		
-		// TODO: FIXME
-		//if(is_current_view) {
-		//	set_as_current_list(0, false);
-		//}
-
-		if(!scrolled_recently) {
-			scroll_to_current_media(false);
-		}
-	}
-
 	public void updateColumnVisibilities() {
 		int index = 0;
 		foreach(TreeViewColumn tvc in get_columns()) {

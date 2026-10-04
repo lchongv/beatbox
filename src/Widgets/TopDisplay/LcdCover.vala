@@ -8,6 +8,8 @@
 using Gtk;
 
 public class BeatBox.LcdCover : Image {
+	delegate bool ZoomFunc (double zoom);
+
 	const int CORNER = 7;  // inner radius of the LCD's rounded border
 
 	Gdk.Pixbuf? source = null;  // the cover, unscaled
@@ -69,12 +71,12 @@ public class BeatBox.LcdCover : Image {
 		win.title = App.playback.current_media.album;
 		win.add (image);
 		// ponytail: rescales the whole pixbuf on each step; fine up to the 2.5x cap
-		bool set_zoom (double z) {
+		ZoomFunc set_zoom = (z) => {
 			zoom = z.clamp (0.1, 2.5);
 			image.pixbuf = src.scale_simple (int.max (1, (int)(src.width * zoom)), int.max (1, (int)(src.height * zoom)), Gdk.InterpType.BILINEAR);
 			win.resize (1, 1); // shrink with the image
 			return true;
-		}
+		};
 		set_zoom (fit);
 		var scroll = new Gtk.EventControllerScroll (win, Gtk.EventControllerScrollFlags.VERTICAL);
 		scroll.scroll.connect ((dx, dy) => { set_zoom (dy < 0 ? zoom * 1.15 : zoom / 1.15); });

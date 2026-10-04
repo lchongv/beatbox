@@ -26,7 +26,7 @@
  */
 
 public class LastFM.TopArtistAlbums : Object {
-	static const int MAX_RESULTS = 5;
+	const int MAX_RESULTS = 5;
 	
 	BeatBox.Media _base;
 	bool working;
@@ -85,7 +85,6 @@ public class LastFM.TopArtistAlbums : Object {
 			return;
 		}
 		
-		FileInputStream filestream;
 		Gdk.Pixbuf? pix = null;
 		
 		/*try {

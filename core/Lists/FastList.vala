@@ -28,7 +28,7 @@
 using Gtk;
 
 public class BeatBox.FastList : TreeView {
-	public static const int OPTIMAL_COLUMN = -2;
+	public const int OPTIMAL_COLUMN = -2;
 	FastListModel fm;
 	List<Type> columns;
 	HashTable<int, Media> table; // is not the same object as showing.

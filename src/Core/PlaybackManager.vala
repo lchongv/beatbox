@@ -30,7 +30,7 @@
 using Gee;
 
 public class BeatBox.PlaybackManager : GLib.Object, BeatBox.PlaybackInterface {
-	public static const int PREVIEW_MEDIA_ID = -2;
+	public const int PREVIEW_MEDIA_ID = -2;
 	
 	Streamer player;
 	

@@ -109,7 +109,7 @@ public class BeatBox.DuplicateSourceView : SourceView {
 		
 		if(priority.get_active() != 0) {
 			foreach(var ent in dups.entries) {
-				var all = new PriorityQueue<Media>(first_priority);
+				var all = new PriorityQueue<Media>((a, b) => first_priority(a, b));
 				all.offer(ent.key);
 				foreach(var m in ent.value)
 					all.offer(m);

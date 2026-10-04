@@ -165,7 +165,7 @@ public class BeatBox.PresetList : ComboBox {
 		if (o != null && o is EqualizerPreset) {
 			last_selected_preset = o as EqualizerPreset;
 
-			if (!(o as EqualizerPreset).is_default)
+			if (!((EqualizerPreset)o).is_default)
 				add_delete_preset_option();
 			else
 				remove_delete_option();
@@ -206,7 +206,7 @@ public class BeatBox.PresetList : ComboBox {
 				GLib.Object o;
 				store.get(iter, 0, out o);
 
-				if(o != null && o is EqualizerPreset && (o as EqualizerPreset).name == preset_name) {
+				if(o != null && o is EqualizerPreset && ((EqualizerPreset)o).name == preset_name) {
 					set_active_iter(iter);
 					automatic_selected = false;
 					preset_selected(o as EqualizerPreset);

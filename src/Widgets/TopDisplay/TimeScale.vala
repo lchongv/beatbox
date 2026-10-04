@@ -109,7 +109,6 @@ public class BeatBox.TimeScale : Box {
 		//calculate percentage to go to based on location
 		Gtk.Allocation extents;
 		int point_x = 0;
-		int point_y = 0;
 		
 		point_x = (int)event.x;
 		scale.get_allocation(out extents);
@@ -127,7 +126,6 @@ public class BeatBox.TimeScale : Box {
 		
 		Gtk.Allocation extents;
 		int point_x = 0;
-		int point_y = 0;
 		
 		point_x = (int)event.x;
 		scale.get_allocation(out extents);

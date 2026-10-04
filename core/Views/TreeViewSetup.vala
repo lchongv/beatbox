@@ -32,34 +32,34 @@ public class BeatBox.TreeViewSetup : GLib.Object {
 	
 	// TODO: Fixme. I am a duplicate of DuplicateList.CHECKBOX_COLUMN_TITLE
 	// for core dependency reasons
-	public static const string CHECKBOX_COLUMN_TITLE = "";
+	public const string CHECKBOX_COLUMN_TITLE = "";
 	
-	public static const int MUSIC_COLUMN_COUNT = 19;
-	public static const int DUPLICATE_COLUMN_COUNT = 19;
-	public static const int PODCAST_COLUMN_COUNT = 12;
-	public static const int RADIO_COLUMN_COUNT = 6;
+	public const int MUSIC_COLUMN_COUNT = 19;
+	public const int DUPLICATE_COLUMN_COUNT = 19;
+	public const int PODCAST_COLUMN_COUNT = 12;
+	public const int RADIO_COLUMN_COUNT = 6;
 	
-	public static const int ID_WIDTH = 10;
-	public static const int ICON_WIDTH = 24;
-	public static const int NUMBER_WIDTH = 40;
-	public static const int TRACK_WIDTH = 60;
-	public static const int TITLE_WIDTH = 220;
-	public static const int ALBUM_VIEW_TITLE_WIDTH = 300;
-	public static const int LENGTH_WIDTH = 75;
-	public static const int ARTIST_WIDTH = 170;
-	public static const int ALBUM_WIDTH = 200;
-	public static const int GENRE_WIDTH = 100;
-	public static const int YEAR_WIDTH = 50;
-	public static const int BITRATE_WIDTH = 85;
-	public static const int RATING_WIDTH = 90;
-	public static const int PLAYS_WIDTH = 65;
-	public static const int SKIPS_WIDTH = 65;
-	public static const int DATE_ADDED_WIDTH = 130;
-	public static const int LAST_PLAYED_WIDTH = 130;
-	public static const int BPM_WIDTH = 50;
-	public static const int PULSER_WIDTH = 40;
-	public static const int COMMENT_WIDTH = 70;
-	public static const int STATION_WIDTH = 300;
+	public const int ID_WIDTH = 10;
+	public const int ICON_WIDTH = 24;
+	public const int NUMBER_WIDTH = 40;
+	public const int TRACK_WIDTH = 60;
+	public const int TITLE_WIDTH = 220;
+	public const int ALBUM_VIEW_TITLE_WIDTH = 300;
+	public const int LENGTH_WIDTH = 75;
+	public const int ARTIST_WIDTH = 170;
+	public const int ALBUM_WIDTH = 200;
+	public const int GENRE_WIDTH = 100;
+	public const int YEAR_WIDTH = 50;
+	public const int BITRATE_WIDTH = 85;
+	public const int RATING_WIDTH = 90;
+	public const int PLAYS_WIDTH = 65;
+	public const int SKIPS_WIDTH = 65;
+	public const int DATE_ADDED_WIDTH = 130;
+	public const int LAST_PLAYED_WIDTH = 130;
+	public const int BPM_WIDTH = 50;
+	public const int PULSER_WIDTH = 40;
+	public const int COMMENT_WIDTH = 70;
+	public const int STATION_WIDTH = 300;
 	
 	public enum Hint {
 		MUSIC,

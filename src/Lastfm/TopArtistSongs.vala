@@ -26,7 +26,7 @@
  */
 
 public class LastFM.TopArtistSongs : Object {
-	static const int MAX_RESULTS = 15;
+	const int MAX_RESULTS = 15;
 	
 	BeatBox.Media _base;
 	bool working;

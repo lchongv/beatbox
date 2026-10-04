@@ -745,7 +745,8 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		bool doingOps = App.operations.doing_ops;
 		bool mediaActive = App.playback.media_active;
 		bool showingMediaList = (get_current_view() is SourceView);
-		bool songsInList = showingMediaList ? (get_current_view() as SourceView).have_media : false;
+		var source_view = get_current_view() as SourceView;
+		bool songsInList = showingMediaList && source_view != null && source_view.have_media;
 
 		top_display.set_visible(mediaActive || doingOps);
 		

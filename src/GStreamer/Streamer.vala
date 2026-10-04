@@ -356,7 +356,6 @@ public class BeatBox.Streamer : GLib.Object {
 			return;
 		}
 		
-		string message_type = message.get_structure().get_name();
 		if(Gst.Video.is_video_overlay_prepare_window_handle_message(message)) {
 			
 			message.src.set_property("force-aspect-ratio", true);

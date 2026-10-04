@@ -97,7 +97,7 @@ public class BeatBox.App : Gtk.Application {
 	public static BeatBox.Settings settings { get; private set; }
 	public static BeatBox.DeviceInterface devices { get; private set; }
 
-	/*private static const OptionEntry[] app_options = {
+	/*private const OptionEntry[] app_options = {
 		{ "debug", 'd', 0, OptionArg.NONE, ref Options.debug, N_("Enable debug logging"), null },
 		{ "no-plugins", 'n', 0, OptionArg.NONE, ref Options.disable_plugins, N_("Disable plugins"), null},
 		{ null }

@@ -549,11 +549,10 @@ public class BeatBox.MusicList : GenericList {
 	void mediaFileBrowseClicked() {
 		foreach(Media m in get_selected_medias()) {
 			try {
-				var file = File.new_for_uri(m.uri);
-				try { AppInfo.launch_default_for_uri(file.get_parent().get_uri(), null); } catch (Error e) { warning(e.message); }
+				AppInfo.launch_default_for_uri(File.new_for_uri(m.uri).get_parent().get_uri(), null);
 			}
 			catch(GLib.Error err) {
-				debug("Could not browse media %s: %s\n", m.uri, err.message);
+				warning("Could not browse media %s: %s", m.uri, err.message);
 			}
 
 			return;
@@ -626,18 +625,6 @@ public class BeatBox.MusicList : GenericList {
 		}
 
 		import_requested(to_import);
-	}
-
-	 void onDragDataGet(Gdk.DragContext context, Gtk.SelectionData selection_data, uint info, uint time_) {
-		string[] uris = null;
-
-		foreach(Media m in get_selected_medias()) {
-			debug("adding %s\n", m.uri);
-			uris += (m.uri);
-		}
-
-		if (uris != null)
-			selection_data.set_uris(uris);
 	}
 
 	public void apply_style_to_view(CssProvider style) {

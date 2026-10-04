@@ -173,7 +173,7 @@ public class BeatBox.SongEditor : GLib.Object, MediaEditorInterface {
 		lyricsInfobar.add_buttons("Try again", Gtk.ResponseType.OK);
 		lyricsInfobar.set_message_type (Gtk.MessageType.WARNING);
 		
-		(lyricsInfobar.get_content_area() as Gtk.Container).add (lyricsInfobarLabel);
+		((Gtk.Container)lyricsInfobar.get_content_area()).add (lyricsInfobarLabel);
 
 		lyricsInfobar.response.connect(fetchLyricsClicked);
 		

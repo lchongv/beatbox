@@ -28,12 +28,12 @@
 public class BeatBox.Operation : GLib.Object {
 	public delegate void OperationFunc(Operation op);
 	
-	public unowned OperationFunc start_sync_func { get; set; }
-	public unowned OperationFunc start_async_func { get; set; }
-	public unowned OperationFunc cancel_func { get; set; }
+	public unowned OperationFunc start_sync_func; // a field: delegates can\'t be GObject properties
+	public unowned OperationFunc start_async_func; // a field: delegates can\'t be GObject properties
+	public unowned OperationFunc cancel_func; // a field: delegates can\'t be GObject properties
 	
 	// These functions are optional, but will be executed if not null
-	public unowned OperationFunc finished_func { get; set; }
+	public unowned OperationFunc finished_func; // a field: delegates can\'t be GObject properties
 	
 	public string description { get; set; }
 	

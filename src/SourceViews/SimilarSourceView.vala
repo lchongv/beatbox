@@ -29,7 +29,7 @@ using Gee;
 using Gtk;
 
 public class BeatBox.SimilarSourceView : SourceView {
-	public static const int REQUIRED_MEDIAS = 12;
+	public const int REQUIRED_MEDIAS = 12;
 	Media base_media;
 	bool fetched;
 	public new bool have_media { get { return media_count >= REQUIRED_MEDIAS; } }
