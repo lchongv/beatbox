@@ -1,7 +1,9 @@
 #!/bin/sh
-# Version 0.8.N, where N is the number of commits made since the v0.8 tag
-# (this commit included). Enable with: ln -s ../../tools/pre-commit .git/hooks/pre-commit
-git rev-parse -q --verify refs/tags/v0.8 >/dev/null || exit 0
-n=$(( $(git rev-list --count v0.8..HEAD) + 1 ))
-sed -i "0,/version: '[0-9.]*')/s//version: '0.8.$n')/" meson.build
+# Version X.Y.N: X.Y from the latest vX.Y.0 tag, N the number of commits made
+# since it (this commit included). Enable with: ln -s ../../tools/pre-commit .git/hooks/pre-commit
+tag=$(git describe --tags --abbrev=0 --match 'v[0-9]*.[0-9]*.0' 2>/dev/null) || exit 0
+base=${tag#v}
+base=${base%.0}
+n=$(( $(git rev-list --count "$tag"..HEAD) + 1 ))
+sed -i "0,/version: '[0-9.]*')/s//version: '$base.$n')/" meson.build
 git add meson.build
