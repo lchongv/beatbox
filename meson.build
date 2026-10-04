@@ -1,4 +1,4 @@
-project('beatbox', 'vala', 'c', version: '0.9.14')
+project('beatbox', 'vala', 'c', version: '0.9.15')
 
 gnome = import('gnome')
 i18n = import('i18n')
@@ -91,6 +91,7 @@ core_sources = files(
   'core/Utils/String.vala',
   'core/Utils/Numeric.vala',
   'core/Utils/ListUtils.vala',
+  'core/Utils/Shortcuts.vala',
   'core/Operations/Operation.vala',
   'core/Operations/FilesOperation.vala',
   'core/Operations/PlaylistOperation.vala',
@@ -202,6 +203,7 @@ app_sources = files(
   'src/NowPlayingView/SongArtistSection.vala',
   'src/NowPlayingView/PodcastSummarySection.vala',
   'src/Preferences/BehaviorPreferences.vala',
+  'src/Preferences/ShortcutsPreferences.vala',
   'src/Preferences/LastfmPreferences.vala',
   'src/Preferences/MusicPreferences.vala',
   'src/Preferences/PodcastPreferences.vala',
@@ -286,3 +288,4 @@ subdir('po')
 
 test('ellipsize', executable('test-ellipsize', 'tests/ellipsize.vala', dependencies: core_dep))
 test('list-utils', executable('test-list-utils', 'tests/list-utils.vala', dependencies: core_dep))
+test('shortcuts', executable('test-shortcuts', 'tests/shortcuts.vala', dependencies: core_dep))

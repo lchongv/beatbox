@@ -201,6 +201,7 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		// Start by initializing the window and widgets to create the UI
 		setup_window ();
         setup_widgets ();
+        register_shortcuts ();
         
         // The title bar's height when set_default_size is applied (see size_allocate)
         title_widget.get_preferred_height (null, out startup_titlebar_height);
@@ -838,45 +839,51 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		}
 	}
 	
-	bool keyPressed(Gdk.EventKey event) {
-		// These modifiers are taken into account when a key-pressed event is evaluated...
-		int valid_mod_keys = Gdk.ModifierType.SHIFT_MASK 			// SHIFT_L and SHIFT_R
-								| Gdk.ModifierType.CONTROL_MASK 	// CTR_L and CTRL_R
-								| Gdk.ModifierType.MOD1_MASK		// ALT_L
-								| Gdk.ModifierType.SUPER_MASK		// WIN or CMD
-								| Gdk.ModifierType.META_MASK;		//ALT_GR or ALT_R
-		int event_state = event.state & valid_mod_keys;
-		
-		if (event_state != 0) {
-			if((event_state & Gdk.ModifierType.CONTROL_MASK) == event_state && event.keyval == Gdk.Key.q) {
-				destroy();
-			}
-			else if((event_state & Gdk.ModifierType.CONTROL_MASK) == event_state && event.keyval == Gdk.Key.i) {
-				showSongInfo.active = !showSongInfo.active;
-			}
-			else if((event_state & Gdk.ModifierType.CONTROL_MASK) == event_state && event.keyval == Gdk.Key.m) {
-				toggle_mini();
-			}
-			else if((event_state & Gdk.ModifierType.CONTROL_MASK) == event_state && event.keyval == Gdk.Key.f) {
-				if (searchField.sensitive && !searchField.has_focus) {
-					searchField.grab_focus();
-				}
-			}
-		}
-		else if(Regex.match_simple("[a-zA-Z0-9]", event.str) && searchField.sensitive && !searchField.has_focus) {
-			if(!(get_focus() is Gtk.Entry)) {
+	/* The keyboard shortcuts (Preferences › Shortcuts), with their default keys */
+	void register_shortcuts() {
+		Shortcuts.init(App.settings.main.shortcuts, (list) => { App.settings.main.shortcuts = list; });
+		Shortcuts.register("play-pause", _("Play / Pause"), "space", playClicked);
+		Shortcuts.register("next", _("Next song"), "<Control>Right", nextClicked);
+		Shortcuts.register("previous", _("Previous song"), "<Control>Left", previousClicked);
+		Shortcuts.register("volume-up", _("Volume up"), "<Control>Up", () => { change_volume(0.1); });
+		Shortcuts.register("volume-down", _("Volume down"), "<Control>Down", () => { change_volume(-0.1); });
+		Shortcuts.register("mini-player", _("Mini player"), "<Control>m", toggle_mini);
+		Shortcuts.register("search", _("Search"), "<Control>f", () => {
+			if (searchField.sensitive)
 				searchField.grab_focus();
-			}
-		}
-		else if(event.str == " " && App.playback.media_active && !searchField.has_focus) {
-			playClicked ();
+		});
+		Shortcuts.register("now-playing", _("Now playing"), "<Control>i", () => { showSongInfo.active = !showSongInfo.active; });
+		Shortcuts.register("equalizer", _("Equalizer"), "<Control>e", () => { App.actions.show_equalizer.activate(null); });
+		Shortcuts.register("preferences", _("Preferences"), "<Control>comma", () => { App.actions.show_preferences.activate(null); });
+		Shortcuts.register("quit", _("Quit"), "<Control>q", () => { destroy(); });
+	}
+	
+	void change_volume(double delta) {
+		double volume = (App.playback.get_volume() + delta).clamp(0.0, 1.0);
+		App.playback.set_volume(volume);
+		App.settings.equalizer.volume = (int)Math.round(volume * 100);
+	}
+	
+	bool keyPressed(Gdk.EventKey event) {
+		var focus = get_focus();
+		
+		// Escape in the search box goes back to the list
+		if(event.keyval == Gdk.Key.Escape && searchField.has_focus && focusAfterSearch != null) {
+			focusAfterSearch.grab_focus();
 			return true;
 		}
-		else if(event.keyval == Gdk.Key.Escape && searchField.has_focus) {
-			if (focusAfterSearch != null) {
-				focusAfterSearch.grab_focus();
-			}
-		}
+		
+		// a text field gets the key first: there Space types a space, Ctrl+Left moves by word...
+		if(focus is Gtk.Editable && propagate_key_event(event))
+			return true;
+		
+		if(Shortcuts.activate(event.keyval, event.state))
+			return true;
+		
+		// typing a letter or a digit anywhere starts a search
+		var mods = event.state & Gtk.accelerator_get_default_mod_mask();
+		if(mods == 0 && Regex.match_simple("^[a-zA-Z0-9]$", event.str) && searchField.sensitive && !(focus is Gtk.Entry))
+			searchField.grab_focus(); // the key itself then goes on to it
 
 		return false;
 	}

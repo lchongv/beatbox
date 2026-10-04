@@ -2402,3 +2402,42 @@ msgstr "Pega el token de usuario de %s para enviar ahí tus escuchas."
 
 msgid "ListenBrainz didn't accept that token (or couldn't be reached)."
 msgstr "ListenBrainz no aceptó ese token (o no se pudo conectar)."
+
+msgid "Play / Pause"
+msgstr "Reproducir / pausar"
+
+msgid "Next song"
+msgstr "Canción siguiente"
+
+msgid "Previous song"
+msgstr "Canción anterior"
+
+msgid "Volume up"
+msgstr "Subir el volumen"
+
+msgid "Volume down"
+msgstr "Bajar el volumen"
+
+msgid "Mini player"
+msgstr "Mini reproductor"
+
+msgid "Now playing"
+msgstr "Reproduciendo ahora"
+
+msgid "Quit"
+msgstr "Salir"
+
+msgid "Shortcuts"
+msgstr "Atajos"
+
+msgid "Keyboard Shortcuts"
+msgstr "Atajos de teclado"
+
+msgid "Click a shortcut and press the new keys; Backspace leaves the action without one."
+msgstr "Haz clic en un atajo y presiona las teclas nuevas; Retroceso deja la acción sin atajo."
+
+msgid "Restore the Defaults"
+msgstr "Restaurar los predeterminados"
+
+msgid "“%s” used those keys; it has no shortcut now."
+msgstr "«%s» usaba esas teclas; ahora no tiene atajo."
