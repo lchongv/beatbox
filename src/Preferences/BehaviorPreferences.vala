@@ -82,6 +82,15 @@ public class BeatBox.BehaviorPreferences : SimplePreferences {
 		organize.toggled.connect(() => { App.settings.main.update_folder_hierarchy = organize.active; });
 		write.toggled.connect(() => { App.settings.main.write_metadata_to_file = write.active; });
 		copy.toggled.connect(() => { App.settings.main.copy_imported_music = copy.active; });
+		
+		add_heading(_("Playback"));
+		var rg = new ComboBoxText();
+		rg.append("0", _("Off"));
+		rg.append("1", _("Per song"));
+		rg.append("2", _("Per album"));
+		rg.active_id = App.settings.equalizer.replaygain.to_string();
+		rg.changed.connect(() => { App.settings.equalizer.replaygain = int.parse(rg.active_id); });
+		add_row(labelled(_("Volume normalization (ReplayGain):"), rg, _("from the next song")));
 	}
 }
 

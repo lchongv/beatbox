@@ -294,8 +294,10 @@ public class BeatBox.Settings {
         public string[] custom_presets { get; set;}
         public string[] default_presets { get; set;}
         public int volume { get; set;}
+        public int replaygain { get; set; } // 0 off, 1 track, 2 album (BeatBox.ReplayGain)
         
         public Equalizer () {
+            replaygain = 1;
             auto_switch_preset = true;
             selected_preset = "";
             custom_presets = {};
