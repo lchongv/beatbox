@@ -74,7 +74,7 @@ Total fases 1–8: ~20–25 h. Fase 9: +8 h.
   video (en GTK4 se usa gtk4paintablesink), CDRipper `format_get_by_nick`.
 
 # Hoja de ruta 0.9
-1. Reproducción sin cortes (gapless) + ReplayGain + crossfade.
+1. [x] Reproducción sin cortes (ya existía; verificada) + ReplayGain (Preferencias › Comportamiento). Crossfade: pendiente, requiere dos playbin.
 2. Letras sincronizadas (LRCLIB) en el LCD.
 3. Mini reproductor.
 4. Cola de reproducción visible y editable.

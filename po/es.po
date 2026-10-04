@@ -2276,3 +2276,18 @@ msgstr "_Abrir"
 
 msgid "_Save"
 msgstr "_Guardar"
+
+msgid "Playback"
+msgstr "Reproducción"
+
+msgid "Per song"
+msgstr "Por canción"
+
+msgid "Per album"
+msgstr "Por álbum"
+
+msgid "Volume normalization (ReplayGain):"
+msgstr "Normalizar el volumen (ReplayGain):"
+
+msgid "from the next song"
+msgstr "desde la próxima canción"

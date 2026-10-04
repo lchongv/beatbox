@@ -45,7 +45,7 @@ public class BeatBox.Pipeline : GLib.Object {
 	public Gst.Pipeline pipe;
 	public Equalizer eq;
 	public CDDA cdda;
-	public ReplayGain gapless;
+	public ReplayGain replaygain;
 	public Video video;
 	
 	public dynamic Gst.Bus bus;
@@ -65,7 +65,7 @@ public class BeatBox.Pipeline : GLib.Object {
 	//dynamic Gst.Element rgvolume;
 	
 	public Pipeline() {
-		gapless = new ReplayGain();
+		replaygain = new ReplayGain();
 		
 		pipe = new Gst.Pipeline("pipeline");
 		playbin = ElementFactory.make("playbin", null);
@@ -89,7 +89,14 @@ public class BeatBox.Pipeline : GLib.Object {
 		
 		((Gst.Bin)audiobin).add_many(audiotee, audiosinkqueue, audiosink);
 		
-		audiobin.add_pad(new GhostPad("sink", audiotee.get_static_pad("sink")));
+		// replaygain (when available) sits in front of the tee
+		if (replaygain.element != null) {
+			((Gst.Bin)audiobin).add(replaygain.element);
+			replaygain.element.link(audiotee);
+			audiobin.add_pad(new GhostPad("sink", replaygain.element.get_static_pad("sink")));
+		}
+		else
+			audiobin.add_pad(new GhostPad("sink", audiotee.get_static_pad("sink")));
 		
 		if (eq.element != null)
 			audiosinkqueue.link_many(eq_audioconvert, preamp, eq.element, eq_audioconvert2, audiosink);
