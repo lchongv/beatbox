@@ -90,7 +90,7 @@ public class BeatBox.AddPodcastWindow : Window {
 		var bottomButtons = new ButtonBox(Orientation.HORIZONTAL);
 		bottomButtons.set_layout(ButtonBoxStyle.END);
 		bottomButtons.set_spacing (6);
-		bottomButtons.pack_start(_cancel, false, false, 0);
+		bottomButtons.add(_cancel);
 		bottomButtons.pack_end(_save, false, false, 0);
 
 		/* source vbox */
@@ -99,8 +99,8 @@ public class BeatBox.AddPodcastWindow : Window {
 		sourceBox.pack_end(_is_valid, false, false, 0);
 		sourceBox.pack_end(_is_working, false, false, 0);
 		
-		content.pack_start(wrap_alignment(sourceLabel, 12, 0, 0, 0), false, true, 0);
-		content.pack_start(wrap_alignment(sourceBox, 0, 12, 0, 0), false, true, 0);
+		content.add(wrap_alignment(sourceLabel, 12, 0, 0, 0));
+		content.add(wrap_alignment(sourceBox, 0, 12, 0, 0));
 		content.pack_start(bottomButtons, false, false, 12);
 		
 		padding.pack_start(content, true, true, 12);

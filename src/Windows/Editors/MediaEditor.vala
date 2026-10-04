@@ -94,12 +94,12 @@ public class BeatBox.MediaEditor : Window {
 		_save = new Button.with_label(_("Done"));
 		var cancel = new Button.with_label(_("Cancel"));
 		
-		buttonSep.pack_start(nav_arrows, false, false, 0);
-		buttonSep.pack_start(cancel, false, false, 0);
+		buttonSep.add(nav_arrows);
+		buttonSep.add(cancel);
 		buttonSep.pack_end(_save, false, false, 0);
 		
 		content.pack_start(UI.wrap_alignment(notebook, 10, 0, 0, 0), true, true, 0);
-		content.pack_start(UI.wrap_alignment(buttonSep, 0, 0, 10, 0), false, true, 0);
+		content.add(UI.wrap_alignment(buttonSep, 0, 0, 10, 0));
 		
 		(buttonSep as Gtk.ButtonBox).set_child_secondary(nav_arrows, true);
 		

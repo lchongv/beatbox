@@ -78,7 +78,7 @@ public class BeatBox.PreferencesWindow : Gtk.Window {
 		notebook_scroll.add(notebook_padding);
 		
 		var list_to_content = new Box(Orientation.HORIZONTAL, 0);
-		list_to_content.pack_start(side_bar, false, false, 0);
+		list_to_content.add(side_bar);
 		list_to_content.pack_end(notebook_scroll, true, true, 0);
 		
 		saveChanges = new Button.with_label(_("Done"));

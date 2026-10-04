@@ -130,13 +130,13 @@ public class BeatBox.PopupListView : Gtk.Window {
 		var vbox = new Box(Orientation.VERTICAL, 0);
 
 #if !USE_GRANITE_DECORATED_WINDOW
-		vbox.pack_start (close, false, false, 0);
+		vbox.add(close);
 #endif
 
-		vbox.pack_start (album_label, false, true, 0);
-		vbox.pack_start (artist_label, false, true, 0);
+		vbox.add(album_label);
+		vbox.add(artist_label);
 		vbox.pack_start (list_scrolled, true, true, 0);
-		vbox.pack_start (rating, false, true, 0);
+		vbox.add(rating);
 
 		add(vbox);
 

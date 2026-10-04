@@ -90,16 +90,16 @@ public class Store.AlbumView : ScrolledWindow {
 		similarReleases = new Store.IconView(storeView);
 		
 		HBox topInfoSplit = new HBox(false, 0);
-		topInfo.pack_start(wrap_alignment(albumName, 20, 10, 10, 0), false, true, 0);
-		topInfo.pack_start(wrap_alignment(albumArtist, 0, 10, 10, 0), false, true, 0);
-		topInfo.pack_start(wrap_alignment(releaseDate, 0, 10, 10, 0), false, true, 0);
-		topInfo.pack_start(wrap_alignment(producer, 0, 10, 10, 0), false, true, 0);
-		topInfo.pack_start(wrap_alignment(priceFlags, 0, 10, 10, 0), false, true, 0);
+		topInfo.add(wrap_alignment(albumName, 20, 10, 10, 0));
+		topInfo.add(wrap_alignment(albumArtist, 0, 10, 10, 0));
+		topInfo.add(wrap_alignment(releaseDate, 0, 10, 10, 0));
+		topInfo.add(wrap_alignment(producer, 0, 10, 10, 0));
+		topInfo.add(wrap_alignment(priceFlags, 0, 10, 10, 0));
 		
 		topInfoSplit.pack_start(topInfo, true, true, 0);
-		topInfoSplit.pack_start(rightButtons, false, true, 0);
+		topInfoSplit.add(rightButtons);
 		
-		topRow.pack_start(wrap_alignment(albumArt, 20, 10, 20, 20), false, true, 0);
+		topRow.add(wrap_alignment(albumArt, 20, 10, 20, 20));
 		topRow.pack_start(topInfoSplit, true, true, 0);
 		
 		albumName.xalign = 0.0f;
@@ -125,8 +125,8 @@ public class Store.AlbumView : ScrolledWindow {
 		allDetails.pack_start(topRow, true, true, 0);
 		allDetails.pack_start(wrap_alignment(description, 0, 20, 20, 20), true, true, 0);
 		allDetails.pack_start(wrap_alignment(trackList, 0, 20, 6, 20), true, true, 0);
-		allDetails.pack_start(wrap_alignment(tags, 0, 20, 6, 20), false, true, 0);
-		allDetails.pack_start(wrap_alignment(similarReleasesLabel, 34, 0, 6, 20), false, true, 0);
+		allDetails.add(wrap_alignment(tags, 0, 20, 6, 20));
+		allDetails.add(wrap_alignment(similarReleasesLabel, 34, 0, 6, 20));
 		allDetails.pack_start(wrap_alignment(similarReleases, 0, 20, 40, 20), true, true, 0);
 		
 		/** now fill in with the artist's data **/
@@ -278,7 +278,7 @@ public class Store.AlbumView : ScrolledWindow {
 		Idle.add( () => { 
 			foreach(var lab in labels) {
 				stdout.printf("label added: %s\n", lab.label);
-				priceFlags.pack_start(lab, false, false, 0);
+				priceFlags.add(lab);
 			}
 				
 			++storeView.index;
@@ -323,7 +323,7 @@ public class Store.AlbumView : ScrolledWindow {
 			
 			foreach(var tag in tags) {
 				stdout.printf("tag added: %s\n", tag.text);
-				//this.tags.pack_start(new TagLabel(tag.text, "blue", tag, true), false, false, 0);
+				//this.tags.add(new TagLabel(tag.text, "blue", tag, true));
 			}
 			
 			return false;

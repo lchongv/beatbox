@@ -59,7 +59,7 @@ public class BeatBox.DirectoryDialog : Dialog {
 		spinner = new Spinner ();
 		var top = new Box (Orientation.HORIZONTAL, 6);
 		top.pack_start (entry, true, true, 0);
-		top.pack_start (spinner, false, false, 0);
+		top.add(spinner);
 
 		store = new Gtk.ListStore (6, typeof (string), typeof (string), typeof (string), typeof (string), typeof (string), typeof (bool));
 		view = new TreeView.with_model (store);
@@ -98,10 +98,10 @@ public class BeatBox.DirectoryDialog : Dialog {
 		var box = get_content_area ();
 		box.spacing = 8;
 		box.margin = 12;
-		box.pack_start (top, false, false, 0);
+		box.add(top);
 		box.pack_start (scroll, true, true, 0);
-		box.pack_start (status, false, false, 0);
-		box.pack_start (source, false, false, 0);
+		box.add(status);
+		box.add(source);
 
 		add_button (_("Close"), ResponseType.CLOSE);
 		add_btn = add_button ((kind == Kind.RADIO) ? _("Add Station") : _("Subscribe"), ResponseType.APPLY);

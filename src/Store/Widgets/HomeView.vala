@@ -68,18 +68,18 @@ public class Store.HomeView : ScrolledWindow {
 		tracksLabel.set_markup("<span weight=\"bold\" size=\"larger\">Top Tracks</span>");
 		rockLabel.set_markup("<span weight=\"bold\" size=\"larger\">New Rock Releases</span>");
 		
-		leftItems.pack_start(wrap_alignment(genresLabel, 20, 0, 0, 20), false, true, 0);
-		leftItems.pack_start(wrap_alignment(tagList, 10, 10, 30, 20), false, true, 0);
-		leftItems.pack_start(wrap_alignment(artistsLabel, 10, 0, 0, 20), false, true, 0);
-		leftItems.pack_start(wrap_alignment(artistList, 10, 10, 10, 20), false, true, 0);
+		leftItems.add(wrap_alignment(genresLabel, 20, 0, 0, 20));
+		leftItems.add(wrap_alignment(tagList, 10, 10, 30, 20));
+		leftItems.add(wrap_alignment(artistsLabel, 10, 0, 0, 20));
+		leftItems.add(wrap_alignment(artistList, 10, 10, 10, 20));
 		
-		centerItems.pack_start(wrap_alignment(releaseRotator, 0, 0, 40, 0), false, true, 0);
-		centerItems.pack_start(wrap_alignment(tracksLabel, 0, 0, 0, 0), false, true, 0);
-		centerItems.pack_start(wrap_alignment(trackList, 10, 0, 0, 0), false, true, 0);
-		centerItems.pack_start(wrap_alignment(rockLabel, 40, 0, 0, 0), false, true, 0);
-		centerItems.pack_start(wrap_alignment(topRock, 10, 0, 0, 0), false, true, 0);
+		centerItems.add(wrap_alignment(releaseRotator, 0, 0, 40, 0));
+		centerItems.add(wrap_alignment(tracksLabel, 0, 0, 0, 0));
+		centerItems.add(wrap_alignment(trackList, 10, 0, 0, 0));
+		centerItems.add(wrap_alignment(rockLabel, 40, 0, 0, 0));
+		centerItems.add(wrap_alignment(topRock, 10, 0, 0, 0));
 		
-		allItems.pack_start(leftItems, false, true, 0);
+		allItems.add(leftItems);
 		allItems.pack_start(wrap_alignment(centerItems, 20, 20, 10, 10), true, true, 0);
 		
 		releaseRotator.set_size_request(-1, 200);

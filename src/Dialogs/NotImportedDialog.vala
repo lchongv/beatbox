@@ -124,7 +124,7 @@ public class BeatBox.NotImportedDialog : Window{
 		Box information_text = new Box(Orientation.VERTICAL, 0);
 		information.pack_start(warning, false, false, 10);
 		information_text.pack_start(title, false, true, 10);
-		information_text.pack_start(info, false, true, 0);
+		information_text.add(info);
 		information.pack_start(information_text, true, true, 10);
 		
 		Box listBox = new Box(Orientation.VERTICAL, 0);
@@ -140,8 +140,8 @@ public class BeatBox.NotImportedDialog : Window{
 		bottomButtons.pack_end(okButton, false, false, 10);
 		bottomButtons.set_spacing(6);
 		
-		content.pack_start(information, false, true, 0);
-		content.pack_start(wrap_alignment(trashAll, 5, 0, 0, 75), false, true, 0);
+		content.add(information);
+		content.add(wrap_alignment(trashAll, 5, 0, 0, 75));
 		content.pack_start(wrap_alignment(exp, 0, 0, 0, 75), true, true, 0);
 		content.pack_start(bottomButtons, false, true, 10);
 		

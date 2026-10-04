@@ -64,13 +64,13 @@ public class Store.SearchResultsView : ScrolledWindow {
 		artists.set_size_request(-1, 250);
 		releases.set_size_request(-1, 250);
 		
-		allLists.pack_start(wrap_alignment(tracksLabel, 10, 20, 10, 20), false, true, 0);
+		allLists.add(wrap_alignment(tracksLabel, 10, 20, 10, 20));
 		allLists.pack_start(wrap_alignment(tracks, 0, 20, 40, 20), true, true, 0);
 		
-		leftList.pack_start(wrap_alignment(artistsLabel, 10, 20, 10, 20), false, true, 0);
+		leftList.add(wrap_alignment(artistsLabel, 10, 20, 10, 20));
 		leftList.pack_start(wrap_alignment(artists, 0, 20, 40, 20), true, true, 0);
 		
-		rightList.pack_start(wrap_alignment(releasesLabel, 10, 20, 10, 20), false, true, 0);
+		rightList.add(wrap_alignment(releasesLabel, 10, 20, 10, 20));
 		rightList.pack_start(wrap_alignment(releases, 0, 20, 40, 20), true, true, 0);
 		
 		bottomLists.pack_start(leftList, true, true, 0);

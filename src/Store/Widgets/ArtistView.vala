@@ -73,10 +73,10 @@ public class Store.ArtistView : ScrolledWindow {
 		
 		artistName.ellipsize = Pango.EllipsizeMode.END;
 		
-		topInfo.pack_start(wrap_alignment(artistName, 20, 10, 10, 0), false, true, 0);
+		topInfo.add(wrap_alignment(artistName, 20, 10, 10, 0));
 		topInfo.pack_start(bio, true, true, 0);
 		
-		topRow.pack_start(wrap_alignment(artistImage, 20, 10, 40, 20), false, true, 0);
+		topRow.add(wrap_alignment(artistImage, 20, 10, 40, 20));
 		topRow.pack_start(topInfo, true, true, 0);
 		
 		/* make some 'category' labels */
@@ -93,9 +93,9 @@ public class Store.ArtistView : ScrolledWindow {
 		topTracks.set_size_request(-1, 250);
 		
 		allDetails.pack_start(topRow, true, true, 0);
-		allDetails.pack_start(wrap_alignment(topTracksLabel, 0, 0, 10, 20), false, true, 0);
+		allDetails.add(wrap_alignment(topTracksLabel, 0, 0, 10, 20));
 		allDetails.pack_start(wrap_alignment(topTracks, 0, 20, 40, 20), true, true, 0);
-		allDetails.pack_start(wrap_alignment(releasesLabel, 0, 0, 10, 20), false, true, 0);
+		allDetails.add(wrap_alignment(releasesLabel, 0, 0, 10, 20));
 		allDetails.pack_start(wrap_alignment(releases, 0, 20, 40, 20), true, true, 0);
 		
 		/** now fill in with the artist's data **/

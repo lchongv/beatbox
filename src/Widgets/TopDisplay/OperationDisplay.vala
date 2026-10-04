@@ -44,8 +44,8 @@ public class BeatBox.OperationDisplay : BeatBox.Display, Box {
 		operation_status.ellipsize = Pango.EllipsizeMode.END;
 		
 		var left_box = new Box(Orientation.VERTICAL, 0);
-		left_box.pack_start(operation_status, false, false, 0);
-		left_box.pack_start(operation_bar, false, false, 0);
+		left_box.add(operation_status);
+		left_box.add(operation_bar);
 		
 		this.set_orientation(Orientation.HORIZONTAL);
 		pack_start(left_box, true, true, 0);

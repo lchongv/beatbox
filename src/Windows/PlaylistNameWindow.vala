@@ -76,8 +76,8 @@ public class BeatBox.PlaylistNameWindow : Window {
 		bottomButtons.pack_end(cancel_widget, false, false, 0);
 		bottomButtons.pack_end(save_widget, false, false, 0);
 		
-		content.pack_start(wrap_alignment(nameLabel, 12, 0, 0, 0), false, true, 0);
-		content.pack_start(wrap_alignment(name_widget, 0, 12, 0, 12), false, true, 0);
+		content.add(wrap_alignment(nameLabel, 12, 0, 0, 0));
+		content.add(wrap_alignment(name_widget, 0, 12, 0, 12));
 		content.pack_start(bottomButtons, false, false, 12);
 		
 		padding.pack_start(content, true, true, 12);

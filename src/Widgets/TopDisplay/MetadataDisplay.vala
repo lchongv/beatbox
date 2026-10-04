@@ -71,9 +71,9 @@ public class BeatBox.MetadataDisplay : BeatBox.Display, Box {
 		second_line.set_no_show_all(true);
 		
         this.set_orientation(Orientation.VERTICAL);
-        pack_start(label, false, false, 0);
-        pack_start(second_line, false, false, 0);
-        pack_start(time_scale, false, false, 0);
+        add(label);
+        add(second_line);
+        add(time_scale);
         pack_start(station_label, true, true, 0);
         
         App.library.medias_updated.connect(medias_updated);

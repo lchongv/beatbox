@@ -152,9 +152,9 @@ public class BeatBox.EqualizerWindow : Gtk.Window {
 		var bottom_toolbar = new ButtonBox(Orientation.HORIZONTAL);
 		bottom_toolbar.set_layout(ButtonBoxStyle.END);
 		
-		bottom_toolbar.pack_start(eq_switch, false, false, 0);
-		bottom_toolbar.pack_start(preset_combo, false, false, 0);
-		bottom_toolbar.pack_start(new_preset_entry, false, false, 0);
+		bottom_toolbar.add(eq_switch);
+		bottom_toolbar.add(preset_combo);
+		bottom_toolbar.add(new_preset_entry);
 		bottom_toolbar.pack_end(close_button, false, false, 0);
 		
 		(bottom_toolbar as Gtk.ButtonBox).set_child_secondary(eq_switch, true);

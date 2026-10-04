@@ -128,7 +128,7 @@ public class BeatBox.NowPlayingPage : ScrolledWindow {
 	
 	public void add_section(Widget w) {
 		int top_padding = (contents.get_children().length() == 0) ? SECTION_PADDING : 0;
-		contents.pack_start(UI.wrap_alignment(w, top_padding, SECTION_PADDING, SECTION_PADDING, SECTION_PADDING), false, false, 0);
+		contents.add(UI.wrap_alignment(w, top_padding, SECTION_PADDING, SECTION_PADDING, SECTION_PADDING));
 	}
 	
 	public void remove_section(Widget w) {

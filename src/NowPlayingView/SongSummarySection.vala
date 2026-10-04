@@ -130,17 +130,17 @@ public class BeatBox.SongSummarySection : Box {
 		summary_text = new Label("");
 		lyrics = new Label("");
 		
-		rate_box.pack_start(rating, false, false, 0);
-		rate_box.pack_start(loveMedia, false, false, 0);
-		rate_box.pack_start(banMedia, false, false, 0);
+		rate_box.add(rating);
+		rate_box.add(loveMedia);
+		rate_box.add(banMedia);
 		
-		metadata.pack_start(coverArt, false, false, 0);
-		metadata.pack_start(UI.wrap_alignment(meta_labels, 0, 0, 0, 6), false, false, 0);
-		meta_labels.pack_start(meta_title, false, false, 0);
-		meta_labels.pack_start(meta_artist, false, false, 0);
-		meta_labels.pack_start(meta_album, false, false, 0);
-		meta_labels.pack_start(meta_year, false, false, 0);
-		meta_labels.pack_start(rate_box, false, false, 0);
+		metadata.add(coverArt);
+		metadata.add(UI.wrap_alignment(meta_labels, 0, 0, 0, 6));
+		meta_labels.add(meta_title);
+		meta_labels.add(meta_artist);
+		meta_labels.add(meta_album);
+		meta_labels.add(meta_year);
+		meta_labels.add(rate_box);
 		
 		coverArt.xalign = 0.0f;
 		meta_title.xalign = 0.0f;
@@ -210,7 +210,7 @@ public class BeatBox.SongSummarySection : Box {
 		lyrics_holder.set_size_request(300, -1);
 		lyrics_holder.set_widget(lyrics_scroll);
 		
-		left_side.pack_start(metadata, false, true, 0);
+		left_side.add(metadata);
 		left_side.pack_start(UI.wrap_alignment(summary_text, 6, 0, 0, 6), true, true, 0);
 		left_side.pack_start(UI.wrap_alignment(album_songs_holder, 6, 0, 0, 6), true, true, 0);
 		

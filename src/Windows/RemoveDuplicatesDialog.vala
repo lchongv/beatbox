@@ -72,18 +72,18 @@ public class BeatBox.RemoveDuplicatesDialog : Gtk.Window {
 		percent_box = new Box(Orientation.HORIZONTAL, 0);
 		var percentLabel = new Label(_("Media must match by at least "));
 		var percentPercentLabel = new Label(_(" percent."));
-		percent_box.pack_start(percentLabel, false, false, 0);
-		percent_box.pack_start(matchPercent, false, false, 0);
-		percent_box.pack_start(percentPercentLabel, false, false, 0);
+		percent_box.add(percentLabel);
+		percent_box.add(matchPercent);
+		percent_box.add(percentPercentLabel);
 		
 		Box feedbackBox = new Box(Orientation.HORIZONTAL, 6);
-		feedbackBox.pack_start(is_working, false, false, 0);
-		feedbackBox.pack_start(feedback_label, false, false, 0);
+		feedbackBox.add(is_working);
+		feedbackBox.add(feedback_label);
 		
 		var buttonSep = new ButtonBox(Orientation.HORIZONTAL);
 		buttonSep.set_spacing (6);
 		buttonSep.set_layout(ButtonBoxStyle.END);
-		buttonSep.pack_start(feedbackBox, false, false, 0);
+		buttonSep.add(feedbackBox);
 		buttonSep.pack_end(cancel, false, false, 0);
 		buttonSep.pack_end(analyze, false, false, 0);
 		(buttonSep as Gtk.ButtonBox).set_child_secondary(feedbackBox, true);
@@ -96,9 +96,9 @@ public class BeatBox.RemoveDuplicatesDialog : Gtk.Window {
 		matchOption.set_active(0);
 		
 		// Pack all widgets
-		content.pack_start(wrap_alignment(matchLabel, 10, 0, 0, 0), false, true, 0);
-		content.pack_start(wrap_alignment(matchOption, 0, 0, 0, 10), false, true, 0);
-		content.pack_start(wrap_alignment(percent_box, 0, 0, 0, 10), false, true, 0);
+		content.add(wrap_alignment(matchLabel, 10, 0, 0, 0));
+		content.add(wrap_alignment(matchOption, 0, 0, 0, 10));
+		content.add(wrap_alignment(percent_box, 0, 0, 0, 10));
 		content.pack_end(buttonSep, false, true, 10);
 		
 		padding.pack_start(content, true, true, 10);

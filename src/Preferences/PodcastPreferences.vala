@@ -64,11 +64,11 @@ public class BeatBox.PodcastPreferences : GLib.Object, PreferencesSection {
 		fileChooser.set_current_folder(App.settings.main.podcast_folder);
 		downloadNewPodcasts.set_active(App.settings.main.download_new_podcasts);
 		
-		content.pack_start(podcastLabel, false, true, 0);
-		content.pack_start(UI.wrap_alignment(fileChooser, 0, 0, 0, 10), false, true, 0);
-		content.pack_start(UI.wrap_alignment(button_box, 0, 0, 0, 10), false, true, 0);
-		content.pack_start(managementLabel, false, true, 0);
-		content.pack_start(UI.wrap_alignment(downloadNewPodcasts, 0, 0, 0, 10), false, true, 0);
+		content.add(podcastLabel);
+		content.add(UI.wrap_alignment(fileChooser, 0, 0, 0, 10));
+		content.add(UI.wrap_alignment(button_box, 0, 0, 0, 10));
+		content.add(managementLabel);
+		content.add(UI.wrap_alignment(downloadNewPodcasts, 0, 0, 0, 10));
 		
 		App.operations.operation_started.connect(operation_started);
 		App.operations.operation_finished.connect(operation_finished);

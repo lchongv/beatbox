@@ -361,10 +361,10 @@ public class BeatBox.AlbumWall : Layout {
 		var left = new Box (Orientation.VERTICAL, 4);
 		left.valign = Align.START;
 		detail_left = left;
-		left.pack_start (cover, false, false, 0);
+		left.add(cover);
 		left.pack_start (title, false, false, 2);
-		left.pack_start (artist, false, false, 0);
-		left.pack_start (details, false, false, 0);
+		left.add(artist);
+		left.add(details);
 		left.pack_start (play, false, false, 8);
 
 		// Same track list as the popup window
@@ -386,7 +386,7 @@ public class BeatBox.AlbumWall : Layout {
 		var band = new Box (Orientation.HORIZONTAL, 18);
 		band.get_style_context ().add_class ("album-detail");
 		band.border_width = 16;
-		band.pack_start (left, false, false, 0);
+		band.add(left);
 		band.pack_start (list_scroll, true, true, 0);
 		return band;
 	}

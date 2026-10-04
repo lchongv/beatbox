@@ -44,8 +44,8 @@ public class BeatBox.BufferDisplay : BeatBox.Display, Box {
 		buffering_status.ellipsize = Pango.EllipsizeMode.END;
 		
 		this.set_orientation(Orientation.VERTICAL);
-		pack_start(buffering_status, false, false, 0);
-		pack_start(buffering_bar, false, false, 0);
+		add(buffering_status);
+		add(buffering_bar);
 		
 		App.playback.buffer_percent_update.connect(player_buffering_update);
 		App.playback.media_played.connect(media_played);

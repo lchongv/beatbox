@@ -60,9 +60,9 @@ public class BeatBox.TopDisplay : Box, BeatBox.TopDisplayInterface {
 		cancel_button.set_no_show_all(true);
 		
 		this.set_orientation(Orientation.HORIZONTAL);
-		this.pack_start(switch_button, false, false, 0);
+		this.add(switch_button);
 		this.pack_start(view_container, true, true, 0);
-		this.pack_start(cancel_button, false, false, 0);
+		this.add(cancel_button);
 		
 		meta_display = new MetadataDisplay();
 		buffer_display = new BufferDisplay();
