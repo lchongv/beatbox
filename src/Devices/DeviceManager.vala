@@ -96,7 +96,7 @@ public class BeatBox.DeviceManager : GLib.Object, BeatBox.DeviceInterface {
 	void volume_added(Volume volume) {
 		if(App.settings.main.music_mount_name == volume.get_name() && volume.get_mount() == null) {
 			message("Mounting %s because it is believed to be the music folder\n", volume.get_name());
-			volume.mount(MountMountFlags.NONE, null, null);
+			volume.mount.begin(MountMountFlags.NONE, null, null);
 		}
 	}
 	
@@ -126,7 +126,7 @@ public class BeatBox.DeviceManager : GLib.Object, BeatBox.DeviceInterface {
 			// user mounted music folder, rescan for images
 			App.settings.main.music_mount_name = mount.get_volume().get_name();
 			App.library.recheck_files_not_found_async ();
-			App.covers.fetch_image_cache_async ();
+			App.covers.fetch_image_cache_async.begin ();
 			
 			return;
 		}

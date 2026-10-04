@@ -62,7 +62,7 @@ public class BeatBox.CDRipper : GLib.Object {
 		
 		queue.set("max-size-time", 120 * Gst.SECOND);
 		
-		_format = Gst.format_get_by_nick("track");
+		_format = Gst.Format.get_by_nick("track");
 		
 		((Gst.Bin)pipeline).add_many(src, queue, filter, sink);
 		if(!src.link_many(queue, filter, sink)) {

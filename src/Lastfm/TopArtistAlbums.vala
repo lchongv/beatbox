@@ -74,7 +74,7 @@ public class LastFM.TopArtistAlbums : Object {
     
     async void load_pixbufs() {
 		foreach(var album in albums.get_values()) {
-			uri_to_pixbuf(album);
+			uri_to_pixbuf.begin(album);
 		}
 	}
 	

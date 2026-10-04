@@ -431,7 +431,7 @@ public abstract class BeatBox.SourceView : Box, View {
 			add_medias_sync(add);
 		}
 		else {
-			add_medias_async(add);
+			add_medias_async.begin(add);
 		}
 	}
 	
@@ -497,7 +497,7 @@ public abstract class BeatBox.SourceView : Box, View {
 			update_medias_sync(to_update, metadata_changed);
 		}
 		else {
-			update_medias_async(to_update, metadata_changed);
+			update_medias_async.begin(to_update, metadata_changed);
 		}
 	}
 	
@@ -632,7 +632,7 @@ public abstract class BeatBox.SourceView : Box, View {
 			remove_medias_sync(to_remove);
 		}
 		else {
-			remove_medias_async(to_remove);
+			remove_medias_async.begin(to_remove);
 		}
 	}
 	
@@ -688,7 +688,7 @@ public abstract class BeatBox.SourceView : Box, View {
 			set_media_sync(new_media, update_grid);
 		}
 		else {
-			set_media_async(new_media, update_grid);
+			set_media_async.begin(new_media, update_grid);
 		}
 	}
 	

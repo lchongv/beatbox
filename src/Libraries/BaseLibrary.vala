@@ -173,7 +173,7 @@ public abstract class BeatBox.BaseLibrary : GLib.Object, BeatBox.Library {
 	
 	private void set_local_folder_start_async(Operation op) {
 		App.files.start_import();
-		App.files.queue_music_files_bootstrap_async ();
+		App.files.queue_music_files_bootstrap_async.begin ();
 	}
 	
 	private void set_local_folder_cancel(Operation op) {

@@ -129,7 +129,7 @@ public class BeatBox.NowPlayingView : Notebook, NowPlayingViewInterface {
 	}
 	
 	void video_area_realized() {
-        video_area_xid = (ulong)Gdk.X11Window.get_xid(video_area.get_window());
+        video_area_xid = (ulong)((Gdk.X11.Window)video_area.get_window()).get_xid();
     }
 	
 	private void update_current_page() {

@@ -59,7 +59,6 @@ public class BeatBox.OptionChooser : ToggleButton {
 		INSIDE_WINDOW
 	}
 
-	public Gtk.Action? myaction;
 	public ulong toggled_sig_id;
 	public MenuPosition menu_position;
 	
@@ -180,35 +179,19 @@ public class BeatBox.OptionChooser : ToggleButton {
 	}
 
 	private void deactivate_menu () {
-		if (myaction != null)
-			myaction.block_activate ();
-
 		active = false;
-
-		if (myaction != null)
-			myaction.unblock_activate ();
 	}
 
 	private void popup_menu_and_depress_button (Gdk.EventButton ev) {
-		if (myaction != null)
-			myaction.block_activate ();
 
 		active = true;
-
-		if (myaction != null)
-			myaction.unblock_activate ();
-
 		popup_menu (ev);
 	}
 
 	private bool on_button_release_event (Gdk.EventButton ev) {
 		if (ev.time - last_click_time < LONG_PRESS_TIME) {
-			if (myaction != null) {
-				myaction.activate ();
-			} else {
-				active = true;
-				popup_menu (ev);
-			}
+			active = true;
+			popup_menu (ev);
 		}
 
 		if (timeout != -1) {
@@ -221,7 +204,7 @@ public class BeatBox.OptionChooser : ToggleButton {
 
 	private bool on_button_press_event (Gdk.EventButton ev) {
 		// If the button is kept pressed, don't make the user wait when there's no action
-		int max_press_time = (myaction != null)? LONG_PRESS_TIME : 0;
+		int max_press_time = 0;
 
 		if (timeout == -1 && ev.button == 1) {
 			last_click_time = ev.time;

@@ -223,7 +223,7 @@ public class BeatBox.StyledArtistImages : EventBox {
 		images = new LinkedList<Gdk.Pixbuf>();
 		
 		foreach(var url in image_urls) {
-			uri_to_pixbuf(url);
+			uri_to_pixbuf.begin(url);
 		}
 	}
 	

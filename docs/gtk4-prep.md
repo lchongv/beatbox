@@ -83,11 +83,19 @@ Total fases 1–8: ~20–25 h. Fase 9: +8 h.
       las listas devuelven true para conservar la selección y la ventana principal
       intercepta teclas antes que la búsqueda; con controladores cambia el orden, así
       que conviene hacerlos junto con TreeView → ColumnView.
-- Avisos: 214 → 28.
+- [x] Resto: Granite.Application → Gtk.Application (el formato del log se conserva
+      con Granite.Services.Logger; depuración con G_MESSAGES_DEBUG en vez de --debug),
+      Gdk.X11.Window, Gst.Format.get_by_nick, `.begin` explícitos, ImageMenuItem →
+      MenuItem con caja, OptionChooser sin Gtk.Action. Al ejecutar: sin los 46 avisos
+      de GENERIC_FALLBACK de los íconos.
+- Avisos de obsolescencia: 214 → 0.
 - Quedan además: Granite.Application (se va con Granite 7), Gdk.X11Window del
   video (en GTK4 se usa gtk4paintablesink), CDRipper `format_get_by_nick`.
 
-# Hoja de ruta 0.9
+# Hoja de ruta
+0.9: solo limpieza (errores y avisos de obsolescencia). Lo pendiente pasa a 0.10.
+
+## Hecho en 0.9
 1. [x] Reproducción sin cortes (ya existía; verificada) + ReplayGain (Preferencias › Comportamiento). Crossfade: pendiente, requiere dos playbin.
 2. [x] Letras sincronizadas (LRCLIB) en la segunda línea del LCD; caché en ~/.cache/beatbox/lyrics (Preferencias › Apariencia).
 3. [x] Mini reproductor: Ctrl+M, Alt+botón verde o menú; deja solo controles y LCD.
