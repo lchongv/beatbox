@@ -133,7 +133,7 @@ public class BeatBox.AdvancedSearchBox : Gtk.SearchEntry {
 				}
 				
 				search_suggester.show_all();
-				search_suggester.popup (null, null, menu_pos_func, 3, get_current_event_time());
+				search_suggester.popup_at_widget(this, Gdk.Gravity.SOUTH_WEST, Gdk.Gravity.NORTH_WEST, null);
 			}
 			
 			return false;
@@ -164,16 +164,5 @@ public class BeatBox.AdvancedSearchBox : Gtk.SearchEntry {
 		}
 
 		return false;
-	}
-	
-	void menu_pos_func(Gtk.Menu menu, out int x, out int y, out bool push_in) {
-		int dest_x, dest_y;
-		int win_x, win_y;
-		translate_coordinates(App.window, 0, get_allocated_height(), out dest_x, out dest_y);
-		App.window.get_position(out win_x, out win_y);
-		
-		x = dest_x + win_x;
-		y = dest_y + win_y + 16;
-		push_in = true;
 	}
 }

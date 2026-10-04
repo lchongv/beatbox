@@ -202,7 +202,7 @@ public class BeatBox.RadioList : GenericList {
 			}
 			mediaEditMedia.label = _("Edit %s").printf(type.to_string((int)get_selected_medias().length()));
 			
-			mediaMenuActionMenu.popup (null, null, null, 3, get_current_event_time());
+			mediaMenuActionMenu.popup_at_pointer(null);
 
 			TreeSelection selected = get_selection();
 			selected.set_mode(SelectionMode.MULTIPLE);

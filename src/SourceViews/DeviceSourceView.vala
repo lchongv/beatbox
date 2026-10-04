@@ -78,20 +78,18 @@ public class BeatBox.DeviceSourceView : SourceView {
 		
 		switch (hint) {
 			case TreeViewSetup.Hint.DEVICE_PODCAST:
-				error_box.set_alert (_("No Podcasts Found"), _("This device supports podcasts. To sync podcasts with this device, edit the device's preferences."),
-				null, true, Gtk.MessageType.INFO);
+				error_box.set_alert (_("No Podcasts Found"), _("This device supports podcasts. To sync podcasts with this device, edit the device's preferences."), true, Gtk.MessageType.INFO);
 
 				break;
 			case TreeViewSetup.Hint.DEVICE_AUDIO:
-				error_box.set_alert (_("No Music Found"), _("To sync music with this device, edit the device's preferences."),
-				null, true, Gtk.MessageType.INFO);
+				error_box.set_alert (_("No Music Found"), _("To sync music with this device, edit the device's preferences."), true, Gtk.MessageType.INFO);
 
 				break;
 			case TreeViewSetup.Hint.DEVICE_AUDIOBOOK:
 			
 				break;
 			case TreeViewSetup.Hint.CDROM:
-				error_box.set_alert (_("Audio CD Invalid"), _("BeatBox could not read the contents of this Audio CD."), null, true, Gtk.MessageType.ERROR);
+				error_box.set_alert (_("Audio CD Invalid"), _("BeatBox could not read the contents of this Audio CD."), true, Gtk.MessageType.ERROR);
 				
 				break;
 			default:

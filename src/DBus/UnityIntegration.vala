@@ -101,12 +101,12 @@ public class BeatBox.UnityIntegration : GLib.Object {
 	}
 	
 	void preferences_activated(uint object) {
-		App.actions.show_preferences.activate();
+		App.actions.show_preferences.activate(null);
 	}
 	
 	void equalizer_activated(uint object) {
 		//if(App.actions.show_equalizer.get_sensitive()) {
-			App.actions.show_equalizer.activate();
+			App.actions.show_equalizer.activate(null);
 		//}
 	}
 	

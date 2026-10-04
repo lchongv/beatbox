@@ -53,8 +53,7 @@ public class BeatBox.DefaultSourceView : SourceView {
 	}
 	
 	protected override void set_default_warning () {
-		error_box.set_alert (_("No Media Found"), _("There is no media here."),
-				null, true, Gtk.MessageType.INFO);
+		error_box.set_alert (_("No Media Found"), _("There is no media here."), true, Gtk.MessageType.INFO);
 	}
 	
 	/** Specific implementations for View interface **/

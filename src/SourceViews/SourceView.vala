@@ -344,7 +344,7 @@ public abstract class BeatBox.SourceView : Box, View {
 		if(!have_error_box)
 			return;
 		
-		error_box.set_alert (_("No Results"), _("Your search query returned no results."), null, false, Gtk.MessageType.INFO);
+		error_box.set_alert (_("No Results"), _("Your search query returned no results."), false, Gtk.MessageType.INFO);
 	}
 	
 	protected void check_have_media () {

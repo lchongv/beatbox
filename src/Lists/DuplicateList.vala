@@ -240,7 +240,7 @@ public class BeatBox.DuplicateList : GenericList {
 	/* button_press_event */
 	bool viewClick(Gdk.EventButton event) {
 		if(event.type == Gdk.EventType.BUTTON_PRESS && event.button == 3) { //right click
-			mediaMenuActionMenu.popup (null, null, null, 3, get_current_event_time());
+			mediaMenuActionMenu.popup_at_pointer(null);
 
 			TreeSelection selected = get_selection();
 			selected.set_mode(SelectionMode.MULTIPLE);

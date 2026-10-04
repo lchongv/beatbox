@@ -116,7 +116,7 @@ public class BeatBox.SimpleOptionChooser : EventBox {
 				}
 			}
 			else if(event.button == 3 && menu != null && items.size > 1) {
-				menu.popup (null, null, null, 3, get_current_event_time());
+				menu.popup_at_pointer(null);
 			}
 		}
 
