@@ -92,9 +92,9 @@ public class BeatBox.OptionChooser : ToggleButton {
 		menu = new Gtk.Menu();
 		content = new Box(Orientation.HORIZONTAL, 0);
 		image_bin = new EventBox();
-		var arrow = new Gtk.Arrow(ArrowType.DOWN, ShadowType.NONE);
+		var arrow = new Gtk.Image.from_icon_name("pan-down-symbolic", IconSize.MENU);
 		arrow.xalign = 1.0f;
-		arrow.margin_left = 3;
+		arrow.margin_start = 3;
 		
 		content.pack_start(image_bin, true, true, 0);
 		content.pack_end(arrow, false, false, 0);
@@ -334,7 +334,8 @@ public class BeatBox.OptionChooser : ToggleButton {
 
 		y += allocation.y;
 
-		if (y + height >= menu.attach_widget.get_screen ().get_height ())
+		var mon = menu.attach_widget.get_display ().get_monitor_at_window (menu.attach_widget.get_window ());
+		if (y + height >= mon.get_geometry ().height)
 			y -= height;
 		else
 			y += allocation.height;

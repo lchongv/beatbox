@@ -72,7 +72,6 @@ public class BeatBox.CellDataFunctionHelper : GLib.Object {
 			model.get_value (iter, icon_column, out icon); // ICON column is same for all
 
 			/* Themed icon */
-			(renderer as CellRendererPixbuf).follow_state = true;
 			(renderer as CellRendererPixbuf).gicon = (icon as GLib.Icon);
 
 			renderer.visible = !showIndicator;

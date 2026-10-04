@@ -58,7 +58,7 @@ public class BeatBox.InstallGstreamerPluginsDialog : Window {
 		padding = new Box(Orientation.HORIZONTAL, 20);
 		
 		// initialize controls
-		Image warning = new Image.from_stock(Gtk.Stock.DIALOG_ERROR, Gtk.IconSize.DIALOG);
+		Image warning = new Image.from_icon_name("dialog-error", Gtk.IconSize.DIALOG);
 		Label title = new Label("");
 		Label info = new Label("");
 		installPlugin = new Button.with_label(_("Install Plugin"));
@@ -79,7 +79,7 @@ public class BeatBox.InstallGstreamerPluginsDialog : Window {
 		information_text.pack_start(info, false, true, 0);
 		information.pack_start(information_text, true, true, 10);
 		
-		HButtonBox bottomButtons = new HButtonBox();
+		var bottomButtons = new ButtonBox(Orientation.HORIZONTAL);
 		bottomButtons.set_layout(ButtonBoxStyle.END);
 		bottomButtons.pack_end(installPlugin, false, false, 0);
 		bottomButtons.pack_end(doNothing, false, false, 10);
@@ -97,15 +97,13 @@ public class BeatBox.InstallGstreamerPluginsDialog : Window {
 		show_all();
 	}
 	
-	public static Gtk.Alignment wrap_alignment (Gtk.Widget widget, int top, int right, int bottom, int left) {
-		var alignment = new Gtk.Alignment(0.0f, 0.0f, 1.0f, 1.0f);
-		alignment.top_padding = top;
-		alignment.right_padding = right;
-		alignment.bottom_padding = bottom;
-		alignment.left_padding = left;
-		
-		alignment.add(widget);
-		return alignment;
+	public static Gtk.Widget wrap_alignment (Gtk.Widget widget, int top, int right, int bottom, int left) {
+		// padding as extra margins (Gtk.Alignment is deprecated)
+		widget.margin_top += top;
+		widget.margin_end += right;
+		widget.margin_bottom += bottom;
+		widget.margin_start += left;
+		return widget;
 	}
 	
 	public void installPluginClicked() {

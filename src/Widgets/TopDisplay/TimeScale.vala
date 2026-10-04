@@ -60,8 +60,8 @@ public class BeatBox.TimeScale : Box {
 		right_time = new Label("0:00");
 		scale = new Scale.with_range(Orientation.HORIZONTAL, 0, 1, 1);
 		
-		left_time.margin_right = 6;
-		right_time.margin_left = 6;
+		left_time.margin_end = 6;
+		right_time.margin_start = 6;
 		// equal-width digits and a width fixed by the song's length, so the
 		// diamond's track doesn't shrink and grow as the seconds tick
 		var digits = new Pango.AttrList ();
@@ -111,7 +111,7 @@ public class BeatBox.TimeScale : Box {
 		int point_x = 0;
 		int point_y = 0;
 		
-		scale.get_pointer(out point_x, out point_y);
+		point_x = (int)event.x;
 		scale.get_allocation(out extents);
 		
 		// get seconds of media
@@ -129,7 +129,7 @@ public class BeatBox.TimeScale : Box {
 		int point_x = 0;
 		int point_y = 0;
 		
-		scale.get_pointer(out point_x, out point_y);
+		point_x = (int)event.x;
 		scale.get_allocation(out extents);
 		
 		// get seconds of media

@@ -76,7 +76,7 @@ public class BeatBox.FileNotFoundDialog : Window {
 		padding = new Box(Orientation.HORIZONTAL, 20);
 		
 		// initialize controls
-		Image warning = new Image.from_stock(Gtk.Stock.DIALOG_ERROR, Gtk.IconSize.DIALOG);
+		Image warning = new Image.from_icon_name("dialog-error", Gtk.IconSize.DIALOG);
 		Label title = new Label("");
 		Label info = new Label("");
 		filesScroll = new ScrolledWindow(null, null);
@@ -122,7 +122,7 @@ public class BeatBox.FileNotFoundDialog : Window {
 		exp.add(listBox);
 		exp.expanded = false;
 		
-		HButtonBox bottomButtons = new HButtonBox();
+		var bottomButtons = new ButtonBox(Orientation.HORIZONTAL);
 		bottomButtons.set_layout(ButtonBoxStyle.END);
 		bottomButtons.pack_end(removeMedia, false, false, 0);
 		bottomButtons.pack_end(rescanLibrary, false, false, 0);
@@ -176,8 +176,8 @@ public class BeatBox.FileNotFoundDialog : Window {
 		string file = "";
 		var file_chooser = new FileChooserDialog (_("Locate Music File"), this,
 								  FileChooserAction.OPEN,
-								  Gtk.Stock.CANCEL, ResponseType.CANCEL,
-								  Gtk.Stock.OPEN, ResponseType.ACCEPT);
+								  _("_Cancel"), ResponseType.CANCEL,
+								  _("_Open"), ResponseType.ACCEPT);
 		
 		// try and help user by setting a sane default folder
 		var invalid_file = File.new_for_uri(m.uri);

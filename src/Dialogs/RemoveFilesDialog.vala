@@ -53,12 +53,12 @@ public class BeatBox.RemoveFilesDialog : Window {
 		padding = new Box(Orientation.HORIZONTAL, 20);
 		
 		// initialize controls
-		Image warning = new Image.from_stock(Gtk.Stock.DIALOG_WARNING, Gtk.IconSize.DIALOG);
+		Image warning = new Image.from_icon_name("dialog-warning", Gtk.IconSize.DIALOG);
 		Label title = new Label("");
 		Label info = new Label("");
 		trash_button = new Button.with_label(_("Move to Trash"));
 		remove_button = new Button.with_label(_("Remove from BeatBox"));
-		cancel_button = new Button.from_stock (Gtk.Stock.CANCEL);
+		cancel_button = new Button.with_mnemonic (_("_Cancel"));
 		
 		bool multiple_media = to_remove.size > 1;
 		var media_text = new StringBuilder();
@@ -119,7 +119,7 @@ public class BeatBox.RemoveFilesDialog : Window {
 		information_text.pack_start(info, false, true, 0);
 		information.pack_start(information_text, true, true, 10);
 		
-		HButtonBox bottomButtons = new HButtonBox();
+		var bottomButtons = new ButtonBox(Orientation.HORIZONTAL);
 		bottomButtons.set_layout(ButtonBoxStyle.END);
 		if(need_trash)	bottomButtons.pack_end(trash_button, false, false, 0);
 		bottomButtons.pack_end(cancel_button, false, false, 0);

@@ -76,7 +76,6 @@ public class BeatBox.PopupListView : Gtk.Window {
 
 		// window stuff
 		set_decorated(false);
-		set_has_resize_grip(false);
 
 		// close button
 		var close = new Gtk.Button ();
@@ -110,7 +109,7 @@ public class BeatBox.PopupListView : Gtk.Window {
 		album_label.set_max_width_chars (30);
 		artist_label.set_max_width_chars (30);
 
-		album_label.margin_left = album_label.margin_right = 12;
+		album_label.margin_start = album_label.margin_end = 12;
 		artist_label.margin_bottom = 12;
 
 		// add actual list

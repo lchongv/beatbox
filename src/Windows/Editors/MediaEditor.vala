@@ -87,7 +87,7 @@ public class BeatBox.MediaEditor : Window {
 			add_extra_views();
 		}
 		
-		HButtonBox buttonSep = new HButtonBox();
+		var buttonSep = new ButtonBox(Orientation.HORIZONTAL);
 		buttonSep.set_layout(ButtonBoxStyle.END);
 		buttonSep.set_spacing (6);
 		nav_arrows = new NavigationArrows();

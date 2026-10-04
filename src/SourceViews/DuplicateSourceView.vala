@@ -179,7 +179,7 @@ public class BeatBox.DuplicateSourceView : SourceView {
 	}
 	
 	public override Gdk.Pixbuf get_view_icon() {
-		return render_icon_pixbuf(Gtk.Stock.COPY, Gtk.IconSize.MENU);
+		return App.icons.render_icon("edit-copy", Gtk.IconSize.MENU);
 	}
 	
 	public override string get_view_name() {

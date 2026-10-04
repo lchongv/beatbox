@@ -40,7 +40,7 @@ public class BeatBox.OperationDisplay : BeatBox.Display, Box {
 		
 		operation_status.xalign = 0.5f;
 		operation_status.set_justify(Justification.CENTER);
-		operation_status.margin_left = 0;
+		operation_status.margin_start = 0;
 		operation_status.ellipsize = Pango.EllipsizeMode.END;
 		
 		var left_box = new Box(Orientation.VERTICAL, 0);

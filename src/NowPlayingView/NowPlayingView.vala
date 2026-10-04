@@ -48,7 +48,6 @@ public class BeatBox.NowPlayingView : Notebook, NowPlayingViewInterface {
 		append_page(dashboard);
 		append_page(video_area);
 		
-		video_area.double_buffered = false;
 		
 		add_section(MediaType.SONG, new SongSummarySection());
 		//add_section(MediaType.SONG, new SongArtistSection());

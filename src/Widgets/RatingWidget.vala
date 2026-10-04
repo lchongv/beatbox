@@ -110,9 +110,6 @@ public class BeatBox.RatingWidget : Gtk.EventBox {
     }
 
     public void set_background_color (Gdk.RGBA color) {
-        override_background_color (Gtk.StateFlags.NORMAL, color);
-        override_background_color (Gtk.StateFlags.ACTIVE, color);
-        override_background_color (Gtk.StateFlags.PRELIGHT, color);
         redraw ();
     }
 

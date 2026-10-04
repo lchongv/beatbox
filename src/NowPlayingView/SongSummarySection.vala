@@ -205,7 +205,7 @@ public class BeatBox.SongSummarySection : Box {
 		lyrics_eb.get_style_context().add_class("black");
 		lyrics_eb.get_style_context().add_provider(style_provider, STYLE_PROVIDER_PRIORITY_APPLICATION);
 		lyrics_eb.add(lyrics);
-		lyrics_scroll.add_with_viewport(lyrics_eb);
+		lyrics_scroll.add(lyrics_eb);
 		lyrics_scroll.set_policy(PolicyType.AUTOMATIC, PolicyType.AUTOMATIC);
 		lyrics_holder.set_size_request(300, -1);
 		lyrics_holder.set_widget(lyrics_scroll);

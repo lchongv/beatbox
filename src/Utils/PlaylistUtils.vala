@@ -228,8 +228,8 @@ namespace BeatBox.PlaylistUtils {
 		
 		var file_chooser = new Gtk.FileChooserDialog (_("Export Playlist"), main_window,
 								  Gtk.FileChooserAction.SAVE,
-								  Gtk.Stock.CANCEL, Gtk.ResponseType.CANCEL,
-								  Gtk.Stock.SAVE, Gtk.ResponseType.ACCEPT);
+								  _("_Cancel"), Gtk.ResponseType.CANCEL,
+								  _("_Save"), Gtk.ResponseType.ACCEPT);
 		
 		// filters for .m3u and .pls
 		var m3u_filter = new Gtk.FileFilter();

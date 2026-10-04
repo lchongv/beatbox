@@ -215,15 +215,13 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		// searchField.set_text(App.settings.main.search_string);
 	}
 
-	public static Gtk.Alignment wrap_alignment (Gtk.Widget widget, int top, int right, int bottom, int left) {
-		var alignment = new Gtk.Alignment(0.0f, 0.0f, 1.0f, 1.0f);
-		alignment.top_padding = top;
-		alignment.right_padding = right;
-		alignment.bottom_padding = bottom;
-		alignment.left_padding = left;
-
-		alignment.add(widget);
-		return alignment;
+	public static Gtk.Widget wrap_alignment (Gtk.Widget widget, int top, int right, int bottom, int left) {
+		// padding as extra margins (Gtk.Alignment is deprecated)
+		widget.margin_top += top;
+		widget.margin_end += right;
+		widget.margin_bottom += bottom;
+		widget.margin_start += left;
+		return widget;
 	}
 	
 	// Initializes properties, values, and event handlers on the window itself
@@ -304,7 +302,7 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		
 		showSongInfo.get_style_context().add_class("raised");
 		showSongInfoBin.add(showSongInfo);
-		showSongInfoBin.margin_left = 12;
+		showSongInfoBin.margin_start = 12;
 		showSongInfo.set_image(App.icons.INFO.render_image (IconSize.MENU, viewSelector.get_style_context()));
 		
 		// The LCD is always visible; the app name fills it when idle
@@ -319,7 +317,7 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		top_display.notify["visible"].connect(() => { lcd_logo.visible = !top_display.visible; });
 		top_displayBin.add(lcd);
 		top_displayBin.set_expand(true);
-		top_displayBin.margin_left = 12;
+		top_displayBin.margin_start = 12;
 		
 		viewSelector.append(App.icons.VIEW_DETAILS.render_image (IconSize.MENU));
 		viewSelector.append(App.icons.VIEW_ICONS.render_image (IconSize.MENU));
@@ -327,13 +325,13 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		viewSelector.valign = showSongInfo.valign = Gtk.Align.CENTER;
 		viewSelector.selected = App.settings.saved_state.view_mode;
 		
-		viewSelectorBin.margin_left = 12;
+		viewSelectorBin.margin_start = 12;
 		viewSelectorBin.add(viewSelector);
 		
 		searchFieldBin.add(searchField);
 		searchField.valign = Gtk.Align.CENTER; // half the height of the LCD, not the whole toolbar
-		searchFieldBin.margin_left = 12;
-		searchFieldBin.margin_right = 6;
+		searchFieldBin.margin_start = 12;
+		searchFieldBin.margin_end = 6;
 		
 		//settingsMenu.append((Gtk.MenuItem)App.actions.import_folder.create_menu_item());
 		//settingsMenu.append((Gtk.MenuItem)App.actions.rescan_music_folder.create_menu_item());
@@ -517,7 +515,7 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 	ToolItem create_traffic_lights() {
 		var box = new Box(Orientation.HORIZONTAL, 8);
 		box.valign = Align.CENTER;
-		box.margin_right = 14;
+		box.margin_end = 14;
 		string[] names = { "close", "minimize", "maximize" };
 		string[] tips = { _("Close"), _("Minimize"), _("Maximize") };
 		for (int i = 0; i < 3; i++) {

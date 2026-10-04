@@ -35,9 +35,9 @@ namespace BeatBox.UI {
         widget.halign = Gtk.Align.FILL;
 
         widget.margin_top = top;
-        widget.margin_right = right;
+        widget.margin_end = right;
         widget.margin_bottom = bottom;
-        widget.margin_left = left;
+        widget.margin_start = left;
 
         return widget;
     }

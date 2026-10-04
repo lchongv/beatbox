@@ -183,7 +183,7 @@ public class BeatBox.PodcastSummarySection : Box {
 		summary_eb.get_style_context().add_class("pure_white");
 		summary_eb.get_style_context().add_provider(style_provider, STYLE_PROVIDER_PRIORITY_APPLICATION);
 		summary_eb.add(summary_text);
-		//summary_scroll.add_with_viewport(summary_eb);
+		//summary_scroll.add(summary_eb);
 		summary_scroll.set_policy(PolicyType.AUTOMATIC, PolicyType.AUTOMATIC);
 		summary_scroll.set_size_request(-1, 130);
 		//summary_holder.set_widget(summary_scroll);
@@ -198,7 +198,7 @@ public class BeatBox.PodcastSummarySection : Box {
 		description_eb.get_style_context().add_class("black");
 		description_eb.get_style_context().add_provider(style_provider, STYLE_PROVIDER_PRIORITY_APPLICATION);
 		description_eb.add(description);
-		description_scroll.add_with_viewport(description_eb);
+		description_scroll.add(description_eb);
 		description_scroll.set_policy(PolicyType.AUTOMATIC, PolicyType.AUTOMATIC);
 		description_holder.set_size_request(300, -1);
 		description_holder.set_widget(description_scroll);

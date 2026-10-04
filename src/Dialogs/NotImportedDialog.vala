@@ -65,7 +65,7 @@ public class BeatBox.NotImportedDialog : Window{
 		padding = new Box(Orientation.HORIZONTAL, 20);
 		
 		// initialize controls
-		Image warning = new Image.from_stock(Gtk.Stock.DIALOG_ERROR, Gtk.IconSize.DIALOG);
+		Image warning = new Image.from_icon_name("dialog-error", Gtk.IconSize.DIALOG);
 		Label title = new Label("");
 		Label info = new Label(_("BeatBox was unable to import %d medias. The files may be damaged.").printf(files.size));
 		trashAll = new CheckButton.with_label(_("Move all corrupted files to trash"));
@@ -134,7 +134,7 @@ public class BeatBox.NotImportedDialog : Window{
 		exp.add(listBox);
 		exp.expanded = false;
 		
-		HButtonBox bottomButtons = new HButtonBox();
+		var bottomButtons = new ButtonBox(Orientation.HORIZONTAL);
 		bottomButtons.set_layout(ButtonBoxStyle.END);
 		bottomButtons.pack_end(moveToTrash, false, false, 0);
 		bottomButtons.pack_end(okButton, false, false, 10);
@@ -165,15 +165,13 @@ public class BeatBox.NotImportedDialog : Window{
 		show_all();
 	}
 	
-	public static Gtk.Alignment wrap_alignment (Gtk.Widget widget, int top, int right, int bottom, int left) {
-		var alignment = new Gtk.Alignment(0.0f, 0.0f, 1.0f, 1.0f);
-		alignment.top_padding = top;
-		alignment.right_padding = right;
-		alignment.bottom_padding = bottom;
-		alignment.left_padding = left;
-		
-		alignment.add(widget);
-		return alignment;
+	public static Gtk.Widget wrap_alignment (Gtk.Widget widget, int top, int right, int bottom, int left) {
+		// padding as extra margins (Gtk.Alignment is deprecated)
+		widget.margin_top += top;
+		widget.margin_end += right;
+		widget.margin_bottom += bottom;
+		widget.margin_start += left;
+		return widget;
 	}
 	
 	public bool updateMoveToTrashSensetivity(TreeModel model, TreePath path, TreeIter iter) {
