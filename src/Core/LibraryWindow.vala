@@ -288,6 +288,7 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		viewSelector = new Granite.Widgets.ModeButton();
 		showSongInfo = new ToggleButton();
 		searchField = new AdvancedSearchBox();
+		searchField.width_request = 250; // 1.5 × its natural width
 		infoBarLabel = new Label("");
 		infoBar = new InfoBar();
 		file_not_found_pileup = new LinkedList<Media>();
