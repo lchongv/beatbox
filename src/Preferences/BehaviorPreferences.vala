@@ -78,6 +78,8 @@ public class BeatBox.BehaviorPreferences : SimplePreferences {
 		add_heading(_("Library Management"));
 		var organize = add_check(_("Keep media folders organized"), App.settings.main.update_folder_hierarchy);
 		var write = add_check(_("Write metadata to file"), App.settings.main.write_metadata_to_file);
+		var watch = add_check(_("Import songs that appear in the music folder"), App.settings.main.watch_music_folder);
+		watch.toggled.connect(() => { App.settings.main.watch_music_folder = watch.active; });
 		var copy = add_check(_("Copy files to library folder when imported"), App.settings.main.copy_imported_music);
 		organize.toggled.connect(() => { App.settings.main.update_folder_hierarchy = organize.active; });
 		write.toggled.connect(() => { App.settings.main.write_metadata_to_file = write.active; });

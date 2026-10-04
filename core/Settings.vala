@@ -245,6 +245,7 @@ public class BeatBox.Settings {
 
         public string music_mount_name { get; set; }
         public string music_folder { get; set; }
+        public bool watch_music_folder { get; set; } // import songs that appear in it (FolderWatcher)
         public string podcast_folder { get; set; }
         public bool update_folder_hierarchy { get; set; }
         public bool write_metadata_to_file { get; set; }
@@ -273,6 +274,7 @@ public class BeatBox.Settings {
         public Settings ()  {
             music_mount_name = "";
             music_folder = "";
+            watch_music_folder = true;
             podcast_folder = "";
             search_string = "";
             skin = "";

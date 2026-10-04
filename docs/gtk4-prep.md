@@ -100,8 +100,8 @@ Total fases 1–8: ~20–25 h. Fase 9: +8 h.
 2. [x] Letras sincronizadas (LRCLIB) en la segunda línea del LCD; caché en ~/.cache/beatbox/lyrics (Preferencias › Apariencia).
 3. [x] Mini reproductor: Ctrl+M, Alt+botón verde o menú; deja solo controles y LCD.
 4. [x] Cola editable: «Reproducir a continuación» en las listas; en la Cola, Subir, Bajar y Vaciar (menú contextual). Pendiente: guardarla al cerrar, arrastrar para reordenar.
-5. Vigilar carpetas (importar/mover automáticamente), duplicados, edición por lotes, portada embebida.
+5. [~] Vigilar la carpeta de música: hecho (importa lo nuevo, también carpetas movidas; Preferencias › Comportamiento). Pendiente: reflejar archivos borrados o movidos, duplicados, edición por lotes, portada embebida.
 6. Scrobbling Last.fm / ListenBrainz.
-7. Atajos configurables, notificaciones con portada.
+7. Atajos configurables. (Las notificaciones ya llevan la portada.)
 8. Ecualizador revisado.
 9. Paquete Flatpak/AppImage.
