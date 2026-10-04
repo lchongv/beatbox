@@ -58,7 +58,6 @@ public class BeatBox.Actions : BeatBox.ActionsInterface {
 		next = add("next", _("Next"));
 		play_pause = add("play_pause", _("Play/Pause"));
 		previous = add("previous", _("Previous"));
-		lastfm_ban = add("lastfm_ban", _("Ban"));
 		lastfm_love = add("lastfm_love", _("Love"));
 		show_duplicates = add("show_duplicates", _("Show Duplicates"));
 		hide_duplicates = add("hide_duplicates", _("Hide Duplicates"));
@@ -80,7 +79,6 @@ public class BeatBox.Actions : BeatBox.ActionsInterface {
 		next.activate.connect(next_activate);
 		play_pause.activate.connect(play_pause_activate);
 		previous.activate.connect(previous_activate);
-		lastfm_ban.activate.connect(lastfm_ban_activate);
 		lastfm_love.activate.connect(lastfm_love_activate);
 		show_duplicates.activate.connect(show_duplicates_activate);
 		hide_duplicates.activate.connect(hide_duplicates_activate);
@@ -224,10 +222,6 @@ public class BeatBox.Actions : BeatBox.ActionsInterface {
 		App.playback.request_previous();
 	}
 	
-	private void lastfm_ban_activate() {
-		App.info.lastfm.ban_track(App.playback.current_media.title, App.playback.current_media.artist);
-	}
-	
 	private void lastfm_love_activate() {
 		App.info.lastfm.love_track(App.playback.current_media.title, App.playback.current_media.artist);
 	}
@@ -264,12 +258,10 @@ public class BeatBox.Actions : BeatBox.ActionsInterface {
 	void media_played(Media m, Media? old) {
 		var lastfm_elements_visible = App.settings.lastfm.session_key != "";
 		// TODO: Listen to lastfm login event
-		lastfm_ban.set_enabled(lastfm_elements_visible);
 		lastfm_love.set_enabled(lastfm_elements_visible);
 	}
 	
 	void playback_stopped(Media? was_playing) {
-		lastfm_ban.set_enabled(false);
 		lastfm_love.set_enabled(false);
 	}
 	

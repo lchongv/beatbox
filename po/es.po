@@ -2381,3 +2381,24 @@ msgid "Written into %d file"
 msgid_plural "Written into %d files"
 msgstr[0] "Escrita en %d archivo"
 msgstr[1] "Escrita en %d archivos"
+
+msgid "Scrobbling"
+msgstr "Escuchas"
+
+msgid "User token"
+msgstr "Token de usuario"
+
+msgid "Connect"
+msgstr "Conectar"
+
+msgid "Disconnect"
+msgstr "Desconectar"
+
+msgid "Your listens are sent to ListenBrainz as %s."
+msgstr "Tus escuchas se envían a ListenBrainz como %s."
+
+msgid "Paste the user token from %s to send your listens there."
+msgstr "Pega el token de usuario de %s para enviar ahí tus escuchas."
+
+msgid "ListenBrainz didn't accept that token (or couldn't be reached)."
+msgstr "ListenBrainz no aceptó ese token (o no se pudo conectar)."

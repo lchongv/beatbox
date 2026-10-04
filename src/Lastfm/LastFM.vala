@@ -65,81 +65,53 @@ public class BeatBox.LastFMCore : GLib.Object, BeatBox.LastFMInterface {
 	}
 	
 	/** Last.FM Api functions **/
-	// for now, assume always use https
+	/* Signed call (api_sig over the raw values, see last.fm/api/authspec); POST sends
+	 * the parameters as a form, GET in the query string, escaped either way.
+	 * call_back runs in a worker thread. */
 	public void query(string type, HashMap<string, string> params, bool requires_sk, BeatBox.LastFMCallback call_back) {
 		if(requires_sk && BeatBox.String.is_empty(session_key)) {
-			warning("User must authenticate before calling method %s", params.get("method"));
+			debug("Not logged in to Last.fm: %s not sent", params.get("method"));
 			return;
 		}
 		
-		try {
-			new Thread<void*>.try (null, () => {
-				// use sync call with yield and idle signal handler
-				// generate the md5 by sorting the params, appending them 1 by 1, and then adding the secret
-				string url = HTTPS_BASE;
-				string md5_arg = "";
-				var headers = new Soup.MessageHeaders(Soup.MessageHeadersType.REQUEST);
-				
-				// Add the api key and session key
-				params.set("api_key", api);
-				if(requires_sk) {
-					params.set("sk", session_key);
-				}
-				
-				// Convert the params into a sorted list
-				generate_url_md5_headers(params, ref url, ref md5_arg, ref headers);
-				md5_arg += secret;
-				
-				string md5_string = generate_md5(md5_arg);
-				params.set("api_sig", md5_string);
-				
-				// Now generate params and headers with the api_sig
-				url = HTTPS_BASE;
-				headers = new Soup.MessageHeaders(Soup.MessageHeadersType.REQUEST);
-				generate_url_md5_headers(params, ref url, ref md5_arg, ref headers);
-				
-				string body = BeatBox.Http.fetch (url, type);
-                
-                call_back(body);
-                
-                return null;
-			});
-		} catch(Error err) {}
+		var fields = new HashMap<string, string>();
+		foreach(var entry in params.entries)
+			fields.set(entry.key, entry.value);
+		fields.set("api_key", api);
+		if(requires_sk)
+			fields.set("sk", session_key);
+		fields.set("api_sig", signature(fields));
+		
+		new Thread<void*>("lastfm", () => {
+			uint status;
+			string body;
+			if(type == "POST")
+				body = BeatBox.Http.send("POST", HTTPS_BASE, "application/x-www-form-urlencoded", BeatBox.Http.form_encode(fields), null, out status);
+			else
+				body = BeatBox.Http.send("GET", HTTPS_BASE + "?" + BeatBox.Http.form_encode(fields), null, null, null, out status);
+			if(status != 200)
+				message("Last.fm %s answered %u: %s", fields.get("method"), status, body);
+			call_back(body);
+			return null;
+		});
 	}
 	
-	// Since we will unlikely have much more than 5 params, simple selection sort is fine.
-	void generate_url_md5_headers(HashMap<string, string> untouched_params, ref string? url, ref string? md5, ref Soup.MessageHeaders? headers) {
-		var params = new HashMap<string, string>();
-		
-		// Create a copy of hashmap so we can remove from it
-		foreach(var entry in untouched_params.entries) {
-			params.set(entry.key, entry.value);
+	/** md5 of the parameters sorted by name, each name followed by its value, then the secret */
+	static string signature(Map<string, string> fields) {
+		var names = new ArrayList<string>();
+		names.add_all(fields.keys);
+		names.sort((a, b) => strcmp(a, b));
+		var sb = new StringBuilder();
+		foreach(var name in names) {
+			sb.append(name);
+			sb.append(fields.get(name));
 		}
-		
-		int count = params.size;
-		for(int i = 0; i < count; ++i) {
-			Map.Entry<string, string>? lowest = null;
-			
-			foreach(var entry in params.entries) {
-				if(lowest == null || lowest.key > entry.key) {
-					lowest = entry;
-				}
-			}
-			
-			if(headers != null)		headers.append(lowest.key, lowest.value);
-			if(url != null)			url += ((i == 0) ? "?" : "&") + lowest.key + "=" + lowest.value;
-			if(md5 != null)			md5 += lowest.key + lowest.value;
-			
-			params.unset(lowest.key);
-		}
+		sb.append(secret);
+		return Checksum.compute_for_string(ChecksumType.MD5, sb.str);
 	}
 	
 	public static string fix_for_url (string fix) {
 		return Uri.escape_string (fix, "", false);
-	}
-	
-	public string generate_md5(string text) {
-		return Checksum.compute_for_string(ChecksumType.MD5, text, text.length);
 	}
 	
 	public void authenticate_user(string username, string password) {
@@ -154,10 +126,12 @@ public class BeatBox.LastFMCore : GLib.Object, BeatBox.LastFMInterface {
 			bool subsc = false;;
 			
 			Xml.Doc* doc = Xml.Parser.parse_memory(body, body.length);
-			if(doc == null) return;
-			
-			Xml.Node* root = doc->get_root_element();
-			if(root == null) return;
+			Xml.Node* root = (doc != null) ? doc->get_root_element() : null;
+			if(root == null) { // no answer, or not XML: still tell the preferences
+				delete doc;
+				Idle.add(() => { App.info.lastfm.login_returned(false); return false; });
+				return;
+			}
 			
 			for (Xml.Node* iter = root->children; iter != null; iter = iter->next) {
 				if(iter->name == "session") {
@@ -209,22 +183,11 @@ public class BeatBox.LastFMCore : GLib.Object, BeatBox.LastFMInterface {
 		});
 	}
 	
-	public void ban_track(string title, string artist) {
-		var params = new HashMap<string, string>();
-		params.set("method", "track.ban");
-		params.set("artist", artist);
-		params.set("track", title);
-		
-		query("POST", params, true, (body) => {
-			
-		});
-	}
-	
 	/** Update's the user's currently playing track on last.fm
 	 * 
 	 */
 	public void post_now_playing() {
-		if(!BeatBox.App.playback.media_active)
+		if(!BeatBox.App.playback.media_active || BeatBox.String.is_empty(session_key))
 			return;
 		
 		var artist = BeatBox.App.playback.current_media.artist;
@@ -248,15 +211,14 @@ public class BeatBox.LastFMCore : GLib.Object, BeatBox.LastFMInterface {
 	}
 	
 	/**
-	 * Scrobbles the currently playing track to last.fm
+	 * Scrobbles the currently playing track to last.fm; started_at is when it
+	 * began playing (unix time), as last.fm/api/scrobbling asks.
 	 */
-	// TODO: Set the 'chosenByUser' param to 0 for radio, etc.
-	// See http://www.last.fm/api/scrobbling
-	public void scrobble() {
-		if(!BeatBox.App.playback.media_active)
+	public void scrobble(int64 started_at) {
+		if(!BeatBox.App.playback.media_active || BeatBox.String.is_empty(session_key))
 			return;
 		
-		var timestamp = (int)time_t();
+		var timestamp = started_at;
 		var artist = BeatBox.App.playback.current_media.artist;
 		var title = BeatBox.App.playback.current_media.title;
 		var album_artist = BeatBox.App.playback.current_media.album_artist;
@@ -269,6 +231,7 @@ public class BeatBox.LastFMCore : GLib.Object, BeatBox.LastFMInterface {
 		params.set("albumArtist", album_artist);
 		params.set("album", album);
 		params.set("timestamp", timestamp.to_string());
+		params.set("duration", BeatBox.App.playback.current_media.length.to_string());
 		
 		query("POST", params, true, (body) => {
 			// TODO: Use the corrections returned

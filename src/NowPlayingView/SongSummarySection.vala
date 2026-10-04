@@ -35,7 +35,6 @@ public class BeatBox.SongSummarySection : Box {
 	Label meta_album;
 	Label meta_year;
 	Button loveMedia;
-	Button banMedia;
 	RatingWidget rating;
 	StyledBox lyrics_holder;
 	Label lyrics;
@@ -124,7 +123,6 @@ public class BeatBox.SongSummarySection : Box {
 		meta_album = new Label("");
 		Box rate_box = new Box(Orientation.HORIZONTAL, 0);
 		loveMedia = new Button();
-		banMedia = new Button();
 		rating = new RatingWidget(false, IconSize.MENU, false, null);
 		meta_year = new Label("");
 		summary_text = new Label("");
@@ -132,7 +130,6 @@ public class BeatBox.SongSummarySection : Box {
 		
 		rate_box.add(rating);
 		rate_box.add(loveMedia);
-		rate_box.add(banMedia);
 		
 		metadata.add(coverArt);
 		metadata.add(UI.wrap_alignment(meta_labels, 0, 0, 0, 6));
@@ -163,17 +160,12 @@ public class BeatBox.SongSummarySection : Box {
 		lyrics.set_line_wrap(true);
 		coverArt.set_size_request (Icons.ALBUM_VIEW_IMAGE_SIZE, Icons.ALBUM_VIEW_IMAGE_SIZE);
 		loveMedia.set_no_show_all(true);
-		banMedia.set_no_show_all(true);
 		loveMedia.relief = ReliefStyle.NONE;
-		banMedia.relief = ReliefStyle.NONE;
 		var lastfm_love_icon = App.icons.LASTFM_LOVE.render (IconSize.MENU);
-		var lastfm_ban_icon = App.icons.LASTFM_BAN.render (IconSize.MENU);
 		loveMedia.set_image(new Image.from_pixbuf(lastfm_love_icon));
-		banMedia.set_image(new Image.from_pixbuf(lastfm_ban_icon));
 		
 		rating.rating_changed.connect(rating_changed);
 		loveMedia.clicked.connect(loveButtonClicked);
-		banMedia.clicked.connect(banButtonClicked);
 		
 		drag_dest_set(this, DestDefaults.ALL, {}, Gdk.DragAction.MOVE);
 		Gtk.drag_dest_add_uri_targets(this);
@@ -258,13 +250,6 @@ public class BeatBox.SongSummarySection : Box {
 		App.actions.lastfm_love.activate(null);
 	}
 	
-	void banButtonClicked() {
-		App.actions.lastfm_ban.activate(null);
-		
-		// Clearly we should skip this song...
-		App.playback.request_next();
-	}
-	
 	bool is_valid_image_type(string type) {
 		var typeDown = type.down();
 		
@@ -311,7 +296,6 @@ public class BeatBox.SongSummarySection : Box {
 		var lastfm_elements_visible = App.settings.lastfm.session_key != "";
 		
 		loveMedia.set_visible(lastfm_elements_visible);
-		banMedia.set_visible(lastfm_elements_visible);
 		
 		set_visible(media_playing);
 	}
