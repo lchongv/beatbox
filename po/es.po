@@ -2330,3 +2330,6 @@ msgstr "Bajar"
 
 msgid "Clear Queue"
 msgstr "Vaciar la cola"
+
+msgid "Import songs that appear in the music folder"
+msgstr "Importar las canciones que aparezcan en la carpeta de música"

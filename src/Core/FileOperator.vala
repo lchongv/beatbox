@@ -65,7 +65,7 @@ public class BeatBox.FileOperator : Object, FileInterface {
 		}	
 	}
 	
-	private bool is_valid_file_type(string type) {
+	public static bool is_valid_file_type(string type) {
 		var typeDown = type.down();
 		
 		return (typeDown.has_suffix(".mp3") || typeDown.has_suffix(".m4a") || 

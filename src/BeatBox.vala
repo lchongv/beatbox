@@ -96,6 +96,7 @@ public class BeatBox.App : Gtk.Application {
 	public static BeatBox.InfoInterface info { get; private set; }
 	public static BeatBox.Settings settings { get; private set; }
 	public static BeatBox.DeviceInterface devices { get; private set; }
+	static FolderWatcher folder_watcher;
 
 	/*private const OptionEntry[] app_options = {
 		{ "debug", 'd', 0, OptionArg.NONE, ref Options.debug, N_("Enable debug logging"), null },
@@ -193,6 +194,7 @@ public class BeatBox.App : Gtk.Application {
 		library = new LibraryManager();
 		playlists = new PlaylistManager();
 		((LibraryManager)library).init_default_libraries();
+		folder_watcher = new FolderWatcher();
 		((PlaylistManager)playlists).load_playlists_from_db();
 		((LibraryManager)library).add_default_smart_playlists();
 		window = new LibraryWindow(this);
