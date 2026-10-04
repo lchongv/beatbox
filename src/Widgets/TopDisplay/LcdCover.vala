@@ -68,7 +68,6 @@ public class BeatBox.LcdCover : Image {
 		win.window_position = WindowPosition.CENTER_ON_PARENT;
 		win.title = App.playback.current_media.album;
 		win.add (image);
-		win.add_events (Gdk.EventMask.SCROLL_MASK | Gdk.EventMask.SMOOTH_SCROLL_MASK);
 		// ponytail: rescales the whole pixbuf on each step; fine up to the 2.5x cap
 		bool set_zoom (double z) {
 			zoom = z.clamp (0.1, 2.5);
@@ -77,16 +76,9 @@ public class BeatBox.LcdCover : Image {
 			return true;
 		}
 		set_zoom (fit);
-		win.scroll_event.connect ((e) => {
-			double dx = 0, dy = 0;
-			if (e.direction == Gdk.ScrollDirection.SMOOTH)
-				e.get_scroll_deltas (out dx, out dy);
-			bool up = e.direction == Gdk.ScrollDirection.UP || dy < 0;
-			bool down = e.direction == Gdk.ScrollDirection.DOWN || dy > 0;
-			if (up) return set_zoom (zoom * 1.15);
-			if (down) return set_zoom (zoom / 1.15);
-			return false;
-		});
+		var scroll = new Gtk.EventControllerScroll (win, Gtk.EventControllerScrollFlags.VERTICAL);
+		scroll.scroll.connect ((dx, dy) => { set_zoom (dy < 0 ? zoom * 1.15 : zoom / 1.15); });
+		win.set_data ("scroll-controller", scroll); // GTK3 controllers need a reference
 		win.button_press_event.connect ((e) => {
 			if (e.type != Gdk.EventType.2BUTTON_PRESS)
 				return false; // single press: the draggable handler below moves it
@@ -94,14 +86,16 @@ public class BeatBox.LcdCover : Image {
 			return true;
 		});
 		UI.make_window_draggable (win);
-		win.key_press_event.connect ((e) => {
-			if (e.keyval == Gdk.Key.Escape)
+		var keys = new Gtk.EventControllerKey (win);
+		win.set_data ("key-controller", keys);
+		keys.key_pressed.connect ((keyval, keycode, state) => {
+			if (keyval == Gdk.Key.Escape)
 				win.destroy ();
-			else if (e.keyval == Gdk.Key.plus || e.keyval == Gdk.Key.KP_Add || e.keyval == Gdk.Key.equal)
+			else if (keyval == Gdk.Key.plus || keyval == Gdk.Key.KP_Add || keyval == Gdk.Key.equal)
 				set_zoom (zoom * 1.25);
-			else if (e.keyval == Gdk.Key.minus || e.keyval == Gdk.Key.KP_Subtract)
+			else if (keyval == Gdk.Key.minus || keyval == Gdk.Key.KP_Subtract)
 				set_zoom (zoom / 1.25);
-			else if (e.keyval == Gdk.Key.@0 || e.keyval == Gdk.Key.KP_0)
+			else if (keyval == Gdk.Key.@0 || keyval == Gdk.Key.KP_0)
 				set_zoom (fit);
 			return false;
 		});

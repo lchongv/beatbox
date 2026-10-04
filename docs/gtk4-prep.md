@@ -70,9 +70,20 @@ Total fases 1–8: ~20–25 h. Fase 9: +8 h.
       entrada de menú (gris si la acción está deshabilitada; los duplicados se
       ocultan). EmbeddedAlert perdió los botones de acción (nadie los usaba).
       Menús con `popup_at_pointer`/`popup_at_widget`. Queda pasar a `GMenu` + `Popover`.
-- [ ] Fase 7: pospuesta. Cambiar `info.get_tags()` por las etiquetas de cada
-      stream puede perder metadatos al importar; probar con una biblioteca real primero.
-- [ ] Fase 8, 9.
+- [x] Fase 7: `GStreamerTagger.all_tags(info)` junta las etiquetas del contenedor y
+      de cada stream (en MP4 están en el contenedor). Probado importando MP3, FLAC,
+      OGG y M4A con la versión vieja y la nueva: mismas filas en la base, y además
+      el año ahora se importa (venía en DATE_TIME y quedaba en 0).
+- [~] Fase 8: 219 `pack_start(w, false, *, 0)` → `add(w)` (equivalentes exactos;
+      pantallas idénticas píxel a píxel). Quedan ~200 con expand o padding: pasarlos a
+      `hexpand`/márgenes cambia el diseño en GTK3 (hexpand se propaga a los padres),
+      así que van en la migración real, revisando cada pantalla. Tampoco los 77 `pack_end`.
+- [~] Fase 9: CoverFlow (rueda, teclas) y el visor de carátula usan
+      `EventControllerScroll`/`EventControllerKey`. Quedan ~55 `*_event`: los clics de
+      las listas devuelven true para conservar la selección y la ventana principal
+      intercepta teclas antes que la búsqueda; con controladores cambia el orden, así
+      que conviene hacerlos junto con TreeView → ColumnView.
+- Avisos: 214 → 28.
 - Quedan además: Granite.Application (se va con Granite 7), Gdk.X11Window del
   video (en GTK4 se usa gtk4paintablesink), CDRipper `format_get_by_nick`.
 
