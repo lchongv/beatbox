@@ -1,4 +1,4 @@
-project('beatbox', 'vala', 'c', version: '0.9.18')
+project('beatbox', 'vala', 'c', version: '0.9.19')
 
 gnome = import('gnome')
 i18n = import('i18n')
@@ -286,7 +286,11 @@ executable('beatbox', app_sources, embed_cover_sources, resources, icon_resource
   export_dynamic: true,
   install: true)
 
-install_subdir('images/icons', install_dir: datadir / 'icons' / 'hicolor', strip_directory: true)
+# Only the application icon goes into the icon theme: the others are built into the
+# program (GResource), and generic names in hicolor would cover other applications' icons
+foreach size : ['16x16', '22x22', '24x24', '32x32', '48x48', '64x64', '128x128']
+  install_data('images/icons' / size / 'apps' / 'beatbox.svg', install_dir: datadir / 'icons' / 'hicolor' / size / 'apps')
+endforeach
 # Wayland shells match the window to <application id>.desktop
 install_data('data/beatbox.desktop', install_dir: datadir / 'applications', rename: 'net.launchpad.beatbox.desktop')
 install_data('data/net.launchpad.beatbox.metainfo.xml', install_dir: datadir / 'metainfo')

@@ -2,4 +2,5 @@ build/
 build-flatpak/
 .flatpak-builder/
 repo/
+appimage-work/
 *.AppImage
