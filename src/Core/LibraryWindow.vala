@@ -473,9 +473,11 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		
 		verticalBox.pack_start(top_menu, false, true, 0);*/
 		// The toolbar is the window's title bar: no separate system title bar,
-		// traffic lights on the left
-		topControls.insert(create_traffic_lights(), 0);
-		set_titlebar(topControls);
+		// traffic lights in the top-left corner, above the transport buttons
+		var titlebar = new Overlay();
+		titlebar.add(topControls);
+		titlebar.add_overlay(create_traffic_lights());
+		set_titlebar(titlebar);
 		verticalBox.pack_start(sourcesToMedias, true, true, 0);
 		verticalBox.pack_end(statusBar, false, true, 0);
 		this.add(verticalBox);
@@ -494,6 +496,7 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 			int size = (item == playButton) ? 56 : 42;
 			button.set_size_request (size, size);
 			button.valign = button.halign = Align.CENTER;
+			button.margin_top = 12; // room for the traffic lights above
 		}
 		searchField.get_style_context().add_class("search-bar");
 		statusBar.get_style_context().add_class("app-statusbar");
@@ -518,10 +521,12 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		hide_video_mode();
 	}
 	
-	ToolItem create_traffic_lights() {
+	Widget create_traffic_lights() {
 		var box = new Box(Orientation.HORIZONTAL, 8);
-		box.valign = Align.CENTER;
-		box.margin_end = 14;
+		box.halign = Align.START;
+		box.valign = Align.START;
+		box.margin_start = 8;
+		box.margin_top = 6;
 		string[] names = { "close", "minimize", "maximize" };
 		string[] tips = { _("Close"), _("Minimize"), _("Maximize (Alt: mini player)") };
 		for (int i = 0; i < 3; i++) {
@@ -541,9 +546,7 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 				else maximize();
 			});
 		}
-		var item = new ToolItem();
-		item.add(box);
-		return item;
+		return box;
 	}
 	
 	static Gdk.ModifierType get_current_event_state_mods() {
