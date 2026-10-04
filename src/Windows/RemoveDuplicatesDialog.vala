@@ -86,7 +86,7 @@ public class BeatBox.RemoveDuplicatesDialog : Gtk.Window {
 		buttonSep.add(feedbackBox);
 		buttonSep.pack_end(cancel, false, false, 0);
 		buttonSep.pack_end(analyze, false, false, 0);
-		(buttonSep as Gtk.ButtonBox).set_child_secondary(feedbackBox, true);
+		((Gtk.ButtonBox)buttonSep).set_child_secondary(feedbackBox, true);
 		
 		// fancy up the category labels
 		matchLabel.xalign = 0.0f;

@@ -234,7 +234,6 @@ public class BeatBox.StyledArtistImages : EventBox {
 			return;
 		}
 		
-		FileInputStream filestream;
 		Gdk.Pixbuf? pix = null;
 		
 		/*try {

@@ -29,9 +29,9 @@ using Gtk;
 using Gdk;
 
 public class BeatBox.VolumeWidget : Gtk.Box {
-	static const double MUTED_MINIMUM = 0.05;
-	static const double LOW_MINIMUM = 0.25;
-	static const double FULL_MINIMUM = 0.95;
+	const double MUTED_MINIMUM = 0.05;
+	const double LOW_MINIMUM = 0.25;
+	const double FULL_MINIMUM = 0.95;
 	Scale volume;
 	Gtk.Image image;
 	

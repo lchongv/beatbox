@@ -157,9 +157,9 @@ public class BeatBox.EqualizerWindow : Gtk.Window {
 		bottom_toolbar.add(new_preset_entry);
 		bottom_toolbar.pack_end(close_button, false, false, 0);
 		
-		(bottom_toolbar as Gtk.ButtonBox).set_child_secondary(eq_switch, true);
-		(bottom_toolbar as Gtk.ButtonBox).set_child_secondary(preset_combo, true);
-		(bottom_toolbar as Gtk.ButtonBox).set_child_secondary(new_preset_entry, true);
+		((Gtk.ButtonBox)bottom_toolbar).set_child_secondary(eq_switch, true);
+		((Gtk.ButtonBox)bottom_toolbar).set_child_secondary(preset_combo, true);
+		((Gtk.ButtonBox)bottom_toolbar).set_child_secondary(new_preset_entry, true);
 
 		inner_box.pack_end(UI.wrap_alignment(bottom_toolbar, 0, 0, 10, 0), false, false, 0);
 		inner_box.pack_start(UI.wrap_alignment(scales, 0, 12, 0, 12), true, true, 10);

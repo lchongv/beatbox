@@ -288,10 +288,8 @@ podcast_date=:podcast_date, is_new_podcast=:is_new_podcast, resume_pos=:resume_p
 		
 		try {
 			string title = "";
-			string artist, composer, album_artist, album, grouping, genre, comment, lyrics;
-			uint track, track_count, album_number, album_count, bitrate, rating;
-			double bpm;
-			GLib.Date? date = GLib.Date();
+			string artist, album, genre, comment;
+			uint rating;
 			
 			// get title, artist, album artist, album, genre, comment, lyrics strings
 			if(tags.get_string(Gst.Tags.TITLE, out title))

@@ -307,6 +307,8 @@ public abstract class BeatBox.SourceView : Box, View {
 				if (have_welcome_screen)
 					view_index = view_container.page_num (welcome_screen);
 				break;
+			default:
+				break;
 		}
 
 		// i.e. we're not switching the view if it is not available
@@ -427,21 +429,8 @@ public abstract class BeatBox.SourceView : Box, View {
 	*/
 	
 	public void add_medias (Collection<Media> add) {
-		if(true || is_current_wrapper) {
-			add_medias_sync(add);
-		}
-		else {
-			add_medias_async.begin(add);
-		}
+		add_medias_sync(add);
 	}
-	
-	private async void add_medias_async (Collection<Media> add) {
-        var priority = Priority.DEFAULT_IDLE;
-        Idle.add_full (priority, () => {
-            add_medias_sync(add);
-            return false;
-        });
-    }
 	
 	protected void add_medias_sync (Collection<Media> add) {
 		if(!have_list_view && !have_album_view)
@@ -493,21 +482,8 @@ public abstract class BeatBox.SourceView : Box, View {
 	}
 	
 	public void update_medias (Collection<Media> to_update, bool metadata_changed) {
-		if(true || is_current_wrapper) {
-			update_medias_sync(to_update, metadata_changed);
-		}
-		else {
-			update_medias_async.begin(to_update, metadata_changed);
-		}
+		update_medias_sync(to_update, metadata_changed);
 	}
-	
-	private async void update_medias_async (Collection<Media> to_update, bool metadata_changed) {
-        var priority = Priority.DEFAULT_IDLE;
-        Idle.add_full (priority, () => {
-            update_medias_sync (to_update, metadata_changed);
-            return false;
-        });
-    }
 	
 	private void update_medias_sync (Collection<Media> to_update, bool metadata_changed) {
 		if(!have_list_view && !have_album_view)
@@ -684,29 +660,8 @@ public abstract class BeatBox.SourceView : Box, View {
 	}
 	
 	public void set_media (Collection<Media> new_media, bool update_grid = false) {
-		if(true || is_current_wrapper) {
-			set_media_sync(new_media, update_grid);
-		}
-		else {
-			set_media_async.begin(new_media, update_grid);
-		}
+		set_media_sync(new_media, update_grid);
 	}
-	
-	private async void set_media_async (Gee.Collection<Media> new_media, bool update_grid = false) {
-        int priority = Priority.DEFAULT_IDLE;
-
-        // Populate playlists in order
-        priority += relative_id;
-
-        // lower priority
-        if (hint == TreeViewSetup.Hint.SMART_PLAYLIST || hint == TreeViewSetup.Hint.PLAYLIST)
-            priority += 10;
-
-        Idle.add_full (priority, () => {
-            set_media_sync (new_media);
-            return false;
-        });
-    }
 
 	protected void set_media_sync (Collection<Media> new_media, bool update_grid = false) {
 		update_grid = true;
