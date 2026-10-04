@@ -250,7 +250,8 @@ public abstract class BeatBox.GenericList : FastList {
 			}
 
 			// Show the name translated; the title stays the English key the code matches on
-			if(tvc.title != " " && tvc.title != "id") {
+			// (never _(""): gettext answers the empty string with the catalog's header)
+			if(tvc.title != " " && tvc.title != "id" && tvc.title != "") {
 				var header = new Label(_(tvc.title));
 				header.show();
 				get_column(index).widget = header;

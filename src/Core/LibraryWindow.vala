@@ -63,6 +63,8 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 	ToolItem searchFieldBin;
 	bool mini = false; // mini player: only the toolbar (controls and LCD) is left
 	bool maximized_before_mini = false;
+	Gtk.Widget? title_widget = null;
+	int startup_titlebar_height = 0;
 	Notebook all_views { get; private set; } // mainViews, songInfo, possibly video later on
 	public Notebook mainViews { get; private set; }
 	public Gtk.Paned sourcesToMedias { get; private set; } //allows for draggable
@@ -169,8 +171,14 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 
 		this.destroy.connect (on_quit);
 		this.size_allocate.connect (() => {
-			if (!(window_maximized || window_fullscreen || mini))
+			if (!(window_maximized || window_fullscreen || mini)) {
 				get_size (out last_width, out last_height);
+				// get_size leaves the title bar out, and it grows once a song shows in the
+				// LCD: count that growth so set_default_size gives back the same window
+				// (it used to lose 11 px of height every session)
+				if (title_widget != null && startup_titlebar_height > 0)
+					last_height += title_widget.get_allocated_height () - startup_titlebar_height;
+			}
 		});
 
 		object_to_view = new HashMap<Object, View>();
@@ -193,6 +201,9 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		// Start by initializing the window and widgets to create the UI
 		setup_window ();
         setup_widgets ();
+        
+        // The title bar's height when set_default_size is applied (see size_allocate)
+        title_widget.get_preferred_height (null, out startup_titlebar_height);
         
         // We have all the widgets, so show to user even though most views aren't built yet
         this.show();
@@ -506,6 +517,7 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		titlebar.add(topControls);
 		titlebar.add_overlay(create_traffic_lights());
 		set_titlebar(titlebar);
+		title_widget = titlebar;
 		verticalBox.pack_start(sourcesToMedias, true, true, 0);
 		verticalBox.pack_end(statusBar, false, true, 0);
 		this.add(verticalBox);
@@ -595,9 +607,11 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 				unmaximize();
 			resize(1, 1); // the toolbar's natural size
 		} else {
-			// last_width is only 0 when BeatBox started in mini mode
+			// last_width is only 0 when BeatBox started in mini mode. last_height counts
+			// the title bar as it was at startup; resize() counts it as it is now
+			int growth = startup_titlebar_height > 0 ? title_widget.get_allocated_height() - startup_titlebar_height : 0;
 			resize(last_width > 0 ? last_width : App.settings.saved_state.window_width,
-			       last_height > 0 ? last_height : App.settings.saved_state.window_height);
+			       (last_height > 0 ? last_height : App.settings.saved_state.window_height) - growth);
 			if (maximized_before_mini)
 				maximize();
 		}
