@@ -51,23 +51,42 @@ public class BeatBox.LcdCover : Image {
 		show ();
 	}
 
-	/** The cover at full size in a borderless window: drag it anywhere, double-click or Esc closes it */
+	/** The cover at full size in a borderless window: drag it anywhere, wheel or +/- zooms,
+	 *  0 goes back to the first size, double-click or Esc closes it */
 	public void show_full_size (Gtk.Window parent) {
 		if (source == null)
 			return;
 		var area = parent.get_display ().get_monitor_at_window (parent.get_window ()).get_workarea ();
 		int max = (int)(int.min (area.width, area.height) * 0.8);
-		var pix = source;
-		if (pix.width > max || pix.height > max) {
-			double k = double.min ((double)max / pix.width, (double)max / pix.height);
-			pix = pix.scale_simple ((int)(pix.width * k), (int)(pix.height * k), Gdk.InterpType.BILINEAR);
-		}
+		double fit = double.min (1.0, double.min ((double)max / source.width, (double)max / source.height));
+		double zoom = fit;
+		var image = new Image ();
+		var src = source;
 		var win = new Gtk.Window ();
 		win.decorated = false;
 		win.transient_for = parent;
 		win.window_position = WindowPosition.CENTER_ON_PARENT;
 		win.title = App.playback.current_media.album;
-		win.add (new Image.from_pixbuf (pix));
+		win.add (image);
+		win.add_events (Gdk.EventMask.SCROLL_MASK | Gdk.EventMask.SMOOTH_SCROLL_MASK);
+		// ponytail: rescales the whole pixbuf on each step; fine up to the 2.5x cap
+		bool set_zoom (double z) {
+			zoom = z.clamp (0.1, 2.5);
+			image.pixbuf = src.scale_simple (int.max (1, (int)(src.width * zoom)), int.max (1, (int)(src.height * zoom)), Gdk.InterpType.BILINEAR);
+			win.resize (1, 1); // shrink with the image
+			return true;
+		}
+		set_zoom (fit);
+		win.scroll_event.connect ((e) => {
+			double dx = 0, dy = 0;
+			if (e.direction == Gdk.ScrollDirection.SMOOTH)
+				e.get_scroll_deltas (out dx, out dy);
+			bool up = e.direction == Gdk.ScrollDirection.UP || dy < 0;
+			bool down = e.direction == Gdk.ScrollDirection.DOWN || dy > 0;
+			if (up) return set_zoom (zoom * 1.15);
+			if (down) return set_zoom (zoom / 1.15);
+			return false;
+		});
 		win.button_press_event.connect ((e) => {
 			if (e.type != Gdk.EventType.2BUTTON_PRESS)
 				return false; // single press: the draggable handler below moves it
@@ -78,6 +97,12 @@ public class BeatBox.LcdCover : Image {
 		win.key_press_event.connect ((e) => {
 			if (e.keyval == Gdk.Key.Escape)
 				win.destroy ();
+			else if (e.keyval == Gdk.Key.plus || e.keyval == Gdk.Key.KP_Add || e.keyval == Gdk.Key.equal)
+				set_zoom (zoom * 1.25);
+			else if (e.keyval == Gdk.Key.minus || e.keyval == Gdk.Key.KP_Subtract)
+				set_zoom (zoom / 1.25);
+			else if (e.keyval == Gdk.Key.@0 || e.keyval == Gdk.Key.KP_0)
+				set_zoom (fit);
 			return false;
 		});
 		win.show_all ();
