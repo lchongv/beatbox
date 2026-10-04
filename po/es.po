@@ -2297,3 +2297,9 @@ msgstr "Mostrar la letra sincronizada en la segunda línea cuando exista (lrclib
 
 msgid "Lyrics: %s"
 msgstr "Letras: %s"
+
+msgid "_Mini Player"
+msgstr "_Mini reproductor"
+
+msgid "Maximize (Alt: mini player)"
+msgstr "Maximizar (Alt: mini reproductor)"

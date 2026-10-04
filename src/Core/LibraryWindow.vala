@@ -59,6 +59,9 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 	
 	// Main containers
 	Box verticalBox;
+	ToolItem viewSelectorBin;
+	ToolItem searchFieldBin;
+	bool mini = false; // mini player: only the toolbar (controls and LCD) is left
 	Notebook all_views { get; private set; } // mainViews, songInfo, possibly video later on
 	public Notebook mainViews { get; private set; }
 	public Gtk.Paned sourcesToMedias { get; private set; } //allows for draggable
@@ -165,7 +168,7 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 
 		this.destroy.connect (on_quit);
 		this.size_allocate.connect (() => {
-			if (!(window_maximized || window_fullscreen))
+			if (!(window_maximized || window_fullscreen || mini))
 				get_size (out last_width, out last_height);
 		});
 
@@ -296,9 +299,9 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		
 		/* Toolbar with media controls, search, app menu, etc. */
 		ToolItem top_displayBin = new ToolItem();
-		ToolItem viewSelectorBin = new ToolItem();
+		viewSelectorBin = new ToolItem();
 		ToolItem showSongInfoBin = new ToolItem();
-		ToolItem searchFieldBin = new ToolItem();
+		searchFieldBin = new ToolItem();
 		
 		showSongInfo.get_style_context().add_class("raised");
 		showSongInfoBin.add(showSongInfo);
@@ -336,6 +339,9 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		//settingsMenu.append((Gtk.MenuItem)App.actions.import_folder.create_menu_item());
 		//settingsMenu.append((Gtk.MenuItem)App.actions.rescan_music_folder.create_menu_item());
 		//settingsMenu.append(new SeparatorMenuItem());
+		var miniItem = new Gtk.MenuItem.with_mnemonic(_("_Mini Player"));
+		miniItem.activate.connect(toggle_mini);
+		settingsMenu.append(miniItem);
 		settingsMenu.append((Gtk.MenuItem)App.actions.show_equalizer.create_menu_item());
 		settingsMenu.append((Gtk.MenuItem)App.actions.show_preferences.create_menu_item());
 		settingsMenu.append((Gtk.MenuItem)App.actions.exit.create_menu_item());
@@ -517,7 +523,7 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		box.valign = Align.CENTER;
 		box.margin_end = 14;
 		string[] names = { "close", "minimize", "maximize" };
-		string[] tips = { _("Close"), _("Minimize"), _("Maximize") };
+		string[] tips = { _("Close"), _("Minimize"), _("Maximize (Alt: mini player)") };
 		for (int i = 0; i < 3; i++) {
 			var button = new Button();
 			button.get_style_context().add_class("traffic-light");
@@ -530,6 +536,7 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 			button.clicked.connect(() => {
 				if (which == 0) close();
 				else if (which == 1) iconify();
+				else if (mini || (get_current_event_state_mods() & Gdk.ModifierType.MOD1_MASK) != 0) toggle_mini(); // Alt+green, as in old players
 				else if (window_maximized) unmaximize();
 				else maximize();
 			});
@@ -537,6 +544,26 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		var item = new ToolItem();
 		item.add(box);
 		return item;
+	}
+	
+	static Gdk.ModifierType get_current_event_state_mods() {
+		Gdk.ModifierType state;
+		Gtk.get_current_event_state(out state);
+		return state;
+	}
+	
+	/** Shrinks the window to its toolbar, and back to the saved size */
+	public void toggle_mini() {
+		mini = !mini;
+		verticalBox.visible = viewSelectorBin.visible = searchFieldBin.visible = !mini;
+		height_request = mini ? -1 : 440;
+		if (mini) {
+			if (window_maximized)
+				unmaximize();
+			resize(1, 1); // the toolbar's natural size
+		} else {
+			resize(last_width, last_height);
+		}
 	}
 	
 	public void setup_playback() {
@@ -768,6 +795,9 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 			}
 			else if((event_state & Gdk.ModifierType.CONTROL_MASK) == event_state && event.keyval == Gdk.Key.i) {
 				showSongInfo.active = !showSongInfo.active;
+			}
+			else if((event_state & Gdk.ModifierType.CONTROL_MASK) == event_state && event.keyval == Gdk.Key.m) {
+				toggle_mini();
 			}
 			else if((event_state & Gdk.ModifierType.CONTROL_MASK) == event_state && event.keyval == Gdk.Key.f) {
 				if (searchField.sensitive && !searchField.has_focus) {
