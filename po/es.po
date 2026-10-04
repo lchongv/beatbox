@@ -2303,3 +2303,18 @@ msgstr "_Mini reproductor"
 
 msgid "Maximize (Alt: mini player)"
 msgstr "Maximizar (Alt: mini reproductor)"
+
+msgid "Diamond"
+msgstr "Rombo"
+
+msgid "Circle"
+msgstr "Círculo"
+
+msgid "Cup"
+msgstr "Copa"
+
+msgid "Shape of the position marker:"
+msgstr "Forma del marcador de posición:"
+
+msgid "Size of the position marker:"
+msgstr "Tamaño del marcador de posición:"
