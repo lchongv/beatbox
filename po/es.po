@@ -2342,3 +2342,12 @@ msgstr "Di Weng (%s): textos acortados por caracteres en vez de bytes"
 
 msgid "Add to Queue"
 msgstr "Añadir a la cola"
+
+msgid "Mini Player"
+msgstr "Mini reproductor"
+
+msgid "Keep the mini player above other windows"
+msgstr "Mantener el mini reproductor encima de las demás ventanas"
+
+msgid "On Wayland the desktop keeps windows on top: right-click the toolbar and choose “Always on Top”."
+msgstr "En Wayland es el escritorio el que mantiene ventanas encima: haz clic derecho en la barra y elige «Siempre encima»."

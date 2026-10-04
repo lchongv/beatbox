@@ -163,6 +163,20 @@ public class BeatBox.AppearancePreferences : SimplePreferences {
 		add_row(labelled(_("Duration of the slide:"), transition, _("milliseconds")));
 		transition.value_changed.connect(() => { App.settings.main.lcd_transition_ms = (int)transition.value; });
 		
+		add_heading(_("Mini Player"));
+		var keepAbove = add_check(_("Keep the mini player above other windows"), App.settings.main.mini_keep_above);
+		keepAbove.toggled.connect(() => { App.settings.main.mini_keep_above = keepAbove.active; });
+		if (Gdk.Display.get_default().get_type().name() == "GdkWaylandDisplay") {
+			// GTK 3 can't ask a Wayland compositor for that
+			keepAbove.sensitive = false;
+			var hint = new Label(_("On Wayland the desktop keeps windows on top: right-click the toolbar and choose “Always on Top”."));
+			hint.get_style_context().add_class("dim-label");
+			hint.xalign = 0.0f;
+			hint.wrap = true;
+			hint.max_width_chars = 60;
+			add_row(hint);
+		}
+		
 		add_heading(_("Position bar"));
 		var trackWidth = new SpinButton.with_range(2, 16, 1);
 		trackWidth.value = App.settings.main.lcd_track_width;
