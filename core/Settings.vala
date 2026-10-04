@@ -223,6 +223,7 @@ public class BeatBox.Settings {
         public string[] music_miller_visible_columns { get; set; }
         public string[] generic_miller_visible_columns { get; set; }
         public Position miller_columns_position { get; set; }
+        public string[] queue { get; set; }  // media ids, restored at startup
 
         public SavedState () {
             window_width = 1100;
@@ -236,6 +237,7 @@ public class BeatBox.Settings {
             music_miller_visible_columns = { "2", "3", "4" };
             generic_miller_visible_columns = { "2" };
             miller_columns_position = Position.AUTOMATIC;
+            queue = {};
             init_config ("savedstate", "net.launchpad.beatbox.SavedState");
         }
         

@@ -13,6 +13,7 @@ public class BeatBox.FolderWatcher : GLib.Object {
 	Gee.HashMap<string, FileMonitor> monitors = new Gee.HashMap<string, FileMonitor> ();
 	Gee.HashSet<string> pending = new Gee.HashSet<string> ();
 	uint flush_id = 0;
+	uint retry_id = 0;
 
 	public FolderWatcher () {
 		App.settings.main.notify["music-folder"].connect (restart);
@@ -25,8 +26,18 @@ public class BeatBox.FolderWatcher : GLib.Object {
 			m.cancel ();
 		monitors.clear ();
 		pending.clear ();
-		if (App.settings.main.watch_music_folder && App.settings.main.music_folder != "")
-			watch_tree (File.new_for_path (App.settings.main.music_folder), false);
+		if (retry_id != 0)
+			Source.remove (retry_id);
+		retry_id = 0;
+		if (!App.settings.main.watch_music_folder || App.settings.main.music_folder == "")
+			return;
+		var root = File.new_for_path (App.settings.main.music_folder);
+		if (root.query_exists ()) {
+			watch_tree (root, false);
+		} else { // a drive that isn't mounted yet: look again in a minute
+			debug ("Music folder %s not found; watching it once it appears", root.get_path ());
+			retry_id = Timeout.add_seconds (60, () => { retry_id = 0; restart (); return false; });
+		}
 	}
 
 	/** Watches dir and its subfolders; with collect, also queues the songs already in them (a folder moved in) */

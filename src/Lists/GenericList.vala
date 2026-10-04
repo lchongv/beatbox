@@ -582,8 +582,8 @@ public abstract class BeatBox.GenericList : FastList {
 	
 	/** **********************************************************
 	 * Drag and drop support. GenericView is a source for uris and can
-	 * be dragged to a playlist in the sidebar. No support for reordering
-	 * is implemented yet.
+	 * be dragged to a playlist in the sidebar; the queue's list also takes
+	 * drops to reorder (MusicList.enable_queue_reordering).
 	***************************************************************/
 	void on_drag_begin(Gtk.Widget sender, Gdk.DragContext context) {
 		dragging = true;
@@ -619,14 +619,6 @@ public abstract class BeatBox.GenericList : FastList {
 		App.window.dragging_from_music = false;
 
 		debug("drag end\n");
-
-		//unset_rows_drag_dest();
-		Gtk.drag_dest_set(this,
-						  Gtk.DestDefaults.ALL,
-						  {},
-						  Gdk.DragAction.COPY|
-						  Gdk.DragAction.MOVE
-						  );
 	}
 	
 	/** **************************************************

@@ -61,13 +61,19 @@ public class BeatBox.PlaybackManager : GLib.Object, BeatBox.PlaybackInterface {
 	private bool play_counted;        // whether or not this play was already added to the play count
 	private bool scrobbled_track;
 	
-	// TODO: Save queue list on app close
 	public PlaybackManager() {
 		this.player = new Streamer();
 		
 		playback_reference_list = new HashMap<int, Media>();
 		playback_used_list = new HashMap<int, Media>();
 		_queue = new LinkedList<Media>();
+		// saved as it changes, so it survives a crash too (restored in load_and_play_last_playing)
+		queue_changed.connect(() => {
+			string[] ids = {};
+			foreach(var m in _queue)
+				ids += m.rowid.to_string();
+			App.settings.saved_state.queue = ids;
+		});
 		_history = new LinkedList<Media>();
 		
 		_played_index = 0;
@@ -98,6 +104,16 @@ public class BeatBox.PlaybackManager : GLib.Object, BeatBox.PlaybackInterface {
 			if((double)((int)App.settings.main.last_media_position/(double)restore_song.length) > 0.90)
 				added_to_play_count = true;
 		}
+		
+		// The queue as it was when BeatBox was closed
+		var queued = new LinkedList<Media>();
+		foreach(var id in App.settings.saved_state.queue) {
+			var m = App.library.media_from_id(int.parse(id));
+			if(m != null)
+				queued.add(m);
+		}
+		if(queued.size > 0)
+			queue_medias(queued);
 		
 		// Set the initial view
 		App.window.setup_playback();
@@ -171,12 +187,8 @@ public class BeatBox.PlaybackManager : GLib.Object, BeatBox.PlaybackInterface {
 		queue_changed();
 	}
 	
-	public void queue_medias_next(Collection<Media> medias) {
-		int i = 0;
-		foreach(Media m in medias) {
-			_queue.remove(m);
-			_queue.insert(i++, m);
-		}
+	public void insert_in_queue(Collection<Media> medias, int index) {
+		ListUtils.move_to(_queue, medias, index);
 		queue_changed();
 	}
 	

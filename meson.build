@@ -1,4 +1,4 @@
-project('beatbox', 'vala', 'c', version: '0.9.7')
+project('beatbox', 'vala', 'c', version: '0.9.8')
 
 gnome = import('gnome')
 i18n = import('i18n')
@@ -89,6 +89,7 @@ core_sources = files(
   'core/Utils/TimeUtils.vala',
   'core/Utils/String.vala',
   'core/Utils/Numeric.vala',
+  'core/Utils/ListUtils.vala',
   'core/Operations/Operation.vala',
   'core/Operations/FilesOperation.vala',
   'core/Operations/PlaylistOperation.vala',
@@ -272,3 +273,4 @@ gnome.post_install(gtk_update_icon_cache: true)
 subdir('po')
 
 test('ellipsize', executable('test-ellipsize', 'tests/ellipsize.vala', dependencies: core_dep))
+test('list-utils', executable('test-list-utils', 'tests/list-utils.vala', dependencies: core_dep))

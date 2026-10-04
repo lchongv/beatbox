@@ -485,6 +485,8 @@ public class BeatBox.SideBar : Gtk.TreeView {
 	}
 	
 	void drag_received(Gdk.DragContext context, int x, int y, Gtk.SelectionData data, uint info, uint timestamp) {
+		// the model isn't a TreeDragDest: TreeView's own handler must not run
+		Signal.stop_emission_by_name(this, "drag-data-received");
 		bool success = false;
 		TreeIter? iter;
 		TreePath? path;

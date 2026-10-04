@@ -2339,3 +2339,6 @@ msgstr "Contribuciones"
 
 msgid "Di Weng (%s): shortening texts by characters instead of bytes"
 msgstr "Di Weng (%s): textos acortados por caracteres en vez de bytes"
+
+msgid "Add to Queue"
+msgstr "Añadir a la cola"

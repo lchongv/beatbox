@@ -217,7 +217,7 @@ public class BeatBox.MusicList : GenericList {
 		mediaMenuActionMenu = new Gtk.Menu();
 		mediaEditMedia = new Gtk.MenuItem.with_label(_("Edit Song Info"));
 		mediaFileBrowse = new Gtk.MenuItem.with_label(_("Show in File Browser"));
-		mediaMenuQueue = new Gtk.MenuItem.with_label(_("Queue"));
+		mediaMenuQueue = new Gtk.MenuItem.with_label(_("Add to Queue"));
 		mediaMenuPlayNext = new Gtk.MenuItem.with_label(_("Play Next"));
 		queueMoveUp = new Gtk.MenuItem.with_label(_("Move Up"));
 		queueMoveDown = new Gtk.MenuItem.with_label(_("Move Down"));
@@ -251,7 +251,9 @@ public class BeatBox.MusicList : GenericList {
 		mediaEditMedia.activate.connect(mediaMenuEditClicked);
 		mediaFileBrowse.activate.connect(mediaFileBrowseClicked);
 		mediaMenuQueue.activate.connect(mediaMenuQueueClicked);
-		mediaMenuPlayNext.activate.connect(() => { App.playback.queue_medias_next(selected_list()); });
+		if(tvs.get_hint() == TreeViewSetup.Hint.QUEUE)
+			enable_queue_reordering();
+		mediaMenuPlayNext.activate.connect(() => { App.playback.insert_in_queue(selected_list(), 0); });
 		queueMoveUp.activate.connect(() => move_selected_in_queue(-1));
 		queueMoveDown.activate.connect(() => move_selected_in_queue(1));
 		queueClear.activate.connect(() => App.playback.clear_queue());
@@ -622,6 +624,64 @@ public class BeatBox.MusicList : GenericList {
 		else
 			foreach(var m in selected)
 				App.playback.move_in_queue(m, delta);
+		select_medias(selected);
+	}
+	
+	/** Selects the rows of these medias (after the queue was reordered) */
+	void select_medias(Gee.Collection<Media> medias) {
+		var selection = get_selection();
+		selection.unselect_all();
+		var visible = get_visible_table();
+		for(int i = 0; i < visible.size(); i++)
+			if(medias.contains(visible.get(i)))
+				selection.select_path(new TreePath.from_indices(i));
+	}
+	
+	/* In the queue, rows dragged within the list (or from another list) are
+	 * dropped at the pointer's position. */
+	void enable_queue_reordering() {
+		TargetEntry te = { "text/uri-list", TargetFlags.SAME_APP, 0 };
+		Gtk.drag_dest_set(this, DestDefaults.ALL, { te }, Gdk.DragAction.COPY | Gdk.DragAction.MOVE);
+		drag_motion.connect(queue_drag_motion);
+		drag_leave.connect(() => { set_drag_dest_row(null, TreeViewDropPosition.BEFORE); });
+		drag_data_received.connect(queue_drag_received);
+	}
+	
+	int queue_drop_index(int x, int y, out TreePath? path, out TreeViewDropPosition pos) {
+		pos = TreeViewDropPosition.BEFORE;
+		if(!get_dest_row_at_pos(x, y, out path, out pos))
+			return (int)get_visible_table().size(); // below the last row
+		bool after = pos == TreeViewDropPosition.AFTER || pos == TreeViewDropPosition.INTO_OR_AFTER;
+		pos = after ? TreeViewDropPosition.AFTER : TreeViewDropPosition.BEFORE;
+		return path.get_indices()[0] + (after ? 1 : 0);
+	}
+	
+	bool queue_drag_motion(Gdk.DragContext context, int x, int y, uint time) {
+		TreePath? path;
+		TreeViewDropPosition pos;
+		queue_drop_index(x, y, out path, out pos);
+		set_drag_dest_row(path, pos);
+		// TreeView's own handler would clear the row: our model isn't a TreeDragDest
+		Signal.stop_emission_by_name(this, "drag-motion");
+		return true;
+	}
+	
+	void queue_drag_received(Gdk.DragContext context, int x, int y, Gtk.SelectionData data, uint info, uint time) {
+		Signal.stop_emission_by_name(this, "drag-data-received");
+		TreePath? path;
+		TreeViewDropPosition pos;
+		int index = queue_drop_index(x, y, out path, out pos);
+		set_drag_dest_row(null, TreeViewDropPosition.BEFORE);
+		var medias = new Gee.ArrayList<Media>();
+		foreach(string uri in data.get_uris()) {
+			var m = App.library.media_from_file(uri);
+			if(m != null)
+				medias.add(m);
+		}
+		if(medias.size > 0) {
+			App.playback.insert_in_queue(medias, index);
+			select_medias(medias);
+		}
 	}
 	
 	void mediaRemoveClicked() {
