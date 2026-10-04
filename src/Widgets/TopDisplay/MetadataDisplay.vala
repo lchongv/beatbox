@@ -40,6 +40,9 @@ public class BeatBox.MetadataDisplay : BeatBox.Display, Box {
 	private int second_index = 0;
 	private uint alternate_id = 0;
 	private TimeScale time_scale;
+	private SyncedLyrics? lyrics = null;
+	private int lyric_line = -2;
+	private uint lyrics_request = 0; // drops answers for songs no longer playing
 	
 	public MetadataDisplay() {
 		label = new Label("");
@@ -79,6 +82,8 @@ public class BeatBox.MetadataDisplay : BeatBox.Display, Box {
 		App.settings.main.notify["lcd-two-lines"].connect(update_metadata);
 		App.settings.main.notify["lcd-transition-ms"].connect(apply_transition);
 		App.settings.main.notify["lcd-alternate-seconds"].connect(update_metadata);
+		App.settings.main.notify["lcd-lyrics"].connect(update_metadata);
+		App.playback.current_position_update.connect(position_update);
 		apply_transition();
 		
 		show_all();
@@ -124,6 +129,8 @@ public class BeatBox.MetadataDisplay : BeatBox.Display, Box {
 			Source.remove(alternate_id);
 		alternate_id = 0;
 		second_line.hide();
+		lyrics = null;
+		lyrics_request++;
 		
 		if(App.playback.media_active) {
 			var m = App.playback.current_media;
@@ -143,6 +150,8 @@ public class BeatBox.MetadataDisplay : BeatBox.Display, Box {
 				}
 				if(second_texts.length > 1)
 					alternate_id = Timeout.add_seconds(App.settings.main.lcd_alternate_seconds.clamp(1, 60), () => { show_next_second_line(); return Source.CONTINUE; });
+				if(App.settings.main.lcd_lyrics && m.media_type == MediaType.SONG)
+					fetch_lyrics(m);
 			}
 			
 			if(!App.playback.current_media.can_seek) {
@@ -163,6 +172,42 @@ public class BeatBox.MetadataDisplay : BeatBox.Display, Box {
 		else {
 			disabled();
 		}
+	}
+	
+	void fetch_lyrics(Media m) {
+		uint request = lyrics_request;
+		try {
+			new Thread<void*>.try(null, () => {
+				var found = SyncedLyrics.fetch(m);
+				Idle.add(() => {
+					if(request == lyrics_request && found != null) {
+						// the lyrics take over the second line from artist/album
+						if(alternate_id != 0)
+							Source.remove(alternate_id);
+						alternate_id = 0;
+						lyrics = found;
+						lyric_line = -2;
+						second_line.show();
+					}
+					return false;
+				});
+				return null;
+			});
+		} catch (Error err) {
+			warning("Could not start the lyrics thread: %s", err.message);
+		}
+	}
+	
+	void position_update(int64 position) {
+		if(lyrics == null)
+			return;
+		int line = lyrics.line_at(position / 1000000);
+		if(line == lyric_line)
+			return;
+		lyric_line = line;
+		// before the first line, and on instrumental gaps, show the artist
+		string text = (line >= 0 && lyrics.texts[line] != "") ? lyrics.texts[line] : (second_texts.length > 0 ? second_texts[0] : "♪");
+		show_second_line(text, true);
 	}
 	
 	public bool is_cancellable() {
