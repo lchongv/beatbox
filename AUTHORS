@@ -6,5 +6,9 @@ Designers:
 	Scott Ringwelski <sgringwe@mtu.edu>
     Danielle Foré
 
+Contributions:
+    Di Weng (w1ndy) - shortening texts by characters instead of bytes,
+                      from https://github.com/w1ndy/beatbox
+
 2026 fork (GTK3 / GStreamer 1.0 / meson port):
     lchongv

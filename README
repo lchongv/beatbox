@@ -43,6 +43,7 @@ from radio-browser.info.
 Versioning
 ----------
 
-Each commit after the v0.8 tag is 0.8.N. To bump it automatically:
+Releases are tagged vX.Y.0; each later commit is X.Y.N (N = commits since
+the tag). To bump it automatically:
 
     ln -s ../../tools/pre-commit .git/hooks/pre-commit

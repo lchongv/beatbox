@@ -2333,3 +2333,9 @@ msgstr "Vaciar la cola"
 
 msgid "Import songs that appear in the music folder"
 msgstr "Importar las canciones que aparezcan en la carpeta de música"
+
+msgid "Contributions"
+msgstr "Contribuciones"
+
+msgid "Di Weng (%s): shortening texts by characters instead of bytes"
+msgstr "Di Weng (%s): textos acortados por caracteres en vez de bytes"

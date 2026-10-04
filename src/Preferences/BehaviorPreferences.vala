@@ -244,6 +244,8 @@ public class BeatBox.AboutPreferences : SimplePreferences {
 		
 		add_heading(_("Authors"));
 		add_row(text("Scott Ringwelski\nVictor Eduardo M."));
+		add_heading(_("Contributions"));
+		add_row(text(_("Di Weng (%s): shortening texts by characters instead of bytes").printf(link("https://github.com/w1ndy/beatbox", "w1ndy")), true));
 		add_heading(_("Artwork"));
 		add_row(text("Scott Ringwelski\nDanielle Foré"));
 		add_heading(_("2026 update"));
