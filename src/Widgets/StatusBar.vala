@@ -89,7 +89,7 @@ public class BeatBox.StatusBar : Gtk.ActionBar {
 		eq_eventbox.set_above_child(true);
 		eq_eventbox.set_visible_window(false);
         
-        repeat_chooser.margin_left = shuffle_chooser.margin_left = eq_eventbox.margin_right = 6;
+        repeat_chooser.margin_start = shuffle_chooser.margin_start = eq_eventbox.margin_end = 6;
         
         insert_widget(shuffle_chooser, true);
         insert_widget(repeat_chooser, true);

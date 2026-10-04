@@ -57,9 +57,9 @@ public class BeatBox.Actions : BeatBox.ActionsInterface {
 		
 		create_playlist.set_gicon(App.icons.PLAYLIST.get_gicon());
 		create_smart_playlist.set_gicon(App.icons.SMART_PLAYLIST.get_gicon());
-		show_preferences.set_stock_id(Gtk.Stock.PREFERENCES);
-		show_duplicates.set_stock_id(Gtk.Stock.COPY);
-		hide_duplicates.set_stock_id(Gtk.Stock.COPY);
+		show_preferences.set_icon_name("preferences-system");
+		show_duplicates.set_icon_name("edit-copy");
+		hide_duplicates.set_icon_name("edit-copy");
 		lastfm_ban.set_gicon(App.icons.LASTFM_BAN.get_gicon());
 		lastfm_love.set_gicon(App.icons.LASTFM_LOVE.get_gicon());
 		
@@ -128,8 +128,8 @@ public class BeatBox.Actions : BeatBox.ActionsInterface {
 		File? folder = null;
 		var file_chooser = new Gtk.FileChooserDialog (_("Choose %s Folder").printf(library.name), App.window,
 								  Gtk.FileChooserAction.SELECT_FOLDER,
-								  Gtk.Stock.CANCEL, Gtk.ResponseType.CANCEL,
-								  Gtk.Stock.OPEN, Gtk.ResponseType.ACCEPT);
+								  _("_Cancel"), Gtk.ResponseType.CANCEL,
+								  _("_Open"), Gtk.ResponseType.ACCEPT);
 		file_chooser.set_local_only(true);
 		if (file_chooser.run () == Gtk.ResponseType.ACCEPT) {
 			folder = File.new_for_path(file_chooser.get_filename());
@@ -146,8 +146,8 @@ public class BeatBox.Actions : BeatBox.ActionsInterface {
 		GLib.SList<File> folders = new GLib.SList<File>();
 		var file_chooser = new Gtk.FileChooserDialog (_("Import %s").printf(library.name), App.window,
 								  Gtk.FileChooserAction.SELECT_FOLDER,
-								  Gtk.Stock.CANCEL, Gtk.ResponseType.CANCEL,
-								  Gtk.Stock.OPEN, Gtk.ResponseType.ACCEPT);
+								  _("_Cancel"), Gtk.ResponseType.CANCEL,
+								  _("_Open"), Gtk.ResponseType.ACCEPT);
 		file_chooser.set_local_only(true);
 		file_chooser.set_select_multiple(true); // allow user to select multiple folders
 
@@ -298,8 +298,8 @@ public class BeatBox.Actions : BeatBox.ActionsInterface {
 		string name = "";
 		var file_chooser = new Gtk.FileChooserDialog (_("Import %s").printf(to_import), App.window,
 								  Gtk.FileChooserAction.OPEN,
-								  Gtk.Stock.CANCEL, Gtk.ResponseType.CANCEL,
-								  Gtk.Stock.OPEN, Gtk.ResponseType.ACCEPT);
+								  _("_Cancel"), Gtk.ResponseType.CANCEL,
+								  _("_Open"), Gtk.ResponseType.ACCEPT);
 		
 		// filters for .m3u and .pls
 		var m3u_filter = new Gtk.FileFilter();

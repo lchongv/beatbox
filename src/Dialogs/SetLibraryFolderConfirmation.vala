@@ -64,12 +64,12 @@ public class BeatBox.SetLibraryFolderConfirmation : Window {
 		padding = new Box(Orientation.HORIZONTAL, 10);
 		
 		// initialize controls
-		Image warning = new Image.from_stock(Gtk.Stock.DIALOG_WARNING, Gtk.IconSize.DIALOG);
+		Image warning = new Image.from_icon_name("dialog-warning", Gtk.IconSize.DIALOG);
 		Label title = new Label("");
 		Label info = new Label("");
 		savePlaylists = new Button.with_label(_("Export Playlists"));
 		ok = new Button.with_label(_("Set %s Folder").printf(lib.name));
-		cancel = new Button.from_stock (Gtk.Stock.CANCEL);
+		cancel = new Button.with_mnemonic (_("_Cancel"));
 		is_finished = new Gtk.Image();
 		is_working = new Gtk.Spinner();
 		
@@ -94,7 +94,7 @@ public class BeatBox.SetLibraryFolderConfirmation : Window {
 		playlistBox.pack_end(is_finished, false, false, 0);
 		playlistBox.pack_end(is_working, false, false, 0);
 		
-		HButtonBox bottomButtons = new HButtonBox();
+		var bottomButtons = new ButtonBox(Orientation.HORIZONTAL);
 		bottomButtons.set_layout(ButtonBoxStyle.END);
 		bottomButtons.pack_start(playlistBox, false, false, 0);
 		bottomButtons.pack_end(cancel, false, false, 0);
@@ -124,8 +124,8 @@ public class BeatBox.SetLibraryFolderConfirmation : Window {
 		string folder = "";
 		var file_chooser = new FileChooserDialog (_("Choose Music Folder"), this,
 								  FileChooserAction.SELECT_FOLDER,
-								  Gtk.Stock.CANCEL, ResponseType.CANCEL,
-								  Gtk.Stock.OPEN, ResponseType.ACCEPT);
+								  _("_Cancel"), ResponseType.CANCEL,
+								  _("_Open"), ResponseType.ACCEPT);
 		if (file_chooser.run () == ResponseType.ACCEPT) {
 			folder = file_chooser.get_filename();
 		}

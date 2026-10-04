@@ -70,15 +70,13 @@ public class Store.TagLabel : EventBox {
 		show_all();
 	}
 	
-	public static Gtk.Alignment wrap_alignment (Gtk.Widget widget, int top, int right, int bottom, int left) {
-		var alignment = new Gtk.Alignment(0.0f, 0.0f, 1.0f, 1.0f);
-		alignment.top_padding = top;
-		alignment.right_padding = right;
-		alignment.bottom_padding = bottom;
-		alignment.left_padding = left;
-		
-		alignment.add(widget);
-		return alignment;
+	public static Gtk.Widget wrap_alignment (Gtk.Widget widget, int top, int right, int bottom, int left) {
+		// padding as extra margins (Gtk.Alignment is deprecated)
+		widget.margin_top += top;
+		widget.margin_end += right;
+		widget.margin_bottom += bottom;
+		widget.margin_start += left;
+		return widget;
 	}
 	
 	protected override bool motion_notify_event (EventMotion event) {

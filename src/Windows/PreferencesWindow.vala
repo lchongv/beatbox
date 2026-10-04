@@ -75,7 +75,7 @@ public class BeatBox.PreferencesWindow : Gtk.Window {
 		notebook_scroll.set_policy(PolicyType.NEVER, PolicyType.NEVER);
 		
 		notebook_padding.pack_start(notebook, true, true, 10);
-		notebook_scroll.add_with_viewport(notebook_padding);
+		notebook_scroll.add(notebook_padding);
 		
 		var list_to_content = new Box(Orientation.HORIZONTAL, 0);
 		list_to_content.pack_start(side_bar, false, false, 0);
@@ -84,7 +84,7 @@ public class BeatBox.PreferencesWindow : Gtk.Window {
 		saveChanges = new Button.with_label(_("Done"));
 		
 		// Add save button
-		var bottomButtons = new HButtonBox();
+		var bottomButtons = new ButtonBox(Orientation.HORIZONTAL);
 		bottomButtons.set_layout(ButtonBoxStyle.END);
 		bottomButtons.pack_end(saveChanges, false, false, 0);
 		

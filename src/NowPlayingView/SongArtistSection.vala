@@ -120,7 +120,7 @@ public class BeatBox.SongArtistSection : Box {
 		
 		artist_images = new StyledArtistImages(get_style_context());
 		var scroll3 = new ScrolledWindow(null, null);
-		scroll3.add_with_viewport(artist_images);
+		scroll3.add(artist_images);
 		scroll3.set_policy(PolicyType.AUTOMATIC, PolicyType.NEVER);
 		
 		top_tracks_label.xalign = 0.0f;

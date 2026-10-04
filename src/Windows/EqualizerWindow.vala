@@ -86,7 +86,7 @@ public class BeatBox.EqualizerWindow : Gtk.Window {
 		this.destroy_with_parent = true;
 		resizable = false;
 
-		set_icon(render_icon(Gtk.Stock.PREFERENCES, IconSize.DIALOG, null));
+		set_icon_name("preferences-system");
 
 		var outer_box = new Box(Orientation.HORIZONTAL, 10);
 		var inner_box = new Box(Orientation.VERTICAL, 10);
@@ -149,7 +149,7 @@ public class BeatBox.EqualizerWindow : Gtk.Window {
 		
 		close_button = new Button.with_label(_("Done"));
 		
-		HButtonBox bottom_toolbar = new HButtonBox();
+		var bottom_toolbar = new ButtonBox(Orientation.HORIZONTAL);
 		bottom_toolbar.set_layout(ButtonBoxStyle.END);
 		
 		bottom_toolbar.pack_start(eq_switch, false, false, 0);

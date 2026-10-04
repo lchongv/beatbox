@@ -70,7 +70,7 @@ public class BeatBox.PlaylistNameWindow : Window {
 		name_widget.text = original.name;
 		
 		/* add controls to form */
-		HButtonBox bottomButtons = new HButtonBox();
+		var bottomButtons = new ButtonBox(Orientation.HORIZONTAL);
 		bottomButtons.set_spacing (6);
 		bottomButtons.set_layout(ButtonBoxStyle.END);
 		bottomButtons.pack_end(cancel_widget, false, false, 0);
@@ -96,15 +96,13 @@ public class BeatBox.PlaylistNameWindow : Window {
 		destroy ();
 	}
 
-	public static Gtk.Alignment wrap_alignment (Gtk.Widget widget, int top, int right, int bottom, int left) {
-		var alignment = new Gtk.Alignment(0.0f, 0.0f, 1.0f, 1.0f);
-		alignment.top_padding = top;
-		alignment.right_padding = right;
-		alignment.bottom_padding = bottom;
-		alignment.left_padding = left;
-		
-		alignment.add(widget);
-		return alignment;
+	public static Gtk.Widget wrap_alignment (Gtk.Widget widget, int top, int right, int bottom, int left) {
+		// padding as extra margins (Gtk.Alignment is deprecated)
+		widget.margin_top += top;
+		widget.margin_end += right;
+		widget.margin_bottom += bottom;
+		widget.margin_start += left;
+		return widget;
 	}
 	
 	void saveClicked() {

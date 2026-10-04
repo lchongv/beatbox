@@ -56,7 +56,7 @@ public class BeatBox.PodcastPreferences : GLib.Object, PreferencesSection {
 		podcastLabel.set_markup("<b>" + _("Podcast Library Location") + "</b>");
 		managementLabel.set_markup("<b>" + _("Library Management") + "</b>");
 		
-		var button_box = new HButtonBox();
+		var button_box = new ButtonBox(Orientation.HORIZONTAL);
 		button_box.set_layout(ButtonBoxStyle.END);
 		button_box.pack_end(import, false, false, 0);
 		button_box.pack_end(rescan, false, false, 0);

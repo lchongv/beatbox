@@ -68,9 +68,9 @@ public class BeatBox.AddPodcastWindow : Window {
 		not_valid = App.icons.PROCESS_ERROR.render (IconSize.MENU);
 		
 		if(valid == null)
-			valid = App.icons.render_icon(Gtk.Stock.YES, IconSize.MENU);
+			valid = App.icons.render_icon("emblem-default", IconSize.MENU);
 		if(not_valid == null)
-			not_valid = App.icons.render_icon(Gtk.Stock.NO, IconSize.MENU);
+			not_valid = App.icons.render_icon("dialog-error", IconSize.MENU);
 		
 		/* start out by creating all category labels */
 		Label sourceLabel = new Label(_("Podcast RSS Source"));
@@ -87,7 +87,7 @@ public class BeatBox.AddPodcastWindow : Window {
 		_is_working.active = true;
 		
 		/* add controls to form */
-		HButtonBox bottomButtons = new HButtonBox();
+		var bottomButtons = new ButtonBox(Orientation.HORIZONTAL);
 		bottomButtons.set_layout(ButtonBoxStyle.END);
 		bottomButtons.set_spacing (6);
 		bottomButtons.pack_start(_cancel, false, false, 0);
@@ -121,15 +121,13 @@ public class BeatBox.AddPodcastWindow : Window {
 		_source.changed.connect(sourceChanged);
 	}
 	
-	public static Gtk.Alignment wrap_alignment (Gtk.Widget widget, int top, int right, int bottom, int left) {
-		var alignment = new Gtk.Alignment(0.0f, 0.0f, 1.0f, 1.0f);
-		alignment.top_padding = top;
-		alignment.right_padding = right;
-		alignment.bottom_padding = bottom;
-		alignment.left_padding = left;
-		
-		alignment.add(widget);
-		return alignment;
+	public static Gtk.Widget wrap_alignment (Gtk.Widget widget, int top, int right, int bottom, int left) {
+		// padding as extra margins (Gtk.Alignment is deprecated)
+		widget.margin_top += top;
+		widget.margin_end += right;
+		widget.margin_bottom += bottom;
+		widget.margin_start += left;
+		return widget;
 	}
 
 	void cancel_clicked () {

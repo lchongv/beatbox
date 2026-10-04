@@ -78,10 +78,10 @@ public class BeatBox.AlbumGrid : GenericGrid {
 		Gdk.drag_abort(context, Gtk.get_current_event_time());
 
 		if(get_selected_items().length() == 1) {
-			drag_source_set_icon_stock(this, Gtk.Stock.DND);
+			drag_source_set_icon_name(this, "audio-x-generic");
 		}
 		else if(get_selected_items().length() > 1) {
-			drag_source_set_icon_stock(this, Gtk.Stock.DND_MULTIPLE);
+			drag_source_set_icon_name(this, "folder-music");
 		}
 		else {
 			return;

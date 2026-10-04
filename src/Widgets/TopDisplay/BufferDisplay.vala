@@ -40,7 +40,7 @@ public class BeatBox.BufferDisplay : BeatBox.Display, Box {
 		
 		buffering_status.xalign = 0.5f;
 		buffering_status.set_justify(Justification.CENTER);
-		buffering_status.margin_left = 0;
+		buffering_status.margin_start = 0;
 		buffering_status.ellipsize = Pango.EllipsizeMode.END;
 		
 		this.set_orientation(Orientation.VERTICAL);

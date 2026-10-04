@@ -52,7 +52,7 @@ public class BeatBox.MusicPreferences : GLib.Object, PreferencesSection {
 		
 		fileChooser.set_current_folder(App.settings.main.music_folder);
 		
-		var button_box = new HButtonBox();
+		var button_box = new ButtonBox(Orientation.HORIZONTAL);
 		button_box.set_layout(ButtonBoxStyle.END);
 		button_box.pack_end(import, false, false, 0);
 		button_box.pack_end(rescan, false, false, 0);

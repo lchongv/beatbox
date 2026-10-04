@@ -72,7 +72,7 @@ public class BeatBox.TransferFromDeviceDialog : Window {
 		padding = new Box(Orientation.HORIZONTAL, 20);
 		
 		// initialize controls
-		Image warning = new Image.from_stock(Gtk.Stock.DIALOG_QUESTION, Gtk.IconSize.DIALOG);
+		Image warning = new Image.from_icon_name("dialog-question", Gtk.IconSize.DIALOG);
 		Label title = new Label(_("Import medias from") + " " + d.getDisplayName());
 		Label info = new Label(_("The following files were found on %s, but are not in your library. Check all files you would like to import.").printf(d.getDisplayName()));
 		transferAll = new CheckButton.with_label(_("Import all medias"));
@@ -173,7 +173,7 @@ public class BeatBox.TransferFromDeviceDialog : Window {
 		exp.add(listBox);
 		exp.expanded = false;
 		
-		HButtonBox bottomButtons = new HButtonBox();
+		var bottomButtons = new ButtonBox(Orientation.HORIZONTAL);
 		bottomButtons.set_layout(ButtonBoxStyle.END);
 		bottomButtons.pack_end(cancel, false, false, 10);
 		bottomButtons.pack_end(transfer, false, false, 0);

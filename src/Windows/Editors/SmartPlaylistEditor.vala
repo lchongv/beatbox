@@ -113,7 +113,7 @@ public class BeatBox.SmartPlaylistEditor : Window {
 		scroll.set_border_width(0);
 		scrolled_window = new ScrolledWindow(null, null);
 		scrolled_window.set_policy(PolicyType.NEVER, PolicyType.AUTOMATIC);
-		scrolled_window.set_size_request(-1, get_screen().get_height() - BUFFER_SPACE);
+		scrolled_window.set_size_request(-1, get_display().get_monitor_at_window(App.window.get_window()).get_geometry().height - BUFFER_SPACE);
 		scrolled_window.add(scroll);
 		
 		// to start, put in no_scroll
@@ -134,7 +134,7 @@ public class BeatBox.SmartPlaylistEditor : Window {
 		addButton = new Button.with_label(_("Add"));
 		addButton.clicked.connect(addButtonClick);
 		
-		vertQueries.margin_right = addButton.margin_right = 6;
+		vertQueries.margin_end = addButton.margin_end = 6;
 		
 		/* create extra option: limiter */
 		limitMedias = new CheckButton.with_label(_("Limit to"));
@@ -150,7 +150,7 @@ public class BeatBox.SmartPlaylistEditor : Window {
 		limiterBox.pack_start(limiterLabel, false, false, 0);
 		
 		/* add the Done button on bottom */
-		HButtonBox bottomButtons = new HButtonBox();
+		var bottomButtons = new ButtonBox(Orientation.HORIZONTAL);
 		bottomButtons.set_spacing (6);
 		bottomButtons.set_layout(ButtonBoxStyle.END);
 		save = new Button.with_label(_("Done"));
@@ -231,7 +231,7 @@ public class BeatBox.SmartPlaylistEditor : Window {
 		resize(min_req.width, min_req.height);
 		
 		// Determine if we should move to scroll/out of scroll
-		bool should_be_in_scroll = vertQueries.get_allocated_height() >= (get_screen().get_height() - BUFFER_SPACE);
+		bool should_be_in_scroll = vertQueries.get_allocated_height() >= (get_display().get_monitor_at_window(App.window.get_window()).get_geometry().height - BUFFER_SPACE);
 		if(is_in_scroll && !should_be_in_scroll) {
 			scroll.remove(vertQueries);
 			scrolled_window.hide();

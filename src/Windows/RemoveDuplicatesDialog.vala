@@ -80,7 +80,7 @@ public class BeatBox.RemoveDuplicatesDialog : Gtk.Window {
 		feedbackBox.pack_start(is_working, false, false, 0);
 		feedbackBox.pack_start(feedback_label, false, false, 0);
 		
-		HButtonBox buttonSep = new HButtonBox();
+		var buttonSep = new ButtonBox(Orientation.HORIZONTAL);
 		buttonSep.set_spacing (6);
 		buttonSep.set_layout(ButtonBoxStyle.END);
 		buttonSep.pack_start(feedbackBox, false, false, 0);
@@ -114,16 +114,13 @@ public class BeatBox.RemoveDuplicatesDialog : Gtk.Window {
 		analyze.clicked.connect(analyze_clicked);
 	}
 	
-	static Gtk.Alignment wrap_alignment (Gtk.Widget widget, int top, int right, int bottom, int left) {
-	
-		var alignment = new Gtk.Alignment(0.0f, 0.0f, 1.0f, 1.0f);
-		alignment.top_padding = top;
-		alignment.right_padding = right;
-		alignment.bottom_padding = bottom;
-		alignment.left_padding = left;
-		
-		alignment.add(widget);
-		return alignment;
+	static Gtk.Widget wrap_alignment (Gtk.Widget widget, int top, int right, int bottom, int left) {
+		// padding as extra margins (Gtk.Alignment is deprecated)
+		widget.margin_top += top;
+		widget.margin_end += right;
+		widget.margin_bottom += bottom;
+		widget.margin_start += left;
+		return widget;
 	}
 	
 	void cancel_clicked() {

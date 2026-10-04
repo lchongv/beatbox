@@ -185,7 +185,7 @@ public abstract class BeatBox.GenericGrid : FastGrid {
 		if (path == null) // blank area
 			this.get_window ().set_cursor (null);
 		else
-			this.get_window ().set_cursor (new Gdk.Cursor (Gdk.CursorType.HAND1));
+			this.get_window ().set_cursor (new Gdk.Cursor.from_name (get_display (), "pointer"));
 
 	}
 

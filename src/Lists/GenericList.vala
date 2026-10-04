@@ -70,7 +70,6 @@ public abstract class BeatBox.GenericList : FastList {
 		set_headers_clickable(true);
 		set_headers_visible(true);
 		set_fixed_height_mode(true);
-		set_rules_hint(true);
 		set_reorderable(false);
 		
 		// Make the 
@@ -85,7 +84,7 @@ public abstract class BeatBox.GenericList : FastList {
 		
 		playing_icon = App.icons.MEDIA_PLAY_SYMBOLIC.get_gicon ();
 		completed_icon = App.icons.PROCESS_COMPLETED.get_gicon ();
-		saved_locally_icon = new GLib.ThemedIcon.with_default_fallbacks (Gtk.Stock.SAVE);
+		saved_locally_icon = new GLib.ThemedIcon.with_default_fallbacks ("document-save");
 		new_podcast_icon = App.icons.NEW_PODCAST.get_gicon ();
 		
 		// drag source
@@ -594,10 +593,10 @@ public abstract class BeatBox.GenericList : FastList {
 		Gdk.drag_abort(context, Gtk.get_current_event_time());
 
 		if(get_selection().count_selected_rows() == 1) {
-			drag_source_set_icon_stock(this, Gtk.Stock.DND);
+			drag_source_set_icon_name(this, "audio-x-generic");
 		}
 		else if(get_selection().count_selected_rows() > 1) {
-			drag_source_set_icon_stock(this, Gtk.Stock.DND_MULTIPLE);
+			drag_source_set_icon_name(this, "folder-music");
 		}
 		else {
 			return;

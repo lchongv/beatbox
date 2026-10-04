@@ -66,7 +66,7 @@ public class BeatBox.EmbeddedAlert : Gtk.EventBox {
         image.pixel_size = 64;
         image.halign = Gtk.Align.END;
         image.valign = Gtk.Align.START;
-        image.margin_right = 12;
+        image.margin_end = 12;
 
         // Init stuff
         set_alert ("", "", null, false);
@@ -79,7 +79,7 @@ public class BeatBox.EmbeddedAlert : Gtk.EventBox {
         content_hbox = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0);
         content_hbox.halign = content_hbox.valign = Gtk.Align.CENTER; // center-align the content
         content_hbox.margin_top = content_hbox.margin_bottom = MIN_VERTICAL_MARGIN;
-        content_hbox.margin_left = content_hbox.margin_right = MIN_HORIZONTAL_MARGIN;
+        content_hbox.margin_start = content_hbox.margin_end = MIN_HORIZONTAL_MARGIN;
 
         content_hbox.pack_start (image, false, false, 0);
         content_hbox.pack_end (message_vbox, true, true, 0);

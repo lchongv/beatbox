@@ -163,7 +163,6 @@ public class BeatBox.PresetList : ComboBox {
 		store.get (it, 0, out o);
 
 		if (o != null && o is EqualizerPreset) {
-			set_title ((o as EqualizerPreset).name);
 			last_selected_preset = o as EqualizerPreset;
 
 			if (!(o as EqualizerPreset).is_default)

@@ -468,7 +468,7 @@ public class BeatBox.PodcastList : GenericList {
 		foreach(Media m in get_selected_medias()) {
 			try {
 				var file = File.new_for_uri(m.uri);
-				Gtk.show_uri(null, file.get_parent().get_uri(), 0);
+				try { AppInfo.launch_default_for_uri(file.get_parent().get_uri(), null); } catch (Error e) { warning(e.message); }
 			}
 			catch(GLib.Error err) {
 				debug("Could not browse media %s: %s\n", m.uri, err.message);

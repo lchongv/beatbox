@@ -86,7 +86,7 @@ public class BeatBox.LastfmPreferences : GLib.Object, PreferencesSection {
 		left_box.homogeneous = true;
 		login_box.vexpand = false;
 		
-		var button_box = new HButtonBox();
+		var button_box = new ButtonBox(Orientation.HORIZONTAL);
 		button_box.set_layout(ButtonBoxStyle.END);
 		button_box.pack_end(is_working, false, false, 0);
 		button_box.pack_end(login, false, false, 0);
