@@ -81,7 +81,7 @@ public static int main (string[] args) {
  * Application class
  */
 
-public class BeatBox.App : Granite.Application {
+public class BeatBox.App : Gtk.Application {
 	public static BeatBox.LibraryInterface library { get; private set; }
 	public static BeatBox.PlaylistInterface playlists { get; private set; }
 	public static BeatBox.PodcastInterface podcasts { get; private set; }
@@ -107,34 +107,7 @@ public class BeatBox.App : Granite.Application {
 		// This allows opening files. See the open() method below.
 		flags |= ApplicationFlags.HANDLES_OPEN;
 
-		// App info
-		build_data_dir = Build.DATADIR;
-		build_pkg_data_dir = Build.PKG_DATADIR;
-		build_release_name = Build.RELEASE_NAME;
-		build_version = Build.VERSION;
-		build_version_info = Build.VERSION_INFO;
-
-		program_name = "BeatBox";
-		exec_name = "beatbox";
-
-		app_copyright = "2012";
 		application_id = "net.launchpad.beatbox";
-		app_icon = "beatbox";
-		app_launcher = "net.launchpad.beatbox.desktop";
-		app_years = "2010-2012";
-
-		main_url = "https://launchpad.net/beat-box";
-		bug_url = "https://bugs.launchpad.net/beat-box/+filebug";
-		help_url = "https://answers.launchpad.net/beat-box";
-		translate_url = "https://translations.launchpad.net/beat-box";
-
-		about_authors = {"Scott Ringwelski <sgringwe@mtu.edu>",
-						 "Victor Eduardo M. <victoreduardm@gmail.com>",
-						 null};
-
-		about_artists = {"Scott Ringwelski <sgringwe@mtu.edu>",
-						 "Danielle Foré", 
-						 null};
 	}
 
 	/** Where the translations are read from (see main) */
@@ -192,11 +165,9 @@ public class BeatBox.App : Granite.Application {
 			return;
 		}
 		
-		// Granite.Application.run() binds our text domain to its own data dir: bind it back
-		Intl.bindtextdomain (Build.GETTEXT_PACKAGE, locale_dir);
-
+		Granite.Services.Logger.initialize ("BeatBox"); // the [INFO hh:mm] log format
 		// Setup debugger
-		if (DEBUG)
+		if (Environment.get_variable ("G_MESSAGES_DEBUG") != null) // was Granite's --debug
 			Granite.Services.Logger.DisplayLevel = Granite.Services.LogLevel.DEBUG;
 		else
 			Granite.Services.Logger.DisplayLevel = Granite.Services.LogLevel.INFO;
@@ -243,7 +214,7 @@ public class BeatBox.App : Granite.Application {
 		
 		// After everything settles down, load the covers that have been saved.
 		Idle.add(() => {
-			covers.fetch_image_cache_async (); return false;
+			covers.fetch_image_cache_async.begin (); return false;
 		});
 		
 		// After 10 seconds, check for new podcasts
@@ -252,26 +223,6 @@ public class BeatBox.App : Granite.Application {
 
 			return false;
 		});
-	}
-	
-	/**
-	 * We use this identifier to init everything inside the application.
-	 * For instance: libnotify, etc.
-	 */
-	public string get_id () {
-		return application_id;
-	}
-
-	public string get_name () {
-		return program_name;
-	}
-	
-	public string get_name_down () {
-		return program_name.down ();
-	}
-	
-	public string get_desktop_file_name () {
-		return app_launcher;
 	}
 }
 

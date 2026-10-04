@@ -106,26 +106,16 @@ namespace BeatBox.UI {
 		string markup = "<span weight='medium' size='10500'>" + validate_markup(primary, 20) + "</span>" + 
 													(!String.is_empty(secondary) ? ("\n<span foreground=\"#999\">" + validate_markup(secondary, 20) + "</span>") : "");
 		
-		// Decide what kind of menu to create
-		if(pixbuf == null) {
-			item = new Gtk.MenuItem.with_label("");
-		}
-		else {
-			item = new Gtk.ImageMenuItem.with_label("");
-		}
-		
-		// Find the label in the menuitem and set it's markup
-		foreach(var child in item.get_children()) {
-			if(child is Gtk.Label) {
-				((Gtk.Label)child).set_markup(markup);
-			}
-		}
-		
-		// If it's an image, set the image
-		if(item is Gtk.ImageMenuItem) {
-			((Gtk.ImageMenuItem)item).set_always_show_image(true);
-			((Gtk.ImageMenuItem)item).set_image(new Gtk.Image.from_pixbuf(pixbuf.scale_simple(32, 32, Gdk.InterpType.BILINEAR)));
-		}
+		// GTK menu items have no image of their own any more: a box with both
+		item = new Gtk.MenuItem();
+		var box = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 6);
+		if(pixbuf != null)
+			box.add(new Gtk.Image.from_pixbuf(pixbuf.scale_simple(32, 32, Gdk.InterpType.BILINEAR)));
+		var label = new Gtk.Label("");
+		label.set_markup(markup);
+		label.xalign = 0;
+		box.add(label);
+		item.add(box);
 		
 		return item;
 	}

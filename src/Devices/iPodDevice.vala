@@ -228,7 +228,7 @@ public class BeatBox.iPodDevice : GLib.Object, BeatBox.Device {
 	
 	public void unmount() {
 		if(mount != null) {
-			mount.unmount_with_operation(MountUnmountFlags.NONE, null, null);
+			mount.unmount_with_operation.begin(MountUnmountFlags.NONE, null, null);
 		}
 	}
 	

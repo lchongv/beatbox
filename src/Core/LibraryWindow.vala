@@ -30,7 +30,7 @@ using Gee;
 using Notify;
 
 public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface {
-	public static Granite.Application app { get; private set; }
+	public static Gtk.Application app { get; private set; }
 	public BeatBox.MediaKeyListener mkl;
 
 /** It is required to declare this globally, otherwise vala thinks there 
@@ -104,7 +104,7 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 	
 	public Notify.Notification notification { get; private set; }
 
-	public LibraryWindow(Granite.Application bb_app) {
+	public LibraryWindow(Gtk.Application bb_app) {
 		app = bb_app;
 		
 		// Init LibNotify
@@ -203,7 +203,7 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
         
         // Load up the different views. Some loads are asynchronous.
 		build_main_views ();
-		load_playlists_async ();
+		load_playlists_async.begin ();
 		
 		App.devices.load_pre_existing_devices();
 		

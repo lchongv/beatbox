@@ -142,8 +142,8 @@ public class BeatBox.Icon : GLib.Object {
 
 	public Gtk.IconInfo? get_icon_info (int size) {
 		var icon_theme = IconTheme.get_default();
-		var lookup_flags = Gtk.IconLookupFlags.GENERIC_FALLBACK;
-		return icon_theme.lookup_by_gicon (get_gicon(), size, lookup_flags);
+		// the ThemedIcon already carries the generic fallbacks; GENERIC_FALLBACK isn't allowed with a gicon
+		return icon_theme.lookup_by_gicon (get_gicon(), size, 0);
 	}
 
 	public Gdk.Pixbuf? render (Gtk.IconSize? size, StyleContext? context = null, int px_size = 0) {

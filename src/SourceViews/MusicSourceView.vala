@@ -43,7 +43,6 @@ public class BeatBox.MusicSourceView : SourceView {
 		welcome_screen.append_with_pixbuf(music_folder_icon, _("Locate"), _("Change your music folder."));
 		welcome_screen.activated.connect(welcome_screen_activated);
 		
-		warning("TODO: Fixme");
 		App.devices.device_added.connect(device_added);
 		App.devices.device_removed.connect(device_removed);
 		
