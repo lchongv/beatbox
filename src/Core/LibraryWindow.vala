@@ -317,7 +317,28 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		var lcdCover = new LcdCover();
 		var lcdCoverBox = new EventBox(); // an Image gets no clicks of its own
 		lcdCoverBox.add(lcdCover);
-		lcdCoverBox.button_press_event.connect(() => { lcdCover.show_full_size(this); return true; });
+		lcdCoverBox.tooltip_text = _("Click to enlarge; drag to copy it into another application or folder");
+		// a click (released without dragging) enlarges it
+		lcdCoverBox.button_release_event.connect((e) => {
+			if (e.button == 1)
+				lcdCover.show_full_size(this);
+			return true;
+		});
+		Gtk.drag_source_set(lcdCoverBox, Gdk.ModifierType.BUTTON1_MASK, {}, Gdk.DragAction.COPY);
+		Gtk.drag_source_add_uri_targets(lcdCoverBox);
+		lcdCoverBox.drag_begin.connect((context) => {
+			var icon = lcdCover.drag_icon();
+			if (icon != null)
+				Gtk.drag_set_icon_pixbuf(context, icon, icon.width / 2, icon.height / 2);
+		});
+		lcdCoverBox.drag_data_get.connect((context, data, info, time) => {
+			var path = lcdCover.file_for_drag();
+			if (path != null)
+				data.set_uris({ File.new_for_path(path).get_uri() });
+		});
+		// the press stops here (after the drag source saw it): in the title bar
+		// it would otherwise start moving the window as well
+		lcdCoverBox.button_press_event.connect(() => true);
 		lcd.add(lcdCoverBox); // thumbnail at the left edge (optional)
 		var lcd_logo = new Label("BeatBox");
 		lcd_logo.get_style_context().add_class("lcd-logo");

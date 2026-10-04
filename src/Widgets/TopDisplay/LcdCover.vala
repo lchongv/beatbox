@@ -53,6 +53,32 @@ public class BeatBox.LcdCover : Image {
 		show ();
 	}
 
+	/** The cover as a file to hand to other applications by drag and drop:
+	 *  a copy named "Artist - Album.jpg" in ~/.cache/beatbox/drag, so a file
+	 *  manager keeps a meaningful name. null when there is no cover. */
+	public string? file_for_drag () {
+		var m = App.playback.media_active ? App.playback.current_media : null;
+		if (source == null || m == null)
+			return null;
+		string name = (m.artist != "" ? m.artist + " - " : "") + (m.album != "" ? m.album : m.title);
+		name = name.replace ("/", "-").strip ();
+		var dir = Path.build_filename (App.settings.get_cache_dir (), "drag");
+		var path = Path.build_filename (dir, (name != "" ? name : "cover") + ".jpg");
+		try {
+			DirUtils.create_with_parents (dir, 0755);
+			source.save (path, "jpeg", "quality", "95");
+			return path;
+		} catch (Error err) {
+			warning ("Could not prepare the cover for dragging: %s", err.message);
+			return null;
+		}
+	}
+
+	/** A small copy of the cover for the drag icon */
+	public Gdk.Pixbuf? drag_icon () {
+		return source != null ? source.scale_simple (64, 64, Gdk.InterpType.BILINEAR) : null;
+	}
+
 	/** The cover at full size in a borderless window: drag it anywhere, wheel or +/- zooms,
 	 *  0 goes back to the first size, double-click or Esc closes it */
 	public void show_full_size (Gtk.Window parent) {
