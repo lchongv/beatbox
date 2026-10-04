@@ -36,6 +36,11 @@ public class BeatBox.CoverFlow : DrawingArea {
 		add_events(Gdk.EventMask.BUTTON_PRESS_MASK | Gdk.EventMask.SCROLL_MASK
 		           | Gdk.EventMask.SMOOTH_SCROLL_MASK | Gdk.EventMask.KEY_PRESS_MASK);
 		get_style_context().add_class("coverflow");
+		// event controllers, as in GTK4 (GTK3 needs a reference kept)
+		scroll_controller = new Gtk.EventControllerScroll(this, Gtk.EventControllerScrollFlags.BOTH_AXES);
+		scroll_controller.scroll.connect(on_scroll);
+		key_controller = new Gtk.EventControllerKey(this);
+		key_controller.key_pressed.connect(on_key_pressed);
 
 		grid.visible_changed.connect(refresh);
 		App.covers.cover_changed.connect(() => { surfaces.remove_all(); queue_draw(); });
@@ -299,32 +304,21 @@ public class BeatBox.CoverFlow : DrawingArea {
 		return true;
 	}
 
+	Gtk.EventControllerScroll scroll_controller;
+	Gtk.EventControllerKey key_controller;
 	double scroll_accum = 0;
-	public override bool scroll_event(Gdk.EventScroll event) {
-		switch (event.direction) {
-			case Gdk.ScrollDirection.UP:
-			case Gdk.ScrollDirection.LEFT:
-				go_to(target - 1);
-				break;
-			case Gdk.ScrollDirection.DOWN:
-			case Gdk.ScrollDirection.RIGHT:
-				go_to(target + 1);
-				break;
-			case Gdk.ScrollDirection.SMOOTH:
-				double dx, dy;
-				event.get_scroll_deltas(out dx, out dy);
-				scroll_accum += (dx.abs() > dy.abs()) ? dx : dy;
-				if (scroll_accum.abs() >= 1) {
-					go_to(target + (int)scroll_accum);
-					scroll_accum -= (int)scroll_accum;
-				}
-				break;
+	
+	// wheel clicks arrive as deltas of ±1, touchpads as fractions
+	void on_scroll(double dx, double dy) {
+		scroll_accum += (dx.abs() > dy.abs()) ? dx : dy;
+		if (scroll_accum.abs() >= 1) {
+			go_to(target + (int)scroll_accum);
+			scroll_accum -= (int)scroll_accum;
 		}
-		return true;
 	}
 
-	public override bool key_press_event(Gdk.EventKey event) {
-		switch (event.keyval) {
+	bool on_key_pressed(uint keyval, uint keycode, Gdk.ModifierType state) {
+		switch (keyval) {
 			case Gdk.Key.Left:  go_to(target - 1); return true;
 			case Gdk.Key.Right: go_to(target + 1); return true;
 			case Gdk.Key.Home:  go_to(0); return true;
