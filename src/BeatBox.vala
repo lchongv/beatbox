@@ -148,19 +148,31 @@ public class BeatBox.App : Gtk.Application {
 			return;
 		}
 		
-		// Activate, then play files
+		// Activate, then play files: new ones are imported (the import plays the
+		// first); a song already in the library is played right away
 		this.activate ();
 		var to_add = new Gee.LinkedList<File> ();
+		Media? known = null;
 		for (int i = 0; i < files.length; i++) {
 			var file = files[i];
-			if (file != null) {
+			if (file == null)
+				continue;
+			var m = library.media_from_file (file.get_uri ());
+			if (m != null) {
+				if (known == null)
+					known = m;
+			} else {
 				to_add.add (file);
 				message ("Adding file %s", file.get_uri());
 			}
-		}         
+		}
 		
 		if(to_add.size > 0) {
 			library.song_library.add_files(to_add, true);
+		} else if (known != null) {
+			playback.play_media (known, false);
+			if (!playback.playing)
+				playback.play ();
 		}
 	}
 

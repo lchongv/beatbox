@@ -2441,3 +2441,57 @@ msgstr "Restaurar los predeterminados"
 
 msgid "“%s” used those keys; it has no shortcut now."
 msgstr "«%s» usaba esas teclas; ahora no tiene atajo."
+
+msgid "Flat"
+msgstr "Plano"
+
+msgid "Classical"
+msgstr "Clásica"
+
+msgid "Club"
+msgstr "Club"
+
+msgid "Dance"
+msgstr "Dance"
+
+msgid "Full Bass"
+msgstr "Graves al máximo"
+
+msgid "Full Treble"
+msgstr "Agudos al máximo"
+
+msgid "Full Bass + Treble"
+msgstr "Graves y agudos al máximo"
+
+msgid "Headphones"
+msgstr "Audífonos"
+
+msgid "Large Hall"
+msgstr "Sala grande"
+
+msgid "Live"
+msgstr "En vivo"
+
+msgid "Party"
+msgstr "Fiesta"
+
+msgid "Pop"
+msgstr "Pop"
+
+msgid "Reggae"
+msgstr "Reggae"
+
+msgid "Rock"
+msgstr "Rock"
+
+msgid "Soft"
+msgstr "Suave"
+
+msgid "Ska"
+msgstr "Ska"
+
+msgid "Soft Rock"
+msgstr "Rock suave"
+
+msgid "Techno"
+msgstr "Techno"

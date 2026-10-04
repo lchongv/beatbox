@@ -103,5 +103,5 @@ Total fases 1–8: ~20–25 h. Fase 9: +8 h.
 5. [x] Biblioteca: vigila la carpeta de música (importa lo nuevo; sigue borrados, renombres y movimientos conservando reproducciones; desmarca los que vuelven). Duplicados y edición por lotes revisados y corregidos. «Guardar la carátula en los archivos» (menú contextual; TagLib ≥ 2.0).
 6. [x] Escuchas: Last.fm corregido (valores escapados, POST como formulario, firma verificada contra el servidor, regla 30 s + mitad o 4 min, hora de inicio; sin «Prohibir», que Last.fm quitó). ListenBrainz con token validado (Preferencias › Escuchas).
 7. [x] Atajos configurables (Preferencias › Atajos: 11 acciones, aviso al reasignar, restaurar). Las notificaciones llevan la portada (verificado).
-8. Ecualizador revisado.
+8. [x] Ecualizador revisado: bandas en las frecuencias que dicen las etiquetas (32 Hz–16 kHz, una octava), modo automático sin género no toma el primer preajuste, preajustes aplicados en el hilo principal, cierre sin reentrada, nombres traducidos; quitado el código de reconexión muerto.
 9. Paquete Flatpak/AppImage.

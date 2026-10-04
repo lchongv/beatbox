@@ -28,6 +28,11 @@
 using Gtk;
 
 public class BeatBox.PresetList : ComboBox {
+	// the built-in preset names, for the translations (see Settings.Equalizer.default_presets)
+	const string[] DEFAULT_NAMES = { N_("Flat"), N_("Classical"), N_("Club"), N_("Dance"), N_("Full Bass"),
+		N_("Full Treble"), N_("Full Bass + Treble"), N_("Headphones"), N_("Large Hall"), N_("Live"), N_("Party"),
+		N_("Pop"), N_("Reggae"), N_("Rock"), N_("Soft"), N_("Ska"), N_("Soft Rock"), N_("Techno") };
+
 
 	public signal void preset_selected(EqualizerPreset p);
 	public signal void automatic_preset_chosen();
@@ -118,7 +123,9 @@ public class BeatBox.PresetList : ComboBox {
 
 		TreeIter iter;
 		store.append(out iter);
-		store.set(iter, 0, ep, 1, ep.name);
+		// the built-in presets keep their English names (saved, and matched against
+		// genres in automatic mode); only the list shows them translated
+		store.set(iter, 0, ep, 1, ep.is_default ? _(ep.name) : ep.name);
 
 		modifying_list = false;
 		automatic_selected = false;

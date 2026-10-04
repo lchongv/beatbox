@@ -33,19 +33,17 @@ public class BeatBox.Equalizer : GLib.Object {
 	public Equalizer() {
 		element = ElementFactory.make("equalizer-10bands", "equalizer");
 		
-		int[] freqs = {60, 170, 310, 600, 1000, 3000, 6000, 12000, 14000, 16000};
+		if (element == null)
+			return;
 		
-		double last_freq = 0;
+		// the octave bands the equalizer window labels (32 Hz ... 16 kHz), each an
+		// octave wide (an octave around f spans f/sqrt(2) .. f*sqrt(2), i.e. 0.707 f)
+		int[] freqs = {32, 64, 125, 250, 500, 1000, 2000, 4000, 8000, 16000};
 		for (int index = 0; index < 10; index++) {
 			GLib.Object band = ((Gst.ChildProxy)element).get_child_by_index(index);
-			
-			double freq = freqs[index];
-			double bandwidth = freq - last_freq;
-			last_freq = freq;
-			
-			band.set("freq", freq,
-			"bandwidth", bandwidth,
-			"gain", 0.0);
+			band.set("freq", (double)freqs[index],
+			         "bandwidth", freqs[index] * 0.707,
+			         "gain", 0.0);
 		}
 	}
 	
