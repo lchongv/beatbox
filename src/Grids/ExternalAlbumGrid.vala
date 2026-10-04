@@ -82,16 +82,10 @@ public class BeatBox.ExternalAlbumGrid : FastGrid {
 		else if(column == MARKUP_COLUMN) {
 			string artist, album;
 			
-			if(a.album.length > 25)
-				album = a.album.normalize().substring(0, 22) + "...";
-			else
-				album = a.album;
+			album = String.ellipsize(a.album, 25);
 			
 			if(a.show_artist) {
-				if(a.artist.length > 25)
-					artist = a.artist.normalize().substring(0, 22) + "...";
-				else
-					artist = a.artist;
+				artist = String.ellipsize(a.artist, 25);
 			}
 			else {
 				artist = "";

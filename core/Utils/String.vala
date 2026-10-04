@@ -71,9 +71,10 @@ namespace BeatBox.String {
 		return rv;
 	}
 	
+	/** At most limit characters (not bytes: cutting bytes splits ñ, á...), "..." included */
 	public string ellipsize(string str, int limit) {
-		if(str.length > limit)
-			return str.substring(0, limit - 2) + "...";
+		if(str.char_count() > limit)
+			return str.substring(0, str.index_of_nth_char(limit - 3)) + "...";
 		else
 			return str;
 	}

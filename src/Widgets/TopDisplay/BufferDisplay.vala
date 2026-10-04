@@ -58,7 +58,7 @@ public class BeatBox.BufferDisplay : BeatBox.Display, Box {
 		}
 		else {
 			if(percent >= 0 && percent < 100) {
-				var name = (App.playback.current_media.title.length > 50) ? App.playback.current_media.title.substring(0, 50) : App.playback.current_media.title;
+				var name = String.ellipsize(App.playback.current_media.title, 53);
 				
 				buffering_bar.set_fraction((double)((double)percent / (double)100));
 				
