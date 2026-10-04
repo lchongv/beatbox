@@ -36,6 +36,14 @@ public class BeatBox.Streamer : GLib.Object {
 	public bool doing_gapless;
 	Media next_gapless_media;
 	
+	// crossfade: the song fading out plays in its own pipeline until the fade ends
+	Pipeline? fade_out = null;
+	uint fade_id = 0;
+	int64 fade_start = 0;
+	int64 fade_length = 0;  // microseconds
+	double volume = 1.0;     // the user's volume (playbin's volume moves during a fade)
+	Media? next_after_eos = null; // taken from the list for a crossfade that couldn't happen
+	
 	bool checked_video;
 	bool set_resume_pos;
 	bool is_video_enabled;
@@ -51,12 +59,7 @@ public class BeatBox.Streamer : GLib.Object {
 	
 	public Streamer() {
 		pipe = new BeatBox.Pipeline();
-		
-		pipe.bus.enable_sync_message_emission();
-		
-		pipe.bus.add_watch(GLib.Priority.DEFAULT, busCallback);
-		pipe.bus.sync_message.connect(sync_message);
-		pipe.playbin.about_to_finish.connect(about_to_finish);
+		listen_to(pipe);
 		
 		// If volume is down low, let's raise it up so that they aren't confused why no audio is playing
 		double vol = App.settings.equalizer.volume /100.0;
@@ -100,7 +103,112 @@ public class BeatBox.Streamer : GLib.Object {
 			App.playback.current_media.resume_pos = (int)sec;
 		}
 		
+		check_crossfade(position);
 		return true;
+	}
+	
+	void listen_to(Pipeline p) {
+		p.bus.enable_sync_message_emission();
+		p.bus_watch = p.bus.add_watch(GLib.Priority.DEFAULT, busCallback);
+		p.bus.sync_message.connect(sync_message);
+		p.about_to_finish_handler = p.playbin.about_to_finish.connect(about_to_finish);
+	}
+	
+	/* Crossfade (Preferences › Behavior): some seconds before a song ends, the next
+	 * one starts in a second pipeline and they cross over; then the old one goes. */
+	void check_crossfade(int64 position) {
+		int seconds = App.settings.main.crossfade_seconds;
+		if(seconds <= 0 || fade_id != 0 || fade_out != null || doing_gapless || next_after_eos != null || !internal_playing_flag || is_video_enabled)
+			return;
+		var current = App.playback.media_active ? App.playback.current_media : null;
+		if(current == null || !crossfadable(current))
+			return;
+		int64 length = (int64)seconds * Gst.SECOND;
+		int64 duration = getDuration();
+		// short songs (not even twice the fade) keep the plain gapless transition
+		if(duration <= 2 * length || duration - position > length)
+			return;
+		length = duration - position; // checked every half second: fit the fade to what is left
+		
+		Media? next = App.playback.getNext(false); // moves on in the list (or takes it from the queue)
+		if(next == null)
+			return;
+		if(!crossfadable(next) || !File.new_for_uri(next.uri).query_exists()) {
+			next_after_eos = next; // played when this one ends, so nothing is skipped
+			return;
+		}
+		start_crossfade(next, length);
+	}
+	
+	static bool crossfadable(Media m) {
+		return m.media_type == MediaType.SONG && m.uri.has_prefix("file://");
+	}
+	
+	void start_crossfade(Media next, int64 length) {
+		GLib.message("Crossfading into %s", next.uri);
+		fade_out = pipe;
+		SignalHandler.disconnect(fade_out.playbin, fade_out.about_to_finish_handler); // no gapless switch in it
+		
+		pipe = new BeatBox.Pipeline();
+		listen_to(pipe);
+		pipe.copy_equalizer_from(fade_out);
+		pipe.playbin.volume = 0.0;
+		pipe.playbin.uri = next.uri.replace("#", "%23");
+		pipe.playbin.set_state(State.PLAYING);
+		
+		// make it the current song without loading it again (as a gapless switch does)
+		doing_gapless = true;
+		App.playback.play_media(next, false);
+		doing_gapless = false;
+		checked_video = false;
+		set_resume_pos = false;
+		
+		fade_start = GLib.get_monotonic_time();
+		fade_length = length / 1000;
+		fade_id = Timeout.add(40, fade_step);
+	}
+	
+	bool fade_step() {
+		double t = fade_length > 0 ? ((double)(GLib.get_monotonic_time() - fade_start) / fade_length).clamp(0.0, 1.0) : 1.0;
+		// equal power: the sum stays as loud as one song through the fade
+		pipe.playbin.volume = volume * Math.sin(t * Math.PI / 2);
+		if(fade_out != null)
+			fade_out.playbin.volume = volume * Math.cos(t * Math.PI / 2);
+		if(t >= 1.0) {
+			fade_id = 0;
+			finish_crossfade();
+			return false;
+		}
+		return true;
+	}
+	
+	/** The old song ended before the fade did: it goes, the new one keeps rising */
+	void drop_fade_out() {
+		if(fade_out == null)
+			return;
+		Source.remove(fade_out.bus_watch);
+		fade_out.playbin.set_state(State.NULL);
+		fade_out = null;
+	}
+	
+	/** Ends a crossfade at once: the old song stops, the new one at full volume */
+	void finish_crossfade() {
+		if(fade_id != 0)
+			Source.remove(fade_id);
+		fade_id = 0;
+		if(fade_out != null || fade_start != 0) {
+			drop_fade_out();
+			fade_start = 0;
+			GLib.message("Crossfade finished");
+		}
+		pipe.playbin.volume = volume;
+	}
+	
+	/** A song taken from the list for a crossfade that couldn't happen; PlaybackManager plays it at the end */
+	public Media? take_next_after_eos() {
+		var m = next_after_eos;
+		next_after_eos = null;
+		return m;
 	}
 	
 	/* Basic playback functions */
@@ -109,6 +217,7 @@ public class BeatBox.Streamer : GLib.Object {
 	}
 	
 	public void pause() {
+		finish_crossfade();
 		setState(State.PAUSED);
 	}
 	
@@ -124,6 +233,8 @@ public class BeatBox.Streamer : GLib.Object {
 	// This is never called when doing a gapless transition.
 	public void setURI(string uri, bool playing, bool use_resume_position) {
 		assert(!doing_gapless);
+		finish_crossfade();
+		next_after_eos = null;
 		
 		setState(State.READY);
 		
@@ -173,11 +284,13 @@ public class BeatBox.Streamer : GLib.Object {
 	}
 	
 	public void setVolume(double val) {
-		pipe.playbin.volume = val;
+		volume = val;
+		if(fade_id == 0) // during a fade the next step uses it
+			pipe.playbin.volume = val;
 	}
 	
 	public double getVolume() {
-		return pipe.playbin.volume;
+		return volume;
 	}
 	
 	/* Extra stuff */
@@ -209,6 +322,12 @@ public class BeatBox.Streamer : GLib.Object {
 	
 	/* Callbacks */
 	private bool busCallback(Gst.Bus bus, Gst.Message message) {
+		// the song fading out: only its end (or a failure) matters
+		if(bus != pipe.bus) {
+			if(message.type == Gst.MessageType.EOS || message.type == Gst.MessageType.ERROR)
+				drop_fade_out();
+			return true;
+		}
 		switch (message.type) {
 		case Gst.MessageType.ERROR:
 			GLib.Error err;
@@ -365,6 +484,13 @@ public class BeatBox.Streamer : GLib.Object {
 	}
 	
 	void about_to_finish() {
+		// with a crossfade coming, the gapless switch must not take the next song
+		if(App.settings.main.crossfade_seconds > 0 && fade_out == null && next_after_eos == null && getDuration() > 2 * (int64)App.settings.main.crossfade_seconds * Gst.SECOND
+		   && App.playback.media_active && crossfadable(App.playback.current_media))
+			return;
+		if(next_after_eos != null)
+			return;
+		
 		Media s = App.playback.getNext(false);
 		
 		if(s != null && s.supports_gapless && !s.uri.has_prefix("http:/")) {

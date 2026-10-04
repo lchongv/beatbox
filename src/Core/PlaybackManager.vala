@@ -505,8 +505,12 @@ public class BeatBox.PlaybackManager : GLib.Object, BeatBox.PlaybackInterface {
 		// Only call request next if we are not doing gapless. If we are,
 		// then the next media will be played within player
 		if(!player.doing_gapless) {
-			warning("End of stream reached, but not doing gapless transition");
-			request_next();
+			// a song already taken from the list for a crossfade that couldn't be done
+			var next = player.take_next_after_eos();
+			if(next != null)
+				play_media(next, false);
+			else
+				request_next();
 		}
 		
 		end_of_stream();

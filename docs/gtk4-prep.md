@@ -96,7 +96,7 @@ Total fases 1–8: ~20–25 h. Fase 9: +8 h.
 0.9: solo limpieza (errores y avisos de obsolescencia). Lo pendiente pasa a 0.10.
 
 ## Hecho en 0.9
-1. [x] Reproducción sin cortes (ya existía; verificada) + ReplayGain (Preferencias › Comportamiento). Crossfade: pendiente, requiere dos playbin.
+1. [x] Reproducción sin cortes (ya existía; verificada) + ReplayGain + fundido entre canciones (0–12 s, Preferencias › Comportamiento; segundo pipeline con curva de potencia constante).
 2. [x] Letras sincronizadas (LRCLIB) en la segunda línea del LCD; caché en ~/.cache/beatbox/lyrics (Preferencias › Apariencia).
 3. [x] Mini reproductor: Ctrl+M, Alt+botón verde o menú; deja solo controles y LCD.
 4. [x] Cola editable: «Reproducir a continuación» y «Añadir a la cola» en las listas; en la Cola, Subir, Bajar, Vaciar y arrastrar para reordenar; se guarda al cambiar y vuelve al abrir.

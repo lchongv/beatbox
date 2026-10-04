@@ -254,6 +254,7 @@ public class BeatBox.Settings {
         public string music_folder { get; set; }
         public bool watch_music_folder { get; set; } // import songs that appear in it (FolderWatcher)
         public string[] shortcuts { get; set; }      // "id=accelerator" (Shortcuts), only once changed
+        public int crossfade_seconds { get; set; }   // 0: no crossfade (gapless)
         public string podcast_folder { get; set; }
         public bool update_folder_hierarchy { get; set; }
         public bool write_metadata_to_file { get; set; }
