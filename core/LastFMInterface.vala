@@ -43,10 +43,9 @@ public interface BeatBox.LastFMInterface : GLib.Object {
 	public abstract void authenticate_user(string username, string password);
 	public abstract void logout_user();
 	
-	public abstract void ban_track(string title, string artist);
 	public abstract void love_track(string title, string artist);
 	public abstract void post_now_playing();
-	public abstract void scrobble();
+	public abstract void scrobble(int64 started_at);
 	
 	public abstract void fetch_current_similar_songs();
 	public abstract void fetch_top_artist_songs();

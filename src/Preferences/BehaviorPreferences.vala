@@ -270,7 +270,7 @@ public class BeatBox.AboutPreferences : SimplePreferences {
 		             + "\n" + _("Podcasts: %s").printf(link("https://podcasts.apple.com", "Apple Podcasts"))
 		             + "\n" + _("Album art: %s, with %s as fallback").printf(link("https://musicbrainz.org", "MusicBrainz") + " / " + link("https://coverartarchive.org", "Cover Art Archive"), link("https://music.apple.com", "Apple Music"))
 		             + "\n" + _("Lyrics: %s").printf(link("https://lrclib.net", "LRCLIB"))
-		             + "\n" + _("Scrobbling: %s").printf(link("https://www.last.fm", "Last.fm")), true));
+		             + "\n" + _("Scrobbling: %s").printf(link("https://www.last.fm", "Last.fm") + ", " + link("https://listenbrainz.org", "ListenBrainz")), true));
 		
 		add_heading(_("License"));
 		add_row(text(_("Free software under the %s.").printf(link("https://www.gnu.org/licenses/gpl-3.0.html", _("GNU General Public License, version 3")))

@@ -1,4 +1,4 @@
-project('beatbox', 'vala', 'c', version: '0.9.13')
+project('beatbox', 'vala', 'c', version: '0.9.14')
 
 gnome = import('gnome')
 i18n = import('i18n')
@@ -180,6 +180,7 @@ app_sources = files(
   'src/GStreamer/ReplayGain.vala',
   'src/GStreamer/Streamer.vala',
   'src/Lastfm/LastFM.vala',
+  'src/Lastfm/ListenBrainz.vala',
   'src/Lastfm/SimilarMedia.vala',
   'src/Lastfm/TopArtistSongs.vala',
   'src/Lastfm/TopArtistAlbums.vala',

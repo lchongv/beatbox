@@ -37,7 +37,6 @@ public abstract class BeatBox.ActionsInterface : GLib.Object {
 	public SimpleAction next { get; protected set; }
 	public SimpleAction play_pause { get; protected set; }
 	public SimpleAction previous { get; protected set; }
-	public SimpleAction lastfm_ban { get; protected set; }
 	public SimpleAction lastfm_love { get; protected set; }
 	public SimpleAction show_duplicates { get; protected set; }
 	public SimpleAction hide_duplicates { get; protected set; }

@@ -200,10 +200,14 @@ public class BeatBox.Settings {
         public string session_key { get; set; }
         public bool is_subscriber { get; set; }
         public string username { get; set; }
+        public string listenbrainz_token { get; set; }
+        public string listenbrainz_user { get; set; }
         
         public LastFM () {
             session_key = "";
             username = "";
+            listenbrainz_token = "";
+            listenbrainz_user = "";
             init_config ("lastfm", "net.launchpad.beatbox.LastFM");
         }
     }

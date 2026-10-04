@@ -101,7 +101,7 @@ Total fases 1–8: ~20–25 h. Fase 9: +8 h.
 3. [x] Mini reproductor: Ctrl+M, Alt+botón verde o menú; deja solo controles y LCD.
 4. [x] Cola editable: «Reproducir a continuación» y «Añadir a la cola» en las listas; en la Cola, Subir, Bajar, Vaciar y arrastrar para reordenar; se guarda al cambiar y vuelve al abrir.
 5. [x] Biblioteca: vigila la carpeta de música (importa lo nuevo; sigue borrados, renombres y movimientos conservando reproducciones; desmarca los que vuelven). Duplicados y edición por lotes revisados y corregidos. «Guardar la carátula en los archivos» (menú contextual; TagLib ≥ 2.0).
-6. Scrobbling Last.fm / ListenBrainz.
+6. [x] Escuchas: Last.fm corregido (valores escapados, POST como formulario, firma verificada contra el servidor, regla 30 s + mitad o 4 min, hora de inicio; sin «Prohibir», que Last.fm quitó). ListenBrainz con token validado (Preferencias › Escuchas).
 7. Atajos configurables. (Las notificaciones ya llevan la portada.)
 8. Ecualizador revisado.
 9. Paquete Flatpak/AppImage.

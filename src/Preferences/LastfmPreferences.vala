@@ -29,7 +29,7 @@ using Gtk;
 
 public class BeatBox.LastfmPreferences : GLib.Object, PreferencesSection {
 	public PreferencesSectionCategory category { get { return PreferencesSectionCategory.GENERAL; } }
-	public string title { get { return "Last.fm"; } }
+	public string title { get { return _("Scrobbling"); } }
 	public Gdk.Pixbuf? icon { get { return null; } }
 	public Widget widget { get { return content; } }
 	
@@ -42,6 +42,11 @@ public class BeatBox.LastfmPreferences : GLib.Object, PreferencesSection {
 	Button logout;
 	Gtk.Spinner is_working;
 	
+	Entry lb_token;
+	Label lb_info;
+	Button lb_connect;
+	Button lb_disconnect;
+	
 	public LastfmPreferences() {
 		content = new Box(Orientation.VERTICAL, 0);
 		content.spacing = 10;
@@ -53,11 +58,11 @@ public class BeatBox.LastfmPreferences : GLib.Object, PreferencesSection {
 		logout = new Button.with_label(_("Logout"));
 		is_working = new Gtk.Spinner();
 		
-		var auth_label = new Label(_("Authentication"));
+		var auth_label = new Label("");
 		
 		// fancy up the category labels
 		auth_label.xalign = 0.0f;
-		auth_label.set_markup("<b>" + _("Authentication") + "</b>");
+		auth_label.set_markup("<b>Last.fm</b>");
 		
 		auth_info.xalign = 0.0f;
 		auth_info.set_line_wrap(true);
@@ -117,6 +122,77 @@ public class BeatBox.LastfmPreferences : GLib.Object, PreferencesSection {
 		else {
 			show_loginprompt_gui();
 		}
+		
+		build_listenbrainz();
+	}
+	
+	/* ListenBrainz: the user token from listenbrainz.org/settings, checked before it is kept */
+	void build_listenbrainz() {
+		var heading = new Label("");
+		heading.xalign = 0.0f;
+		heading.set_markup("<b>ListenBrainz</b>");
+		heading.margin_top = 12;
+		content.add(heading);
+		
+		lb_info = new Label("");
+		lb_info.xalign = 0.0f;
+		lb_info.wrap = true;
+		lb_info.max_width_chars = 60;
+		content.add(UI.wrap_alignment(lb_info, 0, 0, 0, 10));
+		
+		lb_token = new Entry();
+		lb_token.visibility = false;
+		lb_token.placeholder_text = _("User token");
+		lb_token.hexpand = true;
+		lb_connect = new Button.with_label(_("Connect"));
+		lb_disconnect = new Button.with_label(_("Disconnect"));
+		var row = new Box(Orientation.HORIZONTAL, 6);
+		row.add(lb_token);
+		row.add(lb_connect);
+		row.add(lb_disconnect);
+		content.add(UI.wrap_alignment(row, 0, 0, 0, 10));
+		
+		lb_token.activate.connect(listenbrainz_connect);
+		lb_connect.clicked.connect(listenbrainz_connect);
+		lb_disconnect.clicked.connect(() => {
+			App.settings.lastfm.listenbrainz_token = "";
+			App.settings.lastfm.listenbrainz_user = "";
+			show_listenbrainz();
+		});
+		row.show_all();
+		lb_info.show();
+		// the preferences window shows everything: these are shown and hidden here
+		lb_token.no_show_all = lb_connect.no_show_all = lb_disconnect.no_show_all = true;
+		show_listenbrainz();
+	}
+	
+	void show_listenbrainz(string? problem = null) {
+		bool connected = App.settings.lastfm.listenbrainz_token != "";
+		lb_token.visible = lb_connect.visible = !connected;
+		lb_disconnect.visible = connected;
+		lb_token.sensitive = lb_connect.sensitive = true;
+		if(connected)
+			lb_info.set_markup(_("Your listens are sent to ListenBrainz as %s.").printf("<b>" + Markup.escape_text(App.settings.lastfm.listenbrainz_user) + "</b>"));
+		else
+			lb_info.set_markup((problem != null ? "<b>" + Markup.escape_text(problem) + "</b>\n" : "")
+			                   + _("Paste the user token from %s to send your listens there.").printf("<a href=\"https://listenbrainz.org/settings/\">listenbrainz.org/settings</a>"));
+	}
+	
+	void listenbrainz_connect() {
+		string token = lb_token.text.strip();
+		if(token == "")
+			return;
+		lb_token.sensitive = lb_connect.sensitive = false;
+		ListenBrainz.validate(token, (valid, user) => {
+			if(valid) {
+				App.settings.lastfm.listenbrainz_user = user;
+				App.settings.lastfm.listenbrainz_token = token;
+				lb_token.text = "";
+				show_listenbrainz();
+			} else {
+				show_listenbrainz(_("ListenBrainz didn't accept that token (or couldn't be reached)."));
+			}
+		});
 	}
 	
 	void login_click() {

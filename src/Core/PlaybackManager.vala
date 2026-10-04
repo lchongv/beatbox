@@ -699,6 +699,7 @@ public class BeatBox.PlaybackManager : GLib.Object, BeatBox.PlaybackInterface {
 			
 			App.info.lastfm.fetch_current_similar_songs();
 			App.info.lastfm.post_now_playing();
+			ListenBrainz.now_playing(current_media);
 		}
 
 		//at 30 seconds in, we consider the media as played
@@ -728,11 +729,13 @@ public class BeatBox.PlaybackManager : GLib.Object, BeatBox.PlaybackInterface {
 #endif
 		}
 
-		// at halfway, scrobble
-		if((double)(sec/(double)current_media.length) > 0.50 && !scrobbled_track) {
+		// scrobble, by the rule Last.fm and ListenBrainz share: a song longer than
+		// 30 seconds, once half of it or 4 minutes have played
+		if(!scrobbled_track && current_media.length > 30 && (sec >= current_media.length / 2.0 || sec >= 240)) {
 			scrobbled_track = true;
-			
-			App.info.lastfm.scrobble();
+			int64 started_at = (int64)time_t() - (int64)sec;
+			App.info.lastfm.scrobble(started_at);
+			ListenBrainz.listened(current_media, started_at);
 		}
 
 		// past 80%, skipping to the next one is no longer a skip
