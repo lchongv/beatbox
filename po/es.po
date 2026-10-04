@@ -1532,7 +1532,7 @@ msgstr "Mover a la papelera"
 
 #: /home/scott/beat-box/po/../src//Dialogs/RemoveFilesDialog.vala:60
 msgid "Remove from BeatBox"
-msgstr "Eliminar de Beatbox"
+msgstr "Quitar de BeatBox"
 
 #: /home/scott/beat-box/po/../src//Dialogs/RemoveFilesDialog.vala:70
 msgid "podcast episode"
@@ -1543,7 +1543,7 @@ msgstr[1] "episodios de podcast"
 #: /home/scott/beat-box/po/../src//Dialogs/RemoveFilesDialog.vala:88
 #, c-format
 msgid "Remove %d %s from BeatBox?"
-msgstr "¿Eliminar %d %s de BeatBox?"
+msgstr "¿Quitar %d %s de BeatBox?"
 
 #: /home/scott/beat-box/po/../src//Dialogs/RemoveFilesDialog.vala:94 /home/scott/beat-box/po/../src//Dialogs/RemoveFilesDialog.vala:96
 #, c-format
@@ -2354,3 +2354,11 @@ msgstr "En Wayland es el escritorio el que mantiene ventanas encima: haz clic de
 
 msgid "Click to enlarge; drag to copy it into another application or folder"
 msgstr "Clic para agrandar; arrástrala para copiarla en otra aplicación o carpeta"
+
+msgid "Remove “%s” from BeatBox?"
+msgstr "¿Quitar «%s» de BeatBox?"
+
+msgid "It will be removed from your library and from any device that syncs automatically with BeatBox."
+msgid_plural "They will be removed from your library and from any device that syncs automatically with BeatBox."
+msgstr[0] "Se quitará de tu colección y de cualquier dispositivo que se sincronice automáticamente con BeatBox."
+msgstr[1] "Se quitarán de tu colección y de cualquier dispositivo que se sincronice automáticamente con BeatBox."

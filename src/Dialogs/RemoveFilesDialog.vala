@@ -41,8 +41,7 @@ public class BeatBox.RemoveFilesDialog : Window {
 	public RemoveFilesDialog (Collection<Media> to_remove, TreeViewSetup.Hint media_type) {
 		this.set_title("BeatBox");
 		
-		// set the size based on saved gconf settings
-		//this.window_position = WindowPosition.CENTER;
+		this.window_position = WindowPosition.CENTER_ON_PARENT;
 		this.type_hint = Gdk.WindowTypeHint.DIALOG;
 		this.set_modal(true);
 		this.set_transient_for(App.window);
@@ -90,18 +89,15 @@ public class BeatBox.RemoveFilesDialog : Window {
 		else {
   			Media m = to_remove.to_array()[0];
   			
-  			if(m is Station)
-				title_text = _("Remove %s from BeatBox?").printf(Markup.escape_text(m.title));
-			else
-				title_text = _("Remove %s from BeatBox?").printf(Markup.escape_text(m.album_artist));
+			title_text = _("Remove “%s” from BeatBox?").printf(Markup.escape_text(m.title));
 		}
 		title.set_markup("<span weight=\"bold\" size=\"larger\">" + title_text + "</span>");
 		
 		// set info text
 		info.xalign = 0.0f;
 		info.set_line_wrap(true);
-		string info_text = _("This will remove the %s from your library and from any device that automatically syncs with BeatBox.").printf(media_text.str.down());
-		info.set_markup(info_text);
+		info.label = ngettext("It will be removed from your library and from any device that syncs automatically with BeatBox.",
+		                      "They will be removed from your library and from any device that syncs automatically with BeatBox.", to_remove.size);
 		
 		// decide if we need the trash button
 		bool need_trash = false;

@@ -130,7 +130,7 @@ public class BeatBox.FieldEditorImpl : Box, FieldEditor {
 		
 		check = new CheckButton();
 		label = new Label(field_name);
-		field_name_box = new Box(Orientation.HORIZONTAL, 0);
+		field_name_box = new Box(Orientation.HORIZONTAL, 4);
 		
 		label.justify = Justification.LEFT;
 		label.xalign = 0.0f;

@@ -196,12 +196,25 @@ public class BeatBox.FolderWatcher : GLib.Object {
 					lost.add (m);
 			}
 		}
-		// files not in the library yet
+		// files not in the library yet, and songs marked missing whose file is back
 		var found = new Gee.ArrayList<File> ();
+		var back = new Gee.ArrayList<Media> ();
 		foreach (var uri in appeared) {
 			var f = File.new_for_uri (uri);
-			if (App.library.media_from_file (uri) == null && f.query_exists ())
+			if (!f.query_exists ())
+				continue;
+			var m = App.library.media_from_file (uri);
+			if (m == null) {
 				found.add (f);
+			} else if (m.location_unknown) {
+				m.location_unknown = false;
+				back.add (m);
+			}
+		}
+		if (back.size > 0) {
+			App.library.update_medias (back, false, false, true);
+			foreach (var m in back)
+				App.playback.media_found (m);
 		}
 		disappeared.clear ();
 		appeared.clear ();

@@ -184,14 +184,8 @@ public class BeatBox.LibraryManager : GLib.Object, BeatBox.LibraryInterface {
 	}
 	
 	public void add_medias(Collection<Media> new_media) {
-		Library relevant_library;
-		
-		if((relevant_library = check_library_exists(new_media)) != null) {
-			relevant_library.add_medias(new_media);
-		}
-		else {
-			warning("No library found for added medias. Cannot add.");
-		}
+		foreach(var entry in by_library(new_media).entries)
+			entry.key.add_medias(entry.value);
 	}
 	
 	public void update_media(Media m, bool updateMeta, bool record_time, bool emit) {
@@ -201,33 +195,29 @@ public class BeatBox.LibraryManager : GLib.Object, BeatBox.LibraryInterface {
 	}
 	
 	public void update_medias(Collection<Media> updates, bool updateMeta, bool record_time, bool emit) {
-		Library relevant_library;
-		
-		if((relevant_library = check_library_exists(updates)) != null) {
-			relevant_library.update_medias(updates, updateMeta, record_time, emit);
-		}
-		else {
-			warning("No library found for updated medias. Cannot update.");
-		}
+		foreach(var entry in by_library(updates).entries)
+			entry.key.update_medias(entry.value, updateMeta, record_time, emit);
 	}
 	
 	public void remove_medias(Collection<Media> to_remove, bool trash) {
-		Library relevant_library;
-		
-		if((relevant_library = check_library_exists(to_remove)) != null) {
-			relevant_library.remove_medias(to_remove, trash);
-		}
-		else {
-			warning("No library found for removed medias. Cannot remove.");
-		}
+		foreach(var entry in by_library(to_remove).entries)
+			entry.key.remove_medias(entry.value, trash);
 	}
 	
-	Library? check_library_exists(Collection<Media> items) {
-		if(items.size == 0)
-			return null;
-		
-		Media to_test = items.to_array()[0];
-		return libraries.get(to_test.key);
+	/** Songs, podcasts and stations each go to their own library */
+	HashMap<Library, LinkedList<Media>> by_library(Collection<Media> items) {
+		var groups = new HashMap<Library, LinkedList<Media>>();
+		foreach(var m in items) {
+			var library = libraries.get(m.key);
+			if(library == null) {
+				warning("No library for %s (%s)", m.uri, m.key);
+				continue;
+			}
+			if(!groups.has_key(library))
+				groups[library] = new LinkedList<Media>();
+			groups[library].add(m);
+		}
+		return groups;
 	}
 	
 	/**
@@ -331,8 +321,7 @@ public class BeatBox.LibraryManager : GLib.Object, BeatBox.LibraryInterface {
 		
 		Idle.add( () => {
 			if(not_found.size > 0) {
-				warning("Some media files could not be found and are being marked as such.\n");
-				warning("TODO: update_medias assumes consistent media type. How to deal with mixes?");
+				message("%d media file(s) could not be found and are marked as such", not_found.size);
 				update_medias(not_found, false, false, true);
 				
 				foreach(var m in not_found) {
@@ -340,8 +329,7 @@ public class BeatBox.LibraryManager : GLib.Object, BeatBox.LibraryInterface {
 				}
 			}
 			if(found.size > 0) {
-				warning("Some media files whose location were unknown were found.\n");
-				warning("TODO: update_medias assumes consistent media type. How to deal with mixes?");
+				message("%d media file(s) that were missing are back", found.size);
 				update_medias(found, false, false, true);
 
 				foreach(var m in found) {
