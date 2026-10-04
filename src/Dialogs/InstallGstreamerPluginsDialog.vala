@@ -76,7 +76,7 @@ public class BeatBox.InstallGstreamerPluginsDialog : Window {
 		Box information_text = new Box(Orientation.VERTICAL, 0);
 		information.pack_start(warning, false, false, 10);
 		information_text.pack_start(title, false, true, 10);
-		information_text.pack_start(info, false, true, 0);
+		information_text.add(info);
 		information.pack_start(information_text, true, true, 10);
 		
 		var bottomButtons = new ButtonBox(Orientation.HORIZONTAL);
@@ -85,7 +85,7 @@ public class BeatBox.InstallGstreamerPluginsDialog : Window {
 		bottomButtons.pack_end(doNothing, false, false, 10);
 		bottomButtons.set_spacing(6);
 		
-		content.pack_start(information, false, true, 0);
+		content.add(information);
 		content.pack_start(bottomButtons, false, true, 10);
 		
 		padding.pack_start(content, true, true, 10);

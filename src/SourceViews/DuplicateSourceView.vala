@@ -55,7 +55,7 @@ public class BeatBox.DuplicateSourceView : SourceView {
 		priority.append("file", _("Keep largest file"));
 		priority.set_active(0);
 		first_priority = highest_bitrate;
-		top_bar.pack_start(priority, false, false, 0);
+		top_bar.add(priority);
 		top_bar.pack_end(remove_checked, false, false, 0);
 		pack_end(top_bar, false, true, 0);
 		

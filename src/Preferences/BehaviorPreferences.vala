@@ -40,11 +40,11 @@ public abstract class BeatBox.SimplePreferences : GLib.Object, PreferencesSectio
 		var label = new Label("");
 		label.xalign = 0.0f;
 		label.set_markup("<b>" + Markup.escape_text(text) + "</b>");
-		content.pack_start(label, false, true, 0);
+		content.add(label);
 	}
 	
 	protected void add_row(Widget row) {
-		content.pack_start(UI.wrap_alignment(row, 0, 0, 0, 10), false, true, 0);
+		content.add(UI.wrap_alignment(row, 0, 0, 0, 10));
 	}
 	
 	protected CheckButton add_check(string text, bool active) {
@@ -56,10 +56,10 @@ public abstract class BeatBox.SimplePreferences : GLib.Object, PreferencesSectio
 	
 	protected static Box labelled(string text, Widget w, string? after = null) {
 		var box = new Box(Orientation.HORIZONTAL, 8);
-		box.pack_start(new Label(text), false, false, 0);
-		box.pack_start(w, false, false, 0);
+		box.add(new Label(text));
+		box.add(w);
 		if (after != null)
-			box.pack_start(new Label(after), false, false, 0);
+			box.add(new Label(after));
 		return box;
 	}
 	
@@ -123,7 +123,7 @@ public class BeatBox.AppearancePreferences : SimplePreferences {
 			}
 		});
 		var skinBox = labelled(_("Skin:"), skinChooser);
-		skinBox.pack_start(openSkins, false, false, 0);
+		skinBox.add(openSkins);
 		add_row(skinBox);
 		add_row(skinInfo);
 		skinChooser.changed.connect(() => {
@@ -221,13 +221,13 @@ public class BeatBox.AboutPreferences : SimplePreferences {
 	
 	public AboutPreferences() {
 		var top = new Box(Orientation.HORIZONTAL, 14);
-		top.pack_start(new Image.from_pixbuf(App.icons.BEATBOX.render(null, null, 112)), false, false, 0);
+		top.add(new Image.from_pixbuf(App.icons.BEATBOX.render(null, null, 112)));
 		var name = new Label("");
 		name.xalign = 0.0f;
 		name.set_markup("<span size='x-large' weight='bold'>BeatBox</span>\n" + Markup.escape_text(_("Version %s").printf(Build.VERSION))
 		                + "\n" + Markup.escape_text(_("A music player for your collection, podcasts and internet radio.")));
-		top.pack_start(name, false, false, 0);
-		content.pack_start(top, false, false, 0);
+		top.add(name);
+		content.add(top);
 		
 		add_heading(_("Authors"));
 		add_row(text("Scott Ringwelski\nVictor Eduardo M."));

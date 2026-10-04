@@ -66,9 +66,9 @@ public class Store.ReleaseRotator : HBox {
 		albumArtist.ellipsize = Pango.EllipsizeMode.END;
 		releaseDate.ellipsize = Pango.EllipsizeMode.END;
 		
-		topInfo.pack_start(wrap_alignment(albumName, 0, 0, 10, 0), false, true, 0);
-		topInfo.pack_start(wrap_alignment(albumArtist, 0, 0, 10, 0), false, true, 0);
-		topInfo.pack_start(wrap_alignment(releaseDate, 0, 0, 10, 0), false, true, 0);
+		topInfo.add(wrap_alignment(albumName, 0, 0, 10, 0));
+		topInfo.add(wrap_alignment(albumArtist, 0, 0, 10, 0));
+		topInfo.add(wrap_alignment(releaseDate, 0, 0, 10, 0));
 		
 		HBox tags = new HBox(false, 0);
 		Color blue, lightblue, white;
@@ -76,14 +76,14 @@ public class Store.ReleaseRotator : HBox {
 		Color.parse("#E8EEF5", out lightblue);
 		Color.parse("#ffffff", out white);
 		
-		/*tags.pack_start(wrap_alignment(new TagLabel("Rock", blue, lightblue, white), 0, 5, 10, 5), false, false, 0);
-		tags.pack_start(wrap_alignment(new TagLabel("2000's", blue, lightblue, white), 0, 5, 10, 5), false, false, 0);
-		tags.pack_start(wrap_alignment(new TagLabel("Pop", blue, lightblue, white), 0, 5, 10, 5), false, false, 0);
-		tags.pack_start(wrap_alignment(new TagLabel("Indie", blue, lightblue, white), 0, 5, 10, 5), false, false, 0);*/
+		/*tags.add(wrap_alignment(new TagLabel("Rock", blue, lightblue, white), 0, 5, 10, 5));
+		tags.add(wrap_alignment(new TagLabel("2000's", blue, lightblue, white), 0, 5, 10, 5));
+		tags.add(wrap_alignment(new TagLabel("Pop", blue, lightblue, white), 0, 5, 10, 5));
+		tags.add(wrap_alignment(new TagLabel("Indie", blue, lightblue, white), 0, 5, 10, 5));*/
 		
-		topInfo.pack_start(wrap_alignment(tags, 0, 0, 10, 0), false, false, 0);
+		topInfo.add(wrap_alignment(tags, 0, 0, 10, 0));
 		
-		pack_start(wrap_alignment(albumArt, 0, 10, 0, 0), false, true, 0);
+		add(wrap_alignment(albumArt, 0, 10, 0, 0));
 		pack_start(topInfo, true, true, 0);
 		
 		show_all();

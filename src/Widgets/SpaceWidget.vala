@@ -205,7 +205,7 @@ public class BeatBox.SpaceWidget : StyledContentBox {
         top_box.pack_end (new Box (Orientation.HORIZONTAL, 0), true, true, 0);
 
         // Adding legend
-        top_box.pack_start (legend_wrapper, false, true, 0);
+        top_box.add(legend_wrapper);
 
         bar_wrapper = new Box (Orientation.HORIZONTAL, 0);
         full_bar_wrapper = new Box (Orientation.HORIZONTAL, 0);
@@ -217,8 +217,8 @@ public class BeatBox.SpaceWidget : StyledContentBox {
         bottom_box.pack_end (new Box (Orientation.HORIZONTAL, 0), true, true, 0);
 
         // Adding bar
-        bottom_box.pack_start (bar_wrapper, false, true, 0);
-        bottom_box.pack_start (full_bar_wrapper, false, true, 0);
+        bottom_box.add(bar_wrapper);
+        bottom_box.add(full_bar_wrapper);
 
         left_box = new Box (Orientation.VERTICAL, 3);
         left_box.pack_start (top_box, true, false, 0);
@@ -302,7 +302,7 @@ public class BeatBox.SpaceWidget : StyledContentBox {
             bar_wrapper.pack_end (item.bar_item, false, false, 0);
             legend_wrapper.pack_end (item.legend, true, true, 0);
         } else {
-            bar_wrapper.pack_start (item.bar_item, false, false, 0);
+            bar_wrapper.add(item.bar_item);
             legend_wrapper.pack_start (item.legend, true, true, 0);
         }
 
@@ -374,7 +374,7 @@ public class BeatBox.SpaceWidget : StyledContentBox {
             bar_wrapper.set_no_show_all (true);
             full_bar_wrapper.set_no_show_all (false);
             full_bar_item = new SpaceWidgetBarFullItem (color, 0);
-            full_bar_wrapper.pack_start (full_bar_item, false, false, 0);
+            full_bar_wrapper.add(full_bar_item);
             single_item_visible = true;
         } else {
             full_bar_item.destroy ();
@@ -530,7 +530,7 @@ private class BeatBox.SpaceWidgetItem : GLib.Object {
         var legend_icon_wrapper = new Gtk.Box (Gtk.Orientation.VERTICAL, 0);
 
         legend_icon_wrapper.pack_start (new Gtk.Box (Gtk.Orientation.VERTICAL, 0), true, true, 0);
-        legend_icon_wrapper.pack_start (legend_icon, false, false, 0);
+        legend_icon_wrapper.add(legend_icon);
         legend_icon_wrapper.pack_end (new Gtk.Box (Gtk.Orientation.VERTICAL, 0), true, true, 0);
 
         if (id > 0)

@@ -136,16 +136,16 @@ public class BeatBox.SongArtistSection : Box {
 		
 		left_side.pack_start(artist_top_albums_holder, true, true, 0);
 		
-		right_side.pack_start(artist_top_songs_holder, false, true, 0);
-		right_side.pack_start(UI.wrap_alignment(similar_artists, 6, 0, 0, 1), false, true, 0);
-		right_side.pack_start(UI.wrap_alignment(artist_tags, 6, 0, 0, 1), false, true, 0);
+		right_side.add(artist_top_songs_holder);
+		right_side.add(UI.wrap_alignment(similar_artists, 6, 0, 0, 1));
+		right_side.add(UI.wrap_alignment(artist_tags, 6, 0, 0, 1));
 		right_side.pack_end(scroll3, false, true, 0);
 		
-		hbox.pack_start(left_side, false, true, 0);
+		hbox.add(left_side);
 		hbox.pack_end(UI.wrap_alignment(right_side, 0, 0, 0, 12), true, true, 0);
 		
-		pack_start(UI.wrap_alignment(artist_section_label, 6, 0, 6, 0), false, true, 0);
-		pack_start(hbox, false, true, 0);
+		add(UI.wrap_alignment(artist_section_label, 6, 0, 6, 0));
+		add(hbox);
 	}
 	
 	void update_contents() {

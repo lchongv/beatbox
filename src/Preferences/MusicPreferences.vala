@@ -57,9 +57,9 @@ public class BeatBox.MusicPreferences : GLib.Object, PreferencesSection {
 		button_box.pack_end(import, false, false, 0);
 		button_box.pack_end(rescan, false, false, 0);
 		
-		content.pack_start(musicLabel, false, true, 0);
-		content.pack_start(UI.wrap_alignment(fileChooser, 0, 0, 0, 10), false, true, 0);
-		content.pack_start(UI.wrap_alignment(button_box, 0, 0, 0, 10), false, true, 0);
+		content.add(musicLabel);
+		content.add(UI.wrap_alignment(fileChooser, 0, 0, 0, 10));
+		content.add(UI.wrap_alignment(button_box, 0, 0, 0, 10));
 		
 		App.operations.operation_started.connect(operation_started);
 		App.operations.operation_finished.connect(operation_finished);

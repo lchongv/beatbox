@@ -250,8 +250,8 @@ public abstract class BeatBox.SourceView : Box, View {
 		var bar = new Box (Orientation.HORIZONTAL, 6);
 		bar.get_style_context ().add_class ("source-actions");
 		foreach (var b in buttons)
-			bar.pack_start (b, false, false, 0);
-		pack_start (bar, false, false, 0);
+			bar.add(b);
+		add(bar);
 		reorder_child (bar, 0);
 	}
 

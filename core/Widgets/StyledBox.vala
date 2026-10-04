@@ -155,17 +155,17 @@ public class BeatBox.StyledBox : Gtk.Box {
 			title_box.get_style_context().add_provider(style_provider, STYLE_PROVIDER_PRIORITY_APPLICATION);
 			title_box.add(title_label);
 			title_label.set_markup("<b>" + Markup.escape_text(title) + "</b>");
-			content.pack_start(title_box, false, true, 0);
+			content.add(title_box);
 		}
 		
-		inner.pack_start(left, false, true, 0);
+		inner.add(left);
 		inner.pack_start(center, true, true, 0);
-		inner.pack_start(right, false, true, 0);
+		inner.add(right);
 		
 		this.set_orientation(Orientation.VERTICAL);
-		pack_start(top, false, true, 0);
+		add(top);
 		pack_start(inner, true, true, 0);
-		pack_start(bottom, false, true, 0);
+		add(bottom);
 		
 		top.get_style_context().add_class("top");
 		right.get_style_context().add_class("right");

@@ -136,9 +136,9 @@ public class BeatBox.FieldEditorImpl : Box, FieldEditor {
 		label.xalign = 0.0f;
 		label.set_markup("<b>" + Markup.escape_text(field_name) + "</b>");
 		
-		field_name_box.pack_start(check, false, false, 0);
-		field_name_box.pack_start(label, false, true, 0);
-		this.pack_start(field_name_box, false, false, 0);
+		field_name_box.add(check);
+		field_name_box.add(label);
+		this.add(field_name_box);
 	}
 	
 	public void set_width_request(int width) {

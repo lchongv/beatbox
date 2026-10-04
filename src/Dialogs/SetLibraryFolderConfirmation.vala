@@ -85,7 +85,7 @@ public class BeatBox.SetLibraryFolderConfirmation : Window {
 		Box information_text = new Box(Orientation.VERTICAL, 0);
 		information.pack_start(warning, false, false, 10);
 		information_text.pack_start(title, false, true, 10);
-		information_text.pack_start(info, false, true, 0);
+		information_text.add(info);
 		information.pack_start(information_text, true, true, 10);
 		
 		// save playlist hbox
@@ -96,14 +96,14 @@ public class BeatBox.SetLibraryFolderConfirmation : Window {
 		
 		var bottomButtons = new ButtonBox(Orientation.HORIZONTAL);
 		bottomButtons.set_layout(ButtonBoxStyle.END);
-		bottomButtons.pack_start(playlistBox, false, false, 0);
+		bottomButtons.add(playlistBox);
 		bottomButtons.pack_end(cancel, false, false, 0);
 		bottomButtons.pack_end(ok, false, false, 0);
 		bottomButtons.set_spacing(6);
 		
 		((Gtk.ButtonBox)bottomButtons).set_child_secondary(playlistBox, true);
 		
-		content.pack_start(information, false, true, 0);
+		content.add(information);
 		content.pack_start(bottomButtons, false, true, 10);
 		
 		padding.pack_start(content, true, true, 10);

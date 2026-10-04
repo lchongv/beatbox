@@ -76,9 +76,9 @@ public class BeatBox.TimeScale : Box {
 		scale.set_draw_value(false);
 		
 		set_orientation(Orientation.HORIZONTAL);
-		pack_start(left_time, false, false, 0);
+		add(left_time);
 		pack_start(scale, true, true, 0);
-		pack_start(right_time, false, false, 0);
+		add(right_time);
 		
 		scale.button_press_event.connect(scale_button_press);
 		scale.button_release_event.connect(scale_button_release);

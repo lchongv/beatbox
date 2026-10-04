@@ -83,16 +83,16 @@ public class BeatBox.InfoViewport : Viewport {
 		bitrate_label.xalign = 0.0f;
 		samplerate_label.xalign = 0.0f;
 		
-		left.pack_start(location_label, false, false, 0);
-		left.pack_start(file_size_label, false, false, 0);
-		left.pack_start(date_added_label, false, false, 0);
-		left.pack_start(last_played_label, false, false, 0);
-		left.pack_start(last_modified_label, false, false, 0);
-		left.pack_start(plays_label, false, false, 0);
-		left.pack_start(skips_label, false, false, 0);
-		left.pack_start(length_label, false, false, 0);
-		left.pack_start(bitrate_label, false, false, 0);
-		left.pack_start(samplerate_label, false, false, 0);
+		left.add(location_label);
+		left.add(file_size_label);
+		left.add(date_added_label);
+		left.add(last_played_label);
+		left.add(last_modified_label);
+		left.add(plays_label);
+		left.add(skips_label);
+		left.add(length_label);
+		left.add(bitrate_label);
+		left.add(samplerate_label);
 		
 		location = new Label("");
 		file_size = new Label("");
@@ -105,16 +105,16 @@ public class BeatBox.InfoViewport : Viewport {
 		bitrate = new Label("");
 		samplerate = new Label("");
 		
-		right.pack_start(location, false, false, 0);
-		right.pack_start(file_size, false, false, 0);
-		right.pack_start(date_added, false, false, 0);
-		right.pack_start(last_played, false, false, 0);
-		right.pack_start(last_modified, false, false, 0);
-		right.pack_start(plays, false, false, 0);
-		right.pack_start(skips, false, false, 0);
-		right.pack_start(length, false, false, 0);
-		right.pack_start(bitrate, false, false, 0);
-		right.pack_start(samplerate, false, false, 0);
+		right.add(location);
+		right.add(file_size);
+		right.add(date_added);
+		right.add(last_played);
+		right.add(last_modified);
+		right.add(plays);
+		right.add(skips);
+		right.add(length);
+		right.add(bitrate);
+		right.add(samplerate);
 		
 		location.xalign = 0.0f;
 		file_size.xalign = 0.0f;
@@ -131,7 +131,7 @@ public class BeatBox.InfoViewport : Viewport {
 		location.ellipsize = Pango.EllipsizeMode.START;
 		location.has_tooltip = true;
 		
-		content.pack_start(left, false, false, 0);
+		content.add(left);
 		content.pack_start(UI.wrap_alignment(right, 0, 10, 10, 4), true, true, 0);
 		
 		add(content);

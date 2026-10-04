@@ -72,8 +72,8 @@ public class BeatBox.EmbeddedAlert : Gtk.EventBox {
         set_alert ("", "", false);
 
         var message_vbox = new Gtk.Box (Gtk.Orientation.VERTICAL, 0);
-        message_vbox.pack_start (primary_text_label, false, false, 0);
-        message_vbox.pack_start (secondary_text_label, false, false, 0);
+        message_vbox.add(primary_text_label);
+        message_vbox.add(secondary_text_label);
         message_vbox.pack_end (action_button_box, false, false, 0);
 
         content_hbox = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0);
@@ -81,7 +81,7 @@ public class BeatBox.EmbeddedAlert : Gtk.EventBox {
         content_hbox.margin_top = content_hbox.margin_bottom = MIN_VERTICAL_MARGIN;
         content_hbox.margin_start = content_hbox.margin_end = MIN_HORIZONTAL_MARGIN;
 
-        content_hbox.pack_start (image, false, false, 0);
+        content_hbox.add(image);
         content_hbox.pack_end (message_vbox, true, true, 0);
 
         add (content_hbox);

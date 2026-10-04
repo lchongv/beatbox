@@ -96,9 +96,9 @@ public class BeatBox.SmartPlaylistEditor : Window {
 		comboMatch.insert_text(1, _("all"));
 		Label tOfTheFollowing = new Label(_("of the following:"));
 		
-		matchBox.pack_start(tMatch, false, false, 0);
-		matchBox.pack_start(comboMatch, false, false, 0);
-		matchBox.pack_start(tOfTheFollowing, false, false, 0);
+		matchBox.add(tMatch);
+		matchBox.add(comboMatch);
+		matchBox.add(tOfTheFollowing);
 		
 		if(sp.conditional == SmartPlaylist.Conditional.ANY)
 			comboMatch.set_active(0);
@@ -122,7 +122,7 @@ public class BeatBox.SmartPlaylistEditor : Window {
 		foreach(SmartQuery q in sp.queries) {
 			SmartPlaylistEditorQuery speq = new SmartPlaylistEditorQuery(q);
 			
-			vertQueries.pack_start(speq, false, true, 0);
+			vertQueries.add(speq);
 			spQueries.add(speq);
 			speq.removed.connect(speq_removed);
 		}
@@ -145,9 +145,9 @@ public class BeatBox.SmartPlaylistEditor : Window {
 		mediaLimit.set_value((double)sp.limit_amount);
 		
 		Box limiterBox = new Box(Orientation.HORIZONTAL, 2);
-		limiterBox.pack_start(limitMedias, false, false, 0);
-		limiterBox.pack_start(mediaLimit, false, false, 0);
-		limiterBox.pack_start(limiterLabel, false, false, 0);
+		limiterBox.add(limitMedias);
+		limiterBox.add(mediaLimit);
+		limiterBox.add(limiterLabel);
 		
 		/* add the Done button on bottom */
 		var bottomButtons = new ButtonBox(Orientation.HORIZONTAL);
@@ -159,15 +159,15 @@ public class BeatBox.SmartPlaylistEditor : Window {
 		bottomButtons.pack_end(save, false, false, 0);
 		
 		/* put it all together */
-		content.pack_start(UI.wrap_alignment(nameLabel, 10, 0, 0, 0), false, false, 0);
-		content.pack_start(UI.wrap_alignment(nameEntry, 0, 10, 0, 10), false, false, 0);
-		content.pack_start(rulesLabel, false, true, 0);
-		content.pack_start(UI.wrap_alignment(matchBox, 0, 10, 0, 10) , false, false, 0);
-		content.pack_start(UI.wrap_alignment(no_scroll, 0, 0, 0, 0), false, false, 0);
-		content.pack_start(UI.wrap_alignment(scrolled_window, 0, 0, 0, 0), false, false, 0);
-		content.pack_start(UI.wrap_alignment(addButton, 0, 0, 0, 0), false, false, 0);
-		content.pack_start(optionsLabel, false, false, 0);
-		content.pack_start(UI.wrap_alignment(limiterBox, 0, 10, 0, 10), false, false, 0);
+		content.add(UI.wrap_alignment(nameLabel, 10, 0, 0, 0));
+		content.add(UI.wrap_alignment(nameEntry, 0, 10, 0, 10));
+		content.add(rulesLabel);
+		content.add(UI.wrap_alignment(matchBox, 0, 10, 0, 10) );
+		content.add(UI.wrap_alignment(no_scroll, 0, 0, 0, 0));
+		content.add(UI.wrap_alignment(scrolled_window, 0, 0, 0, 0));
+		content.add(UI.wrap_alignment(addButton, 0, 0, 0, 0));
+		content.add(optionsLabel);
+		content.add(UI.wrap_alignment(limiterBox, 0, 10, 0, 10));
 		content.pack_start(bottomButtons, false, false, 10);
 		
 		padding.pack_start(content, true, true, 0);
@@ -205,7 +205,7 @@ public class BeatBox.SmartPlaylistEditor : Window {
 	void addRow() {
 		SmartPlaylistEditorQuery speq = new SmartPlaylistEditorQuery(new SmartQuery());
 		
-		vertQueries.pack_start(speq, false, true, 0);
+		vertQueries.add(speq);
 		spQueries.add(speq);
 		speq.removed.connect(speq_removed);
 		resize_gui();
@@ -383,13 +383,13 @@ public class BeatBox.SmartPlaylistEditorQuery : Box {
 			spinbutton.show();
 		}
 		
-		pack_start(field, false, true, 0);
-		pack_start(comparator, false ,true, 0);
+		add(field);
+		add(comparator);
 		pack_start(entry, true, true, 0);
 		pack_start(media_option, true, true, 0);
 		pack_start(spinbutton, true, true, 0);
-		pack_start(units, false, true, 0);
-		pack_start(removeButton, false, true, 0);
+		add(units);
+		add(removeButton);
 		
 		show_all();
 		

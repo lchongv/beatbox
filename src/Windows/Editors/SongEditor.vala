@@ -117,7 +117,7 @@ public class BeatBox.SongEditor : GLib.Object, MediaEditorInterface {
 		textVert = new Box(Orientation.VERTICAL, 0);
 		numerVert = new Box(Orientation.VERTICAL, 0);
 		
-		textVert.pack_start(fields.get("Title"), false, true, 0);
+		textVert.add(fields.get("Title"));
 		textVert.pack_start(fields.get("Artist"), false, true, 5);
 		textVert.pack_start(fields.get("Album Artist"), false, true, 5);
 		textVert.pack_start(fields.get("Composer"), false, true, 5);
@@ -131,7 +131,7 @@ public class BeatBox.SongEditor : GLib.Object, MediaEditorInterface {
 		fields.get("Album").set_width_request(300);
 		fields.get("Comment").set_width_request(300);
 		
-		numerVert.pack_start(fields.get("Track"), false, true, 0);
+		numerVert.add(fields.get("Track"));
 		numerVert.pack_start(fields.get("Disc"), false, true, 5);
 		numerVert.pack_start(fields.get("Genre"), false, true, 5);
 		numerVert.pack_start(fields.get("Grouping"), false, true, 5);
@@ -142,7 +142,7 @@ public class BeatBox.SongEditor : GLib.Object, MediaEditorInterface {
 		horiz.set_size_request(300, -1);
 		fields.get("Comment").set_size_request(-1, 100);
 		
-		horiz.pack_start(UI.wrap_alignment(textVert, 0, 30, 0, 0), false, true, 0);
+		horiz.add(UI.wrap_alignment(textVert, 0, 30, 0, 0));
 		horiz.pack_end(numerVert, false, true, 0);
 		rv.add(horiz);
 		
@@ -190,7 +190,7 @@ public class BeatBox.SongEditor : GLib.Object, MediaEditorInterface {
 		viewport.add(lyricsText);
 		scroll.add(viewport);
 		
-		lyricsContent.pack_start(lyricsInfobar, false, true, 0);
+		lyricsContent.add(lyricsInfobar);
 		lyricsContent.pack_start(scroll, true, true, 0);
 		
 		lyricsText.set_size_request(400, -1);

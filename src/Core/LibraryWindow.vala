@@ -315,7 +315,7 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		var lcdCoverBox = new EventBox(); // an Image gets no clicks of its own
 		lcdCoverBox.add(lcdCover);
 		lcdCoverBox.button_press_event.connect(() => { lcdCover.show_full_size(this); return true; });
-		lcd.pack_start(lcdCoverBox, false, false, 0); // thumbnail at the left edge (optional)
+		lcd.add(lcdCoverBox); // thumbnail at the left edge (optional)
 		var lcd_logo = new Label("BeatBox");
 		lcd_logo.get_style_context().add_class("lcd-logo");
 		lcd_logo.hexpand = true;
@@ -390,7 +390,7 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		var action_hbox = new Box(Orientation.HORIZONTAL, 0);
 		((Gtk.Container)infoBar.get_action_area()).add(action_hbox);
 		var resolve_button = new Button.with_label(_("Resolve"));
-		action_hbox.pack_start(resolve_button, false, true, 0);
+		action_hbox.add(resolve_button);
 		
 		resolve_button.clicked.connect( () => { info_bar_response(Gtk.ResponseType.YES); });
 		
@@ -456,7 +456,7 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		all_views.append_page(mainViews);
 		all_views.append_page(now_playing);
 		
-		contentBox.pack_start(infoBar, false, true, 0);
+		contentBox.add(infoBar);
 		contentBox.pack_start(all_views, true, true, 0);
 		
 		sourcesToMedias.position = App.settings.saved_state.sidebar_width;
@@ -475,7 +475,7 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
             my_menu.append_item(file_menu_item);
 		var top_menu = new MenuBar.from_model(my_menu);
 		
-		verticalBox.pack_start(top_menu, false, true, 0);*/
+		verticalBox.add(top_menu);*/
 		// The toolbar is the window's title bar: no separate system title bar,
 		// traffic lights in the top-left corner, above the transport buttons
 		var titlebar = new Overlay();
@@ -540,7 +540,7 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 			button.tooltip_text = tips[i];
 			button.can_focus = false;
 			button.valign = Align.CENTER;
-			box.pack_start(button, false, false, 0);
+			box.add(button);
 			int which = i;
 			button.clicked.connect(() => {
 				if (which == 0) close();

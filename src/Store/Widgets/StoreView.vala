@@ -64,7 +64,7 @@ public class Store.StoreView : VBox {
 		
 		topPanel.insert(homeButton, 0);
 		
-		pack_start(topPanel, false, true, 0);
+		add(topPanel);
 		pack_start(container, true, true, 0);
 		
 		homeView = new HomeView(this, store);
