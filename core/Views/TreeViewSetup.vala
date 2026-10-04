@@ -412,6 +412,7 @@ public class BeatBox.TreeViewSetup : GLib.Object {
 	}
 	
 	// TODO: FIXME from sort_column to sort_column_id
+#if HAVE_GPOD
 	public GPod.PlaylistSortOrder get_gpod_sortorder() {
 		warning("FIXME");
 		/*if(sort_column == "#")
@@ -449,4 +450,5 @@ public class BeatBox.TreeViewSetup : GLib.Object {
 		else*/
 			return GPod.PlaylistSortOrder.MANUAL;
 	}
+#endif
 }

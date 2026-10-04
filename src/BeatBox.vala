@@ -65,6 +65,9 @@ public static int main (string[] args) {
         // portable bundle (the release tarball): translations in ./locale
         else if (FileUtils.test (Path.build_filename (exe_dir, "locale"), FileTest.IS_DIR))
             langpack_dir = Path.build_filename (exe_dir, "locale");
+        // installed anywhere (an AppImage, another prefix): <prefix>/bin and <prefix>/share/locale
+        else if (FileUtils.test (Path.build_filename (exe_dir, "..", "share", "locale", "es", "LC_MESSAGES", package_name + ".mo"), FileTest.EXISTS))
+            langpack_dir = Path.build_filename (Path.get_dirname (exe_dir), "share", "locale");
     } catch (FileError err) {}
     Intl.setlocale (LocaleCategory.ALL, "");
     BeatBox.App.locale_dir = langpack_dir;

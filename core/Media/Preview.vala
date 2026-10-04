@@ -101,6 +101,7 @@ public class BeatBox.Preview : BeatBox.Media {
 		return rv;
 	}
 	
+#if HAVE_GPOD
 	public static Preview song_from_track(string root, GPod.Track track) {
 		Preview rv = new Preview("");
 		
@@ -108,17 +109,22 @@ public class BeatBox.Preview : BeatBox.Media {
 		
 		return rv;
 	}
+#endif
 	
+#if HAVE_GPOD
 	public override void update_track(ref unowned GPod.Track t) {
 		
 	}
+#endif
 	
 	/* caller must set ipod_path */
+#if HAVE_GPOD
 	public override GPod.Track track_from_media() {
 		GPod.Track t = new GPod.Track();
 		
 		return t;
 	}
+#endif
 	
 	public override MediaEditorInterface? get_editor_widget() {
 		return null;

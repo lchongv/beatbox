@@ -122,17 +122,21 @@ public class BeatBox.Station : BeatBox.Media {
 		return rv;
 	}
 	
+#if HAVE_GPOD
 	public override void update_track(ref unowned GPod.Track t) {
 		// Do nothing
 	}
+#endif
 	
 	/* caller must set ipod_path */
+#if HAVE_GPOD
 	public override GPod.Track track_from_media() {
 		GPod.Track t = new GPod.Track();
 		
 		
 		return t;
 	}
+#endif
 	
 	public override MediaEditorInterface? get_editor_widget() {
 		return new StationEditor();

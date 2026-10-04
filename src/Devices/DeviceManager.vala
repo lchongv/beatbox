@@ -111,6 +111,7 @@ public class BeatBox.DeviceManager : GLib.Object, BeatBox.DeviceInterface {
 		if(mount.get_default_location().get_uri().has_prefix("cdda://") && mount.get_volume() != null) {
 			added = new CDRomDevice(mount);
 		}
+#if HAVE_GPOD // iPod sync is optional (meson -Dipod)
 		else if(File.new_for_path(mount.get_default_location().get_path() + "/iTunes_Control").query_exists() ||
 				File.new_for_path(mount.get_default_location().get_path() + "/iPod_Control").query_exists() ||
 				File.new_for_path(mount.get_default_location().get_path() + "/iTunes/iTunes_Control").query_exists()) {
@@ -119,6 +120,7 @@ public class BeatBox.DeviceManager : GLib.Object, BeatBox.DeviceInterface {
 		else if(mount.get_default_location().get_parse_name().has_prefix("afc://")) {
 			added = new iPodDevice(mount);
 		}
+#endif
 		else if(File.new_for_path(mount.get_default_location().get_path() + "/Android").query_exists()) {
 			added = new AndroidDevice(mount);
 		}

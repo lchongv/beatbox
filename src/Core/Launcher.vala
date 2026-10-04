@@ -32,6 +32,10 @@ namespace BeatBox.Launcher {
 		} catch (FileError err) {
 			return;
 		}
+		// in an AppImage the executable lives in a mount that changes every run
+		string? appimage = Environment.get_variable ("APPIMAGE");
+		if (appimage != null && appimage != "")
+			exe = appimage;
 
 		var installed = new DesktopAppInfo (ID + ".desktop");
 		if (installed != null) {

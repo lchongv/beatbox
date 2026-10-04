@@ -1,0 +1,1 @@
+option('ipod', type: 'feature', value: 'auto', description: 'iPod sync (needs libgpod)')

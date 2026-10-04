@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>net.launchpad.beatbox</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-or-later</project_license>
+  <name>BeatBox</name>
+  <summary>Music player for your collection, podcasts and internet radio</summary>
+  <description>
+    <p>
+      BeatBox plays and organizes your music collection, with playlists and
+      smart playlists, Cover Flow and a cover grid, podcasts and internet
+      radio directories, synced lyrics, gapless playback, crossfade and
+      ReplayGain.
+    </p>
+    <p>
+      It can keep the library in step with your music folder, look up missing
+      album art online, and send your listens to Last.fm or ListenBrainz.
+    </p>
+  </description>
+  <launchable type="desktop-id">net.launchpad.beatbox.desktop</launchable>
+  <url type="homepage">https://github.com/lchongv/beatbox</url>
+  <url type="bugtracker">https://github.com/lchongv/beatbox/issues</url>
+  <developer id="net.launchpad.beatbox">
+    <name>Scott Ringwelski and contributors</name>
+  </developer>
+  <content_rating type="oars-1.1"/>
+  <categories>
+    <category>Audio</category>
+    <category>Player</category>
+  </categories>
+  <releases>
+    <release version="0.9.0" date="2026-10-04"/>
+  </releases>
+</component>
