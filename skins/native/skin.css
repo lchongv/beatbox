@@ -17,3 +17,13 @@ button.traffic-light {
 button.traffic-light.close    { background-image: -gtk-icontheme("window-close-symbolic"); }
 button.traffic-light.minimize { background-image: -gtk-icontheme("window-minimize-symbolic"); }
 button.traffic-light.maximize { background-image: -gtk-icontheme("window-maximize-symbolic"); }
+
+/* the top bar doubles as the window's title bar, which the theme paints in
+ * its title bar color; before the fork it was a plain toolbar */
+toolbar.app-header,
+toolbar.app-header:backdrop {
+  background: @theme_base_color;
+  color: @theme_text_color;
+  box-shadow: none;
+  border-bottom: 1px solid @borders;
+}
