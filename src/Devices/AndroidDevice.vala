@@ -25,7 +25,6 @@
  * BeatBox is covered by.
  */
  
-using GPod;
 using Gee;
 
 public class BeatBox.AndroidDevice : GLib.Object, BeatBox.Device {

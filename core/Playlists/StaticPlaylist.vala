@@ -104,6 +104,7 @@ public class BeatBox.StaticPlaylist : BasePlaylist {
 		return _medias.get(i) != 1;
 	}
 	
+#if HAVE_GPOD
 	public override GPod.Playlist get_gpod_playlist() {
 		GPod.Playlist rv = new GPod.Playlist(name, false);
 		
@@ -112,4 +113,5 @@ public class BeatBox.StaticPlaylist : BasePlaylist {
 		
 		return rv;
 	}
+#endif
 }

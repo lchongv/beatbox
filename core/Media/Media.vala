@@ -126,8 +126,12 @@ public abstract class BeatBox.Media : GLib.Object {
 	public abstract string get_primary_display_text();
 	public abstract string get_secondary_display_text();
 	public abstract Media copy();
+#if HAVE_GPOD
 	public abstract void update_track(ref unowned GPod.Track t);
+#endif
+#if HAVE_GPOD
 	public abstract GPod.Track track_from_media();
+#endif
 	
 	// For media editor
 	public abstract MediaEditorInterface? get_editor_widget();

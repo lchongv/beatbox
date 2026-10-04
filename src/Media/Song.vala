@@ -102,6 +102,7 @@ public class BeatBox.Song : BeatBox.Media {
 		return rv;
 	}
 	
+#if HAVE_GPOD
 	public static Song song_from_track(string root, GPod.Track track) {
 		Song rv = new Song("file://" + Path.build_path("/", root, GPod.iTunesDB.filename_ipod2fs(track.ipod_path)));
 		
@@ -137,7 +138,9 @@ public class BeatBox.Song : BeatBox.Media {
 		
 		return rv;
 	}
+#endif
 	
+#if HAVE_GPOD
 	public override void update_track(ref unowned GPod.Track t) {
 		if(t == null)
 			return;
@@ -174,8 +177,10 @@ public class BeatBox.Song : BeatBox.Media {
 		else if(t.albumartist == "" && t.artist != null)
 			t.albumartist = t.artist;
 	}
+#endif
 	
 	/* caller must set ipod_path */
+#if HAVE_GPOD
 	public override GPod.Track track_from_media() {
 		GPod.Track t = new GPod.Track();
 		
@@ -213,6 +218,7 @@ public class BeatBox.Song : BeatBox.Media {
 		
 		return t;
 	}
+#endif
 	
 	public override MediaEditorInterface? get_editor_widget() {
 		return new SongEditor();

@@ -1,4 +1,4 @@
-project('beatbox', 'vala', 'c', version: '0.9.17')
+project('beatbox', 'vala', 'c', version: '0.9.18')
 
 gnome = import('gnome')
 i18n = import('i18n')
@@ -23,6 +23,9 @@ add_project_arguments('-DGETTEXT_PACKAGE="beatbox"', '-w', language: 'c')
 add_project_arguments('--vapidir=' + meson.current_source_dir() / 'vapi', '--target-glib=2.56', language: 'vala')
 
 valac = meson.get_compiler('vala')
+# iPod sync needs libgpod (meson setup -Dipod=disabled builds without it)
+gpod_dep = dependency('libgpod-1.0', required: get_option('ipod'))
+gpod_vala_args = gpod_dep.found() ? ['-D', 'HAVE_GPOD'] : []
 taglib_dep = dependency('taglib_c')
 deps = [
   dependency('glib-2.0'),
@@ -41,8 +44,8 @@ deps = [
   dependency('libsoup-3.0'),
   dependency('json-glib-1.0'),
   dependency('granite'),
-  dependency('libgpod-1.0'),
   dependency('sqlite3'),
+  gpod_dep,
   valac.find_library('posix'),
   meson.get_compiler('c').find_library('m'),
 ]
@@ -127,6 +130,7 @@ core_sources = files(
 
 core = shared_library('beatbox-core', core_sources, config_vala,
   dependencies: deps,
+  vala_args: gpod_vala_args,
   vala_header: 'beatbox-core.h',
   vala_vapi: 'beatbox-core.vapi',
   install: true)
@@ -159,7 +163,6 @@ app_sources = files(
   'src/DBus/MPRIS/MPRIS.vala',
   'src/DBus/MPRIS/SoundMenuIntegration.vala',
   'src/Devices/DeviceManager.vala',
-  'src/Devices/iPodDevice.vala',
   'src/Devices/AndroidDevice.vala',
   'src/Devices/CDRomDevice.vala',
   'src/Dialogs/InstallGstreamerPluginsDialog.vala',
@@ -267,7 +270,10 @@ skin_resources = gnome.compile_resources('beatbox-skins', 'skins/skins.gresource
 
 # Writing album art into files needs TagLib's complex properties (TagLib 2.0)
 embed_cover_sources = []
-app_vala_args = []
+app_vala_args = gpod_vala_args
+if gpod_dep.found()
+  app_sources += files('src/Devices/iPodDevice.vala')
+endif
 if taglib_dep.version().version_compare('>= 2.0')
   embed_cover_sources = files('src/C/embed-cover.c')
   app_vala_args += ['-D', 'HAVE_EMBED_COVER']
@@ -283,6 +289,7 @@ executable('beatbox', app_sources, embed_cover_sources, resources, icon_resource
 install_subdir('images/icons', install_dir: datadir / 'icons' / 'hicolor', strip_directory: true)
 # Wayland shells match the window to <application id>.desktop
 install_data('data/beatbox.desktop', install_dir: datadir / 'applications', rename: 'net.launchpad.beatbox.desktop')
+install_data('data/net.launchpad.beatbox.metainfo.xml', install_dir: datadir / 'metainfo')
 gnome.post_install(gtk_update_icon_cache: true)
 subdir('po')
 

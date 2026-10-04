@@ -1,0 +1,56 @@
+# Flatpak build of BeatBox. From the repository root:
+#   flatpak-builder --user --install --force-clean build-flatpak flatpak/net.launchpad.beatbox.yml
+# or, for a single-file bundle:
+#   flatpak-builder --repo=repo --force-clean build-flatpak flatpak/net.launchpad.beatbox.yml
+#   flatpak build-bundle repo beatbox.flatpak net.launchpad.beatbox
+# Built without iPod sync (libgpod isn't in the GNOME runtime).
+app-id: net.launchpad.beatbox
+runtime: org.gnome.Platform
+runtime-version: '50'
+sdk: org.gnome.Sdk
+command: beatbox
+rename-icon: beatbox
+finish-args:
+  - --share=ipc
+  - --socket=wayland
+  - --socket=fallback-x11
+  - --socket=pulseaudio
+  - --share=network
+  # the music library
+  - --filesystem=xdg-music
+  # media keys, the sound menu and notifications
+  - --own-name=org.mpris.MediaPlayer2.beatbox
+  - --talk-name=org.gnome.SettingsDaemon.MediaKeys
+  - --talk-name=org.freedesktop.Notifications
+cleanup:
+  - /include
+  - /lib/pkgconfig
+  - /lib/girepository-1.0
+  - /share/gir-1.0
+  - /share/vala
+  - '*.la'
+modules:
+  - name: granite
+    buildsystem: meson
+    config-opts:
+      - -Dintrospection=false
+    # BeatBox shows next to none of Granite's strings; its 150 catalogues aren't worth it
+    post-install:
+      - rm -rf /app/share/locale /app/bin/granite-demo
+    sources:
+      - type: archive
+        url: https://github.com/elementary/granite/archive/refs/tags/6.2.0.tar.gz
+        sha256: 067d31445da9808a802fca523630c3e4b84d2d7c78ae547ced017cb7f3b9c6b5
+
+  - name: beatbox
+    buildsystem: meson
+    config-opts:
+      - -Dipod=disabled
+    sources:
+      - type: dir
+        path: ..
+        skip:
+          - build
+          - build-flatpak
+          - repo
+          - .flatpak-builder

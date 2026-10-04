@@ -36,5 +36,7 @@ public abstract class BeatBox.BasePlaylist : Object {
 	// Static playlists will not use to_use
 	public abstract Collection<Media> analyze(Collection<Media> to_use);
 	
+#if HAVE_GPOD
 	public abstract GPod.Playlist get_gpod_playlist();
+#endif
 }

@@ -123,12 +123,15 @@ public class BeatBox.SmartPlaylist : BasePlaylist {
 		return rv;
 	}
 	
+#if HAVE_GPOD
 	public override GPod.Playlist get_gpod_playlist() {
 		GPod.Playlist rv = new GPod.Playlist(name, false);
 		
 		return rv;
 	}
+#endif
 	
+#if HAVE_GPOD
 	public void set_playlist_properties(GPod.Playlist rv) {
 		foreach(var sq in queries) {
 			rv.splr_add_new(-1);
@@ -288,4 +291,5 @@ public class BeatBox.SmartPlaylist : BasePlaylist {
 		rv.splpref.liveupdate = 1;
 		rv.is_spl = true;
 	}
+#endif
 }

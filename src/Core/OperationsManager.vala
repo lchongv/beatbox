@@ -66,7 +66,10 @@ public class BeatBox.OperationsManager : GLib.Object, BeatBox.OperationsInterfac
 	
 	public double current_progress {
 		get {
-			return (double)((double)operation_progress/(double)operation_total);
+			// before the total is known: 0, not 0/0 (NaN made GTK allocate the bar at INT_MIN)
+			if(operation_total <= 0)
+				return 0.0;
+			return ((double)operation_progress / (double)operation_total).clamp(0.0, 1.0);
 		}
 	}
 	
