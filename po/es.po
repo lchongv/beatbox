@@ -2362,3 +2362,22 @@ msgid "It will be removed from your library and from any device that syncs autom
 msgid_plural "They will be removed from your library and from any device that syncs automatically with BeatBox."
 msgstr[0] "Se quitará de tu colección y de cualquier dispositivo que se sincronice automáticamente con BeatBox."
 msgstr[1] "Se quitarán de tu colección y de cualquier dispositivo que se sincronice automáticamente con BeatBox."
+
+msgid "Save Album Art into the Files"
+msgstr "Guardar la carátula en los archivos"
+
+msgid "Album art not saved"
+msgstr "No se guardó la carátula"
+
+msgid "%d file could not be changed (it may be read-only, or of a kind that has no room for pictures)."
+msgid_plural "%d files could not be changed (they may be read-only, or of a kind that has no room for pictures)."
+msgstr[0] "No se pudo modificar %d archivo (puede ser de solo lectura, o de un tipo sin lugar para imágenes)."
+msgstr[1] "No se pudieron modificar %d archivos (pueden ser de solo lectura, o de un tipo sin lugar para imágenes)."
+
+msgid "Album art saved"
+msgstr "Carátula guardada"
+
+msgid "Written into %d file"
+msgid_plural "Written into %d files"
+msgstr[0] "Escrita en %d archivo"
+msgstr[1] "Escrita en %d archivos"
