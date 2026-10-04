@@ -121,12 +121,7 @@ namespace BeatBox.UI {
 	}
 	
 	public string validate_markup(string s, int max_length) {
-		string rv = Markup.escape_text(s);
-		
-		if(s.length > max_length)
-			rv = Markup.escape_text(s.substring(0, max_length - 1)) + "...";
-		
-		return rv;
+		return Markup.escape_text(String.ellipsize(s, max_length + 2));
 	}
 }
 

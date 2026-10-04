@@ -1,4 +1,4 @@
-project('beatbox', 'vala', 'c', version: '0.9.3')
+project('beatbox', 'vala', 'c', version: '0.9.4')
 
 gnome = import('gnome')
 i18n = import('i18n')
@@ -269,3 +269,5 @@ install_subdir('images/icons', install_dir: datadir / 'icons' / 'hicolor', strip
 install_data('data/beatbox.desktop', install_dir: datadir / 'applications', rename: 'net.launchpad.beatbox.desktop')
 gnome.post_install(gtk_update_icon_cache: true)
 subdir('po')
+
+test('ellipsize', executable('test-ellipsize', 'tests/ellipsize.vala', dependencies: core_dep))
