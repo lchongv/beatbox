@@ -311,7 +311,11 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		// The LCD is always visible; the app name fills it when idle
 		var lcd = new Box(Orientation.HORIZONTAL, 0);
 		lcd.get_style_context().add_class("lcd");
-		lcd.pack_start(new LcdCover(), false, false, 0); // thumbnail at the left edge (optional)
+		var lcdCover = new LcdCover();
+		var lcdCoverBox = new EventBox(); // an Image gets no clicks of its own
+		lcdCoverBox.add(lcdCover);
+		lcdCoverBox.button_press_event.connect(() => { lcdCover.show_full_size(this); return true; });
+		lcd.pack_start(lcdCoverBox, false, false, 0); // thumbnail at the left edge (optional)
 		var lcd_logo = new Label("BeatBox");
 		lcd_logo.get_style_context().add_class("lcd-logo");
 		lcd_logo.hexpand = true;
