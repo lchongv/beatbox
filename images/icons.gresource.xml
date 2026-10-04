@@ -2,6 +2,7 @@
 <gresources>
   <gresource prefix="/net/launchpad/beatbox">
     <file>icons/128x128/apps/beatbox.svg</file>
+    <file>icons/128x128/apps/beatbox-round.svg</file>
     <file>icons/128x128/mimetypes/drop-album.svg</file>
     <file>icons/128x128/mimetypes/folder-music.svg</file>
     <file>icons/128x128/mimetypes/media-audio.png</file>

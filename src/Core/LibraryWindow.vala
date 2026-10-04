@@ -175,20 +175,15 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		object_to_view = new HashMap<Object, View>();
 	}
 
-	/* The app icon cut into a circle that fills the round menu button.
-	 * The icon is a rounded square with ~8 % margin, so it is drawn
-	 * larger and its middle is clipped. */
+	/* The round version of the app icon (images/icons/128x128/apps/beatbox-round.svg),
+	 * drawn to fill the round menu button exactly. */
 	static Gdk.Pixbuf? round_app_icon (int size) {
-		var big = App.icons.BEATBOX.render (null, null, (int)(size / 0.84));
-		if (big == null)
+		try {
+			return new Gdk.Pixbuf.from_resource_at_scale ("/net/launchpad/beatbox/icons/128x128/apps/beatbox-round.svg", size, size, true);
+		} catch (Error err) {
+			warning ("Could not load the round app icon: %s", err.message);
 			return null;
-		var surface = new Cairo.ImageSurface (Cairo.Format.ARGB32, size, size);
-		var cr = new Cairo.Context (surface);
-		cr.arc (size / 2.0, size / 2.0, size / 2.0, 0, 2 * Math.PI);
-		cr.clip ();
-		Gdk.cairo_set_source_pixbuf (cr, big, (size - big.width) / 2.0, (size - big.height) / 2.0);
-		cr.paint ();
-		return Gdk.pixbuf_get_from_surface (surface, 0, 0, size, size);
+		}
 	}
 
 	public void build_ui() {
