@@ -147,7 +147,7 @@ public class BeatBox.PodcastList : GenericList {
 		mediaMenuActionMenu = new Gtk.Menu();
 		mediaEditMedia = new Gtk.MenuItem.with_label(_("Edit Podcast"));
 		mediaFileBrowse = new Gtk.MenuItem.with_label(_("Show in File Browser"));
-		mediaMenuQueue = new Gtk.MenuItem.with_label(_("Queue"));
+		mediaMenuQueue = new Gtk.MenuItem.with_label(_("Add to Queue"));
 		mediaMenuNewPlaylist = new Gtk.MenuItem.with_label(_("New Playlist"));
 		mediaMenuAddToPlaylist = new Gtk.MenuItem.with_label(_("Add to Playlist"));
 		mediaRemove = new Gtk.MenuItem.with_label(_("Remove Episode"));
