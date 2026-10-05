@@ -96,14 +96,17 @@ public class BeatBox.MediaEditor : Window {
 		
 		buttonSep.add(nav_arrows);
 		buttonSep.add(cancel);
-		buttonSep.pack_end(_save, false, false, 0);
+		buttonSep.add(_save);
 		
-		content.pack_start(UI.wrap_alignment(notebook, 10, 0, 0, 0), true, true, 0);
+		notebook.vexpand = true;
+		content.add(UI.wrap_alignment(notebook, 10, 0, 0, 0));
 		content.add(UI.wrap_alignment(buttonSep, 0, 0, 10, 0));
 		
 		((Gtk.ButtonBox)buttonSep).set_child_secondary(nav_arrows, true);
 		
-		padding.pack_start(content, true, true, 10);
+		content.hexpand = true;
+		content.margin_start = content.margin_end = 10;
+		padding.add(content);
 		add(padding);
 		
 		show_all();

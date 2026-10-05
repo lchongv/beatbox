@@ -95,8 +95,9 @@ public class BeatBox.OptionChooser : ToggleButton {
 		arrow.xalign = 1.0f;
 		arrow.margin_start = 3;
 		
-		content.pack_start(image_bin, true, true, 0);
-		content.pack_end(arrow, false, false, 0);
+		image_bin.hexpand = true;
+		content.add(image_bin);
+		content.add(arrow);
 		
 		menu.attach_to_widget(this, null);
 		

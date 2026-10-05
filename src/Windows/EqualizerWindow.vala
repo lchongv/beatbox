@@ -99,8 +99,10 @@ public class BeatBox.EqualizerWindow : Gtk.Window {
 		
 		// First add volume control on left of equalizer scales
 		volume = new VolumeWidget(App.playback.get_volume());
-		scales.pack_start(volume, true, true, 6);
-		scales.pack_start(new Gtk.Separator(Gtk.Orientation.VERTICAL), true, true, 6);
+		volume.hexpand = true;
+		volume.margin_start = volume.margin_end = 6;
+		scales.add(volume);
+		scales.add(new Gtk.Separator(Gtk.Orientation.VERTICAL) { hexpand = true, margin_start = 6, margin_end = 6 });
 		
 		string[] decibels = {"32", "64", "125", "250", "500", "1k", "2k", "4k", "8k", "16k"};
 		for (int index = 0; index < 10; ++index) {
@@ -113,10 +115,13 @@ public class BeatBox.EqualizerWindow : Gtk.Window {
 
 			var label = new Label(decibels[index]);
 
-			holder.pack_start(v, true, true, 0);
-			holder.pack_end(UI.wrap_alignment(label, 4, 0, 0, 0), false, false, 0);
+			v.vexpand = true;
+			holder.add(v);
+			holder.add(UI.wrap_alignment(label, 4, 0, 0, 0));
 
-			scales.pack_start(holder, true, true, 6);
+			holder.hexpand = true;
+			holder.margin_start = holder.margin_end = 6;
+			scales.add(holder);
 			scale_list.append(v);
 			label_list.append(label);
 
@@ -155,16 +160,19 @@ public class BeatBox.EqualizerWindow : Gtk.Window {
 		bottom_toolbar.add(eq_switch);
 		bottom_toolbar.add(preset_combo);
 		bottom_toolbar.add(new_preset_entry);
-		bottom_toolbar.pack_end(close_button, false, false, 0);
+		bottom_toolbar.add(close_button);
 		
 		((Gtk.ButtonBox)bottom_toolbar).set_child_secondary(eq_switch, true);
 		((Gtk.ButtonBox)bottom_toolbar).set_child_secondary(preset_combo, true);
 		((Gtk.ButtonBox)bottom_toolbar).set_child_secondary(new_preset_entry, true);
 
-		inner_box.pack_end(UI.wrap_alignment(bottom_toolbar, 0, 0, 10, 0), false, false, 0);
-		inner_box.pack_start(UI.wrap_alignment(scales, 0, 12, 0, 12), true, true, 10);
+		scales.vexpand = true;
+		inner_box.add(UI.wrap_alignment(scales, 10, 12, 10, 12));
+		inner_box.add(UI.wrap_alignment(bottom_toolbar, 0, 0, 10, 0));
 
-		outer_box.pack_start(inner_box, true, true, 10);
+		inner_box.hexpand = true;
+		inner_box.margin_start = inner_box.margin_end = 10;
+		outer_box.add(inner_box);
 		add(outer_box);
 		
 		volume.volume_changed.connect(volume_changed);

@@ -80,12 +80,15 @@ public class BeatBox.LastfmPreferences : GLib.Object, PreferencesSection {
 		username_label.xalign = 0.0f;
 		password_label.xalign = 0.0f;
 		
-		left_box.pack_start(username_label, false, false, 0);
-		left_box.pack_start(password_label, false, false, 0);
-		right_box.pack_start(username, false, false, 0);
-		right_box.pack_start(password, false, false, 0);
-		login_box.pack_start(UI.wrap_alignment(left_box, 0, 4, 0, 0), false, false, 0);
-		login_box.pack_start(right_box, true, true, 0);
+		username_label.valign = Align.CENTER;
+		left_box.add(username_label);
+		password_label.valign = Align.CENTER;
+		left_box.add(password_label);
+		right_box.add(username);
+		right_box.add(password);
+		login_box.add(UI.wrap_alignment(left_box, 0, 4, 0, 0));
+		right_box.hexpand = true;
+		login_box.add(right_box);
 		
 		left_box.vexpand = true;
 		left_box.homogeneous = true;
@@ -93,15 +96,15 @@ public class BeatBox.LastfmPreferences : GLib.Object, PreferencesSection {
 		
 		var button_box = new ButtonBox(Orientation.HORIZONTAL);
 		button_box.set_layout(ButtonBoxStyle.END);
-		button_box.pack_end(is_working, false, false, 0);
-		button_box.pack_end(login, false, false, 0);
-		button_box.pack_end(logout, false, false, 0);
+		button_box.add(is_working);
+		button_box.add(login);
+		button_box.add(logout);
 		
 		// Pack all widgets
-		content.pack_start(auth_label, false, false, 0);
-		content.pack_start(UI.wrap_alignment(auth_info, 0, 0, 0, 10), false, false, 0);
-		content.pack_start(UI.wrap_alignment(login_box, 0, 0, 0, 10), false, false, 0);
-		content.pack_start(UI.wrap_alignment(button_box, 0, 0, 0, 10), false, true, 0);
+		content.add(auth_label);
+		content.add(UI.wrap_alignment(auth_info, 0, 0, 0, 10));
+		content.add(UI.wrap_alignment(login_box, 0, 0, 0, 10));
+		content.add(UI.wrap_alignment(button_box, 0, 0, 0, 10));
 		
 		login.clicked.connect(login_click);
 		logout.clicked.connect(logout_click);

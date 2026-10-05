@@ -118,11 +118,10 @@ public class BeatBox.SongEditor : GLib.Object, MediaEditorInterface {
 		numerVert = new Box(Orientation.VERTICAL, 0);
 		
 		textVert.add(fields.get("Title"));
-		textVert.pack_start(fields.get("Artist"), false, true, 5);
-		textVert.pack_start(fields.get("Album Artist"), false, true, 5);
-		textVert.pack_start(fields.get("Composer"), false, true, 5);
-		textVert.pack_start(fields.get("Album"), false, true, 5);
-		textVert.pack_start(fields.get("Comment"), false, true, 5);
+		foreach(var name in new string[] { "Artist", "Album Artist", "Composer", "Album", "Comment" }) {
+			fields.get(name).margin_top = fields.get(name).margin_bottom = 5;
+			textVert.add(fields.get(name));
+		}
 		
 		fields.get("Title").set_width_request(300);
 		fields.get("Artist").set_width_request(300);
@@ -132,18 +131,19 @@ public class BeatBox.SongEditor : GLib.Object, MediaEditorInterface {
 		fields.get("Comment").set_width_request(300);
 		
 		numerVert.add(fields.get("Track"));
-		numerVert.pack_start(fields.get("Disc"), false, true, 5);
-		numerVert.pack_start(fields.get("Genre"), false, true, 5);
-		numerVert.pack_start(fields.get("Grouping"), false, true, 5);
-		numerVert.pack_start(fields.get("Year"), false, true, 5);
-		numerVert.pack_start(fields.get("Rating"), false, true, 5);
+		foreach(var name in new string[] { "Disc", "Genre", "Grouping", "Year", "Rating" }) {
+			fields.get(name).margin_top = fields.get(name).margin_bottom = 5;
+			numerVert.add(fields.get(name));
+		}
 		//numerVert.pack_end(fields.get("Media Type"), false, true, 5);
 		
 		horiz.set_size_request(300, -1);
 		fields.get("Comment").set_size_request(-1, 100);
 		
 		horiz.add(UI.wrap_alignment(textVert, 0, 30, 0, 0));
-		horiz.pack_end(numerVert, false, true, 0);
+		numerVert.hexpand = true;
+		numerVert.halign = Align.END; // at the right edge
+		horiz.add(numerVert);
 		rv.add(horiz);
 		
 		return rv;
@@ -191,13 +191,15 @@ public class BeatBox.SongEditor : GLib.Object, MediaEditorInterface {
 		scroll.add(viewport);
 		
 		lyricsContent.add(lyricsInfobar);
-		lyricsContent.pack_start(scroll, true, true, 0);
+		scroll.vexpand = true;
+		lyricsContent.add(scroll);
 		
 		lyricsText.set_size_request(400, -1);
 		scroll.set_size_request(400, -1);
 		viewport.set_size_request(400, -1);
 		
-		padding.pack_start(lyricsContent, true, true, 0);
+		lyricsContent.vexpand = true;
+		padding.add(lyricsContent);
 		rv.add(padding);
 
 		return rv;

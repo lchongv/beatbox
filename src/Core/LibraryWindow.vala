@@ -348,8 +348,9 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		var lcd_logo = new Label("BeatBox");
 		lcd_logo.get_style_context().add_class("lcd-logo");
 		lcd_logo.hexpand = true;
-		lcd.pack_start(lcd_logo, true, true, 0);
-		lcd.pack_start(top_display, true, true, 0);
+		lcd.add(lcd_logo);
+		top_display.hexpand = true;
+		lcd.add(top_display);
 		top_display.notify["visible"].connect(() => { lcd_logo.visible = !top_display.visible; });
 		top_displayBin.add(lcd);
 		top_displayBin.set_expand(true);
@@ -456,7 +457,8 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		//sideTreeBar.insert(sideToolbarSeparator, -1);
 		sideTreeBar.insert(sideTreeOptions, -1);
 		
-		sideBox.pack_start(sideTreeScroll, true, true, 0);
+		sideTreeScroll.vexpand = true;
+		sideBox.add(sideTreeScroll);
 		//sideBox.pack_end(sideTreeBar, false, false, 0);
 		
 		sideTreeAddMenu = new Gtk.Menu();
@@ -486,7 +488,8 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		all_views.append_page(now_playing);
 		
 		contentBox.add(infoBar);
-		contentBox.pack_start(all_views, true, true, 0);
+		all_views.vexpand = true;
+		contentBox.add(all_views);
 		
 		sourcesToMedias.position = App.settings.saved_state.sidebar_width;
 		sourcesToMedias.pack1(sideBox, false, true);
@@ -512,8 +515,9 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		titlebar.add_overlay(create_traffic_lights());
 		set_titlebar(titlebar);
 		title_widget = titlebar;
-		verticalBox.pack_start(sourcesToMedias, true, true, 0);
-		verticalBox.pack_end(statusBar, false, true, 0);
+		sourcesToMedias.vexpand = true;
+		verticalBox.add(sourcesToMedias);
+		verticalBox.add(statusBar);
 		this.add(verticalBox);
 		
 		// Set theming

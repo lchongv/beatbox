@@ -56,8 +56,10 @@ public class BeatBox.DuplicateSourceView : SourceView {
 		priority.set_active(0);
 		first_priority = highest_bitrate;
 		top_bar.add(priority);
-		top_bar.pack_end(remove_checked, false, false, 0);
-		pack_end(top_bar, false, true, 0);
+		remove_checked.hexpand = true;
+		remove_checked.halign = Gtk.Align.END;
+		top_bar.add(remove_checked);
+		add(top_bar); // below the list
 		
 		// Add list and alert widgets
 		list_view = new DuplicateList(tvs);

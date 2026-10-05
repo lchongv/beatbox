@@ -155,8 +155,8 @@ public class BeatBox.SmartPlaylistEditor : Window {
 		bottomButtons.set_layout(ButtonBoxStyle.END);
 		save = new Button.with_label(_("Done"));
 		var cancel = new Button.with_label(_("Cancel"));
-		bottomButtons.pack_end(cancel, false, false, 0);
-		bottomButtons.pack_end(save, false, false, 0);
+		bottomButtons.add(cancel);
+		bottomButtons.add(save);
 		
 		/* put it all together */
 		content.add(UI.wrap_alignment(nameLabel, 10, 0, 0, 0));
@@ -168,9 +168,11 @@ public class BeatBox.SmartPlaylistEditor : Window {
 		content.add(UI.wrap_alignment(addButton, 0, 0, 0, 0));
 		content.add(optionsLabel);
 		content.add(UI.wrap_alignment(limiterBox, 0, 10, 0, 10));
-		content.pack_start(bottomButtons, false, false, 10);
+		bottomButtons.margin_top = bottomButtons.margin_bottom = 10;
+		content.add(bottomButtons);
 		
-		padding.pack_start(content, true, true, 0);
+		content.hexpand = true;
+		padding.add(content);
 		
 		scrolled_window.set_no_show_all(true);
 		
@@ -388,9 +390,12 @@ public class BeatBox.SmartPlaylistEditorQuery : Box {
 		
 		add(field);
 		add(comparator);
-		pack_start(entry, true, true, 0);
-		pack_start(media_option, true, true, 0);
-		pack_start(spinbutton, true, true, 0);
+		entry.hexpand = true;
+		add(entry);
+		media_option.hexpand = true;
+		add(media_option);
+		spinbutton.hexpand = true;
+		add(spinbutton);
 		add(units);
 		add(removeButton);
 		

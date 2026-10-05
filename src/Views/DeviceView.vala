@@ -67,7 +67,8 @@ public class BeatBox.DeviceView : Box, View {
 	
 	void buildUI() {
 		summary = new DeviceSummaryWidget(d);
-		pack_start(summary, true, true, 0);
+		summary.hexpand = true;
+		add(summary);
 		
 		deviceMenu = new Gtk.Menu();
 		deviceImportToLibrary = new Gtk.MenuItem.with_label(_("Import from Device"));

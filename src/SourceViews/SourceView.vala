@@ -162,7 +162,8 @@ public abstract class BeatBox.SourceView : Box, View {
 		view_container = new Notebook ();
 		view_container.show_tabs = false;
 		view_container.show_border = false;
-		this.pack_start (view_container, true, true, 0);
+		view_container.vexpand = true;
+		this.add (view_container);
 
 		initialized = true;
 	}

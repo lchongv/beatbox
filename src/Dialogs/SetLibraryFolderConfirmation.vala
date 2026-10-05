@@ -83,30 +83,38 @@ public class BeatBox.SetLibraryFolderConfirmation : Window {
 		/* set up controls layout */
 		Box information = new Box(Orientation.HORIZONTAL, 0);
 		Box information_text = new Box(Orientation.VERTICAL, 0);
-		information.pack_start(warning, false, false, 10);
-		information_text.pack_start(title, false, true, 10);
+		warning.margin_start = warning.margin_end = 10;
+		information.add(warning);
+		title.margin_top = title.margin_bottom = 10;
+		information_text.add(title);
 		information_text.add(info);
-		information.pack_start(information_text, true, true, 10);
+		information_text.hexpand = true;
+		information_text.margin_start = information_text.margin_end = 10;
+		information.add(information_text);
 		
 		// save playlist hbox
 		Box playlistBox = new Box(Orientation.HORIZONTAL, 6);
-		playlistBox.pack_start(savePlaylists, true, true, 0);
-		playlistBox.pack_end(is_finished, false, false, 0);
-		playlistBox.pack_end(is_working, false, false, 0);
+		savePlaylists.hexpand = true;
+		playlistBox.add(savePlaylists);
+		playlistBox.add(is_working);
+		playlistBox.add(is_finished);
 		
 		var bottomButtons = new ButtonBox(Orientation.HORIZONTAL);
 		bottomButtons.set_layout(ButtonBoxStyle.END);
 		bottomButtons.add(playlistBox);
-		bottomButtons.pack_end(cancel, false, false, 0);
-		bottomButtons.pack_end(ok, false, false, 0);
+		bottomButtons.add(cancel);
+		bottomButtons.add(ok);
 		bottomButtons.set_spacing(6);
 		
 		((Gtk.ButtonBox)bottomButtons).set_child_secondary(playlistBox, true);
 		
 		content.add(information);
-		content.pack_start(bottomButtons, false, true, 10);
+		bottomButtons.margin_top = bottomButtons.margin_bottom = 10;
+		content.add(bottomButtons);
 		
-		padding.pack_start(content, true, true, 10);
+		content.hexpand = true;
+		content.margin_start = content.margin_end = 10;
+		padding.add(content);
 		
 		savePlaylists.set_sensitive(App.library.media_count() > 0 && App.playlists.playlist_count() > 0);
 		

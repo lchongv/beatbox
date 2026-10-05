@@ -177,48 +177,51 @@ public class BeatBox.SpaceWidget : StyledContentBox {
         status_label.halign = Gtk.Align.CENTER;
 
         legend_wrapper = new Box (Orientation.HORIZONTAL, 5);
+        legend_wrapper.hexpand = false; // its natural width, centered: the legends don't spread out
         var top_box = new Box (Orientation.HORIZONTAL, 0);
 
-        // Adding left and right spacing
-        top_box.pack_start (new Box (Orientation.HORIZONTAL, 0), true, true, 0);
-        top_box.pack_end (new Box (Orientation.HORIZONTAL, 0), true, true, 0);
-
-        // Adding legend
-        top_box.add(legend_wrapper);
+        // the legend between left and right spacing
+        top_box.add (new Box (Orientation.HORIZONTAL, 0) { hexpand = true });
+        top_box.add (legend_wrapper);
+        top_box.add (new Box (Orientation.HORIZONTAL, 0) { hexpand = true });
 
         bar_wrapper = new Box (Orientation.HORIZONTAL, 0);
         full_bar_wrapper = new Box (Orientation.HORIZONTAL, 0);
 
+        // the bar between left and right spacing
         var bottom_box = new Box (Orientation.HORIZONTAL, 0);
-
-        // Adding left and right spacing
-        bottom_box.pack_start (new Box (Orientation.HORIZONTAL, 0), true, true, 0);
-        bottom_box.pack_end (new Box (Orientation.HORIZONTAL, 0), true, true, 0);
-
-        // Adding bar
-        bottom_box.add(bar_wrapper);
-        bottom_box.add(full_bar_wrapper);
+        bottom_box.add (new Box (Orientation.HORIZONTAL, 0) { hexpand = true });
+        bottom_box.add (bar_wrapper);
+        bottom_box.add (full_bar_wrapper);
+        bottom_box.add (new Box (Orientation.HORIZONTAL, 0) { hexpand = true });
 
         left_box = new Box (Orientation.VERTICAL, 3);
-        left_box.pack_start (top_box, true, false, 0);
-        //left_box.pack_end (bottom_box, true, false, 0);
-        left_box.pack_start (bottom_box, true, false, 0);
-        left_box.pack_end (status_label, false, false, 5);
+        top_box.vexpand = bottom_box.vexpand = true;
+        top_box.valign = bottom_box.valign = Align.CENTER;
+        status_label.margin_top = status_label.margin_bottom = 5;
+        left_box.add (top_box);
+        left_box.add (bottom_box);
+        left_box.add (status_label);
 		
         var right_box = new Box (Orientation.VERTICAL, 3);
-        right_box.pack_end (sync_button, false, true, 0);
+        sync_button.vexpand = true;
+        sync_button.valign = Align.END;
+        right_box.add (sync_button);
 
+        // the button between top and bottom spacing
         var right_box_padding = new Box (Orientation.VERTICAL, 0);
-        right_box_padding.pack_start (new Box (Orientation.VERTICAL, 0), true, true, 0);
-        right_box_padding.pack_start (right_box, true, true, 0);
-        right_box_padding.pack_end (new Box (Orientation.VERTICAL, 0), true, true, 0);
+        right_box.vexpand = true;
+        right_box_padding.add (new Box (Orientation.VERTICAL, 0) { vexpand = true });
+        right_box_padding.add (right_box);
+        right_box_padding.add (new Box (Orientation.VERTICAL, 0) { vexpand = true });
 
         var wrapper = new Box (Orientation.HORIZONTAL, 0);
-        wrapper.pack_start (new Box (Orientation.HORIZONTAL, 0), false, true, DEFAULT_PADDING);
-        wrapper.pack_end (new Box (Orientation.HORIZONTAL, 0), false, true, DEFAULT_PADDING);
-        wrapper.pack_start (left_box, true, true, 4);
-        wrapper.pack_start (new Box (Orientation.HORIZONTAL, 0), false, true, DEFAULT_PADDING);
-        wrapper.pack_end (right_box_padding, false, true, DEFAULT_PADDING);
+        left_box.hexpand = true;
+        left_box.margin_start = left_box.margin_end = 2 * DEFAULT_PADDING + 4;
+        right_box_padding.margin_start = DEFAULT_PADDING;
+        right_box_padding.margin_end = 3 * DEFAULT_PADDING;
+        wrapper.add (left_box);
+        wrapper.add (right_box_padding);
         
         set_content(wrapper);
 
@@ -277,12 +280,12 @@ public class BeatBox.SpaceWidget : StyledContentBox {
         var item = new SpaceWidgetItem (index, name, size, color);
         items.set(index, item);
 		
-        if (pos == ItemPosition.END) {
-            bar_wrapper.pack_end (item.bar_item, false, false, 0);
-            legend_wrapper.pack_end (item.legend, true, true, 0);
-        } else {
-            bar_wrapper.add(item.bar_item);
-            legend_wrapper.pack_start (item.legend, true, true, 0);
+        item.legend.hexpand = true;
+        bar_wrapper.add (item.bar_item);
+        legend_wrapper.add (item.legend);
+        if (pos == ItemPosition.START && items.has_key (0)) { // the free space (item 0, at the END) stays last
+            bar_wrapper.reorder_child (items[0].bar_item, -1);
+            legend_wrapper.reorder_child (items[0].legend, -1);
         }
 
         update_bar_item_sizes();
@@ -508,23 +511,26 @@ private class BeatBox.SpaceWidgetItem : GLib.Object {
 
         var legend_icon_wrapper = new Gtk.Box (Gtk.Orientation.VERTICAL, 0);
 
-        legend_icon_wrapper.pack_start (new Gtk.Box (Gtk.Orientation.VERTICAL, 0), true, true, 0);
-        legend_icon_wrapper.add(legend_icon);
-        legend_icon_wrapper.pack_end (new Gtk.Box (Gtk.Orientation.VERTICAL, 0), true, true, 0);
+        // the icon between top and bottom spacing
+        legend_icon_wrapper.add (new Gtk.Box (Gtk.Orientation.VERTICAL, 0) { vexpand = true });
+        legend_icon_wrapper.add (legend_icon);
+        legend_icon_wrapper.add (new Gtk.Box (Gtk.Orientation.VERTICAL, 0) { vexpand = true });
 
-        if (id > 0)
-            legend.pack_end (new Box (Orientation.HORIZONTAL, 0), true, true, 20);
-
-        legend.pack_start (legend_icon_wrapper, true, true, 0);
+        legend_icon_wrapper.hexpand = true;
+        legend.add (legend_icon_wrapper);
 
         title_label = new Gtk.Label ("<span weight='medium' size='10700'>" + Markup.escape_text(name) + "</span>");
         title_label.use_markup = true;
 
         var label_wrapper = new Gtk.Box (Gtk.Orientation.VERTICAL, 2);
-        label_wrapper.pack_start (title_label, true, true, 0);
-        label_wrapper.pack_start (size_label, true, true, 0);
+        title_label.vexpand = size_label.vexpand = true;
+        label_wrapper.add (title_label);
+        label_wrapper.add (size_label);
 
-        legend.pack_start (label_wrapper, true, true, 7);
+        label_wrapper.hexpand = true;
+        label_wrapper.margin_start = 7;
+        label_wrapper.margin_end = (id > 0) ? 7 + 2 * 20 : 7; // room before the next legend
+        legend.add (label_wrapper);
 
         bar_item = new SpaceWidgetBarItem (color, 0);
     }

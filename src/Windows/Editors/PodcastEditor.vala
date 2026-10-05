@@ -87,20 +87,25 @@ public class BeatBox.PodcastEditor : Object, MediaEditorInterface {
 		numerVert = new Box(Orientation.VERTICAL, 0);
 		
 		textVert.add(fields.get("Title"));
-		textVert.pack_start(fields.get("Author"), false, true, 5);
-		textVert.pack_start(fields.get("Podcast"), false, true, 5);
-		textVert.pack_start(fields.get("Comment"), false, true, 5);
+		foreach(var name in new string[] { "Author", "Podcast", "Comment" }) {
+			fields.get(name).margin_top = fields.get(name).margin_bottom = 5;
+			textVert.add(fields.get(name));
+		}
 		
 		numerVert.add(fields.get("Episode"));
-		numerVert.pack_start(fields.get("Genre"), false, true, 5);
-		numerVert.pack_start(fields.get("Rating"), false, true, 5);
+		foreach(var name in new string[] { "Genre", "Rating" }) {
+			fields.get(name).margin_top = fields.get(name).margin_bottom = 5;
+			numerVert.add(fields.get(name));
+		}
 		//numerVert.pack_end(fields.get("Media Type"), false, true, 5);
 		
 		horiz.set_size_request(300, -1);
 		fields.get("Comment").set_size_request(-1, 100);
 		
 		horiz.add(UI.wrap_alignment(textVert, 0, 30, 0, 0));
-		horiz.pack_end(numerVert, false, true, 0);
+		numerVert.hexpand = true;
+		numerVert.halign = Align.END; // at the right edge
+		horiz.add(numerVert);
 		rv.add(horiz);
 		
 		return rv;

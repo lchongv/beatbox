@@ -74,7 +74,8 @@ public class BeatBox.MetadataDisplay : BeatBox.Display, Box {
         add(label);
         add(second_line);
         add(time_scale);
-        pack_start(station_label, true, true, 0);
+        station_label.vexpand = true;
+        add(station_label);
         
         App.library.medias_updated.connect(medias_updated);
 		App.playback.media_played.connect(media_played);
