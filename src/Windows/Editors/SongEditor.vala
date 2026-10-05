@@ -27,7 +27,6 @@
 
 using Gtk;
 using Gee;
-using Granite;
 
 public class BeatBox.SongEditor : GLib.Object, MediaEditorInterface {
 	Media current_media;

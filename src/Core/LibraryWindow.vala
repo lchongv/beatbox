@@ -85,7 +85,7 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 	ToolButton previousButton;
 	ToolButton playButton;
 	ToolButton nextButton;
-	Granite.Widgets.ModeButton viewSelector;
+	ModeButton viewSelector;
 	bool songInfoShown; // the now playing view in place of the lists (Ctrl+I)
 	AdvancedSearchBox searchField;
 	
@@ -298,7 +298,7 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		nextButton = new ToolButton(null, null);
 		nextButton.icon_name = "media-skip-forward-symbolic";
 		top_display = new TopDisplay();
-		viewSelector = new Granite.Widgets.ModeButton();
+		viewSelector = new ModeButton();
 		searchField = new AdvancedSearchBox();
 		searchField.width_request = 250; // 1.5 × its natural width
 		infoBarLabel = new Label("");

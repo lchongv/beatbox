@@ -37,7 +37,7 @@ public class BeatBox.MusicSourceView : SourceView {
 		this.media_representation = _("song");
 		
 		// Setup welcome screen
-		welcome_screen = new Granite.Widgets.Welcome(_("Get Some Tunes"), _("BeatBox can't find your music."));
+		welcome_screen = new Welcome(_("Get Some Tunes"), _("BeatBox can't find your music."));
 		welcome_screen_keys = new HashMap<int, Device>();
 		var music_folder_icon = App.icons.MUSIC_FOLDER.render (IconSize.DIALOG, null);
 		welcome_screen.append_with_pixbuf(music_folder_icon, _("Locate"), _("Change your music folder."));

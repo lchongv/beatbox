@@ -59,7 +59,7 @@ en GTK4 sea solo renombrar. Empezar por los más simples (clics y teclas).
 
 ## Fuera de alcance (solo en la migración real)
 TreeView/CellRenderer → ColumnView, IconView → GridView, drag & drop,
-Granite 6 → 7, revisión de CSS de skins.
+revisión de CSS de skins.
 
 Total fases 1–8: ~20–25 h. Fase 9: +8 h.
 
@@ -93,6 +93,10 @@ Total fases 1–8: ~20–25 h. Fase 9: +8 h.
       Gdk.X11.Window, Gst.Format.get_by_nick, `.begin` explícitos, ImageMenuItem →
       MenuItem con caja, OptionChooser sin Gtk.Action. Al ejecutar: sin los 46 avisos
       de GENERIC_FALLBACK de los íconos.
+- [x] Sin Granite (Granite 7 exige GTK4): el selector de vista, la página de las vistas vacías,
+      el formato del log y el desenfoque de la sombra de las carátulas son código propio
+      adaptado de Granite 6.2.0, con el mismo aspecto (capturas idénticas salvo ±1 de color en
+      la sombra).
 - Avisos de obsolescencia: 214 → 0.
 - Quedan además: `Gdk.X11.Window` del video (en GTK4 se usa gtk4paintablesink) y
   `Gst.Format.get_by_nick` en CDRipper.

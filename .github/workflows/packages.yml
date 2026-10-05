@@ -24,7 +24,7 @@ jobs:
           apt-get update -qq
           apt-get install -y -qq --no-install-recommends ca-certificates curl file python3 \
             valac meson ninja-build pkg-config gettext appstream desktop-file-utils \
-            libgtk-3-dev libgranite-dev libgee-0.8-dev libxml2-dev libnotify-dev \
+            libgtk-3-dev libgee-0.8-dev libxml2-dev libnotify-dev \
             libsoup-3.0-dev libjson-glib-dev libsqlite3-dev libgpod-dev librsvg2-common glib-networking \
             libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev \
             gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-libav \

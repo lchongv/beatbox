@@ -27,7 +27,6 @@
 
 using Gtk;
 using Gee;
-using Granite;
 
 public class BeatBox.MediaEditor : Window {
 	LinkedList<Media> entire_media_list;
