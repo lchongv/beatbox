@@ -147,6 +147,10 @@ public class BeatBox.AlbumWall : Layout {
 		if (!Gtk.cairo_should_draw_window (cr, get_bin_window ()))
 			return base.draw (cr);
 
+		// draw() gets widget coordinates; the covers and the band live in the scrolled bin window
+		cr.save ();
+		Gtk.cairo_transform_to_window (cr, this, get_bin_window ());
+
 		uint w, h;
 		get_size (out w, out h);
 		var ctx = get_style_context ();
@@ -182,6 +186,7 @@ public class BeatBox.AlbumWall : Layout {
 
 		if (detail != null)
 			draw_band (cr, w);
+		cr.restore (); // the children are drawn in widget coordinates
 
 		return base.draw (cr);
 	}
