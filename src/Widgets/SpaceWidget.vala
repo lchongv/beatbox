@@ -59,18 +59,6 @@ public class BeatBox.SpaceWidget : StyledContentBox {
             padding: 0;
         }
 
-        .SpaceBarItem,
-        .SpaceBarFullItem,
-        .SpaceBarItem:nth-child(first),
-        .SpaceBarItem:nth-child(last) {
-
-                                                   from (alpha (#fff, 0.5)),
-                                                   to (alpha (#fff, 0.0)));
-
-                                                         from (alpha (#000, 0.03)),
-                                                         to (alpha (#000, 0.08)));
-        }
-
         .SpaceBarItem {
             border-radius: 0 0 0 0;
         }
@@ -89,15 +77,6 @@ public class BeatBox.SpaceWidget : StyledContentBox {
 
         .LegendItem {
             border-radius: 100px;
-
-
-
-
-                                                   from (alpha (#fff, 0.9)),
-                                                   to (alpha (#fff, 0.5)));
-
-                                                         from (alpha (#000, 0.04)),
-                                                         to (alpha (#000, 0.12)));
         }
 
         .blue {
