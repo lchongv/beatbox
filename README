@@ -32,11 +32,24 @@ iPod sync is built when libgpod is found (`-Dipod=enabled|disabled` to force it)
 Packages
 --------
 
-GitHub builds both on every push to master (Actions > Packages > the run >
-Artifacts) and attaches them to the release of every vX.Y.Z tag
-(.github/workflows/packages.yml). The Flatpak bundle installs with
-`flatpak install --user BeatBox-<version>-x86_64.flatpak`; the AppImage runs
-after `chmod +x`. To build them yourself:
+GitHub builds an AppImage, a Flatpak bundle, .deb packages for Debian 13,
+Ubuntu 24.04 and Ubuntu 26.04, and an .rpm for Fedora 44 on every push to
+master (Actions > Packages > the run > Artifacts), and attaches them to the
+release of every vX.Y.Z tag (.github/workflows/packages.yml). To install:
+
+    sudo apt install ./beatbox_<version>-1~ubuntu24.04_amd64.deb
+    sudo dnf install ./beatbox-<version>-1.fc44.x86_64.rpm
+    flatpak install --user BeatBox-<version>-x86_64.flatpak
+    chmod +x BeatBox-<version>-x86_64.AppImage
+
+Ubuntu 24.04 has TagLib 1.13, so its package can't write album art into the
+song files. To build the packages yourself:
+
+.deb and .rpm, as root in a throwaway container of the target release (they
+install the build dependencies):
+
+    packaging/build-deb.sh [output dir]
+    packaging/build-rpm.sh [output dir]
 
 Flatpak (GNOME 50 runtime, needs flatpak-builder):
 

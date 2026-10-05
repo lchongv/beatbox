@@ -1,0 +1,23 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: BeatBox
+Source: https://github.com/lchongv/beatbox
+
+Files: *
+Copyright: 2010-2013 Scott Ringwelski and the BeatBox contributors
+           2026 lchongv
+License: GPL-3+
+Comment: The files are under GPL-2+ or LGPL-2+; the program as a whole is
+ distributed under GPL-3+.
+
+Files: src/Widgets/ModeButton.vala src/Widgets/Welcome.vala src/Core/Logger.vala
+Copyright: 2011-2019 elementary, Inc. and the Granite contributors
+           2026 lchongv
+License: LGPL-3+
+
+License: GPL-3+
+ On Debian systems, the full text of the GNU General Public License
+ version 3 can be found in /usr/share/common-licenses/GPL-3.
+
+License: LGPL-3+
+ On Debian systems, the full text of the GNU Lesser General Public License
+ version 3 can be found in /usr/share/common-licenses/LGPL-3.
