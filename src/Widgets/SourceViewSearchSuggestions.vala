@@ -170,9 +170,6 @@ public class BeatBox.SourceViewSearchSuggestions : GLib.Object {
 				rv.append(item);
 				item.activate.connect( () => {
 					source_view.genre_filter = m.genre;
-					
-					source_view.list_view.do_search (null);
-					source_view.set_statusbar_info();
 				});
 			}
 		}

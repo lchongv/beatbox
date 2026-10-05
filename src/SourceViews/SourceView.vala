@@ -407,6 +407,7 @@ public abstract class BeatBox.SourceView : Box, View {
 		if(have_album_view)
 			album_view.do_search(null);
 			
+		set_statusbar_info();
 		update_library_window_widgets();
 	}
 	
