@@ -875,7 +875,6 @@ public abstract class BeatBox.SourceView : Box, View {
 		
 		list_view.set_as_current_list(list_view.get_media_from_index(0));
 		
-		warning("Is below necessary?");
 		App.playback.play_media (App.playback.media_from_playback_list_index(0), false);
 
 		if(!App.playback.playing) {
