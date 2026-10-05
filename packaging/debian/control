@@ -1,0 +1,36 @@
+Source: beatbox
+Section: sound
+Priority: optional
+Maintainer: lchongv <lchongv+beatbox@gmail.com>
+Build-Depends: debhelper-compat (= 13),
+               meson,
+               valac,
+               pkgconf | pkg-config,
+               gettext,
+               libgtk-3-dev,
+               libgee-0.8-dev,
+               libtag-dev | libtagc0-dev,
+               libxml2-dev,
+               libnotify-dev,
+               libsoup-3.0-dev,
+               libjson-glib-dev,
+               libsqlite3-dev,
+               libgpod-dev,
+               libgstreamer1.0-dev,
+               libgstreamer-plugins-base1.0-dev
+Standards-Version: 4.7.0
+Homepage: https://github.com/lchongv/beatbox
+Rules-Requires-Root: no
+
+Package: beatbox
+Architecture: any
+Depends: ${shlibs:Depends},
+         ${misc:Depends},
+         gstreamer1.0-plugins-base,
+         gstreamer1.0-plugins-good,
+         glib-networking
+Recommends: gstreamer1.0-libav
+Description: music player with Cover Flow, podcasts and internet radio
+ BeatBox is a music player for GTK: a library with smart playlists,
+ Cover Flow and an inline cover grid, synced lyrics, podcasts, internet
+ radio, Last.fm and ListenBrainz scrobbling, and iPod sync.
