@@ -283,7 +283,7 @@ podcast_date=:podcast_date, is_new_podcast=:is_new_podcast, resume_pos=:resume_p
 	}
 	
 	public override Media import_tags_to_media(Gst.PbUtils.DiscovererInfo info) {
-		Gst.TagList? tags = (info != null) ? GStreamerTagger.all_tags(info) : null;
+		Gst.TagList tags = GStreamerTagger.all_tags(info) ?? new Gst.TagList.empty(); // untagged: named after the file
 		Song s = new Song(info.get_uri());
 			
 		try {

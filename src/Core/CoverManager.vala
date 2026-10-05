@@ -400,18 +400,16 @@ public class BeatBox.CoverManager : Object, BeatBox.CoverInterface {
 		var body = Http.fetch("https://musicbrainz.org/ws/2/release-group/?fmt=json&limit=3&query=" + Uri.escape_string(query, null, false));
 		Thread.usleep(1100000); // MusicBrainz rate limit
 		
-		try {
-			var parser = new Json.Parser();
-			parser.load_from_data(body);
-			foreach(var node in parser.get_root().get_object().get_array_member("release-groups").get_elements()) {
-				var group = node.get_object();
-				if(group.get_int_member("score") < 90)
-					continue;
-				var pix = pixbuf_from_url("https://coverartarchive.org/release-group/" + group.get_string_member("id") + "/front-500");
-				if(pix != null)
-					return pix;
-			}
-		} catch(Error err) {}
+		var groups = Http.json_objects(body, "release-groups"); // null: an error answer (rate limit...)
+		if(groups == null)
+			return null;
+		foreach(var group in groups) {
+			if(group.get_int_member_with_default("score", 0) < 90 || group.get_string_member_with_default("id", "") == "")
+				continue;
+			var pix = pixbuf_from_url("https://coverartarchive.org/release-group/" + group.get_string_member("id") + "/front-500");
+			if(pix != null)
+				return pix;
+		}
 		return null;
 	}
 	
@@ -420,20 +418,19 @@ public class BeatBox.CoverManager : Object, BeatBox.CoverInterface {
 		var body = Http.fetch("https://itunes.apple.com/search?entity=album&limit=10&term=" + Uri.escape_string(artist + " " + simplify(album), null, false));
 		Thread.usleep(3000000); // Apple allows about 20 searches per minute
 		
-		try {
-			var parser = new Json.Parser();
-			parser.load_from_data(body);
-			foreach(var node in parser.get_root().get_object().get_array_member("results").get_elements()) {
-				var r = node.get_object();
-				string their_artist = r.get_string_member("artistName").down();
-				if(simplify(r.get_string_member("collectionName")) != simplify(album)
-				   || !(artist.down() in their_artist || their_artist in artist.down()))
-					continue;
-				var pix = pixbuf_from_url(r.get_string_member("artworkUrl100").replace("100x100bb", "600x600bb"));
-				if(pix != null)
-					return pix;
-			}
-		} catch(Error err) {}
+		var results = Http.json_objects(body, "results");
+		if(results == null)
+			return null;
+		foreach(var r in results) {
+			string their_artist = r.get_string_member_with_default("artistName", "").down();
+			string artwork = r.get_string_member_with_default("artworkUrl100", "");
+			if(their_artist == "" || artwork == "" || simplify(r.get_string_member_with_default("collectionName", "")) != simplify(album)
+			   || !(artist.down() in their_artist || their_artist in artist.down()))
+				continue;
+			var pix = pixbuf_from_url(artwork.replace("100x100bb", "600x600bb"));
+			if(pix != null)
+				return pix;
+		}
 		return null;
 	}
 	

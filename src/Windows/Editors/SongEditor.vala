@@ -170,7 +170,7 @@ public class BeatBox.SongEditor : GLib.Object, MediaEditorInterface {
 		lyricsInfobarLabel.ellipsize = Pango.EllipsizeMode.END;
 		
 		lyricsInfobar = new InfoBar();
-		lyricsInfobar.add_buttons("Try again", Gtk.ResponseType.OK);
+		lyricsInfobar.add_buttons(_("Try Again"), Gtk.ResponseType.OK);
 		lyricsInfobar.set_message_type (Gtk.MessageType.WARNING);
 		
 		((Gtk.Container)lyricsInfobar.get_content_area()).add (lyricsInfobarLabel);

@@ -78,7 +78,7 @@ public class BeatBox.DirectoryDialog : Dialog {
 			col.set_cell_data_func (cell, (c, r, model, iter) => {
 				bool added;
 				model.get (iter, Col.ADDED, out added);
-				((CellRendererText)c).weight = added ? Pango.Weight.BOLD : Pango.Weight.NORMAL;
+				((CellRendererText)r).weight = added ? Pango.Weight.BOLD : Pango.Weight.NORMAL;
 			});
 			view.append_column (col);
 		}
@@ -179,19 +179,13 @@ public class BeatBox.DirectoryDialog : Dialog {
 		foreach (var body in bodies) {
 			if (body == "")
 				continue;
-			var parser = new Json.Parser ();
-			try {
-				parser.load_from_data (body);
-			} catch (Error err) {
-				warning ("Bad directory answer: %s", err.message);
+			var items = Http.json_objects (body, (kind == Kind.RADIO) ? null : "results");
+			if (items == null) {
+				warning ("Unexpected answer from the directory: %.100s", body);
 				continue;
 			}
 			failed = false;
-			var root = parser.get_root ();
-			Json.Array items = (kind == Kind.RADIO) ? root.get_array ()
-			                                        : root.get_object ().get_array_member ("results");
-			foreach (var node in items.get_elements ()) {
-				var o = node.get_object ();
+			foreach (var o in items) {
 				string name, detail, extra, url, genre;
 				if (kind == Kind.RADIO) {
 					name = str (o, "name").strip ();
@@ -199,7 +193,7 @@ public class BeatBox.DirectoryDialog : Dialog {
 					detail = str (o, "country");
 					genre = str (o, "tags").split (",")[0];
 					extra = str (o, "tags").replace (",", ", ");
-					if (o.has_member ("bitrate") && o.get_int_member ("bitrate") > 0)
+					if (o.get_int_member_with_default ("bitrate", 0) > 0)
 						extra = "%d kbps%s%s".printf ((int)o.get_int_member ("bitrate"), extra != "" ? " · " : "", extra);
 				}
 				else {
@@ -230,9 +224,7 @@ public class BeatBox.DirectoryDialog : Dialog {
 	}
 
 	static string str (Json.Object o, string member) {
-		if (!o.has_member (member) || o.get_member (member).is_null ())
-			return "";
-		return o.get_string_member (member) ?? "";
+		return o.get_string_member_with_default (member, "");
 	}
 
 	bool already_added (string url) {

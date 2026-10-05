@@ -67,7 +67,7 @@ public class BeatBox.NotImportedDialog : Window{
 		// initialize controls
 		Image warning = new Image.from_icon_name("dialog-error", Gtk.IconSize.DIALOG);
 		Label title = new Label("");
-		Label info = new Label(_("BeatBox was unable to import %d medias. The files may be damaged.").printf(files.size));
+		Label info = new Label(ngettext("BeatBox could not read it. It may be damaged or not be audio.", "BeatBox could not read them. They may be damaged or not be audio.", files.size));
 		trashAll = new CheckButton.with_label(_("Move all corrupted files to trash"));
 		filesScroll = new ScrolledWindow(null, null);
 		filesView = new TreeView();
@@ -78,10 +78,8 @@ public class BeatBox.NotImportedDialog : Window{
 		
 		// pretty up labels
 		title.xalign = 0.0f;
-		string TITLE_TEXT = _("Unable to import %d medias from %s").printf(files.size, music_folder);
-		stdout.printf("c\n");
+		string TITLE_TEXT = ngettext("Could not import %d file", "Could not import %d files", files.size).printf(files.size);
 		title.set_markup(("<span weight=\"bold\" size=\"larger\">%s</span>").printf(TITLE_TEXT));
-		stdout.printf("d\n");
 		info.xalign = 0.0f;
 		info.set_line_wrap(false);
 		

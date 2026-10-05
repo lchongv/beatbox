@@ -195,7 +195,7 @@ public abstract class BeatBox.GenericList : FastList {
 				else if(tvc.title == "Category")
 					insert_column_with_data_func(-1, tvc.title, new CellRendererText(), cellHelper.stringTreeViewFiller);
 				else if(tvc.title == "Podcast")
-					insert_column_with_data_func(-1, tvc.title, new SmartAlbumRenderer(), cellHelper.stringTreeViewFiller);
+					insert_column_with_data_func(-1, tvc.title, new CellRendererText(), cellHelper.stringTreeViewFiller);
 				else if(tvc.title == "Pulser")
 					insert_column(tvc, index); // cells for pulser is made ready to go in TVS
 				

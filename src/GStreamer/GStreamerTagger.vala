@@ -160,21 +160,15 @@ public class BeatBox.GStreamerTagger : GLib.Object {
 		uri_queue.remove(info.get_uri());
 		--size;
 		
-		if(info != null && all_tags(info) != null) {
+		// tagged files, and untagged ones that play; the rest is reported as not imported
+		if(info != null && (all_tags(info) != null || (info.get_result() == Gst.PbUtils.DiscovererResult.OK && info.get_audio_streams().length() > 0))) {
 			Media s = ((FilesOperation)App.operations.current_op).library.import_tags_to_media(info);
 			
 			media_imported(s);
 		}
-		
-		// TODO: How to do importing for various media types without extreme duplication???
-		/*else {
-			Media s = taglib_import_media(info.get_uri());
-			
-			if(s == null)
-				import_error(File.new_for_uri(info.get_uri()).get_path());
-			else
-				media_imported(s);
-		}*/
+		else if(info != null) {
+			import_error(File.new_for_uri(info.get_uri()).get_path());
+		}
 	}
 	
 	/*public Media? taglib_import_media(string uri) {
