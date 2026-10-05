@@ -224,6 +224,9 @@ public class BeatBox.SmartPlaylistEditor : Window {
 	}
 	
 	void resize_gui() {
+		if(!get_realized()) // a row added while building the window: shown at its size anyway
+			return;
+		
 		Requisition min_req = Requisition();
 		Requisition natural_req = Requisition();
 		get_preferred_size(out min_req, out natural_req);

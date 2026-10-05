@@ -93,7 +93,7 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 	ToolButton playButton;
 	ToolButton nextButton;
 	Granite.Widgets.ModeButton viewSelector;
-	ToggleButton showSongInfo;
+	bool songInfoShown; // the now playing view in place of the lists (Ctrl+I)
 	AdvancedSearchBox searchField;
 	
 	public StatusBar statusBar { get; private set; }
@@ -302,7 +302,6 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		nextButton.icon_name = "media-skip-forward-symbolic";
 		top_display = new TopDisplay();
 		viewSelector = new Granite.Widgets.ModeButton();
-		showSongInfo = new ToggleButton();
 		searchField = new AdvancedSearchBox();
 		searchField.width_request = 250; // 1.5 × its natural width
 		infoBarLabel = new Label("");
@@ -315,13 +314,7 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		/* Toolbar with media controls, search, app menu, etc. */
 		ToolItem top_displayBin = new ToolItem();
 		viewSelectorBin = new ToolItem();
-		ToolItem showSongInfoBin = new ToolItem();
 		searchFieldBin = new ToolItem();
-		
-		showSongInfo.get_style_context().add_class("raised");
-		showSongInfoBin.add(showSongInfo);
-		showSongInfoBin.margin_start = 12;
-		showSongInfo.set_image(App.icons.INFO.render_image (IconSize.MENU, viewSelector.get_style_context()));
 		
 		// The LCD is always visible; the app name fills it when idle
 		var lcd = new Box(Orientation.HORIZONTAL, 0);
@@ -365,7 +358,7 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		viewSelector.append(App.icons.VIEW_DETAILS.render_image (IconSize.MENU));
 		viewSelector.append(App.icons.VIEW_ICONS.render_image (IconSize.MENU));
 		viewSelector.append(new Image.from_resource ("/net/launchpad/beatbox/icons/16x16/actions/view-coverflow-symbolic.svg"));
-		viewSelector.valign = showSongInfo.valign = Gtk.Align.CENTER;
+		viewSelector.valign = Gtk.Align.CENTER;
 		viewSelector.selected = App.settings.saved_state.view_mode;
 		
 		viewSelectorBin.margin_start = 12;
@@ -547,7 +540,6 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		playButton.clicked.connect(playClicked);
 		nextButton.clicked.connect(nextClicked);
 		viewSelector.mode_changed.connect(view_selection_changed);
-		showSongInfo.toggled.connect(showSongInfoToggled);
 		searchField.changed.connect(search_field_changed);
 		
 		// Sidetoolbar events
@@ -559,7 +551,6 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		lcd_logo.visible = !top_display.visible;
 		infoBar.hide();
 		update_sensitivities();
-		hide_video_mode();
 	}
 	
 	Widget create_traffic_lights() {
@@ -648,9 +639,8 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 	public void add_view (View view) {
 		debug("Adding view %s\n", view.get_view_name());
 		
-		sideTree.add_view(view);
-		
-		// Add the main view
+		// Add the main view (before its side tree item: adding that one
+		// may select it, and selecting it shows this page)
 		mainViews.append_page(view);
 		
 		if(view.get_object() != null) {
@@ -668,6 +658,8 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 				}
 			}
 		}
+		
+		sideTree.add_view(view);
 	}
 	
 	// TODO: Make this properly recursive
@@ -720,7 +712,7 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		sideTree.select_view(view);
 		
 		// If in now_playing view, they probably don't want to be anymore
-		showSongInfo.active = false;
+		songInfoShown = false;
 		update_sensitivities();
 		
 		view_changed(view);
@@ -811,11 +803,7 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		sideTree.setVisibility(sideTree.playlists_iter, haveMedias);
 		
 		// Update if now_playing is showing or not
-		if(!now_playing.has_content_to_show())
-			showSongInfo.active = false;
-		
-		showSongInfo.set_sensitive(now_playing.has_content_to_show());
-		showSongInfoToggled();
+		show_song_info(songInfoShown);
 	}
 	
 	public void show_notification(string title, string sub_title, Gdk.Pixbuf? pixbuf) {
@@ -852,7 +840,7 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 			if (searchField.sensitive)
 				searchField.grab_focus();
 		});
-		Shortcuts.register("now-playing", _("Now playing"), "<Control>i", () => { showSongInfo.active = !showSongInfo.active; });
+		Shortcuts.register("now-playing", _("Now playing"), "<Control>i", () => { show_song_info(!songInfoShown); });
 		Shortcuts.register("equalizer", _("Equalizer"), "<Control>e", () => { App.actions.show_equalizer.activate(null); });
 		Shortcuts.register("preferences", _("Preferences"), "<Control>comma", () => { App.actions.show_preferences.activate(null); });
 		Shortcuts.register("quit", _("Quit"), "<Control>q", () => { destroy(); });
@@ -890,8 +878,6 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 
 	void media_played(Media m, Media? old) {
 		update_sensitivities();
-		
-		showSongInfo.set_image(App.icons.INFO.render_image (IconSize.MENU, viewSelector.get_style_context()));
 	}
 	
 	void playback_changed() {
@@ -938,7 +924,7 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 	
 	// If user searches, hide the now playing view
 	void search_field_changed() {
-		showSongInfo.active = false;
+		show_song_info(false);
 	}
 	
 	void view_selection_changed() {
@@ -946,7 +932,7 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		
 		App.settings.saved_state.view_mode = viewSelector.selected;
 		
-		showSongInfo.active = false;
+		songInfoShown = false;
 		update_sensitivities();
 	}
 	
@@ -1110,28 +1096,17 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		infoBar.hide();
 	}
 	
-	void showSongInfoToggled() {
-		if(showSongInfo.active)
+	// the now playing view, when there is something to show in it, or the lists
+	void show_song_info(bool show) {
+		songInfoShown = show && now_playing.has_content_to_show();
+		if(songInfoShown)
 			all_views.set_current_page(all_views.page_num(now_playing));
 		else
 			all_views.set_current_page(all_views.page_num(mainViews));
 	}
 	
 	void video_enabled() {
-		showSongInfo.set_image(App.icons.VIEW_VIDEO.render_image (IconSize.MENU, viewSelector.get_style_context()));
-		showSongInfo.active = true;
-	}
-	
-	public void show_video_mode() {
-		//now_playing.show_video_mode();
-		//warning("Fixme: show video");
-		showSongInfo.set_image(App.icons.VIEW_VIDEO.render_image (IconSize.MENU, viewSelector.get_style_context()));
-	}
-	
-	public void hide_video_mode() {
-		//now_playing.hide_video_mode();
-		//warning("FIXME: hide video");
-		showSongInfo.set_image(App.icons.INFO.render_image (IconSize.MENU, viewSelector.get_style_context()));
+		show_song_info(true);
 	}
 	
 	bool window_state_changed(Gdk.EventWindowState event) {

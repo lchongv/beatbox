@@ -35,8 +35,6 @@ public class BeatBox.FileNotFoundDialog : Window {
 	Box content;
 	Box padding;
 	
-	ScrolledWindow filesScroll;
-	MusicList list;
 	Button removeMedia;
 	Button locateMedia;
 	Button rescanLibrary;
@@ -79,16 +77,14 @@ public class BeatBox.FileNotFoundDialog : Window {
 		Image warning = new Image.from_icon_name("dialog-error", Gtk.IconSize.DIALOG);
 		Label title = new Label("");
 		Label info = new Label("");
-		filesScroll = new ScrolledWindow(null, null);
-		list = new MusicList(new TreeViewSetup(MusicColumn.TITLE, SortType.ASCENDING, TreeViewSetup.Hint.FILES_NOT_FOUND));
-		removeMedia = new Button.with_label(_("Remove %s").printf(m_type.to_string(ids.size)));
-		rescanLibrary = new Button.with_label(_("Rescan %s Library").printf(m_type.to_string(1)));
-		locateMedia = new Button.with_label(_("Locate %s").printf(m_type.to_string(ids.size)));
+		removeMedia = new Button.with_label(_("Remove from Library"));
+		rescanLibrary = new Button.with_label(_("Rescan Library"));
+		locateMedia = new Button.with_label(_("Locate File…"));
 		doNothing = new Button.with_label(_("Do Nothing"));
 		
 		// pretty up labels
 		title.xalign = 0.0f;
-		title.set_markup("<span weight=\"bold\" size=\"larger\">%s</span>".printf(_("Could not find %s %s").printf(m_type.to_string(1), ngettext("file", "files", ids.size))));
+		title.set_markup("<span weight=\"bold\" size=\"larger\">%s</span>".printf(ngettext("Could not find the file", "Could not find the files", ids.size)));
 		info.xalign = 0.0f;
 		info.set_line_wrap(false);
 		if(ids.size == 1)
@@ -106,22 +102,6 @@ public class BeatBox.FileNotFoundDialog : Window {
 		information_text.add(info);
 		information.pack_start(information_text, true, true, 10);
 		
-		var media_list = new HashTable<int, Media>(null, null);
-		foreach(var m in ids) {
-			media_list.set((int)media_list.size(), m);
-		}
-		list.set_table(media_list);
-		
-		filesScroll.add(list);
-		filesScroll.set_policy(PolicyType.AUTOMATIC, PolicyType.AUTOMATIC);
-		
-		Box listBox = new Box(Orientation.VERTICAL, 0);
-		listBox.pack_start(filesScroll, true, true, 5);
-		
-		Expander exp = new Expander(_("%s not found:").printf(m_type.to_string(ids.size)));
-		exp.add(listBox);
-		exp.expanded = false;
-		
 		var bottomButtons = new ButtonBox(Orientation.HORIZONTAL);
 		bottomButtons.set_layout(ButtonBoxStyle.END);
 		bottomButtons.pack_end(removeMedia, false, false, 0);
@@ -131,7 +111,6 @@ public class BeatBox.FileNotFoundDialog : Window {
 		bottomButtons.set_spacing(10);
 		
 		content.add(information);
-		//content.pack_start(UI.wrap_alignment(exp, 0, 0, 0, 75), true, true, 0);
 		content.pack_start(bottomButtons, false, true, 10);
 		
 		padding.pack_start(content, true, true, 10);
@@ -143,17 +122,6 @@ public class BeatBox.FileNotFoundDialog : Window {
 			this.destroy(); 
 		});
 		
-		
-		/*exp.activate.connect( () => {
-			if(exp.get_expanded()) {
-				resizable = true;
-				set_size_request(475, 180);
-				resize(475, 180);
-				resizable = false;
-			}
-			else
-				set_size_request(475, 350);
-		});*/
 		
 		App.operations.operation_started.connect(operation_started);
 		App.operations.operation_finished.connect(operation_finished);

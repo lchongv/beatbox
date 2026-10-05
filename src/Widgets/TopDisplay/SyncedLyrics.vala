@@ -70,13 +70,9 @@ public class BeatBox.SyncedLyrics : GLib.Object {
 			Uri.escape_string (m.artist), Uri.escape_string (m.title), Uri.escape_string (m.album), m.length);
 		var body = Http.fetch (url);
 		if (body != "") {
-			try {
-				var parser = new Json.Parser ();
-				parser.load_from_data (body);
-				var obj = parser.get_root ().get_object ();
-				if (obj.has_member ("syncedLyrics") && !obj.get_null_member ("syncedLyrics"))
-					lrc = obj.get_string_member ("syncedLyrics");
-			} catch (Error e) {}
+			var obj = Http.json_object (body);
+			if (obj != null)
+				lrc = obj.get_string_member_with_default ("syncedLyrics", "");
 		} else {
 			return null; // network trouble: don't cache, try again next time
 		}

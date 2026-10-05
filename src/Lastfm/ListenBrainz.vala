@@ -86,14 +86,12 @@ namespace BeatBox.ListenBrainz {
 			string answer = Http.send ("GET", api () + "validate-token", null, null, authorization, out status);
 			bool valid = false;
 			string user = "";
-			try {
-				var parser = new Json.Parser ();
-				parser.load_from_data (answer);
-				var obj = parser.get_root ().get_object ();
-				valid = obj.has_member ("valid") && obj.get_boolean_member ("valid");
-				if (valid && obj.has_member ("user_name"))
-					user = obj.get_string_member ("user_name");
-			} catch (Error err) {}
+			var obj = Http.json_object (answer);
+			if (obj != null) {
+				valid = obj.get_boolean_member_with_default ("valid", false);
+				if (valid)
+					user = obj.get_string_member_with_default ("user_name", "");
+			}
 			Idle.add (() => { done (valid, user); return false; });
 			return null;
 		});

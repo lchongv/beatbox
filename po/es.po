@@ -2501,3 +2501,27 @@ msgstr "Fundido entre canciones:"
 
 msgid "seconds (0: none, songs follow without a gap)"
 msgstr "segundos (0: sin fundido, una canción sigue a la otra sin pausa)"
+
+msgid "Could not find the file"
+msgid_plural "Could not find the files"
+msgstr[0] "No se encontró el archivo"
+msgstr[1] "No se encontraron los archivos"
+
+msgid "Rescan Library"
+msgstr "Reanalizar la colección"
+
+msgid "Locate File…"
+msgstr "Buscar el archivo…"
+
+msgid "Try Again"
+msgstr "Reintentar"
+
+msgid "Could not import %d file"
+msgid_plural "Could not import %d files"
+msgstr[0] "No se pudo importar %d archivo"
+msgstr[1] "No se pudieron importar %d archivos"
+
+msgid "BeatBox could not read it. It may be damaged or not be audio."
+msgid_plural "BeatBox could not read them. They may be damaged or not be audio."
+msgstr[0] "BeatBox no pudo leerlo. Puede que esté dañado o que no sea audio."
+msgstr[1] "BeatBox no pudo leerlos. Puede que estén dañados o que no sean audio."

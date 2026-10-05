@@ -1,4 +1,4 @@
-project('beatbox', 'vala', 'c', version: '0.9.19')
+project('beatbox', 'vala', 'c', version: '0.9.20')
 
 gnome = import('gnome')
 i18n = import('i18n')
@@ -74,7 +74,6 @@ core_sources = files(
   'core/MediaEditorInterface.vala',
   'core/TopDisplayInterface.vala',
   'core/NowPlayingViewInterface.vala',
-  'core/CellRenderers/SmartAlbumRenderer.vala',
   'core/CellRenderers/CellDataFunctionHelper.vala',
   'core/Devices/DevicePreferences.vala',
   'core/Devices/Device.vala',
@@ -156,7 +155,6 @@ app_sources = files(
   'src/Core/CoverEmbedder.vala',
   'src/Core/Launcher.vala',
   'src/CellRenderers/SideBarRenderer.vala',
-  'src/CellRenderers/SmartAlbumDataFunc.vala',
   'src/DataBase/DataBaseManager.vala',
   'src/DBus/MediaKeyListener.vala',
   'src/DBus/UnityIntegration.vala',
@@ -300,3 +298,4 @@ subdir('po')
 test('ellipsize', executable('test-ellipsize', 'tests/ellipsize.vala', dependencies: core_dep))
 test('list-utils', executable('test-list-utils', 'tests/list-utils.vala', dependencies: core_dep))
 test('shortcuts', executable('test-shortcuts', 'tests/shortcuts.vala', dependencies: core_dep))
+test('http-json', executable('test-http-json', 'tests/http-json.vala', dependencies: core_dep))
