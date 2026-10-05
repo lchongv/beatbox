@@ -10,6 +10,8 @@ runtime-version: '50'
 sdk: org.gnome.Sdk
 command: beatbox
 rename-icon: beatbox
+# translations inside the app: a downloaded bundle doesn't bring the separate .Locale extension
+separate-locales: false
 finish-args:
   - --share=ipc
   - --socket=wayland
