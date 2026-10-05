@@ -73,7 +73,7 @@ public class BeatBox.DefaultSourceView : SourceView {
 		return view_name;
 	}
 	
-	public override Gtk.Menu? get_context_menu() {
+	public override GLib.MenuModel? get_context_menu() {
 		return null;
 	}
 	

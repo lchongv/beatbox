@@ -33,17 +33,6 @@ public class BeatBox.PodcastList : GenericList {
     
 	public TreeViewSetup podcast_setup { set; get; }
 
-	//for header column chooser
-	CheckMenuItem columnEpisode; // episode
-	CheckMenuItem columnName; // name
-	CheckMenuItem columnLength;
-	CheckMenuItem columnArtist;
-	CheckMenuItem columnPodcast;
-	CheckMenuItem columnDate;
-	CheckMenuItem columnRating;
-	CheckMenuItem columnComments;
-	CheckMenuItem columnCategory;
-
 	//for media list right click
 	Gtk.Menu mediaMenuActionMenu;
 	Gtk.MenuItem mediaEditMedia;
@@ -111,36 +100,16 @@ public class BeatBox.PodcastList : GenericList {
 		button_press_event.connect(viewClick);
 		button_release_event.connect(viewClickRelease);
 
-		// column chooser menu
-		columnEpisode = new CheckMenuItem.with_label(_("Episode"));
-		columnName = new CheckMenuItem.with_label(_("Name"));
-		columnLength = new CheckMenuItem.with_label(_("Length"));
-		columnArtist = new CheckMenuItem.with_label(_("Artist"));
-		columnPodcast = new CheckMenuItem.with_label(_("Podcast"));
-		columnDate = new CheckMenuItem.with_label(_("Date"));
-		columnRating = new CheckMenuItem.with_label(_("Rating"));
-		columnComments = new CheckMenuItem.with_label(_("Comment"));
-		columnCategory = new CheckMenuItem.with_label(_("Category"));
-		updateColumnVisibilities();
-		columnChooserMenu.append(columnEpisode);
-		columnChooserMenu.append(columnName);
-		columnChooserMenu.append(columnLength);
-		columnChooserMenu.append(columnArtist);
-		columnChooserMenu.append(columnPodcast);
-		columnChooserMenu.append(columnDate);
-		columnChooserMenu.append(columnCategory);
-		columnChooserMenu.append(columnComments);
-		columnChooserMenu.append(columnRating);
-		columnEpisode.toggled.connect(columnMenuToggled);
-		columnName.toggled.connect(columnMenuToggled);
-		columnLength.toggled.connect(columnMenuToggled);
-		columnArtist.toggled.connect(columnMenuToggled);
-		columnPodcast.toggled.connect(columnMenuToggled);
-		columnDate.toggled.connect(columnMenuToggled);
-		columnComments.toggled.connect(columnMenuToggled);
-		columnCategory.toggled.connect(columnMenuToggled);
-		columnRating.toggled.connect(columnMenuToggled);
-		columnChooserMenu.show_all();
+		// column chooser menu (header right click)
+		add_column_toggle("Episode", _("Episode"));
+		add_column_toggle("Name", _("Name"));
+		add_column_toggle("Length", _("Length"));
+		add_column_toggle("Artist", _("Artist"));
+		add_column_toggle("Podcast", _("Podcast"));
+		add_column_toggle("Date", _("Date"));
+		add_column_toggle("Category", _("Category"));
+		add_column_toggle("Comment", _("Comment"));
+		add_column_toggle("Rating", _("Rating"));
 
 
 		//media list right click menu
@@ -202,32 +171,6 @@ public class BeatBox.PodcastList : GenericList {
 			App.library.update_media(App.library.media_from_id(rowid), true);
 		}
 		cellTitle.editable = false; */
-	}
-
-	public void updateColumnVisibilities() {
-		int index = 0;
-		foreach(TreeViewColumn tvc in get_columns()) {
-			if(tvc.title == "Episode")
-				columnEpisode.active = get_column(index).visible;
-			else if(tvc.title == "Name")
-				columnName.active = get_column(index).visible;
-			else if(tvc.title == "Length")
-				columnLength.active = get_column(index).visible;
-			else if(tvc.title == "Artist")
-				columnArtist.active = get_column(index).visible;
-			else if(tvc.title == "Podcast")
-				columnPodcast.active = get_column(index).visible;
-			else if(tvc.title == "Date")
-				columnDate.active = get_column(index).visible;
-			else if(tvc.title == "Rating")
-				columnRating.active = get_column(index).visible;
-			else if(tvc.title == "Comment")
-				columnComments.active = get_column(index).visible;
-			else if(tvc.title == "Category")
-				columnCategory.active = get_column(index).visible;
-
-			++index;
-		}
 	}
 
 	/* button_press_event */
@@ -406,35 +349,6 @@ public class BeatBox.PodcastList : GenericList {
 		tvs.set_columns(get_columns());
 		tvs.sort_column_id = sort_id;
 		tvs.sort_direction = sort_dir;
-	}
-
-	/** When the column chooser popup menu has a change/toggle **/
-	 void columnMenuToggled() {
-		int index = 0;
-		foreach(TreeViewColumn tvc in get_columns()) {
-			if(tvc.title == "Episode")
-				get_column(index).visible = columnEpisode.active;
-			else if(tvc.title == "Name")
-				get_column(index).visible = columnName.active;
-			else if(tvc.title == "Length")
-				get_column(index).visible = columnLength.active;
-			else if(tvc.title == "Artist")
-				get_column(index).visible = columnArtist.active;
-			else if(tvc.title == "Podcast")
-				get_column(index).visible = columnPodcast.active;
-			else if(tvc.title == "Date")
-				get_column(index).visible = columnDate.active;
-			else if(tvc.title == "Rating")
-				get_column(index).visible = columnRating.active;
-			else if(tvc.title == "Comment")
-				get_column(index).visible = columnComments.active;
-			else if(tvc.title == "Category")
-				get_column(index).visible = columnCategory.active;
-
-			++index;
-		}
-
-		tvs.set_columns(get_columns());
 	}
 
 	 void mediaFileBrowseClicked() {

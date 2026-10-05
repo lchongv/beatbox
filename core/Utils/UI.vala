@@ -43,6 +43,21 @@ namespace BeatBox.UI {
     }
 
     /**
+     * A menu in a popover pointing at x, y of relative_to; actions (if any) answer
+     * its "view.*" items. It goes away once closed.
+     */
+    public Gtk.Popover popup_menu_model (Gtk.Widget relative_to, GLib.MenuModel model, double x, double y, GLib.ActionGroup? actions = null) {
+        var popover = new Gtk.Popover.from_model (relative_to, model);
+        popover.pointing_to = Gdk.Rectangle () { x = (int) x, y = (int) y, width = 1, height = 1 };
+        popover.position = Gtk.PositionType.BOTTOM;
+        if (actions != null)
+            popover.insert_action_group ("view", actions);
+        popover.closed.connect (() => Idle.add (() => { popover.destroy (); return false; }));
+        popover.popup ();
+        return popover;
+    }
+
+    /**
      * Makes a Gtk.Window draggable. The move starts once the pointer moves: a
      * click stays a click (a window manager's move would swallow a double click).
      */

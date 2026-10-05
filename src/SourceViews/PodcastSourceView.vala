@@ -32,7 +32,7 @@ public class BeatBox.PodcastSourceView : SourceView {
 	HashMap<int, Device> welcome_screen_keys;
 	
 	// For View implementation
-	Gtk.Menu podcastMenu;
+	GLib.Menu podcastMenu;
 	
 	public PodcastSourceView() {
 		base(App.library.podcast_library.medias(), App.window.setups.get_setup(ListSetupInterface.PODCAST_KEY));
@@ -61,13 +61,11 @@ public class BeatBox.PodcastSourceView : SourceView {
 		pack_action_bar ({ find, subscribe, refresh });
 		
 		// Setup context menu
-		podcastMenu = new Gtk.Menu();
-		var find_item = new Gtk.MenuItem.with_label (_("Find Podcasts…"));
-		find_item.activate.connect (() => { new DirectoryDialog (DirectoryDialog.Kind.PODCAST); });
-		podcastMenu.append(find_item);
-		podcastMenu.append(App.actions.menu_item(App.actions.add_podcast_feed));
-		podcastMenu.append(App.actions.menu_item(App.actions.refresh_podcasts));
-		podcastMenu.show_all();
+		podcastMenu = new GLib.Menu();
+		podcastMenu.append(_("Find Podcasts…"), "view.find");
+		add_context_action("find", () => { new DirectoryDialog (DirectoryDialog.Kind.PODCAST); });
+		podcastMenu.append_item(App.actions.model_item(App.actions.add_podcast_feed));
+		podcastMenu.append_item(App.actions.model_item(App.actions.refresh_podcasts));
 		
 		// Populate views
 		set_media_sync(original_medias, false);
@@ -110,7 +108,7 @@ public class BeatBox.PodcastSourceView : SourceView {
 		return _("Podcasts");
 	}
 	
-	public override Gtk.Menu? get_context_menu() {
+	public override GLib.MenuModel? get_context_menu() {
 		return podcastMenu;
 	}
 	

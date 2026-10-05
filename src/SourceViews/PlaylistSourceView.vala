@@ -31,10 +31,7 @@ using Gtk;
 public class BeatBox.PlaylistSourceView : SourceView {
 	StaticPlaylist p;
 	
-	Gtk.Menu playlistMenu;
-	Gtk.MenuItem playlistEdit;
-	Gtk.MenuItem playlistRemove;
-	Gtk.MenuItem playlistExport;
+	GLib.Menu playlistMenu;
 	
 	public PlaylistSourceView(StaticPlaylist p) {
 		if(App.window.setups.get_setup(p.name) == null) {
@@ -55,17 +52,13 @@ public class BeatBox.PlaylistSourceView : SourceView {
 		pack_widgets();
 		
 		//playlist right click menu
-		playlistMenu = new Gtk.Menu();
-		playlistEdit = new Gtk.MenuItem.with_label(_("Edit"));
-		playlistRemove = new Gtk.MenuItem.with_label(_("Remove"));
-		playlistExport = new Gtk.MenuItem.with_label(_("Export..."));
-		playlistMenu.append(playlistEdit);
-		playlistMenu.append(playlistRemove);
-		playlistMenu.append(playlistExport);
-		playlistEdit.activate.connect(playlistMenuEditClicked);
-		playlistRemove.activate.connect(playlistMenuRemoveClicked);
-		playlistExport.activate.connect(playlistExportClicked);
-		playlistMenu.show_all();
+		playlistMenu = new GLib.Menu();
+		playlistMenu.append(_("Edit"), "view.edit");
+		playlistMenu.append(_("Remove"), "view.remove");
+		playlistMenu.append(_("Export..."), "view.export");
+		add_context_action("edit", playlistMenuEditClicked);
+		add_context_action("remove", playlistMenuRemoveClicked);
+		add_context_action("export", playlistExportClicked);
 		
 		// Populate views
 		set_media(p.analyze(new LinkedList<Media>()), false);
@@ -106,7 +99,7 @@ public class BeatBox.PlaylistSourceView : SourceView {
 		return App.playlists.playlist_from_id(relative_id).name;
 	}
 	
-	public override Gtk.Menu? get_context_menu() {
+	public override GLib.MenuModel? get_context_menu() {
 		return playlistMenu;
 	}
 	

@@ -42,11 +42,6 @@ public class BeatBox.TransferFromDeviceDialog : Window {
 	Gtk.ListStore mediasModel;
 	Button transfer;
 	
-	Gtk.Menu viewMenu;
-	Gtk.MenuItem selectItem;
-	Gtk.MenuItem selectAlbum;
-	Gtk.MenuItem selectArtist;
-	
 	LinkedList<Media> to_transfer;
 	
 	// TODO: Enable/disable sensitize based on operations
@@ -195,11 +190,6 @@ public class BeatBox.TransferFromDeviceDialog : Window {
 		content.hexpand = true;
 		content.margin_start = content.margin_end = 10;
 		padding.add(content);
-		
-		viewMenu = new Gtk.Menu();
-		selectItem = new Gtk.MenuItem.with_label(_("Check Item"));
-		selectAlbum = new Gtk.MenuItem.with_label(_("Check Album"));
-		selectArtist = new Gtk.MenuItem.with_label(_("Check Artist"));
 		
 		transfer.clicked.connect(transferClick);
 		transferAll.toggled.connect(transferAllToggled);

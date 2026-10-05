@@ -90,10 +90,10 @@ public class BeatBox.Actions : BeatBox.ActionsInterface {
 		App.operations.operation_finished.connect(operation_finished);
 	}
 	
-	public override Gtk.MenuItem menu_item(SimpleAction action) {
-		var item = new Gtk.MenuItem.with_label(action.get_data<string>("label"));
-		item.activate.connect(() => action.activate(null));
-		action.bind_property("enabled", item, action.get_data<bool>("hide-when-disabled") ? "visible" : "sensitive", BindingFlags.SYNC_CREATE);
+	public override GLib.MenuItem model_item(SimpleAction action) {
+		var item = new GLib.MenuItem(action.get_data<string>("label"), "bb." + action.name);
+		if(action.get_data<bool>("hide-when-disabled"))
+			item.set_attribute("hidden-when", "s", "action-disabled");
 		return item;
 	}
 	

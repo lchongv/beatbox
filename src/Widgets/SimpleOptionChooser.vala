@@ -30,21 +30,19 @@ using Gdk;
 using Gee;
 
 public class BeatBox.SimpleOptionChooser : EventBox {
-	Gtk.Menu? menu = null;
+	GLib.Menu menu = new GLib.Menu(); // right click: one radio item per option
+	SimpleAction option = new SimpleAction.stateful("option", VariantType.INT32, new Variant.int32(0));
+	Gtk.Popover? popover = null;
 	Gtk.GestureMultiPress press_gesture; // GTK3 controllers need a reference
-	public LinkedList<RadioMenuItem> items;
 	public LinkedList<Gtk.Image> images;
 
 	int clicked_index;
 	int previous_index; // for left click
-	bool toggling;
 
 	public signal void option_changed(int index);
 
 	public SimpleOptionChooser () {
-		items = new LinkedList<RadioMenuItem>();
 		images = new LinkedList<Gtk.Image>();
-		toggling = false;
 
 		clicked_index = 0;
 		previous_index = 0;
@@ -53,16 +51,25 @@ public class BeatBox.SimpleOptionChooser : EventBox {
 		set_above_child(true);
 		set_visible_window(false);
 
+		option.activate.connect((index) => {
+			if(index.get_int32() != clicked_index)
+				setOption(index.get_int32());
+			popover.popdown(); // GTK3 leaves popovers open after a radio item; one choice is all there is
+		});
+		var actions = new SimpleActionGroup();
+		actions.add_action(option);
+		insert_action_group("chooser", actions);
+
 		press_gesture = new Gtk.GestureMultiPress(this);
 		press_gesture.button = 0;
 		press_gesture.pressed.connect(buttonPress);
 	}
 
 	public void setOption(int index) {
-		if(index >= items.size)
+		if(index >= images.size)
 			return;
 
-		items.get(index).set_active(true);
+		option.set_state(new Variant.int32(index));
 
 		clicked_index = index;
 		option_changed(index);
@@ -76,37 +83,18 @@ public class BeatBox.SimpleOptionChooser : EventBox {
 	}
 
 	public int append_option(string text, Gtk.Image image, string tooltip) {
-		if (menu == null)
-			menu = new Gtk.Menu();
-
-		Gtk.RadioMenuItem item;
-		if (items.size == 0)
-		    item = new RadioMenuItem.with_label(new SList<Gtk.RadioMenuItem>(), text);
-	    else
-	        item = new RadioMenuItem.with_label_from_widget (items.get(0), text);
-		Gtk.Image item_image = image;
 		image.set_tooltip_text (tooltip);
-		items.add(item);
-		images.add(item_image);
-		menu.append(item);
+		images.add(image);
+		var item = new GLib.MenuItem(text, null);
+		item.set_action_and_target_value("chooser.option", new Variant.int32(images.size - 1));
+		menu.append_item(item);
 
-		item.toggled.connect( () => {
-			if(!toggling) {
-				toggling = true;
+		previous_index = images.size - 1; // my lazy way of making sure the bottom item is the default on/off on click
 
-				setOption(items.index_of(item));
-
-				toggling = false;
-			}
-		});
-
-		item.show();
-		previous_index = items.size - 1; // my lazy way of making sure the bottom item is the default on/off on click
-
-		return items.size - 1;
+		return images.size - 1;
 	}
 
-	void buttonPress() {
+	void buttonPress(int n_press, double x, double y) {
 		uint button = press_gesture.get_current_button();
 		if(button == 1) {
 			if(clicked_index == 0) {
@@ -117,8 +105,8 @@ public class BeatBox.SimpleOptionChooser : EventBox {
 				setOption(0);
 			}
 		}
-		else if(button == 3 && menu != null && items.size > 1) {
-			menu.popup_at_pointer(null);
+		else if(button == 3 && images.size > 1) {
+			popover = UI.popup_menu_model(this, menu, x, y);
 		}
 	}
 }

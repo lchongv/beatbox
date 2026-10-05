@@ -34,9 +34,7 @@ public class BeatBox.SimilarSourceView : SourceView {
 	bool fetched;
 	public new bool have_media { get { return media_count >= REQUIRED_MEDIAS; } }
 	
-	Gtk.Menu playlistMenu;
-	Gtk.MenuItem playlistSave;
-	Gtk.MenuItem playlistExport;
+	GLib.Menu playlistMenu;
 	
 	public SimilarSourceView() {
 		base(new LinkedList<Media>(), App.window.setups.get_setup(ListSetupInterface.SIMILAR_KEY));
@@ -50,14 +48,11 @@ public class BeatBox.SimilarSourceView : SourceView {
 		pack_widgets();
 		
 		//similar songs right click menu
-		playlistMenu = new Gtk.Menu();
-		playlistSave = new Gtk.MenuItem.with_label(_("Save as Playlist"));
-		playlistExport = new Gtk.MenuItem.with_label(_("Export..."));
-		playlistMenu.append(playlistSave);
-		playlistMenu.append(playlistExport);
-		playlistSave.activate.connect(playlistSaveClicked);
-		playlistExport.activate.connect(playlistExportClicked);
-		playlistMenu.show_all();
+		playlistMenu = new GLib.Menu();
+		playlistMenu.append(_("Save as Playlist"), "view.save");
+		playlistMenu.append(_("Export..."), "view.export");
+		add_context_action("save", playlistSaveClicked);
+		add_context_action("export", playlistExportClicked);
 		
 		// Populate views
 		set_media(original_medias);
@@ -187,7 +182,7 @@ public class BeatBox.SimilarSourceView : SourceView {
 		return _("Similar Songs");
 	}
 	
-	public override Gtk.Menu? get_context_menu() {
+	public override GLib.MenuModel? get_context_menu() {
 		return playlistMenu;
 	}
 	

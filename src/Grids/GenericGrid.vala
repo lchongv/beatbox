@@ -66,9 +66,6 @@ public abstract class BeatBox.GenericGrid : FastGrid {
 	protected bool scrolled_recently;
 	protected bool dragging;
 
-	// To select which columns are showing
-	protected Gtk.Menu columnChooserMenu;
-	
 	// GTK3 controllers need a reference
 	Gtk.GestureMultiPress click_gesture;
 	Gtk.EventControllerMotion motion_controller;

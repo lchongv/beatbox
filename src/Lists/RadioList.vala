@@ -30,11 +30,6 @@ using Gtk;
 
 public class BeatBox.RadioList : GenericList {
 
-	//for header column chooser
-	CheckMenuItem columnRating;
-	CheckMenuItem columnStation;
-	CheckMenuItem columnGenre;
-
 	//for media list right click
 	Gtk.Menu mediaMenuActionMenu;
 	Gtk.MenuItem mediaEditMedia;
@@ -78,18 +73,10 @@ public class BeatBox.RadioList : GenericList {
 		button_press_event.connect(viewClick);
 		button_release_event.connect(viewClickRelease);
 
-		// column chooser menu
-		columnStation = new CheckMenuItem.with_label(_("Station"));
-		columnGenre = new CheckMenuItem.with_label(_("Genre"));
-		columnRating = new CheckMenuItem.with_label(_("Rating"));
-		updateColumnVisibilities();
-		columnChooserMenu.append(columnStation);
-		columnChooserMenu.append(columnGenre);
-		columnChooserMenu.append(columnRating);
-		columnStation.toggled.connect(columnMenuToggled);
-		columnGenre.toggled.connect(columnMenuToggled);
-		columnRating.toggled.connect(columnMenuToggled);
-		columnChooserMenu.show_all();
+		// column chooser menu (header right click)
+		add_column_toggle("Station", _("Station"));
+		add_column_toggle("Genre", _("Genre"));
+		add_column_toggle("Rating", _("Rating"));
 
 
 		//media list right click menu
@@ -133,20 +120,6 @@ public class BeatBox.RadioList : GenericList {
 		cellTitle.editable = false; */
 	}
 
-	public void updateColumnVisibilities() {
-		int index = 0;
-		foreach(TreeViewColumn tvc in get_columns()) {
-			if(tvc.title == "Station")
-				columnStation.active = get_column(index).visible;
-			else if(tvc.title == "Genre")
-				columnGenre.active = get_column(index).visible;
-			else if(tvc.title == "Rating")
-				columnRating.active = get_column(index).visible;
-
-			++index;
-		}
-	}
-	
 	/* button_press_event */
 	bool viewClick(Gdk.EventButton event) {
 		if(event.type == Gdk.EventType.BUTTON_PRESS && event.button == 3) { //right click
@@ -259,23 +232,6 @@ public class BeatBox.RadioList : GenericList {
 		tvs.sort_direction = sort_dir;
 	}
 
-	/** When the column chooser popup menu has a change/toggle **/
-	 void columnMenuToggled() {
-		int index = 0;
-		foreach(TreeViewColumn tvc in get_columns()) {
-			if(tvc.title == "Station")
-				get_column(index).visible = columnStation.active;
-			else if(tvc.title == "Genre")
-				get_column(index).visible = columnGenre.active;
-			else if(tvc.title == "Rating")
-				get_column(index).visible = columnRating.active;
-
-			++index;
-		}
-
-		App.window.setups.get_setup(ListSetupInterface.STATION_KEY).set_columns(get_columns());
-	}
-	
 	void mediaRateMediaClicked() {
 		var los = new LinkedList<Media>();
 		int new_rating = mediaRateMedia.rating_value;

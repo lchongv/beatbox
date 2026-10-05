@@ -72,7 +72,8 @@ public interface BeatBox.View : Gtk.Box {
 	public abstract Gdk.Pixbuf get_view_icon();
 	public abstract string get_view_name();
 	public abstract GLib.List<View> get_sub_views(); // for example, devices come with sub views
-	public abstract Gtk.Menu? get_context_menu();
+	public abstract GLib.MenuModel? get_context_menu(); // the sidebar's right click menu
+	public abstract GLib.ActionGroup? get_context_actions(); // that menu's own items, as "view.*"
 	public abstract void set_as_current_view();
 	public abstract void unset_as_current_view();
 	public abstract bool can_receive_drop();

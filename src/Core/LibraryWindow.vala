@@ -74,13 +74,6 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 	// Side box
 	ScrolledWindow sideTreeScroll;
 	public SideTreeView sideTree { get; private set; }
-	Toolbar sideTreeBar;
-	ToolButton sideTreeAdd;
-	ToolButton sideTreeRemove;
-	ToolButton sideTreeOptions;
-	
-	Gtk.Menu sideTreeAddMenu;
-	Gtk.Menu sideTreeMenu;
 	
 	// File not found stuff
 	InfoBar infoBar;
@@ -103,7 +96,7 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 	public StatusBar statusBar { get; private set; }
 	
 	// basic file stuff
-	private Gtk.Menu settingsMenu;
+	private GLib.Menu settingsMenu;
 	
 	// state stuff
 	private Gtk.Widget focusAfterSearch;
@@ -203,6 +196,7 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		message ("Building user interface\n");
 		
 		// Start by initializing the window and widgets to create the UI
+		insert_action_group ("bb", App.actions.group); // what GLib.Menu menus ("bb.<name>") call
 		setup_window ();
         setup_widgets ();
         register_shortcuts ();
@@ -295,11 +289,7 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 
 		sideTree = new SideTreeView();
 		sideTreeScroll = new ScrolledWindow(null, null);
-		sideTreeBar = new Toolbar();
-		sideTreeAdd = new ToolButton(null, "Add...");
-		sideTreeRemove = new ToolButton(null, "Remove...");
-		sideTreeOptions = new ToolButton(null, "Options...");
-		settingsMenu = new Gtk.Menu();
+		settingsMenu = new GLib.Menu();
 		topControls = new Toolbar();
 		previousButton = new ToolButton(null, null);
 		previousButton.icon_name = "media-skip-backward-symbolic";
@@ -377,15 +367,13 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		searchFieldBin.margin_start = 12;
 		searchFieldBin.margin_end = 6;
 		
-		//settingsMenu.append(App.actions.menu_item(App.actions.import_folder));
-		//settingsMenu.append(App.actions.menu_item(App.actions.rescan_music_folder));
-		//settingsMenu.append(new SeparatorMenuItem());
-		var miniItem = new Gtk.MenuItem.with_mnemonic(_("_Mini Player"));
-		miniItem.activate.connect(toggle_mini);
-		settingsMenu.append(miniItem);
-		settingsMenu.append(App.actions.menu_item(App.actions.show_equalizer));
-		settingsMenu.append(App.actions.menu_item(App.actions.show_preferences));
-		settingsMenu.append(App.actions.menu_item(App.actions.exit));
+		var mini_player = new SimpleAction("mini_player", null);
+		mini_player.activate.connect(toggle_mini);
+		App.actions.group.add_action(mini_player);
+		settingsMenu.append(_("_Mini Player"), "bb.mini_player");
+		settingsMenu.append_item(App.actions.model_item(App.actions.show_equalizer));
+		settingsMenu.append_item(App.actions.model_item(App.actions.show_preferences));
+		settingsMenu.append_item(App.actions.model_item(App.actions.exit));
 		
 		topControls.set_vexpand (false);
 		topControls.set_hexpand (true);
@@ -416,8 +404,7 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 			});
 		});
 		appmenu_button.valign = appmenu_button.halign = Gtk.Align.CENTER;
-		appmenu_button.popup = settingsMenu;
-		settingsMenu.show_all ();
+		appmenu_button.menu_model = settingsMenu;
 		var appmenu = new Gtk.ToolItem ();
 		appmenu.add (appmenu_button);
 		topControls.insert(appmenu, -1);
@@ -442,46 +429,8 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		sideTreeScroll.set_policy (PolicyType.AUTOMATIC, PolicyType.AUTOMATIC);
 		sideTreeScroll.get_style_context().add_class("sidebar-scroll");
 		sideTreeScroll.add(sideTree);
-		
-		var side_add_image = App.icons.render_image ("list-add-symbolic", Gtk.IconSize.MENU);
-		var side_remove_image = App.icons.render_image ("list-remove-symbolic", Gtk.IconSize.MENU);
-		var side_options_image = App.icons.render_image ("document-properties-symbolic", Gtk.IconSize.MENU);
-		
-		sideTreeAdd.set_icon_widget(side_add_image);
-		sideTreeRemove.set_icon_widget(side_remove_image);
-		sideTreeOptions.set_icon_widget(side_options_image);
-		
-		sideTreeBar.get_style_context().add_class(STYLE_CLASS_INLINE_TOOLBAR);
-		sideTreeBar.icon_size = Gtk.IconSize.MENU;
-		
-		var sideToolbarSeparator = new SeparatorToolItem();
-		sideToolbarSeparator.expand = true;
-		sideToolbarSeparator.vexpand = false;
-		sideToolbarSeparator.draw = false;
-		
-		sideTreeBar.insert(sideTreeAdd, -1);
-		sideTreeBar.insert(sideTreeRemove, -1);
-		//sideTreeBar.insert(sideToolbarSeparator, -1);
-		sideTreeBar.insert(sideTreeOptions, -1);
-		
 		sideTreeScroll.vexpand = true;
 		sideBox.add(sideTreeScroll);
-		//sideBox.pack_end(sideTreeBar, false, false, 0);
-		
-		sideTreeAddMenu = new Gtk.Menu();
-		sideTreeAddMenu.append(App.actions.menu_item(App.actions.create_playlist));
-		sideTreeAddMenu.append(App.actions.menu_item(App.actions.create_smart_playlist));
-		sideTreeAddMenu.append(App.actions.menu_item(App.actions.import_playlist));
-		sideTreeAddMenu.append(new SeparatorMenuItem());
-		sideTreeAddMenu.append(App.actions.menu_item(App.actions.add_podcast_feed));
-		sideTreeAddMenu.append(new SeparatorMenuItem());
-		sideTreeAddMenu.append(App.actions.menu_item(App.actions.import_station));
-		
-		sideTreeMenu = new Gtk.Menu();
-		sideTreeMenu.append(App.actions.menu_item(App.actions.show_duplicates));
-		sideTreeMenu.append(App.actions.menu_item(App.actions.hide_duplicates));
-		sideTreeMenu.append(new SeparatorMenuItem());
-		sideTreeMenu.append(App.actions.menu_item(App.actions.refresh_podcasts));
 		
 		// Hide notebook tabs and border
 		mainViews.show_tabs = false;
@@ -502,19 +451,6 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		sourcesToMedias.pack1(sideBox, false, true);
 		sourcesToMedias.pack2(contentBox, true, true);
 		
-		// TEMPORARY
-		/*var my_menu = new GLib.Menu();
-            
-            var file_menu_item = new GLib.MenuItem("File", "file");
-            var file_menu = new GLib.Menu();
-            var import_item = new GLib.MenuItem("Import", "import");
-            
-            file_menu_item.set_submenu(file_menu);
-            file_menu.append_item(import_item);
-            my_menu.append_item(file_menu_item);
-		var top_menu = new MenuBar.from_model(my_menu);
-		
-		verticalBox.add(top_menu);*/
 		// The toolbar is the window's title bar: no separate system title bar,
 		// traffic lights in the top-left corner, above the transport buttons
 		var titlebar = new Overlay();
@@ -552,11 +488,6 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		nextButton.clicked.connect(nextClicked);
 		viewSelector.mode_changed.connect(view_selection_changed);
 		searchField.changed.connect(search_field_changed);
-		
-		// Sidetoolbar events
-		sideTreeAdd.clicked.connect(sideTreeAddClicked);
-		sideTreeRemove.clicked.connect(sideTreeRemoveClicked);
-		sideTreeOptions.clicked.connect(sideTreeOptionsClicked);
 		
 		show_all();
 		lcd_logo.visible = !top_display.visible;
@@ -1129,21 +1060,6 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		window_maximized = ((event.new_window_state & (Gdk.WindowState.MAXIMIZED | Gdk.WindowState.FULLSCREEN)) != 0);
 			
 		return false;
-	}
-	
-	void sideTreeAddClicked() {
-		sideTreeAddMenu.show_all();
-		sideTreeAddMenu.popup_at_pointer(null);
-	}
-	
-	void sideTreeRemoveClicked() {
-		//sideTree.playlistMenuRemoveClicked();
-		warning("FIXME");
-	}
-	
-	void sideTreeOptionsClicked() {
-		sideTreeMenu.show_all();
-		sideTreeMenu.popup_at_pointer(null);
 	}
 	
 	public void set_search_string(string search) {

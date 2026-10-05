@@ -38,7 +38,7 @@ public class BeatBox.DuplicateSourceView : SourceView {
 	GLib.CompareDataFunc<Media> first_priority;
 	
 	// For View implementation
-	Gtk.Menu duplicatesMenu;
+	GLib.Menu duplicatesMenu;
 	
 	public DuplicateSourceView() {
 		base(new LinkedList<Media>(), new TreeViewSetup(DuplicateColumn.TITLE, Gtk.SortType.ASCENDING, TreeViewSetup.Hint.DUPLICATES));
@@ -67,9 +67,8 @@ public class BeatBox.DuplicateSourceView : SourceView {
 		pack_widgets();
 		
 		// Setup context menu
-		duplicatesMenu = new Gtk.Menu();
-		duplicatesMenu.append(App.actions.menu_item(App.actions.hide_duplicates));
-		duplicatesMenu.show_all();
+		duplicatesMenu = new GLib.Menu();
+		duplicatesMenu.append_item(App.actions.model_item(App.actions.hide_duplicates));
 		
 		priority.changed.connect(priority_changed);
 		remove_checked.clicked.connect(remove_checked_clicked);
@@ -188,7 +187,7 @@ public class BeatBox.DuplicateSourceView : SourceView {
 		return _("Duplicates");
 	}
 	
-	public override Gtk.Menu? get_context_menu() {
+	public override GLib.MenuModel? get_context_menu() {
 		return duplicatesMenu;
 	}
 	
