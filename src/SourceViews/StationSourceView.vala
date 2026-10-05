@@ -31,7 +31,7 @@ using Gtk;
 public class BeatBox.StationSourceView : SourceView {
 	HashMap<int, Device> welcome_screen_keys;
 	
-	Gtk.Menu radioMenu;
+	GLib.Menu radioMenu;
 	
 	public StationSourceView() {
 		base(App.library.station_library.medias(), App.window.setups.get_setup(ListSetupInterface.STATION_KEY));
@@ -61,15 +61,12 @@ public class BeatBox.StationSourceView : SourceView {
 		pack_action_bar ({ find, add, import });
 		
 		// Setup context menu
-		radioMenu = new Gtk.Menu();
-		var find_item = new Gtk.MenuItem.with_label (_("Find Stations…"));
-		find_item.activate.connect (() => { new DirectoryDialog (DirectoryDialog.Kind.RADIO); });
-		radioMenu.append(find_item);
-		var add_item = new Gtk.MenuItem.with_label (_("Add by Address…"));
-		add_item.activate.connect (() => { DirectoryDialog.add_station_by_url (); });
-		radioMenu.append(add_item);
-		radioMenu.append(App.actions.menu_item(App.actions.import_station));
-		radioMenu.show_all();
+		radioMenu = new GLib.Menu();
+		radioMenu.append(_("Find Stations…"), "view.find");
+		add_context_action("find", () => { new DirectoryDialog (DirectoryDialog.Kind.RADIO); });
+		radioMenu.append(_("Add by Address…"), "view.add-address");
+		add_context_action("add-address", () => { DirectoryDialog.add_station_by_url (); });
+		radioMenu.append_item(App.actions.model_item(App.actions.import_station));
 		
 		// Populate views
 		set_media_sync(original_medias, false);
@@ -114,7 +111,7 @@ public class BeatBox.StationSourceView : SourceView {
 		return _("Internet Radio");
 	}
 	
-	public override Gtk.Menu? get_context_menu() {
+	public override GLib.MenuModel? get_context_menu() {
 		return radioMenu;
 	}
 	

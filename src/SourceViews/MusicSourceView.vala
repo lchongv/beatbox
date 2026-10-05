@@ -182,7 +182,7 @@ public class BeatBox.MusicSourceView : SourceView {
 		return _("Music");
 	}
 	
-	public override Gtk.Menu? get_context_menu() {
+	public override GLib.MenuModel? get_context_menu() {
 		return null;
 	}
 	

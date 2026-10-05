@@ -53,13 +53,9 @@ public abstract class BeatBox.GenericList : FastList {
 	protected GLib.Icon saved_locally_icon;
 	protected GLib.Icon new_podcast_icon;
 	
-	// To select which columns are showing
-	protected Gtk.Menu columnChooserMenu;
-	protected Gtk.MenuItem browseSame;
-	protected Gtk.Menu browseSameMenu;
-	protected Gtk.MenuItem browseSameAlbum;
-	protected Gtk.MenuItem browseSameArtist;
-	protected Gtk.MenuItem browseSameGenre;
+	// To select which columns are showing: a check item per column, "columns.show-<n>"
+	GLib.Menu columnChooserMenu = new GLib.Menu();
+	SimpleActionGroup columnActions = new SimpleActionGroup();
 	
 	public signal void import_requested(LinkedList<Media> to_import);
 	
@@ -96,20 +92,7 @@ public abstract class BeatBox.GenericList : FastList {
 		// allow selecting multiple rows
 		get_selection().set_mode(SelectionMode.MULTIPLE);
 		
-		columnChooserMenu = new Gtk.Menu();
-		
-		/*browseSame = new Gtk.MenuItem.with_label("Show only...");
-		browseSameAlbum = new Gtk.MenuItem.with_label("this Album");
-		browseSameArtist = new Gtk.MenuItem.with_label("this Artist");
-		browseSameGenre = new Gtk.MenuItem.with_label("this Genre");
-		browseSameAlbum.activate.connect(browse_same_album_activate);
-		browseSameArtist.activate.connect(browse_same_artist_activate);
-		browseSameGenre.activate.connect(browse_same_genre_activate);
-		browseSameMenu = new Gtk.Menu();
-		browseSameMenu.append(browseSameAlbum);
-		browseSameMenu.append(browseSameArtist);
-		browseSameMenu.append(browseSameGenre);
-		browseSame.submenu = browseSameMenu;*/
+		insert_action_group("columns", columnActions);
 		
 		drag_begin.connect(on_drag_begin);
 		drag_data_get.connect(on_drag_data_get);
@@ -274,10 +257,32 @@ public abstract class BeatBox.GenericList : FastList {
 		}
 	}
 	
+	protected TreeViewColumn? column_titled(string title) {
+		foreach(var column in get_columns())
+			if(column.title == title)
+				return column;
+		return null;
+	}
+	
+	/** A check item in the header's right click menu that shows or hides the column titled title */
+	protected void add_column_toggle(string title, string label) {
+		var column = column_titled(title);
+		if(column == null)
+			return;
+		var action = new SimpleAction.stateful("show-%d".printf(columnChooserMenu.get_n_items()), null, new Variant.boolean(column.visible));
+		action.change_state.connect((visible) => {
+			column.visible = visible.get_boolean();
+			tvs.set_columns(get_columns());
+		});
+		column.notify["visible"].connect(() => action.set_state(new Variant.boolean(column.visible)));
+		columnActions.add_action(action);
+		columnChooserMenu.append(label, "columns." + action.name);
+	}
+	
 	protected void view_header_click(Gtk.GestureMultiPress gesture, int n_press, double x, double y) {
 		uint button = gesture.get_current_button();
 		if(button == 3) {
-			columnChooserMenu.popup_at_pointer(null);
+			UI.popup_menu_model(gesture.get_widget(), columnChooserMenu, x, y);
 			gesture.set_state(Gtk.EventSequenceState.CLAIMED);
 		}
 		else if(button == 1) {

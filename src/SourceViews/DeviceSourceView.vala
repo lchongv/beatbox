@@ -35,9 +35,7 @@ public class BeatBox.DeviceSourceView : SourceView {
 	Device d;
 	
 	// For View implementation
-	Gtk.Menu CDMenu;
-	Gtk.MenuItem CDimportToLibrary;
-	Gtk.MenuItem CDeject;
+	GLib.Menu CDMenu;
 	
 	public DeviceSourceView(Collection<Media> medias, TreeViewSetup tvs, Device d) {
 		base(medias, tvs);
@@ -51,14 +49,9 @@ public class BeatBox.DeviceSourceView : SourceView {
 		pack_widgets();
 		
 		// Setup context menu for this view
-		CDMenu = new Gtk.Menu();
-		CDimportToLibrary = new Gtk.MenuItem.with_label(_("Import to Library"));
-		CDeject = new Gtk.MenuItem.with_label(_("Eject"));
-		CDMenu.append(CDimportToLibrary);
-		//CDMenu.append(CDeject);
-		CDimportToLibrary.activate.connect(CDimportToLibraryClicked);
-		CDeject.activate.connect(CDejectClicked);
-		CDMenu.show_all();
+		CDMenu = new GLib.Menu();
+		CDMenu.append(_("Import to Library"), "view.import");
+		add_context_action("import", CDimportToLibraryClicked);
 		
 		// Populate views
 		set_media(original_medias, false);
@@ -179,7 +172,7 @@ public class BeatBox.DeviceSourceView : SourceView {
 		}
 	}
 	
-	public override Gtk.Menu? get_context_menu() {
+	public override GLib.MenuModel? get_context_menu() {
 		switch (hint) {
 			case TreeViewSetup.Hint.DEVICE_AUDIO:
 			case TreeViewSetup.Hint.DEVICE_PODCAST:
@@ -214,12 +207,6 @@ public class BeatBox.DeviceSourceView : SourceView {
 				to_transfer.add(m);
 			
 			d.transfer_to_library(to_transfer);
-		}
-	}
-	
-	void CDejectClicked() {
-		if(d.getContentType() == "cdrom") {
-			d.unmount();
 		}
 	}
 }

@@ -29,9 +29,7 @@ using Gee;
 using Gtk;
 
 public class BeatBox.HistorySourceView : SourceView {
-	Gtk.Menu playlistMenu;
-	Gtk.MenuItem playlistSave;
-	Gtk.MenuItem playlistExport;
+	GLib.Menu playlistMenu;
 	
 	public HistorySourceView() {
 		base(App.playback.history(), App.window.setups.get_setup(ListSetupInterface.HISTORY_KEY));
@@ -42,14 +40,11 @@ public class BeatBox.HistorySourceView : SourceView {
 		error_box = new EmbeddedAlert();
 		pack_widgets();
 		
-		playlistMenu = new Gtk.Menu();
-		playlistSave = new Gtk.MenuItem.with_label(_("Save as Playlist"));
-		playlistExport = new Gtk.MenuItem.with_label(_("Export..."));
-		playlistMenu.append(playlistSave);
-		playlistMenu.append(playlistExport);
-		playlistSave.activate.connect(playlistSaveClicked);
-		playlistExport.activate.connect(playlistExportClicked);
-		playlistMenu.show_all();
+		playlistMenu = new GLib.Menu();
+		playlistMenu.append(_("Save as Playlist"), "view.save");
+		playlistMenu.append(_("Export..."), "view.export");
+		add_context_action("save", playlistSaveClicked);
+		add_context_action("export", playlistExportClicked);
 		
 		// Populate views
 		set_media(original_medias, false);
@@ -90,7 +85,7 @@ public class BeatBox.HistorySourceView : SourceView {
 		return _("History");
 	}
 	
-	public override Gtk.Menu? get_context_menu() {
+	public override GLib.MenuModel? get_context_menu() {
 		return playlistMenu;
 	}
 	

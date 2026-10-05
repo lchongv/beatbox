@@ -37,10 +37,8 @@ public class BeatBox.DeviceView : Box, View {
 	View podcasts_view;
 	//View audiobooks_view;
 	
-	Gtk.Menu deviceMenu;
-	Gtk.MenuItem deviceImportToLibrary;
-	Gtk.MenuItem deviceSync;
-	Gtk.MenuItem deviceUnmount;
+	GLib.Menu deviceMenu;
+	SimpleActionGroup deviceActions = new SimpleActionGroup();
 	
 	public DeviceView(Device d) {
 		this.d = d;
@@ -70,17 +68,19 @@ public class BeatBox.DeviceView : Box, View {
 		summary.hexpand = true;
 		add(summary);
 		
-		deviceMenu = new Gtk.Menu();
-		deviceImportToLibrary = new Gtk.MenuItem.with_label(_("Import from Device"));
-		deviceSync = new Gtk.MenuItem.with_label(_("Sync"));
-		deviceUnmount = new Gtk.MenuItem.with_label(_("Unmount"));
-		deviceMenu.append(deviceImportToLibrary);
-		deviceMenu.append(deviceSync);
-		deviceMenu.append(deviceUnmount);
-		deviceImportToLibrary.activate.connect(deviceImportToLibraryClicked);
-		deviceSync.activate.connect(deviceSyncClicked);
-		deviceUnmount.activate.connect(deviceUnmountClicked);
-		deviceMenu.show_all();
+		deviceMenu = new GLib.Menu();
+		deviceMenu.append(_("Import from Device"), "view.import");
+		deviceMenu.append(_("Sync"), "view.sync");
+		deviceMenu.append(_("Unmount"), "view.unmount");
+		var import = new SimpleAction("import", null);
+		import.activate.connect(showImportDialog);
+		var sync = new SimpleAction("sync", null);
+		sync.activate.connect(syncClicked);
+		var unmount = new SimpleAction("unmount", null);
+		unmount.activate.connect(() => d.unmount());
+		deviceActions.add_action(import);
+		deviceActions.add_action(sync);
+		deviceActions.add_action(unmount);
 		
 		show_all();
 	}
@@ -133,8 +133,12 @@ public class BeatBox.DeviceView : Box, View {
 		return d.getDisplayName();
 	}
 	
-	public Gtk.Menu? get_context_menu() {
+	public GLib.MenuModel? get_context_menu() {
 		return deviceMenu;
+	}
+	
+	public GLib.ActionGroup? get_context_actions() {
+		return deviceActions;
 	}
 	
 	public bool can_receive_drop() {
@@ -231,18 +235,5 @@ public class BeatBox.DeviceView : Box, View {
 	
 	public void reset_view() {
 		
-	}
-	
-	// Context menu event handlers
-	void deviceImportToLibraryClicked() {
-		showImportDialog();
-	}
-	
-	void deviceSyncClicked() {
-		syncClicked();
-	}
-	
-	void deviceUnmountClicked() {
-		d.unmount();
 	}
 }

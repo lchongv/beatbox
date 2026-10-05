@@ -45,8 +45,8 @@ public abstract class BeatBox.ActionsInterface : GLib.Object {
 	/** All the actions, as "bb.<name>" */
 	public SimpleActionGroup group { get; protected set; }
 	
-	/** A menu item labelled for the action, greyed out (or hidden, for some) while it is disabled */
-	public abstract Gtk.MenuItem menu_item(SimpleAction action);
+	/** A GLib.Menu item ("bb.<name>") labelled for the action, greyed out (or hidden, for some) while it is disabled */
+	public abstract GLib.MenuItem model_item(SimpleAction action);
 	
 	public abstract void destroy_equalizer();
 	public abstract void show_set_library_folder_dialog(Library library);

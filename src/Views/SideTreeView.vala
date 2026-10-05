@@ -51,8 +51,8 @@ public class BeatBox.SideTreeView : BeatBox.SideBar {
 	
 	public TreeIter plugins_iter { get; private set; }
 	
-	Gtk.Menu libraryMenu;
-	Gtk.Menu playlistMenu;
+	GLib.Menu libraryMenu;
+	GLib.Menu playlistMenu;
 	Gtk.GestureMultiPress side_list_click; // GTK3 controllers need a reference
 	
 	public SideTreeView() {
@@ -65,15 +65,13 @@ public class BeatBox.SideTreeView : BeatBox.SideBar {
 	}
 	
 	public void buildUI() {
-		libraryMenu = new Gtk.Menu();
-		libraryMenu.append(App.actions.menu_item(App.actions.show_duplicates));
-		libraryMenu.show_all();
+		libraryMenu = new GLib.Menu();
+		libraryMenu.append_item(App.actions.model_item(App.actions.show_duplicates));
 		
-		playlistMenu = new Gtk.Menu();
-		playlistMenu.append(App.actions.menu_item(App.actions.create_playlist));
-		playlistMenu.append(App.actions.menu_item(App.actions.create_smart_playlist));
-		playlistMenu.append(App.actions.menu_item(App.actions.import_playlist));
-		playlistMenu.show_all();
+		playlistMenu = new GLib.Menu();
+		playlistMenu.append_item(App.actions.model_item(App.actions.create_playlist));
+		playlistMenu.append_item(App.actions.model_item(App.actions.create_smart_playlist));
+		playlistMenu.append_item(App.actions.model_item(App.actions.import_playlist));
 		
 		// CAPTURE: before the tree view handles the press (selection)
 		side_list_click = new Gtk.GestureMultiPress(this);
@@ -291,7 +289,7 @@ public class BeatBox.SideTreeView : BeatBox.SideBar {
 			View view = (View)w;
 			if(button == 3) {
 				if(view.get_context_menu() != null) {
-					view.get_context_menu().popup_at_pointer(null);
+					UI.popup_menu_model(this, view.get_context_menu(), widget_x, widget_y, view.get_context_actions());
 				}
 			}
 			else if(button == 2) {
@@ -303,10 +301,11 @@ public class BeatBox.SideTreeView : BeatBox.SideBar {
 		else {
 			if(button == 3) {
 				if(iter == convertToFilter(library_iter)) {
-					libraryMenu.popup_at_pointer(null);
+					if(App.actions.show_duplicates.get_enabled()) // its only item, hidden while duplicates are shown
+						UI.popup_menu_model(this, libraryMenu, widget_x, widget_y);
 				}
 				else if(iter == convertToFilter(playlists_iter)) {
-					playlistMenu.popup_at_pointer(null);
+					UI.popup_menu_model(this, playlistMenu, widget_x, widget_y);
 				}
 			}
 		}

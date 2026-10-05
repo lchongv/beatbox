@@ -721,7 +721,7 @@ public abstract class BeatBox.SourceView : Box, View {
 	public abstract Object? get_object();
 	public abstract Gdk.Pixbuf get_view_icon();
 	public abstract string get_view_name();
-	public abstract Gtk.Menu? get_context_menu();
+	public abstract GLib.MenuModel? get_context_menu();
 	public abstract bool can_receive_drop();
 	public abstract void drag_received(Gtk.SelectionData data);
 	public abstract SideTreeCategory get_sidetree_category();
@@ -729,6 +729,22 @@ public abstract class BeatBox.SourceView : Box, View {
 	
 	/** These functions are also required by View interface, but are the same
 	 * for all sourceviews and are therefore implemented here **/
+	// the actions of the context menu's own items ("view.*")
+	protected SimpleActionGroup context_actions = new SimpleActionGroup();
+	
+	public GLib.ActionGroup? get_context_actions() {
+		return context_actions;
+	}
+	
+	public delegate void ContextActionFunc();
+	
+	/** A context menu item's action, "view." + name */
+	protected void add_context_action(string name, owned ContextActionFunc activated) {
+		var action = new SimpleAction(name, null);
+		action.activate.connect(() => activated());
+		context_actions.add_action(action);
+	}
+	
 	public GLib.List<View> get_sub_views() {
 		return new GLib.List<View>(); // No sources have sub views
 	}
