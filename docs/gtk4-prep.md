@@ -98,9 +98,11 @@ Total fases 1–8: ~20–25 h. Fase 9: +8 h.
   `Gst.Format.get_by_nick` en CDRipper.
 
 # Hoja de ruta
-0.9: solo limpieza (errores y avisos de obsolescencia). Lo pendiente pasa a 0.10.
+0.9.0 (4 oct 2026) trajo la limpieza de avisos, ReplayGain, las letras sincronizadas y el mini
+reproductor. 0.10.0 (5 oct 2026) trae el resto de esta lista, la preparación para GTK4 y los
+paquetes. Lo siguiente es la migración real a GTK4 (ver «Fuera de alcance»).
 
-## Hecho en 0.9
+## Hecho en 0.9 y 0.10
 1. [x] Reproducción sin cortes (ya existía; verificada) + ReplayGain + fundido entre canciones (0–12 s, Preferencias › Comportamiento; segundo pipeline con curva de potencia constante).
 2. [x] Letras sincronizadas (LRCLIB) en la segunda línea del LCD; caché en ~/.cache/beatbox/lyrics (Preferencias › Apariencia).
 3. [x] Mini reproductor: Ctrl+M, Alt+botón verde o menú; deja solo controles y LCD.
