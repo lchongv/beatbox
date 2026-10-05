@@ -1,0 +1,81 @@
+# Builds the AppImage and the Flatpak bundle. Every push to master leaves them on the
+# run's page (Actions > Packages > the run > Artifacts); a vX.Y.Z tag also attaches
+# them to that release, creating it if needed.
+name: Packages
+
+on:
+  push:
+    branches: [master]
+    tags: ['v*']
+  workflow_dispatch:
+
+jobs:
+  appimage:
+    runs-on: ubuntu-latest
+    # The AppImage runs on distributions with the build system's glibc or a newer one:
+    # Ubuntu 22.04's (2.35) covers anything from 2022 on
+    container: ubuntu:22.04
+    steps:
+      - uses: actions/checkout@v7
+      - name: Dependencies
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: |
+          apt-get update -qq
+          apt-get install -y -qq --no-install-recommends ca-certificates curl file python3 \
+            valac meson ninja-build pkg-config gettext appstream desktop-file-utils \
+            libgtk-3-dev libgranite-dev libgee-0.8-dev libxml2-dev libnotify-dev \
+            libsoup-3.0-dev libjson-glib-dev libsqlite3-dev libgpod-dev librsvg2-common glib-networking \
+            libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev \
+            gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-libav \
+            cmake g++ libutfcpp-dev zlib1g-dev dpkg-dev patchelf
+      # Ubuntu 22.04 has TagLib 1.11; writing album art into files needs 2.0
+      - name: TagLib 2
+        run: |
+          curl -fsSL https://github.com/taglib/taglib/releases/download/v2.3.2/taglib-2.3.2.tar.gz | tar -xz
+          cmake -G Ninja -S taglib-2.3.2 -B taglib-build -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=/usr/local
+          cmake --build taglib-build -j"$(nproc)"
+          cmake --install taglib-build
+          ldconfig
+      - run: appimage/build-appimage.sh
+      - uses: actions/upload-artifact@v7
+        with:
+          name: appimage
+          path: appimage-work/BeatBox-*.AppImage
+          if-no-files-found: error
+
+  flatpak:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/flathub-infra/flatpak-github-actions:gnome-50
+      options: --privileged
+    steps:
+      - uses: actions/checkout@v7
+      - id: version
+        run: |
+          echo "version=$(sed -n "s/^project('beatbox'.*version: '\([^']*\)'.*/\1/p" meson.build)" >> "$GITHUB_OUTPUT"
+      - uses: flatpak/flatpak-github-actions/flatpak-builder@v6
+        with:
+          manifest-path: flatpak/net.launchpad.beatbox.yml
+          bundle: BeatBox-${{ steps.version.outputs.version }}-x86_64.flatpak
+          artifact-name: flatpak
+          cache-key: flatpak-builder-${{ github.sha }}
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [appimage, flatpak]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          path: dist
+          merge-multiple: true
+      - env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          gh release view "$TAG" >/dev/null 2>&1 || gh release create "$TAG" --title "BeatBox ${TAG#v}" --generate-notes
+          gh release upload "$TAG" dist/* --clobber

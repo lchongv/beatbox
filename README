@@ -32,6 +32,12 @@ iPod sync is built when libgpod is found (`-Dipod=enabled|disabled` to force it)
 Packages
 --------
 
+GitHub builds both on every push to master (Actions > Packages > the run >
+Artifacts) and attaches them to the release of every vX.Y.Z tag
+(.github/workflows/packages.yml). The Flatpak bundle installs with
+`flatpak install --user BeatBox-<version>-x86_64.flatpak`; the AppImage runs
+after `chmod +x`. To build them yourself:
+
 Flatpak (GNOME 50 runtime, needs flatpak-builder):
 
     flatpak-builder --user --install --force-clean build-flatpak flatpak/net.launchpad.beatbox.yml
@@ -48,7 +54,8 @@ directory):
     appimage/build-appimage.sh [work dir, default ./appimage-work]
 
 It bundles the libraries of the system that builds it, so it runs on
-distributions with that glibc or a newer one.
+distributions with that glibc or a newer one; GitHub's is built on Ubuntu
+22.04 (glibc 2.35: Debian 12, Fedora 36 and later).
 
 Files
 -----
