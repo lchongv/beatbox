@@ -27,6 +27,28 @@ gst-plugins-good taglib libxml2 libnotify libsoup3 json-glib libgpod sqlite
 It runs straight from the build directory (translations included); on first
 start it registers a launcher in ~/.local/share/applications so the desktop
 shows its icon. `ninja -C build install` installs it system-wide instead.
+iPod sync is built when libgpod is found (`-Dipod=enabled|disabled` to force it).
+
+Packages
+--------
+
+Flatpak (GNOME 50 runtime, needs flatpak-builder):
+
+    flatpak-builder --user --install --force-clean build-flatpak flatpak/net.launchpad.beatbox.yml
+    flatpak run net.launchpad.beatbox
+
+It has no iPod sync (libgpod isn't in the runtime) and only sees ~/Music;
+for a library elsewhere:
+
+    flatpak override --user --filesystem=/path/to/music net.launchpad.beatbox
+
+AppImage (downloads linuxdeploy and its GTK/GStreamer plugins into the work
+directory):
+
+    appimage/build-appimage.sh [work dir, default ./appimage-work]
+
+It bundles the libraries of the system that builds it, so it runs on
+distributions with that glibc or a newer one.
 
 Files
 -----
