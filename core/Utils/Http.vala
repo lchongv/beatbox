@@ -6,7 +6,29 @@ namespace BeatBox.Http {
 		// themselves; Apple, on the other hand, answers ~5 s later to unknown user agents
 		if ("musicbrainz.org" in url || "radio-browser.info" in url || "lrclib.net" in url || "listenbrainz.org" in url)
 			session.user_agent = "BeatBox/" + Build.VERSION + " ( https://launchpad.net/beat-box )";
+		// ponytail: parsed per session (a few ms); the AppImage sets it where its TLS library can't find the CA bundle
+		var ca_file = Environment.get_variable ("SSL_CERT_FILE");
+		if (ca_file != null) {
+			try {
+				session.tls_database = TlsFileDatabase.new (ca_file);
+			} catch (Error err) {
+				warning ("Could not load the certificates in %s: %s", ca_file, err.message);
+			}
+		}
 		return session;
+	}
+
+	/* A session attaches its sources to the thread's default context when it's created;
+	 * libsoup before 3.2 (Ubuntu 22.04) runs a worker thread's requests on the main loop's,
+	 * which then fires them after the session is gone. Each request gets its own context. */
+	Bytes send_and_read (string url, Soup.Message message) throws Error {
+		var context = new MainContext ();
+		context.push_thread_default ();
+		try {
+			return new_session (url).send_and_read (message);
+		} finally {
+			context.pop_thread_default ();
+		}
 	}
 
 	/** Blocking HTTP request; returns the response body, or "" on failure. */
@@ -16,7 +38,7 @@ namespace BeatBox.Http {
 			return "";
 
 		try {
-			unowned uint8[] data = new_session (url).send_and_read (message).get_data ();
+			unowned uint8[] data = send_and_read (url, message).get_data ();
 			var sb = new StringBuilder.sized (data.length + 1);
 			sb.append_len ((string) data, data.length);
 			return sb.str;
@@ -41,7 +63,7 @@ namespace BeatBox.Http {
 		if (body != null)
 			message.set_request_body_from_bytes (content_type, new Bytes (body.data));
 		try {
-			unowned uint8[] data = new_session (url).send_and_read (message).get_data ();
+			unowned uint8[] data = send_and_read (url, message).get_data ();
 			status = message.status_code;
 			var sb = new StringBuilder.sized (data.length + 1);
 			sb.append_len ((string) data, data.length);
@@ -107,7 +129,7 @@ namespace BeatBox.Http {
 			return null;
 
 		try {
-			var bytes = new_session (url).send_and_read (message);
+			var bytes = send_and_read (url, message);
 			return (message.status_code == 200) ? bytes : null;
 		} catch (Error err) {
 			warning ("Could not fetch %s: %s", url, err.message);
