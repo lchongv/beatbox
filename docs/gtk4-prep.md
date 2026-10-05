@@ -69,28 +69,33 @@ Total fases 1–8: ~20–25 h. Fase 9: +8 h.
       `App.actions.group` ("bb.<nombre>"); `App.actions.menu_item(a)` crea la
       entrada de menú (gris si la acción está deshabilitada; los duplicados se
       ocultan). EmbeddedAlert perdió los botones de acción (nadie los usaba).
-      Menús con `popup_at_pointer`/`popup_at_widget`. Queda pasar a `GMenu` + `Popover`.
+      Menús con `popup_at_pointer`/`popup_at_widget`.
 - [x] Fase 7: `GStreamerTagger.all_tags(info)` junta las etiquetas del contenedor y
       de cada stream (en MP4 están en el contenedor). Probado importando MP3, FLAC,
       OGG y M4A con la versión vieja y la nueva: mismas filas en la base, y además
       el año ahora se importa (venía en DATE_TIME y quedaba en 0).
-- [~] Fase 8: 219 `pack_start(w, false, *, 0)` → `add(w)` (equivalentes exactos;
-      pantallas idénticas píxel a píxel). Quedan ~200 con expand o padding: pasarlos a
-      `hexpand`/márgenes cambia el diseño en GTK3 (hexpand se propaga a los padres),
-      así que van en la migración real, revisando cada pantalla. Tampoco los 77 `pack_end`.
-- [~] Fase 9: CoverFlow (rueda, teclas) y el visor de carátula usan
-      `EventControllerScroll`/`EventControllerKey`. Quedan ~55 `*_event`: los clics de
-      las listas devuelven true para conservar la selección y la ventana principal
-      intercepta teclas antes que la búsqueda; con controladores cambia el orden, así
-      que conviene hacerlos junto con TreeView → ColumnView.
+- [x] Fase 8 (cddbc12): ya no hay `Box.pack_start`/`pack_end`: `add()` + `hexpand`/`vexpand`,
+      `halign`/`valign` y márgenes. Donde un padre debe conservar su tamaño lo dice
+      (`hexpand = false`), porque hexpand se propaga. Revisadas 56 pantallas. Quedan los
+      `pack_start` de CellLayout (columnas, combos) y ActionBar, que GTK4 también tiene.
+- [x] Fase 9 (4741b39): clics, movimiento, teclas y foco con controladores
+      (`GestureMultiPress`, `GestureDrag`, `EventControllerMotion/Key/Scroll`) guardados en
+      campos. Sin convertir a propósito: los clics de fila de las listas (la selección
+      múltiple para arrastrar necesita que el clic llegue al origen de arrastre y no a la
+      TreeView; lo resuelven ColumnView y DragSource) y delete/window-state (sin equivalente
+      en GTK3 de close-request y notify::maximized).
+- [x] GMenu + Popover (8d75bf1): menús de la barra lateral, menú de la aplicación,
+      repetir/aleatorio y columnas de las listas. Siguen como `Gtk.Menu` el menú de los
+      elementos de las listas (lleva las estrellas) y las sugerencias de búsqueda (filas con
+      imagen): en GTK3 un Popover hecho con un modelo no admite widgets propios.
 - [x] Resto: Granite.Application → Gtk.Application (el formato del log se conserva
       con Granite.Services.Logger; depuración con G_MESSAGES_DEBUG en vez de --debug),
       Gdk.X11.Window, Gst.Format.get_by_nick, `.begin` explícitos, ImageMenuItem →
       MenuItem con caja, OptionChooser sin Gtk.Action. Al ejecutar: sin los 46 avisos
       de GENERIC_FALLBACK de los íconos.
 - Avisos de obsolescencia: 214 → 0.
-- Quedan además: Granite.Application (se va con Granite 7), Gdk.X11Window del
-  video (en GTK4 se usa gtk4paintablesink), CDRipper `format_get_by_nick`.
+- Quedan además: `Gdk.X11.Window` del video (en GTK4 se usa gtk4paintablesink) y
+  `Gst.Format.get_by_nick` en CDRipper.
 
 # Hoja de ruta
 0.9: solo limpieza (errores y avisos de obsolescencia). Lo pendiente pasa a 0.10.
@@ -104,4 +109,4 @@ Total fases 1–8: ~20–25 h. Fase 9: +8 h.
 6. [x] Escuchas: Last.fm corregido (valores escapados, POST como formulario, firma verificada contra el servidor, regla 30 s + mitad o 4 min, hora de inicio; sin «Prohibir», que Last.fm quitó). ListenBrainz con token validado (Preferencias › Escuchas).
 7. [x] Atajos configurables (Preferencias › Atajos: 11 acciones, aviso al reasignar, restaurar). Las notificaciones llevan la portada (verificado).
 8. [x] Ecualizador revisado: bandas en las frecuencias que dicen las etiquetas (32 Hz–16 kHz, una octava), modo automático sin género no toma el primer preajuste, preajustes aplicados en el hilo principal, cierre sin reentrada, nombres traducidos; quitado el código de reconexión muerto.
-9. Paquete Flatpak/AppImage.
+9. [x] Paquete Flatpak (flatpak/, sin iPod: libgpod no está en el runtime de GNOME) y AppImage (appimage/build-appimage.sh). Instrucciones en el README.
