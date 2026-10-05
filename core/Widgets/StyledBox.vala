@@ -159,13 +159,16 @@ public class BeatBox.StyledBox : Gtk.Box {
 		}
 		
 		inner.add(left);
-		inner.pack_start(center, true, true, 0);
+		center.hexpand = true;
+		inner.add(center);
 		inner.add(right);
 		
 		this.set_orientation(Orientation.VERTICAL);
 		add(top);
-		pack_start(inner, true, true, 0);
+		inner.vexpand = true;
+		add(inner);
 		add(bottom);
+		hexpand = vexpand = false; // its parts fill it; it doesn't ask its parent for more room
 		
 		top.get_style_context().add_class("top");
 		right.get_style_context().add_class("right");
@@ -202,7 +205,8 @@ public class BeatBox.StyledBox : Gtk.Box {
 	}
 	
 	public void set_widget(Widget w) {
-		content.pack_start(w, true, true, 0);
+		w.vexpand = true;
+		content.add(w);
 		w.get_style_context().add_provider(style_provider, STYLE_PROVIDER_PRIORITY_APPLICATION);
 		
 		// Turn off scroll event on w

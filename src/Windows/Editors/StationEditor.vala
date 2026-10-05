@@ -68,15 +68,19 @@ public class BeatBox.StationEditor : Object, MediaEditorInterface {
 		numerVert = new Box(Orientation.VERTICAL, 0);
 		
 		textVert.add(fields.get("Station"));
-		textVert.pack_start(fields.get("Genre"), false, true, 5);
+		fields.get("Genre").margin_top = fields.get("Genre").margin_bottom = 5;
+		textVert.add(fields.get("Genre"));
 		
 		fields.get("Station").set_width_request(300);
 		fields.get("Genre").set_width_request(300);
 		
-		numerVert.pack_start(fields.get("Rating"), false, true, 5);
+		fields.get("Rating").margin_top = fields.get("Rating").margin_bottom = 5;
+		numerVert.add(fields.get("Rating"));
 		
 		horiz.add(UI.wrap_alignment(textVert, 0, 30, 0, 0));
-		horiz.pack_end(numerVert, false, true, 0);
+		numerVert.hexpand = true;
+		numerVert.halign = Align.END; // at the right edge
+		horiz.add(numerVert);
 		rv.add(horiz);
 		
 		return rv;

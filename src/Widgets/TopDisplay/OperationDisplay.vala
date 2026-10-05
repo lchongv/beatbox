@@ -48,7 +48,8 @@ public class BeatBox.OperationDisplay : BeatBox.Display, Box {
 		left_box.add(operation_bar);
 		
 		this.set_orientation(Orientation.HORIZONTAL);
-		pack_start(left_box, true, true, 0);
+		left_box.hexpand = true;
+		add(left_box);
 		
 		App.operations.operation_started.connect(operation_started);
 		App.operations.operation_progress_updated.connect(operation_progress_updated);

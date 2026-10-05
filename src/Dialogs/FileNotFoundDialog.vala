@@ -97,23 +97,30 @@ public class BeatBox.FileNotFoundDialog : Window {
 		/* set up controls layout */
 		Box information = new Box(Orientation.HORIZONTAL, 0);
 		Box information_text = new Box(Orientation.VERTICAL, 0);
-		information.pack_start(warning, false, false, 10);
-		information_text.pack_start(title, false, true, 10);
+		warning.margin_start = warning.margin_end = 10;
+		information.add(warning);
+		title.margin_top = title.margin_bottom = 10;
+		information_text.add(title);
 		information_text.add(info);
-		information.pack_start(information_text, true, true, 10);
+		information_text.hexpand = true;
+		information_text.margin_start = information_text.margin_end = 10;
+		information.add(information_text);
 		
 		var bottomButtons = new ButtonBox(Orientation.HORIZONTAL);
 		bottomButtons.set_layout(ButtonBoxStyle.END);
-		bottomButtons.pack_end(removeMedia, false, false, 0);
-		bottomButtons.pack_end(rescanLibrary, false, false, 0);
-		if(ids.size == 1)	bottomButtons.pack_end(locateMedia, false, false, 0);
-		bottomButtons.pack_end(doNothing, false, false, 10);
+		bottomButtons.add(removeMedia);
+		bottomButtons.add(rescanLibrary);
+		if(ids.size == 1)	bottomButtons.add(locateMedia);
+		bottomButtons.add(doNothing);
 		bottomButtons.set_spacing(10);
 		
 		content.add(information);
-		content.pack_start(bottomButtons, false, true, 10);
+		bottomButtons.margin_top = bottomButtons.margin_bottom = 10;
+		content.add(bottomButtons);
 		
-		padding.pack_start(content, true, true, 10);
+		content.hexpand = true;
+		content.margin_start = content.margin_end = 10;
+		padding.add(content);
 		
 		removeMedia.clicked.connect(removeMediaClicked);
 		rescanLibrary.clicked.connect(rescanLibraryClicked);

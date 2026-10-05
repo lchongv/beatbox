@@ -286,7 +286,8 @@ public class BeatBox.AlbumWall : Layout {
 		open_album = albums[index];
 		content = build_detail (open_album);
 		var holder = new Box (Orientation.VERTICAL, 0);
-		holder.pack_start (content, true, true, 0);
+		content.vexpand = true;
+		holder.add (content);
 		detail = holder;
 		put (detail, 0, 0);
 		detail.show_all ();
@@ -362,10 +363,12 @@ public class BeatBox.AlbumWall : Layout {
 		left.valign = Align.START;
 		detail_left = left;
 		left.add(cover);
-		left.pack_start (title, false, false, 2);
+		title.margin_top = title.margin_bottom = 2;
+		left.add (title);
 		left.add(artist);
 		left.add(details);
-		left.pack_start (play, false, false, 8);
+		play.margin_top = play.margin_bottom = 8;
+		left.add (play);
 
 		// Same track list as the popup window
 		var tvs = new TreeViewSetup (MusicColumn.ARTIST, SortType.ASCENDING, TreeViewSetup.Hint.ALBUM_LIST);
@@ -387,7 +390,8 @@ public class BeatBox.AlbumWall : Layout {
 		band.get_style_context ().add_class ("album-detail");
 		band.border_width = 16;
 		band.add(left);
-		band.pack_start (list_scroll, true, true, 0);
+		list_scroll.hexpand = true;
+		band.add (list_scroll);
 		return band;
 	}
 }

@@ -97,37 +97,37 @@ public class BeatBox.DeviceSummaryWidget : Box {
 		// device name box
 		var deviceNameBox = new Box(Orientation.HORIZONTAL, 6);
 		deviceNameBox.homogeneous = true;
-		deviceNameBox.pack_start(deviceNameLabel, false, true, 0);
-		deviceNameBox.pack_start(deviceName, false, true, 0);
+		deviceNameBox.add(deviceNameLabel);
+		deviceNameBox.add(deviceName);
 		
 		// auto sync box
 		var autoSyncBox = new Box(Orientation.HORIZONTAL, 6);
 		autoSyncBox.homogeneous = true;
-		autoSyncBox.pack_start(autoSyncLabel, false, true, 0);
-		autoSyncBox.pack_start(UI.wrap_alignment(syncAtStart, 0, 0, 0, 0), false, true, 0);
+		autoSyncBox.add(autoSyncLabel);
+		autoSyncBox.add(UI.wrap_alignment(syncAtStart, 0, 0, 0, 0));
 		
 		// sync options box
 		var musicBox = new Box(Orientation.HORIZONTAL, 6);
-		musicBox.pack_start(syncMusic, false, false, 0);
-		musicBox.pack_start(musicDropdown, false, false, 0);
+		musicBox.add(syncMusic);
+		musicBox.add(musicDropdown);
 		
 		var podcastBox = new Box(Orientation.HORIZONTAL, 6);
-		podcastBox.pack_start(syncPodcasts, false, false, 0);
-		podcastBox.pack_start(podcastDropdown, false, false, 0);
+		podcastBox.add(syncPodcasts);
+		podcastBox.add(podcastDropdown);
 		
 		//var audiobookBox = new Box(Orientation.HORIZONTAL, 6);
 		//audiobookBox.pack_start(syncAudiobooks, false, false, 0);
 		//audiobookBox.pack_start(audiobookDropdown, false, false, 0);
 		
 		var syncOptionsBox = new Box(Orientation.VERTICAL, 0);
-		syncOptionsBox.pack_start(musicBox, false, false, 0);
-		if(dev.supports_podcasts()) 	syncOptionsBox.pack_start(podcastBox, false, false, 0);
+		syncOptionsBox.add(musicBox);
+		if(dev.supports_podcasts()) 	syncOptionsBox.add(podcastBox);
 		//if(dev.supports_audiobooks()) 	syncOptionsBox.pack_start(audiobookBox, false, false, 0);
 		
 		var syncHBox = new Box(Orientation.HORIZONTAL, 6);
 		syncHBox.homogeneous = true;
-		syncHBox.pack_start(syncOptionsLabel, false, true, 0);
-		syncHBox.pack_start(syncOptionsBox, false, true, 0);
+		syncHBox.add(syncOptionsLabel);
+		syncHBox.add(syncOptionsBox);
 		
 		// create bottom section
 		//var syncBox = new Box(Orientation.VERTICAL, 0);
@@ -142,16 +142,18 @@ public class BeatBox.DeviceSummaryWidget : Box {
 		//bottomBox.pack_start(syncButtonBox, false, false, 0);
 		
 		// put it all together
-		content.pack_start(deviceNameBox, false, true, 0);
-		content.pack_start(autoSyncBox, false, true, 0);
-		content.pack_start(syncHBox, false, true, 0);
+		content.add(deviceNameBox);
+		content.add(autoSyncBox);
+		content.add(syncHBox);
 		top_portion.set_content(UI.wrap_alignment(content, 15, 10, 10, 10));
 		
 		this.set_orientation(Orientation.VERTICAL);
 		set_border_width(0);
 		
-		this.pack_start(top_portion, true, true, 0);
-		this.pack_end(spaceWidget, false, true, 0);
+		top_portion.vexpand = true;
+		spaceWidget.vexpand = false; // its own height: the room left goes to the options above
+		this.add(top_portion);
+		this.add(spaceWidget);
 		
 		//add_with_viewport(content_plus_spacewidget);//wrap_alignment(content, 15, 10, 10, 10));
 		

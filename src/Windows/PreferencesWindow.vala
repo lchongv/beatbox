@@ -74,24 +74,30 @@ public class BeatBox.PreferencesWindow : Gtk.Window {
 		notebook.show_border = false;
 		notebook_scroll.set_policy(PolicyType.NEVER, PolicyType.NEVER);
 		
-		notebook_padding.pack_start(notebook, true, true, 10);
+		notebook.hexpand = true;
+		notebook.margin_start = notebook.margin_end = 10;
+		notebook_padding.add(notebook);
 		notebook_scroll.add(notebook_padding);
 		
 		var list_to_content = new Box(Orientation.HORIZONTAL, 0);
 		list_to_content.add(side_bar);
-		list_to_content.pack_end(notebook_scroll, true, true, 0);
+		notebook_scroll.hexpand = true;
+		list_to_content.add(notebook_scroll);
 		
 		saveChanges = new Button.with_label(_("Done"));
 		
 		// Add save button
 		var bottomButtons = new ButtonBox(Orientation.HORIZONTAL);
 		bottomButtons.set_layout(ButtonBoxStyle.END);
-		bottomButtons.pack_end(saveChanges, false, false, 0);
+		bottomButtons.add(saveChanges);
 		
-		content.pack_start(UI.wrap_alignment(list_to_content, 10, 0, 0, 0), true, true, 0);
-		content.pack_end(bottomButtons, false, true, 10);
+		list_to_content.vexpand = true;
+		content.add(UI.wrap_alignment(list_to_content, 10, 0, 0, 0));
+		bottomButtons.margin_top = bottomButtons.margin_bottom = 10;
+		content.add(bottomButtons);
 		
-		padding.pack_start(UI.wrap_alignment(content, 0, 10, 0, 10), true, true, 0);
+		content.hexpand = true;
+		padding.add(UI.wrap_alignment(content, 0, 10, 0, 10));
 		add(padding);
 		
 		general_iter = side_bar.addItem(null, null, null, null, null, _("General"), null, false, false, false);

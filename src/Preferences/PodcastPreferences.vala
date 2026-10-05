@@ -58,8 +58,8 @@ public class BeatBox.PodcastPreferences : GLib.Object, PreferencesSection {
 		
 		var button_box = new ButtonBox(Orientation.HORIZONTAL);
 		button_box.set_layout(ButtonBoxStyle.END);
-		button_box.pack_end(import, false, false, 0);
-		button_box.pack_end(rescan, false, false, 0);
+		button_box.add(import);
+		button_box.add(rescan);
 		
 		fileChooser.set_current_folder(App.settings.main.podcast_folder);
 		downloadNewPodcasts.set_active(App.settings.main.download_new_podcasts);

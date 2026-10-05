@@ -54,8 +54,8 @@ public class BeatBox.MusicPreferences : GLib.Object, PreferencesSection {
 		
 		var button_box = new ButtonBox(Orientation.HORIZONTAL);
 		button_box.set_layout(ButtonBoxStyle.END);
-		button_box.pack_end(import, false, false, 0);
-		button_box.pack_end(rescan, false, false, 0);
+		button_box.add(import);
+		button_box.add(rescan);
 		
 		content.add(musicLabel);
 		content.add(UI.wrap_alignment(fileChooser, 0, 0, 0, 10));

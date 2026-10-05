@@ -49,10 +49,12 @@ public class BeatBox.VolumeWidget : Gtk.Box {
 		volume.draw_value = false;
 		volume.inverted = true;
 		volume.set_value(vol);
-		pack_start(volume, true, true, 6);
+		volume.vexpand = true;
+		volume.margin_top = volume.margin_bottom = 6;
+		add(volume);
 		
 		image = new Gtk.Image();
-		pack_end(image, false, false, 0);
+		add(image);
 		update_image();
 		
 		volume.value_changed.connect(value_changed);

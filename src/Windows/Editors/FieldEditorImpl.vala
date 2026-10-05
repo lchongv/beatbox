@@ -60,7 +60,8 @@ public class BeatBox.FieldEditorImpl : Box, FieldEditor {
 		spin_button.adjustment.value_changed.connect(spin_button_changed);
 		
 		edit_widget = spin_button;
-		this.pack_start(spin_button, true, true, 0);
+		spin_button.vexpand = true;
+		this.add(spin_button);
 	}
 	
 	public FieldEditorImpl.for_string(string field_name, string original) {
@@ -77,7 +78,8 @@ public class BeatBox.FieldEditorImpl : Box, FieldEditor {
 		entry.changed.connect(entry_changed);
 		
 		edit_widget = entry;
-		this.pack_start(entry, true, true, 0);
+		entry.vexpand = true;
+		this.add(entry);
 	}
 	
 	public FieldEditorImpl.for_long_string(string field_name, string original) {
@@ -102,7 +104,8 @@ public class BeatBox.FieldEditorImpl : Box, FieldEditor {
 		scroll.add(viewport);
 		
 		edit_widget = text_view;
-		this.pack_start(scroll, true, true, 0);
+		scroll.vexpand = true;
+		this.add(scroll);
 	}
 	
 	public FieldEditorImpl.for_rating(string field_name, int original) {
@@ -119,7 +122,8 @@ public class BeatBox.FieldEditorImpl : Box, FieldEditor {
 		rating_widget.rating_changed.connect(rating_changed);
 		
 		edit_widget = rating_widget;
-		this.pack_start(rating_widget, true, true, 0);
+		rating_widget.vexpand = true;
+		this.add(rating_widget);
 	}
 	
 	private FieldEditorImpl.basic(string field_name) {
@@ -127,6 +131,7 @@ public class BeatBox.FieldEditorImpl : Box, FieldEditor {
 		
 		this.spacing = 0;
 		this.set_orientation(Orientation.VERTICAL);
+		vexpand = false; // its edit widget fills it; the field doesn't ask for more room
 		
 		check = new CheckButton();
 		label = new Label(field_name);

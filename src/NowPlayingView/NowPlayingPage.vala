@@ -127,6 +127,7 @@ public class BeatBox.NowPlayingPage : ScrolledWindow {
 	}
 	
 	public void add_section(Widget w) {
+		w.vexpand = false; // its natural height; the page scrolls
 		int top_padding = (contents.get_children().length() == 0) ? SECTION_PADDING : 0;
 		contents.add(UI.wrap_alignment(w, top_padding, SECTION_PADDING, SECTION_PADDING, SECTION_PADDING));
 	}

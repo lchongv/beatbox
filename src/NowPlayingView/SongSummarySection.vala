@@ -203,11 +203,13 @@ public class BeatBox.SongSummarySection : Box {
 		lyrics_holder.set_widget(lyrics_scroll);
 		
 		left_side.add(metadata);
-		left_side.pack_start(UI.wrap_alignment(summary_text, 6, 0, 0, 6), true, true, 0);
-		left_side.pack_start(UI.wrap_alignment(album_songs_holder, 6, 0, 0, 6), true, true, 0);
+		summary_text.vexpand = album_songs_holder.vexpand = true;
+		left_side.add(UI.wrap_alignment(summary_text, 6, 0, 0, 6));
+		left_side.add(UI.wrap_alignment(album_songs_holder, 6, 0, 0, 6));
 		
-		pack_start(UI.wrap_alignment(left_side, 0, 0, 0, 0), true, true, 0);
-		pack_end(UI.wrap_alignment(lyrics_holder, 0, 0, 0, 12), false, true, 0);
+		left_side.hexpand = true;
+		add(UI.wrap_alignment(left_side, 0, 0, 0, 0));
+		add(UI.wrap_alignment(lyrics_holder, 0, 0, 0, 12));
 	}
 	
 	void login_returned_lastfm(bool success) {

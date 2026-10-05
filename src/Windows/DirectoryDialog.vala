@@ -58,7 +58,8 @@ public class BeatBox.DirectoryDialog : Dialog {
 		entry.activate.connect (() => search (entry.text.strip ()));
 		spinner = new Spinner ();
 		var top = new Box (Orientation.HORIZONTAL, 6);
-		top.pack_start (entry, true, true, 0);
+		entry.hexpand = true;
+		top.add(entry);
 		top.add(spinner);
 
 		store = new Gtk.ListStore (6, typeof (string), typeof (string), typeof (string), typeof (string), typeof (string), typeof (bool));
@@ -99,7 +100,8 @@ public class BeatBox.DirectoryDialog : Dialog {
 		box.spacing = 8;
 		box.margin = 12;
 		box.add(top);
-		box.pack_start (scroll, true, true, 0);
+		scroll.vexpand = true;
+		box.add(scroll);
 		box.add(status);
 		box.add(source);
 

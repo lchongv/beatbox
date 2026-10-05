@@ -39,7 +39,6 @@ public class BeatBox.EmbeddedAlert : Gtk.EventBox {
     protected Gtk.Label primary_text_label;
     protected Gtk.Label secondary_text_label;
     protected Gtk.Image image;
-    protected Gtk.ButtonBox action_button_box;
 
     const int MIN_HORIZONTAL_MARGIN = 84;
     const int MIN_VERTICAL_MARGIN = 48;
@@ -47,9 +46,6 @@ public class BeatBox.EmbeddedAlert : Gtk.EventBox {
     public EmbeddedAlert () {
         get_style_context ().add_class (Gtk.STYLE_CLASS_VIEW);
         // get_style_context ().add_class (Granite.STYLE_CLASS_CONTENT_VIEW);
-
-        action_button_box = new Gtk.ButtonBox (Gtk.Orientation.HORIZONTAL);
-        action_button_box.valign = Gtk.Align.START;
 
         primary_text_label = new Gtk.Label (null);
         primary_text_label.margin_bottom = 12;
@@ -74,7 +70,6 @@ public class BeatBox.EmbeddedAlert : Gtk.EventBox {
         var message_vbox = new Gtk.Box (Gtk.Orientation.VERTICAL, 0);
         message_vbox.add(primary_text_label);
         message_vbox.add(secondary_text_label);
-        message_vbox.pack_end (action_button_box, false, false, 0);
 
         content_hbox = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0);
         content_hbox.halign = content_hbox.valign = Gtk.Align.CENTER; // center-align the content
@@ -82,7 +77,8 @@ public class BeatBox.EmbeddedAlert : Gtk.EventBox {
         content_hbox.margin_start = content_hbox.margin_end = MIN_HORIZONTAL_MARGIN;
 
         content_hbox.add(image);
-        content_hbox.pack_end (message_vbox, true, true, 0);
+        message_vbox.hexpand = true;
+        content_hbox.add (message_vbox);
 
         add (content_hbox);
     }
@@ -123,8 +119,6 @@ public class BeatBox.EmbeddedAlert : Gtk.EventBox {
 
         set_icon_visible (show_icon);
 
-        set_buttons_visible (false); // ponytail: no caller ever passed action buttons
-
         primary_text_label.set_markup (PRIMARY_TEXT_MARKUP.printf (Markup.escape_text (primary_text, -1)));
         secondary_text_label.set_markup (secondary_text);
     }
@@ -139,10 +133,6 @@ public class BeatBox.EmbeddedAlert : Gtk.EventBox {
 
     public void set_icon_visible (bool visible) {
         set_widget_visible (image, visible);
-    }
-
-    public void set_buttons_visible (bool visible) {
-        set_widget_visible (action_button_box, visible);
     }
 
     private static string get_icon_name_for_message_type (Gtk.MessageType message_type) {

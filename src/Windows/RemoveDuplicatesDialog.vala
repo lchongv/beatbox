@@ -84,8 +84,8 @@ public class BeatBox.RemoveDuplicatesDialog : Gtk.Window {
 		buttonSep.set_spacing (6);
 		buttonSep.set_layout(ButtonBoxStyle.END);
 		buttonSep.add(feedbackBox);
-		buttonSep.pack_end(cancel, false, false, 0);
-		buttonSep.pack_end(analyze, false, false, 0);
+		buttonSep.add(cancel);
+		buttonSep.add(analyze);
 		((Gtk.ButtonBox)buttonSep).set_child_secondary(feedbackBox, true);
 		
 		// fancy up the category labels
@@ -99,9 +99,14 @@ public class BeatBox.RemoveDuplicatesDialog : Gtk.Window {
 		content.add(wrap_alignment(matchLabel, 10, 0, 0, 0));
 		content.add(wrap_alignment(matchOption, 0, 0, 0, 10));
 		content.add(wrap_alignment(percent_box, 0, 0, 0, 10));
-		content.pack_end(buttonSep, false, true, 10);
+		buttonSep.margin_top = buttonSep.margin_bottom = 10;
+		buttonSep.vexpand = true;
+		buttonSep.valign = Gtk.Align.END; // at the bottom
+		content.add(buttonSep);
 		
-		padding.pack_start(content, true, true, 10);
+		content.hexpand = true;
+		content.margin_start = content.margin_end = 10;
+		padding.add(content);
 		add(padding);
 		
 		is_working.set_no_show_all(true);

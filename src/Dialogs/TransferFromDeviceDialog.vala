@@ -161,13 +161,19 @@ public class BeatBox.TransferFromDeviceDialog : Window {
 		/* set up controls layout */
 		Box information = new Box(Orientation.HORIZONTAL, 0);
 		Box information_text = new Box(Orientation.VERTICAL, 0);
-		information.pack_start(warning, false, false, 10);
-		information_text.pack_start(title, false, true, 10);
+		warning.margin_start = warning.margin_end = 10;
+		information.add(warning);
+		title.margin_top = title.margin_bottom = 10;
+		information_text.add(title);
 		information_text.add(info);
-		information.pack_start(information_text, true, true, 10);
+		information_text.hexpand = true;
+		information_text.margin_start = information_text.margin_end = 10;
+		information.add(information_text);
 		
 		Box listBox = new Box(Orientation.VERTICAL, 0);
-		listBox.pack_start(mediasScroll, true, true, 5);
+		mediasScroll.vexpand = true;
+		mediasScroll.margin_top = mediasScroll.margin_bottom = 5;
+		listBox.add(mediasScroll);
 		
 		Expander exp = new Expander(_("Select individual medias to import:"));
 		exp.add(listBox);
@@ -175,16 +181,20 @@ public class BeatBox.TransferFromDeviceDialog : Window {
 		
 		var bottomButtons = new ButtonBox(Orientation.HORIZONTAL);
 		bottomButtons.set_layout(ButtonBoxStyle.END);
-		bottomButtons.pack_end(cancel, false, false, 10);
-		bottomButtons.pack_end(transfer, false, false, 0);
+		bottomButtons.add(cancel);
+		bottomButtons.add(transfer);
 		bottomButtons.set_spacing(6);
 		
 		content.add(information);
 		content.add(UI.wrap_alignment(transferAll, 5, 0, 0, 75));
-		content.pack_start(UI.wrap_alignment(exp, 0, 0, 0, 75), true, true, 0);
-		content.pack_start(bottomButtons, false, true, 10);
+		exp.vexpand = true;
+		content.add(UI.wrap_alignment(exp, 0, 0, 0, 75));
+		bottomButtons.margin_top = bottomButtons.margin_bottom = 10;
+		content.add(bottomButtons);
 		
-		padding.pack_start(content, true, true, 10);
+		content.hexpand = true;
+		content.margin_start = content.margin_end = 10;
+		padding.add(content);
 		
 		viewMenu = new Gtk.Menu();
 		selectItem = new Gtk.MenuItem.with_label(_("Check Item"));

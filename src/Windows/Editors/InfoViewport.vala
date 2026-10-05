@@ -132,7 +132,8 @@ public class BeatBox.InfoViewport : Viewport {
 		location.has_tooltip = true;
 		
 		content.add(left);
-		content.pack_start(UI.wrap_alignment(right, 0, 10, 10, 4), true, true, 0);
+		right.hexpand = true;
+		content.add(UI.wrap_alignment(right, 0, 10, 10, 4));
 		
 		add(content);
 		

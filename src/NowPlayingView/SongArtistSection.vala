@@ -134,15 +134,19 @@ public class BeatBox.SongArtistSection : Box {
 		artist_tags.set_line_wrap(true);
 		top_tracks_label.set_markup("<b>%s</b>".printf(_("Top Tracks")));
 		
-		left_side.pack_start(artist_top_albums_holder, true, true, 0);
+		artist_top_albums_holder.vexpand = true;
+		left_side.add(artist_top_albums_holder);
 		
 		right_side.add(artist_top_songs_holder);
 		right_side.add(UI.wrap_alignment(similar_artists, 6, 0, 0, 1));
 		right_side.add(UI.wrap_alignment(artist_tags, 6, 0, 0, 1));
-		right_side.pack_end(scroll3, false, true, 0);
+		scroll3.vexpand = true;
+		scroll3.valign = Align.END; // at the bottom
+		right_side.add(scroll3);
 		
+		right_side.hexpand = true;
 		hbox.add(left_side);
-		hbox.pack_end(UI.wrap_alignment(right_side, 0, 0, 0, 12), true, true, 0);
+		hbox.add(UI.wrap_alignment(right_side, 0, 0, 0, 12));
 		
 		add(UI.wrap_alignment(artist_section_label, 6, 0, 6, 0));
 		add(hbox);
