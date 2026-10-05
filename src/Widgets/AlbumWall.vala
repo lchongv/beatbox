@@ -39,11 +39,19 @@ public class BeatBox.AlbumWall : Layout {
 	/** Double click on a cover, or the band's play button */
 	public signal void album_activated (Album album);
 
+	// GTK3 controllers need a reference
+	GestureMultiPress click_gesture;
+	EventControllerMotion motion_controller;
+
 	public AlbumWall (GenericGrid grid, SourceView wrapper) {
 		this.grid = grid;
 		this.wrapper = wrapper;
 		get_style_context ().add_class ("albumwall");
 		add_events (Gdk.EventMask.BUTTON_PRESS_MASK | Gdk.EventMask.POINTER_MOTION_MASK);
+		click_gesture = new GestureMultiPress (this);
+		click_gesture.pressed.connect (on_pressed);
+		motion_controller = new EventControllerMotion (this);
+		motion_controller.motion.connect (on_motion);
 
 		grid.visible_changed.connect (refresh);
 		App.covers.cover_changed.connect (() => queue_draw ());
@@ -242,28 +250,32 @@ public class BeatBox.AlbumWall : Layout {
 		return -1;
 	}
 
-	public override bool button_press_event (Gdk.EventButton ev) {
-		if (ev.button != 1 || ev.window != get_bin_window ())
-			return false;
-		int i = index_at (ev.x, ev.y);
-		if (ev.type == Gdk.EventType.DOUBLE_BUTTON_PRESS) {
-			if (i >= 0)
-				album_activated (albums[i]);
-			return true;
-		}
-		if (ev.type != Gdk.EventType.BUTTON_PRESS)
-			return true;
+	/** Where the current event happened in the scrolled area; false when it was over the band's widgets */
+	bool bin_coords (out double x, out double y) {
+		x = y = 0;
+		var ev = get_current_event ();
+		return ev != null && ev.get_window () == get_bin_window () && ev.get_coords (out x, out y);
+	}
+
+	void on_pressed (int n_press, double widget_x, double widget_y) {
+		double x, y;
+		if (!bin_coords (out x, out y))
+			return;
+		int i = index_at (x, y);
+		// every press opens or closes the band; the second one of a double click also plays the album
 		if (i < 0 || i == open_index)
 			close_detail ();
 		else
 			open_detail (i);
-		return true;
+		if (n_press == 2 && i >= 0)
+			album_activated (albums[i]);
+		click_gesture.set_state (EventSequenceState.CLAIMED);
 	}
 
-	public override bool motion_notify_event (Gdk.EventMotion ev) {
-		if (ev.window == get_bin_window ())
-			ev.window.set_cursor ((index_at (ev.x, ev.y) >= 0) ? new Gdk.Cursor.for_display (get_display (), Gdk.CursorType.HAND2) : null);
-		return false;
+	void on_motion (double widget_x, double widget_y) {
+		double x, y;
+		if (bin_coords (out x, out y))
+			get_bin_window ().set_cursor ((index_at (x, y) >= 0) ? new Gdk.Cursor.for_display (get_display (), Gdk.CursorType.HAND2) : null);
 	}
 
 	/* ---------- the detail band ---------- */

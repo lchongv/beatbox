@@ -182,7 +182,10 @@ public class BeatBox.EqualizerWindow : Gtk.Window {
 		preset_combo.preset_selected.connect (preset_selected);
 		new_preset_entry.activate.connect (add_new_preset);
 		new_preset_entry.icon_press.connect (new_preset_entry_icon_pressed);
-		new_preset_entry.focus_out_event.connect (on_entry_focus_out);
+		new_preset_entry.notify["has-focus"].connect (() => {
+			if (!new_preset_entry.has_focus)
+				on_entry_focus_out ();
+		});
 
 		close_button.clicked.connect(on_quit);
 		destroy.connect(on_quit);
@@ -197,10 +200,9 @@ public class BeatBox.EqualizerWindow : Gtk.Window {
 		App.playback.set_volume(volume.get_volume());
 	}
 	
-	bool on_entry_focus_out () {
+	void on_entry_focus_out () {
 		if (!closing)
 			new_preset_entry.grab_focus();
-		return false;
 	}
 
 	void set_sliders_sensitivity (bool sensitivity) {

@@ -43,6 +43,7 @@ public abstract class BeatBox.GenericList : FastList {
 	
 	int timeout_count; // increases for every timeout added, decreases once timeout is executed
 	protected bool scrolled_recently;
+	Gtk.GestureMultiPress click_gesture; // GTK3 controllers need a reference
 	protected bool dragging;
 	
 	protected CellDataFunctionHelper cellHelper;
@@ -113,7 +114,11 @@ public abstract class BeatBox.GenericList : FastList {
 		drag_begin.connect(on_drag_begin);
 		drag_data_get.connect(on_drag_data_get);
 		drag_end.connect(on_drag_end);
-		button_press_event.connect(view_click);
+		// any press, before the list handles it
+		click_gesture = new Gtk.GestureMultiPress(this);
+		click_gesture.button = 0;
+		click_gesture.propagation_phase = Gtk.PropagationPhase.CAPTURE;
+		click_gesture.pressed.connect(() => { scrolled_recently = true; });
 		row_activated.connect(row_activated_signal);
 		rows_reordered.connect(updateTreeViewSetup);
 		App.playback.current_cleared.connect(current_cleared);
@@ -257,32 +262,35 @@ public abstract class BeatBox.GenericList : FastList {
 				get_column(index).widget = header;
 			}
 			
-			get_column(index).get_button().button_press_event.connect(view_header_click);
+			// CAPTURE: before the header button turns the press into a click (sorting)
+			var header_click = new Gtk.GestureMultiPress(get_column(index).get_button());
+			header_click.button = 0;
+			header_click.propagation_phase = Gtk.PropagationPhase.CAPTURE;
+			header_click.pressed.connect(view_header_click);
+			get_column(index).get_button().set_data("click-gesture", header_click); // GTK3 controllers need a reference
 			get_column(index).notify["width"].connect(updateTreeViewSetup);
 
 			++index;
 		}
 	}
 	
-	protected bool view_header_click(Gtk.Widget w, Gdk.EventButton e) {
-		if(e.button == 3) {
+	protected void view_header_click(Gtk.GestureMultiPress gesture, int n_press, double x, double y) {
+		uint button = gesture.get_current_button();
+		if(button == 3) {
 			columnChooserMenu.popup_at_pointer(null);
-			return true;
+			gesture.set_state(Gtk.EventSequenceState.CLAIMED);
 		}
-		else if(e.button == 1) {
+		else if(button == 1) {
 			// If the user tries to sort, then make sure that all other views
 			// become sorted (unshuffled) if they are shuffled
 			if(App.settings.main.shuffle_mode == (int)PlaybackInterface.ShuffleMode.ALL) {
 				App.settings.main.shuffle_mode = 0;
-				return true;
+				gesture.set_state(Gtk.EventSequenceState.CLAIMED);
+				return;
 			}
 			
 			updateTreeViewSetup();
-			
-			return false;
 		}
-
-		return false;
 	}
 	
 	public void row_activated_signal(TreePath path, TreeViewColumn column) {
@@ -501,12 +509,6 @@ public abstract class BeatBox.GenericList : FastList {
 		}
 		
 		App.playback.queue_medias(to_queue);
-	}
-	
-	bool view_click(Gdk.EventButton event) {
-		scrolled_recently = true;
-		
-		return false;
 	}
 	
 	// TODO: Scroll so that the media is in the center of the viewport

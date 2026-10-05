@@ -99,7 +99,10 @@ public class BeatBox.StatusBar : Gtk.ActionBar {
         
         repeat_chooser.option_changed.connect(repeat_chooser_option_changed);
         shuffle_chooser.option_changed.connect(shuffle_chooser_option_changed);
-        eq_eventbox.button_press_event.connect(show_eq_button_clicked);
+        var eq_press = new GestureMultiPress(eq_eventbox);
+        eq_press.button = 0;
+        eq_press.pressed.connect(show_eq_button_clicked);
+        eq_eventbox.set_data("press-gesture", eq_press); // GTK3 controllers need a reference
     }
 
     public void insert_widget (Widget w, bool left) {
@@ -194,12 +197,10 @@ public class BeatBox.StatusBar : Gtk.ActionBar {
         }
     }
     
-    bool show_eq_button_clicked(Gdk.EventButton event) {
+    void show_eq_button_clicked() {
 		if(App.actions.show_equalizer.get_enabled()) {
 			App.actions.show_equalizer.activate(null);
 		}
-		
-		return false;
     }
 }
 

@@ -57,6 +57,10 @@ public class BeatBox.RatingWidget : Gtk.EventBox {
     private Gdk.Pixbuf not_starred;
     private Gdk.Pixbuf starred;
 
+    // GTK3 controllers need a reference
+    private Gtk.EventControllerMotion motion_controller;
+    private Gtk.GestureMultiPress press_gesture;
+
     /**
      * It's not necessary to set a context. In most cases it should be 'null'.
      */
@@ -88,7 +92,18 @@ public class BeatBox.RatingWidget : Gtk.EventBox {
                   | Gdk.EventMask.POINTER_MOTION_MASK
                   | Gdk.EventMask.LEAVE_NOTIFY_MASK);
 
-        button_press_event.connect (on_button_press);
+        // in a menu the item gets the events and passes them on (RatingMenuItem)
+        if (!is_menu_item) {
+            motion_controller = new Gtk.EventControllerMotion (this);
+            motion_controller.motion.connect ((x, y) => hover (x));
+            motion_controller.leave.connect (end_hover);
+            press_gesture = new Gtk.GestureMultiPress (this);
+            press_gesture.button = 0;
+            press_gesture.pressed.connect (() => {
+                press ();
+                press_gesture.set_state (Gtk.EventSequenceState.CLAIMED);
+            });
+        }
         state_flags_changed.connect (render_stars);
     }
 
@@ -203,22 +218,20 @@ public class BeatBox.RatingWidget : Gtk.EventBox {
     }
 
 
-    /** Just draw new rating. Needed by menuitems **/
-    public override bool motion_notify_event (Gdk.EventMotion event) {
-        hover_rating = get_new_rating (event.x);
+    /** Just draw new rating (x: from the left of the stars). Needed by menuitems **/
+    internal void hover (double x) {
+        hover_rating = get_new_rating (x);
         update_rating (hover_rating);
-        return true;
     }
 
     /** draw new rating AND update rating **/
-     bool on_button_press (Gdk.EventButton event) {
+    internal void press () {
         set_rating (hover_rating);
-        return true;
     }
 
-    public override bool leave_notify_event (Gdk.EventCrossing ev) {
+    /** the pointer left: back to the rating **/
+    internal void end_hover () {
         update_rating (rating);
-        return true;
     }
 
     internal void update_rating (int fake_rating) {
@@ -321,6 +334,9 @@ public class BeatBox.RatingWidget : Gtk.EventBox {
 public class BeatBox.RatingMenuItem : Gtk.MenuItem {
 
     protected RatingWidget rating;
+    // GTK3 controllers need a reference
+    Gtk.EventControllerMotion motion_controller;
+    Gtk.GestureMultiPress press_gesture;
 
     public int rating_value {
         get {
@@ -334,6 +350,16 @@ public class BeatBox.RatingMenuItem : Gtk.MenuItem {
     public RatingMenuItem () {
         rating = new RatingWidget (false, Gtk.IconSize.MENU, false, get_style_context ());
         add (rating);
+
+        motion_controller = new Gtk.EventControllerMotion (this);
+        motion_controller.motion.connect (hover_at);
+        motion_controller.leave.connect (() => rating.end_hover ());
+        press_gesture = new Gtk.GestureMultiPress (this);
+        press_gesture.button = 0;
+        press_gesture.pressed.connect ((n_press, x, y) => {
+            hover_at (x, y);
+            rating.press ();
+        });
 
         // Force the NORMAL state flag
         this.state_flags_changed.connect ( () => {
@@ -375,26 +401,12 @@ public class BeatBox.RatingMenuItem : Gtk.MenuItem {
         return rating.get_n_stars ();
     }
 
-    /**
-     * /!\ Don't use these methods
-     */
-
-    public override bool motion_notify_event(Gdk.EventMotion ev) {
-        rating.motion_notify_event (ev);
-        rating.queue_draw();
-        return true;
-    }
-
-    public override bool button_press_event(Gdk.EventButton ev) {
-        rating.button_press_event(ev);
-        //activate(); // for some reason, after this function returns it
-        // calls activate even though the return is true. so, don't do it ourselves
-        return true;
-    }
-
-    public override bool leave_notify_event(Gdk.EventCrossing ev) {
-        rating.update_rating (rating_value);
-        return true;
+    // The item's own window covers the stars: it gets the events and passes them
+    // on, in the stars' coordinates. The release then activates the item as usual.
+    void hover_at (double x, double y) {
+        int star_x, star_y;
+        translate_coordinates (rating, (int) x, (int) y, out star_x, out star_y);
+        rating.hover (star_x);
     }
 }
 

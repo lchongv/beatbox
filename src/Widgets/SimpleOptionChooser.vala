@@ -31,6 +31,7 @@ using Gee;
 
 public class BeatBox.SimpleOptionChooser : EventBox {
 	Gtk.Menu? menu = null;
+	Gtk.GestureMultiPress press_gesture; // GTK3 controllers need a reference
 	public LinkedList<RadioMenuItem> items;
 	public LinkedList<Gtk.Image> images;
 
@@ -52,7 +53,9 @@ public class BeatBox.SimpleOptionChooser : EventBox {
 		set_above_child(true);
 		set_visible_window(false);
 
-		button_press_event.connect(buttonPress);
+		press_gesture = new Gtk.GestureMultiPress(this);
+		press_gesture.button = 0;
+		press_gesture.pressed.connect(buttonPress);
 	}
 
 	public void setOption(int index) {
@@ -103,24 +106,20 @@ public class BeatBox.SimpleOptionChooser : EventBox {
 		return items.size - 1;
 	}
 
-	bool buttonPress(Gdk.EventButton event) {
-		if (event.type == Gdk.EventType.BUTTON_PRESS) {
-			if(event.button == 1) {
-			    
-				if(clicked_index == 0) {
-					setOption(previous_index);
-				}
-				else {
-					previous_index = clicked_index;
-					setOption(0);
-				}
+	void buttonPress() {
+		uint button = press_gesture.get_current_button();
+		if(button == 1) {
+			if(clicked_index == 0) {
+				setOption(previous_index);
 			}
-			else if(event.button == 3 && menu != null && items.size > 1) {
-				menu.popup_at_pointer(null);
+			else {
+				previous_index = clicked_index;
+				setOption(0);
 			}
 		}
-
-		return false;
+		else if(button == 3 && menu != null && items.size > 1) {
+			menu.popup_at_pointer(null);
+		}
 	}
 }
 

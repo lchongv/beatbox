@@ -43,14 +43,21 @@ namespace BeatBox.UI {
     }
 
     /**
-     * Makes a Gtk.Window draggable
+     * Makes a Gtk.Window draggable. The move starts once the pointer moves: a
+     * click stays a click (a window manager's move would swallow a double click).
      */
     public void make_window_draggable (Gtk.Window window) {
-        window.add_events (Gdk.EventMask.BUTTON_PRESS_MASK | Gdk.EventMask.POINTER_MOTION_MASK);
-        window.button_press_event.connect ( (event) => {
-            window.begin_move_drag ((int)event.button, (int)event.x_root, (int)event.y_root, event.time);
-            return true;
+        var drag = new Gtk.GestureDrag (window);
+        drag.button = 0;
+        double start_x = 0, start_y = 0;
+        drag.drag_begin.connect (() => Gtk.get_current_event ().get_root_coords (out start_x, out start_y));
+        drag.drag_update.connect ((dx, dy) => {
+            if (!Gtk.drag_check_threshold (window, 0, 0, (int) dx, (int) dy))
+                return;
+            window.begin_move_drag ((int) drag.get_current_button (), (int) start_x, (int) start_y, Gtk.get_current_event_time ());
+            drag.reset ();
         });
+        window.set_data ("move-gesture", drag); // GTK3 controllers need a reference
     }
 
     /**

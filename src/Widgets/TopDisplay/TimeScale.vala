@@ -31,6 +31,7 @@ public class BeatBox.TimeScale : Box {
 	private Label left_time;
 	private Label right_time;
 	private Scale scale;
+	private GestureMultiPress click_gesture; // GTK3 controllers need a reference
 	
 	private const string WIDGET_STYLESHEET = """
         .scale.slider,
@@ -81,8 +82,15 @@ public class BeatBox.TimeScale : Box {
 		add(scale);
 		add(right_time);
 		
-		scale.button_press_event.connect(scale_button_press);
-		scale.button_release_event.connect(scale_button_release);
+		// pressing and releasing jump there (instead of the scale's own handling, dragging included)
+		click_gesture = new GestureMultiPress(scale);
+		click_gesture.button = 0;
+		click_gesture.propagation_phase = PropagationPhase.CAPTURE;
+		click_gesture.pressed.connect((n_press, x, y) => {
+			seek_to(x);
+			click_gesture.set_state(EventSequenceState.CLAIMED);
+		});
+		click_gesture.released.connect((n_press, x, y) => seek_to(x));
 		scale.value_changed.connect(value_changed);
 		scale.change_value.connect(change_value);
 		App.playback.current_position_update.connect(player_position_update);
@@ -104,39 +112,12 @@ public class BeatBox.TimeScale : Box {
 		return scale.get_value();
 	}
 	
-	bool scale_button_press(Gdk.EventButton event) {
-		event.button = 2;
-		
-		//calculate percentage to go to based on location
-		Gtk.Allocation extents;
-		int point_x = 0;
-		
-		point_x = (int)event.x;
-		scale.get_allocation(out extents);
-		
-		// get seconds of media
-		double mediatime = (double)((double)point_x/(double)extents.width) * scale.get_adjustment().upper;
+	// the point of the media at x pixels from the scale's left
+	void seek_to(double x) {
+		int point_x = (int)x;
+		double mediatime = ((double)point_x / (double)scale.get_allocated_width()) * scale.get_adjustment().upper;
 		
 		change_value(ScrollType.NONE, mediatime);
-		
-		return true;
-	}
-	
-	bool scale_button_release(Gdk.EventButton event) {
-		event.button = 2;
-		
-		Gtk.Allocation extents;
-		int point_x = 0;
-		
-		point_x = (int)event.x;
-		scale.get_allocation(out extents);
-		
-		// get seconds of media
-		double mediatime = (double)((double)point_x/(double)extents.width) * scale.get_adjustment().upper;
-	
-		change_value(ScrollType.NONE, mediatime);
-		
-		return true;
 	}
 		
 	public bool change_value(ScrollType scroll, double val) {
