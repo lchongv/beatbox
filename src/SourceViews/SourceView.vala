@@ -29,7 +29,6 @@
  */
 
 using Gtk;
-using Granite.Widgets;
 using Gee;
 
 public abstract class BeatBox.SourceView : Box, View {

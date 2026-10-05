@@ -185,12 +185,7 @@ public class BeatBox.App : Gtk.Application {
 			return;
 		}
 		
-		Granite.Services.Logger.initialize ("BeatBox"); // the [INFO hh:mm] log format
-		// Setup debugger
-		if (Environment.get_variable ("G_MESSAGES_DEBUG") != null) // was Granite's --debug
-			Granite.Services.Logger.DisplayLevel = Granite.Services.LogLevel.DEBUG;
-		else
-			Granite.Services.Logger.DisplayLevel = Granite.Services.LogLevel.INFO;
+		Logger.initialize (); // the [INFO hh:mm:ss] log format
 		
 		Skins.apply (settings.main.skin); // base look at APPLICATION + 1, optional skin at + 2
 		Gtk.StyleContext.add_provider_for_screen (Gdk.Screen.get_default (), marker_css, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION + 3);

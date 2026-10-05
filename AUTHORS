@@ -12,3 +12,8 @@ Contributions:
 
 2026 fork (GTK3 / GStreamer 1.0 / meson port):
     lchongv
+
+Adapted from Granite 6.2.0 (elementary, Inc. and contributors, LGPL-3.0-or-later):
+    the view switcher and the empty-view page (src/Widgets/ModeButton.vala,
+    src/Widgets/Welcome.vala), the log format (src/Core/Logger.vala) and the
+    cover shadow's blur (src/Utils/PixbufUtils.vala)

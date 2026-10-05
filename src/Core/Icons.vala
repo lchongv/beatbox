@@ -166,30 +166,6 @@ public class BeatBox.Icons : GLib.Object, BeatBox.IconsInterface {
         DEFAULT_ALBUM_SHADOW_PIXBUF = shadow_icon.render (null);
 	}
 	
-	/**
-	 * @param surface_size size of the new pixbuf. Set a value of 0 to use the pixbuf's default size.
-	 **/
-	public Gdk.Pixbuf get_pixbuf_shadow (Gdk.Pixbuf pixbuf, int surface_size = ALBUM_VIEW_IMAGE_SIZE,
-	                                      int shadow_size = 5, double alpha = 0.8)
-	{
-		int S_WIDTH = (surface_size > 0)? surface_size : pixbuf.width;
-		int S_HEIGHT = (surface_size > 0)? surface_size : pixbuf.height;
-
-		var buffer_surface = new Granite.Drawing.BufferSurface (S_WIDTH, S_HEIGHT);
-
-		S_WIDTH -= 2 * shadow_size;
-		S_HEIGHT -= 2 * shadow_size;
-
-		buffer_surface.context.rectangle (shadow_size, shadow_size, S_WIDTH, S_HEIGHT);
-		buffer_surface.context.set_source_rgba (0, 0, 0, alpha);
-		buffer_surface.context.fill();
-		buffer_surface.fast_blur(2, 3);
-		Gdk.cairo_set_source_pixbuf(buffer_surface.context, pixbuf.scale_simple (S_WIDTH, S_HEIGHT, Gdk.InterpType.BILINEAR), shadow_size, shadow_size);
-		buffer_surface.context.paint();
-
-		return buffer_surface.load_to_pixbuf();
-	}
-	
 	public GLib.Icon? render_gicon(string icon_name, Gtk.IconSize size, Gtk.StyleContext? context = null) {
 		var icon = new BeatBox.Icon (icon_name, null, null, null, false);
 		return icon.get_gicon ();

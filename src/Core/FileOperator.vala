@@ -135,7 +135,10 @@ public class BeatBox.FileOperator : Object, FileInterface {
 			}
 		}
 		catch(GLib.Error err) {
-			warning("Could not pre-scan music folder. Progress percentage may be off: %s", err.message);
+			if(err is IOError.NOT_FOUND) // a library folder that doesn't exist (yet), like ~/Podcasts
+				debug("Nothing to queue: %s", err.message);
+			else
+				warning("Could not pre-scan music folder. Progress percentage may be off: %s", err.message);
 		}
         
         // Let it be known that all files are queued and may now finish import

@@ -1,4 +1,4 @@
-project('beatbox', 'vala', 'c', version: '0.10.0')
+project('beatbox', 'vala', 'c', version: '0.10.1')
 
 gnome = import('gnome')
 i18n = import('i18n')
@@ -43,7 +43,6 @@ deps = [
   dependency('libnotify'),
   dependency('libsoup-3.0'),
   dependency('json-glib-1.0'),
-  dependency('granite'),
   dependency('sqlite3'),
   gpod_dep,
   valac.find_library('posix'),
@@ -154,6 +153,7 @@ app_sources = files(
   'src/Core/FolderWatcher.vala',
   'src/Core/CoverEmbedder.vala',
   'src/Core/Launcher.vala',
+  'src/Core/Logger.vala',
   'src/CellRenderers/SideBarRenderer.vala',
   'src/DataBase/DataBaseManager.vala',
   'src/DBus/MediaKeyListener.vala',
@@ -237,6 +237,8 @@ app_sources = files(
   'src/Widgets/SimpleOptionChooser.vala',
   'src/Widgets/VolumeWidget.vala',
   'src/Widgets/EmbeddedAlert.vala',
+  'src/Widgets/ModeButton.vala',
+  'src/Widgets/Welcome.vala',
   'src/Widgets/TopDisplay/TopDisplay.vala',
   'src/Widgets/TopDisplay/LcdCover.vala',
   'src/Widgets/TopDisplay/TimeScale.vala',

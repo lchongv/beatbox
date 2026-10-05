@@ -27,7 +27,6 @@
 
 using Gtk;
 using Gee;
-using Granite;
 
 public class BeatBox.StationEditor : Object, MediaEditorInterface {
 	private Box horiz; // separates text with numerical editors

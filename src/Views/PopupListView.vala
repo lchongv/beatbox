@@ -29,11 +29,7 @@ using Gee;
 using Gtk;
 
 
-#if USE_GRANITE_DECORATED_WINDOW
-public class BeatBox.PopupListView : Granite.Widgets.DecoratedWindow {
-#else
 public class BeatBox.PopupListView : Gtk.Window {
-#endif
 
 	public const int MIN_SIZE = 400;
 	
@@ -46,11 +42,7 @@ public class BeatBox.PopupListView : Gtk.Window {
 	MusicList list;
 
 	public PopupListView (SourceView parent_wrapper) {
-#if USE_GRANITE_DECORATED_WINDOW
-        base ("", "album-list-view", "album-list-view");
-#else
 
-#endif
 		this.view_wrapper = parent_wrapper;
 
 		set_size_request (MIN_SIZE, MIN_SIZE);
@@ -71,7 +63,6 @@ public class BeatBox.PopupListView : Gtk.Window {
 		set_skip_taskbar_hint (true);
 		set_resizable(false);
 
-#if !USE_GRANITE_DECORATED_WINDOW
 		window_position = Gtk.WindowPosition.CENTER_ON_PARENT;
 
 		// window stuff
@@ -86,13 +77,6 @@ public class BeatBox.PopupListView : Gtk.Window {
 		close.halign = Gtk.Align.START;
 		close.set_relief(Gtk.ReliefStyle.NONE);
 		close.clicked.connect( () =>  { this.hide(); });
-#else
-        // Don't destroy the window
-		this.delete_event.connect (hide_on_delete);
-
-        // Hide titlebar (we want to set a title, but not showing it!)
-        this.show_title = false;
-#endif
 		// album artist/album labels
 		album_label = new Label ("");
 		artist_label = new Label ("");
@@ -129,9 +113,7 @@ public class BeatBox.PopupListView : Gtk.Window {
 		// Add everything
 		var vbox = new Box(Orientation.VERTICAL, 0);
 
-#if !USE_GRANITE_DECORATED_WINDOW
 		vbox.add(close);
-#endif
 
 		vbox.add(album_label);
 		vbox.add(artist_label);
@@ -143,10 +125,8 @@ public class BeatBox.PopupListView : Gtk.Window {
 
 		rating.rating_changed.connect(rating_changed);
         App.library.medias_updated.connect (update_album_rating);
-#if !USE_GRANITE_DECORATED_WINDOW
 		/* Make window draggable */
 		UI.make_window_draggable (this);
-#endif
 	}
 
 

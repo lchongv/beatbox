@@ -39,7 +39,7 @@ public class BeatBox.StationSourceView : SourceView {
 		media_representation = _("station");
 		
 		// Setup welcome screen
-		welcome_screen = new Granite.Widgets.Welcome(_("Turn up the Radio"), _("No Stations were found."));
+		welcome_screen = new Welcome(_("Turn up the Radio"), _("No Stations were found."));
 		welcome_screen_keys = new HashMap<int, Device>();
 		var station_icon = App.icons.STATION.render (IconSize.DIALOG, null);
 		welcome_screen.append_with_pixbuf(station_icon, _("Find Stations"), _("Search thousands of stations on radio-browser.info."));

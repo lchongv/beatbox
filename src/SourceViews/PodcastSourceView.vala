@@ -40,7 +40,7 @@ public class BeatBox.PodcastSourceView : SourceView {
 		media_representation = _("podcast");
 		
 		// Setup welcome screen
-		welcome_screen = new Granite.Widgets.Welcome(_("Subscribe to Podcasts"), _("No Podcasts were found."));
+		welcome_screen = new Welcome(_("Subscribe to Podcasts"), _("No Podcasts were found."));
 		welcome_screen_keys = new HashMap<int, Device>();
 		var podcast_icon = App.icons.PODCAST.render (IconSize.DIALOG, null);
 		welcome_screen.append_with_pixbuf(podcast_icon, _("Find Podcasts"), _("Search the Apple Podcasts directory."));

@@ -7,9 +7,9 @@ Cover Flow and a cover grid, podcasts, internet radio and iPod sync.
 This is a fork of BeatBox by Scott Ringwelski and contributors
 (originally at https://launchpad.net/beat-box, later continued as Noise).
 The original project is no longer maintained. In 2026 it was ported to
-meson, GTK3, GStreamer 1.0, libgee-0.8, libsoup-3 and Granite 6, and given
-a new look, Cover Flow, an inline cover grid, podcast and radio directories,
-online album art and skins.
+meson, GTK3, GStreamer 1.0, libgee-0.8 and libsoup-3 (without Granite), and
+given a new look, Cover Flow, an inline cover grid, podcast and radio
+directories, online album art and skins.
 
 License: GPL version 3 (see COPYING); the sources are "GPL version 2 or
 later". Original authors and the fork's changes are listed in AUTHORS.
@@ -17,7 +17,7 @@ later". Original authors and the fork's changes are listed in AUTHORS.
 Building
 --------
 
-Dependencies (Arch): vala meson gtk3 granite libgee gstreamer gst-plugins-base
+Dependencies (Arch): vala meson gtk3 libgee gstreamer gst-plugins-base
 gst-plugins-good taglib libxml2 libnotify libsoup3 json-glib libgpod sqlite
 
     meson setup build

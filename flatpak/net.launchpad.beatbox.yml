@@ -32,18 +32,6 @@ cleanup:
   - /share/vala
   - '*.la'
 modules:
-  - name: granite
-    buildsystem: meson
-    config-opts:
-      - -Dintrospection=false
-    # BeatBox shows next to none of Granite's strings; its 150 catalogues aren't worth it
-    post-install:
-      - rm -rf /app/share/locale /app/bin/granite-demo
-    sources:
-      - type: archive
-        url: https://github.com/elementary/granite/archive/refs/tags/6.2.0.tar.gz
-        sha256: 067d31445da9808a802fca523630c3e4b84d2d7c78ae547ced017cb7f3b9c6b5
-
   - name: beatbox
     buildsystem: meson
     config-opts:
