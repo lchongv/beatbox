@@ -32,6 +32,7 @@ public class BeatBox.AdvancedSearchBox : Gtk.SearchEntry {
 	Gtk.EventControllerKey suggester_keys; // GTK3 controllers need a reference
 	bool listen_for_change;
 	string last_search;
+	Gdk.Event? last_key; // the key press behind the last change: popup_at_widget wants one
 	
 	View current_view;
 	HashTable<View, string> views_search;
@@ -85,6 +86,7 @@ public class BeatBox.AdvancedSearchBox : Gtk.SearchEntry {
 		View view = App.window.get_current_view();
 		var new_search = get_text();
 		last_search = new_search;
+		last_key = Gtk.get_current_event();
 		
 		if(view.supports_search()) {
 			// First notify that the search field changed
@@ -137,7 +139,7 @@ public class BeatBox.AdvancedSearchBox : Gtk.SearchEntry {
 				}
 				
 				search_suggester.show_all();
-				search_suggester.popup_at_widget(this, Gdk.Gravity.SOUTH_WEST, Gdk.Gravity.NORTH_WEST, null);
+				search_suggester.popup_at_widget(this, Gdk.Gravity.SOUTH_WEST, Gdk.Gravity.NORTH_WEST, last_key);
 			}
 			
 			return false;
