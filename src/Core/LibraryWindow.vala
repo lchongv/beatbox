@@ -96,6 +96,10 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 	bool songInfoShown; // the now playing view in place of the lists (Ctrl+I)
 	AdvancedSearchBox searchField;
 	
+	// GTK3 controllers need a reference
+	EventControllerKey key_controller;
+	GestureMultiPress lcd_cover_gesture;
+	
 	public StatusBar statusBar { get; private set; }
 	
 	// basic file stuff
@@ -271,7 +275,10 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		
         debug ("done with main window");
         
-        this.key_press_event.connect (keyPressed);
+        // keys reach keyPressed before the focused widget, as with the window's own key handler
+        key_controller = new EventControllerKey (this);
+        key_controller.propagation_phase = PropagationPhase.CAPTURE;
+        key_controller.key_pressed.connect (keyPressed);
         this.set_focus.connect(focused_widget_changed);
         this.window_state_event.connect(window_state_changed);
     }
@@ -323,12 +330,6 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		var lcdCoverBox = new EventBox(); // an Image gets no clicks of its own
 		lcdCoverBox.add(lcdCover);
 		lcdCoverBox.tooltip_text = _("Click to enlarge; drag to copy it into another application or folder");
-		// a click (released without dragging) enlarges it
-		lcdCoverBox.button_release_event.connect((e) => {
-			if (e.button == 1)
-				lcdCover.show_full_size(this);
-			return true;
-		});
 		Gtk.drag_source_set(lcdCoverBox, Gdk.ModifierType.BUTTON1_MASK, {}, Gdk.DragAction.COPY);
 		Gtk.drag_source_add_uri_targets(lcdCoverBox);
 		lcdCoverBox.drag_begin.connect((context) => {
@@ -341,9 +342,15 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 			if (path != null)
 				data.set_uris({ File.new_for_path(path).get_uri() });
 		});
-		// the press stops here (after the drag source saw it): in the title bar
-		// it would otherwise start moving the window as well
-		lcdCoverBox.button_press_event.connect(() => true);
+		// a click (released without dragging) enlarges it. The press stops here (after the
+		// drag source saw it): in the title bar it would otherwise start moving the window too
+		lcd_cover_gesture = new GestureMultiPress(lcdCoverBox);
+		lcd_cover_gesture.button = 0;
+		lcd_cover_gesture.pressed.connect(() => lcd_cover_gesture.set_state(EventSequenceState.CLAIMED));
+		lcd_cover_gesture.released.connect(() => {
+			if (lcd_cover_gesture.get_current_button() == 1)
+				lcdCover.show_full_size(this);
+		});
 		lcd.add(lcdCoverBox); // thumbnail at the left edge (optional)
 		var lcd_logo = new Label("BeatBox");
 		lcd_logo.get_style_context().add_class("lcd-logo");
@@ -856,7 +863,9 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		App.settings.equalizer.volume = (int)Math.round(volume * 100);
 	}
 	
-	bool keyPressed(Gdk.EventKey event) {
+	bool keyPressed(uint keyval, uint keycode, Gdk.ModifierType state) {
+		// the event itself, for propagate_key_event (GTK3's key_controller.forward only reaches controllers)
+		var event = (Gdk.EventKey) get_current_event();
 		var focus = get_focus();
 		
 		// Escape in the search box goes back to the list

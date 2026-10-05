@@ -47,6 +47,7 @@ public enum BeatBox.SideBarColumn {
 public class BeatBox.SideBar : Gtk.TreeView {
 	public TreeStore tree;
 	public TreeModelFilter filter;
+	Gtk.GestureMultiPress side_bar_click; // GTK3 controllers need a reference
 	
 	SideBarRenderer side_renderer;
 	
@@ -83,7 +84,10 @@ public class BeatBox.SideBar : Gtk.TreeView {
 		this.name = "SidebarContent";
 		
 		this.get_selection().changed.connect(selectionChange);
-		this.button_press_event.connect(sideBarClick);
+		// CAPTURE: before the tree view handles the press (selection)
+		side_bar_click = new Gtk.GestureMultiPress(this);
+		side_bar_click.propagation_phase = Gtk.PropagationPhase.CAPTURE;
+		side_bar_click.pressed.connect(sideBarClick);
 		
 		// drag and drop
 		//var entry = Gtk.TargetEntry("text/uri", 0, 0);
@@ -345,33 +349,31 @@ public class BeatBox.SideBar : Gtk.TreeView {
 	}
 	
 	/* click event functions */
-	private bool sideBarClick(Gdk.EventButton event) {
-		if(event.type == Gdk.EventType.BUTTON_PRESS && event.button == 1) {
-			// select one based on mouse position
-			TreeIter iter;
-			TreePath path;
-			TreeViewColumn column;
-			int cell_x;
-			int cell_y;
-			
-			this.get_path_at_pos((int)event.x, (int)event.y, out path, out column, out cell_x, out cell_y);
-			if(path == null)
-				return false;
-			if(!filter.get_iter(out iter, path))
-				return false;
-			
-			if(overClickable(iter, column, (int)cell_x, (int)cell_y)) {
-				clickable_clicked(iter);
-			}
-			else if(overExpander(iter, column, (int)cell_x, (int)cell_y)) {
-				if(is_row_expanded(path))
-					this.collapse_row(path);
-				else
-					this.expand_row(path, true);
-			}
-		}
+	private void sideBarClick(int n_press, double widget_x, double widget_y) {
+		// select one based on mouse position
+		int x, y;
+		convert_widget_to_bin_window_coords((int)widget_x, (int)widget_y, out x, out y);
+		TreeIter iter;
+		TreePath path;
+		TreeViewColumn column;
+		int cell_x;
+		int cell_y;
 		
-		return false;
+		this.get_path_at_pos(x, y, out path, out column, out cell_x, out cell_y);
+		if(path == null)
+			return;
+		if(!filter.get_iter(out iter, path))
+			return;
+		
+		if(overClickable(iter, column, (int)cell_x, (int)cell_y)) {
+			clickable_clicked(iter);
+		}
+		else if(overExpander(iter, column, (int)cell_x, (int)cell_y)) {
+			if(is_row_expanded(path))
+				this.collapse_row(path);
+			else
+				this.expand_row(path, true);
+		}
 	}
 	
 	private bool overClickable(TreeIter iter, TreeViewColumn col, int x, int y) {

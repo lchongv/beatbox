@@ -50,7 +50,6 @@ public class BeatBox.NowPlayingView : Notebook, NowPlayingViewInterface {
 		
 		
 		add_section(MediaType.SONG, new SongSummarySection());
-		//add_section(MediaType.SONG, new SongArtistSection());
 		
 		add_section(MediaType.PODCAST, new PodcastSummarySection());
 		

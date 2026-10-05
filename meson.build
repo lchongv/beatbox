@@ -1,4 +1,4 @@
-project('beatbox', 'vala', 'c', version: '0.9.22')
+project('beatbox', 'vala', 'c', version: '0.9.23')
 
 gnome = import('gnome')
 i18n = import('i18n')
@@ -201,7 +201,6 @@ app_sources = files(
   'src/NowPlayingView/NowPlayingView.vala',
   'src/NowPlayingView/NowPlayingPage.vala',
   'src/NowPlayingView/SongSummarySection.vala',
-  'src/NowPlayingView/SongArtistSection.vala',
   'src/NowPlayingView/PodcastSummarySection.vala',
   'src/Preferences/BehaviorPreferences.vala',
   'src/Preferences/ShortcutsPreferences.vala',
@@ -235,7 +234,6 @@ app_sources = files(
   'src/Widgets/AlbumWall.vala',
   'src/Widgets/AdvancedSearchBox.vala',
   'src/Widgets/SourceViewSearchSuggestions.vala',
-  'src/Widgets/OptionChooser.vala',
   'src/Widgets/SimpleOptionChooser.vala',
   'src/Widgets/VolumeWidget.vala',
   'src/Widgets/EmbeddedAlert.vala',
@@ -246,7 +244,6 @@ app_sources = files(
   'src/Widgets/TopDisplay/SyncedLyrics.vala',
   'src/Widgets/TopDisplay/BufferDisplay.vala',
   'src/Widgets/TopDisplay/OperationDisplay.vala',
-  'src/Widgets/StyledWidgets/StyledArtistImages.vala',
   'src/Windows/Editors/FieldEditorImpl.vala',
   'src/Windows/Editors/SmartPlaylistEditor.vala',
   'src/Windows/Editors/MediaEditor.vala',

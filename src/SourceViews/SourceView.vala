@@ -230,7 +230,11 @@ public abstract class BeatBox.SourceView : Box, View {
 				if (!user_moved && alloc.height > 1)
 					paned.position = alloc.height / 2;
 			});
-			paned.button_press_event.connect(() => { user_moved = true; return false; });
+			// a press on the divider (presses inside the panes stay with them)
+			var divider_press = new GestureMultiPress(paned);
+			divider_press.button = 0;
+			divider_press.pressed.connect(() => { user_moved = true; });
+			paned.set_data("press-gesture", divider_press); // GTK3 controllers need a reference
 			list_page = paned;
 			cover_flow.no_show_all = true;
 		}

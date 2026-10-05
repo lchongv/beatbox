@@ -40,12 +40,12 @@ public abstract class BeatBox.GenericGrid : FastGrid {
 				debug ("Creating Grid view popup");
 				_popup_list_view = new PopupListView (this.parent_wrapper);
 
-				_popup_list_view.focus_out_event.connect ( () => {
-					if (popup_list.visible && App.window.has_focus) {
+				// when it loses the focus to the main window, it stays in front
+				_popup_list_view.notify["is-active"].connect ( () => {
+					if (!_popup_list_view.is_active && popup_list.visible && App.window.has_focus) {
 						popup_list.show_all ();
 						popup_list.present ();
 					}
-					return false;
 				});
 			}
 
@@ -68,6 +68,12 @@ public abstract class BeatBox.GenericGrid : FastGrid {
 
 	// To select which columns are showing
 	protected Gtk.Menu columnChooserMenu;
+	
+	// GTK3 controllers need a reference
+	Gtk.GestureMultiPress click_gesture;
+	Gtk.EventControllerMotion motion_controller;
+	double pointer_x = -1; // where the pointer is, in widget coordinates
+	double pointer_y = -1;
 	
 	public signal void import_requested(LinkedList<Media> to_import);
 	
@@ -103,11 +109,24 @@ public abstract class BeatBox.GenericGrid : FastGrid {
 
 
 		this.add_events (Gdk.EventMask.POINTER_MOTION_MASK);
-		this.motion_notify_event.connect (on_motion_notify);
-		this.scroll_event.connect (on_scroll_event);
+		// the pointer's shape follows the item under it, when it moves and when the view scrolls
+		motion_controller = new Gtk.EventControllerMotion (this);
+		motion_controller.motion.connect ((x, y) => {
+			pointer_x = x;
+			pointer_y = y;
+			set_pointer ();
+		});
+		motion_controller.leave.connect (() => pointer_x = pointer_y = -1);
+		// (the scrolled window around it brings its own adjustment)
+		notify["vadjustment"].connect (() => {
+			if (vadjustment != null)
+				vadjustment.value_changed.connect (set_pointer);
+		});
 
-		//this.button_press_event.connect (on_button_press);
-		this.button_release_event.connect (on_button_release);
+		// CAPTURE: GtkIconView handles the clicks itself and passes none on
+		click_gesture = new Gtk.GestureMultiPress (this);
+		click_gesture.propagation_phase = Gtk.PropagationPhase.CAPTURE;
+		click_gesture.released.connect (on_released);
 
         // For smart spacing...
 		int MIN_N_ITEMS = 2; // we will allocate horizontal space for at least two items
@@ -160,23 +179,25 @@ public abstract class BeatBox.GenericGrid : FastGrid {
 
     public abstract void item_activated_handler (Object? selected);
 
-	private bool on_button_release (Gdk.EventButton ev) {
-		if (ev.type == Gdk.EventType.BUTTON_RELEASE && ev.button == 1) {
-			TreePath? path;
-			CellRenderer cell;
+	private void on_released (int n_press, double widget_x, double widget_y) {
+		int x, y;
+		convert_widget_to_bin_window_coords ((int) widget_x, (int) widget_y, out x, out y);
+		TreePath? path;
+		CellRenderer cell;
 
-			this.get_item_at_pos ((int)ev.x, (int)ev.y, out path, out cell);
+		this.get_item_at_pos (x, y, out path, out cell);
 
-			if (path != null)
-		        item_activated_handler (get_selected_objects().nth_data (0));
-		    else
-		        item_activated_handler (null);
-		}
-
-		return false;
+		if (path != null)
+			item_activated_handler (get_selected_objects().nth_data (0));
+		else
+			item_activated_handler (null);
 	}
 
-	private inline void set_pointer (int x, int y) {
+	private void set_pointer () {
+		if (pointer_x < 0 || get_window () == null)
+			return;
+		int x, y;
+		convert_widget_to_bin_window_coords ((int) pointer_x, (int) pointer_y, out x, out y);
 		TreePath? path;
 		CellRenderer cell;
 
@@ -186,17 +207,6 @@ public abstract class BeatBox.GenericGrid : FastGrid {
 			this.get_window ().set_cursor (null);
 		else
 			this.get_window ().set_cursor (new Gdk.Cursor.from_name (get_display (), "pointer"));
-
-	}
-
-	private bool on_motion_notify (Gdk.EventMotion ev) {
-		set_pointer ((int)ev.x, (int)ev.y);
-		return false;
-	}
-
-	private bool on_scroll_event (Gdk.EventScroll ev) {
-		set_pointer ((int)ev.x, (int)ev.y);
-		return false;
 	}
 
 

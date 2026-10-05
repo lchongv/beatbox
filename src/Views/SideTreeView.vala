@@ -53,6 +53,7 @@ public class BeatBox.SideTreeView : BeatBox.SideBar {
 	
 	Gtk.Menu libraryMenu;
 	Gtk.Menu playlistMenu;
+	Gtk.GestureMultiPress side_list_click; // GTK3 controllers need a reference
 	
 	public SideTreeView() {
 		view_to_iter = new HashMap<View, TreeIter?>();
@@ -74,7 +75,11 @@ public class BeatBox.SideTreeView : BeatBox.SideBar {
 		playlistMenu.append(App.actions.menu_item(App.actions.import_playlist));
 		playlistMenu.show_all();
 		
-		this.button_press_event.connect(sideListClick);
+		// CAPTURE: before the tree view handles the press (selection)
+		side_list_click = new Gtk.GestureMultiPress(this);
+		side_list_click.button = 0;
+		side_list_click.propagation_phase = Gtk.PropagationPhase.CAPTURE;
+		side_list_click.pressed.connect(sideListClick);
 		this.row_activated.connect(sideListDoubleClick);
 		this.true_selection_change.connect(side_list_selection_change);
 		this.true_drag_received.connect(true_drag_received_signal);
@@ -261,19 +266,22 @@ public class BeatBox.SideTreeView : BeatBox.SideBar {
 		}
 	}
 	
-	bool sideListClick(Gdk.EventButton event) {
+	void sideListClick(int n_press, double widget_x, double widget_y) {
+		uint button = side_list_click.get_current_button();
+		int x, y;
+		convert_widget_to_bin_window_coords((int)widget_x, (int)widget_y, out x, out y);
 		TreeIter iter;
 		TreePath path;
 		TreeViewColumn column;
 		int cell_x;
 		int cell_y;
 		
-		this.get_path_at_pos((int)event.x, (int)event.y, out path, out column, out cell_x, out cell_y);
+		this.get_path_at_pos(x, y, out path, out column, out cell_x, out cell_y);
 		if(path == null)
-			return false;
+			return;
 		
 		if(!filter.get_iter(out iter, path))
-			return false;
+			return;
 		
 		TreeIter parent;
 		if(filter.iter_parent(out parent, iter)) {
@@ -281,19 +289,19 @@ public class BeatBox.SideTreeView : BeatBox.SideBar {
 			filter.get(iter, SideBarColumn.COLUMN_WIDGET, out w);
 			
 			View view = (View)w;
-			if(event.type == Gdk.EventType.BUTTON_PRESS && event.button == 3) {
+			if(button == 3) {
 				if(view.get_context_menu() != null) {
 					view.get_context_menu().popup_at_pointer(null);
 				}
 			}
-			else if(event.type == Gdk.EventType.BUTTON_PRESS && event.button == 2) {
+			else if(button == 2) {
 				if(view.can_set_as_current_list()) {
 					view.set_as_current_list(null);
 				}
 			}
 		}
 		else {
-			if(event.type == Gdk.EventType.BUTTON_PRESS && event.button == 3) {
+			if(button == 3) {
 				if(iter == convertToFilter(library_iter)) {
 					libraryMenu.popup_at_pointer(null);
 				}
@@ -302,8 +310,6 @@ public class BeatBox.SideTreeView : BeatBox.SideBar {
 				}
 			}
 		}
-		
-		return false;
 	}
 	
 	void sideListDoubleClick(TreePath path, TreeViewColumn column) {

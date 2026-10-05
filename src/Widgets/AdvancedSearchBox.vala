@@ -29,6 +29,7 @@ using Gtk;
 
 public class BeatBox.AdvancedSearchBox : Gtk.SearchEntry {
 	Gtk.Menu search_suggester;
+	Gtk.EventControllerKey suggester_keys; // GTK3 controllers need a reference
 	bool listen_for_change;
 	string last_search;
 	
@@ -47,7 +48,10 @@ public class BeatBox.AdvancedSearchBox : Gtk.SearchEntry {
 		
 		this.changed.connect(search_field_changed);
 		this.activate.connect(search_field_activate);
-		search_suggester.key_press_event.connect(keyPressed);
+		// CAPTURE: before the menu's own key handling
+		suggester_keys = new Gtk.EventControllerKey(search_suggester);
+		suggester_keys.propagation_phase = Gtk.PropagationPhase.CAPTURE;
+		suggester_keys.key_pressed.connect(keyPressed);
 		App.window.view_changed.connect(view_changed);
 	}
 	
@@ -148,7 +152,8 @@ public class BeatBox.AdvancedSearchBox : Gtk.SearchEntry {
 		}
 	}
 	
-	bool keyPressed(Gdk.EventKey event) {
+	bool keyPressed(uint keyval, uint keycode, Gdk.ModifierType state) {
+		var event = (Gdk.EventKey) Gtk.get_current_event(); // for its text
 		// Handled here: letting the menu pass the key on typed every letter twice
 		if(event.keyval == 0xff08) { //backspace
 			backspace ();

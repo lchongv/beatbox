@@ -115,10 +115,6 @@ public class BeatBox.StyledBox : Gtk.Box {
 	Gtk.EventBox center;
 	Gtk.Box content;
 	
-	public signal void button_pressed(Gdk.EventButton event);
-	public signal void button_released(Gdk.EventButton event);
-	public signal void scrolled(Gdk.EventScroll event);
-	
 	public StyledBox(string title, string class_style) {
 		this.class_style = class_style;
 		title_label = new Gtk.Label("");
@@ -209,29 +205,12 @@ public class BeatBox.StyledBox : Gtk.Box {
 		content.add(w);
 		w.get_style_context().add_provider(style_provider, STYLE_PROVIDER_PRIORITY_APPLICATION);
 		
-		// Turn off scroll event on w
+		// Turn off scrolling on w: the controller takes the wheel before w sees it
 		if(w is ScrolledWindow) {
-			w.scroll_event.connect((ev) => {
-				GLib.Signal.stop_emission_by_name(w, "scroll-event");
-
-				return true;
-			});
+			var no_scroll = new EventControllerScroll(w, EventControllerScrollFlags.BOTH_AXES);
+			no_scroll.propagation_phase = PropagationPhase.CAPTURE;
+			w.set_data("no-scroll", no_scroll); // GTK3 controllers need a reference
 		}
-	}
-	
-	public override bool button_press_event(Gdk.EventButton event) {
-		button_pressed(event);
-		return false;
-	}
-	
-	public override bool button_release_event(Gdk.EventButton event) {
-		button_released(event);
-		return false;
-	}
-	
-	protected override bool scroll_event(Gdk.EventScroll event) {
-		scrolled(event);
-		return false;
 	}
 }
 

@@ -41,6 +41,9 @@ public class BeatBox.CoverFlow : DrawingArea {
 		scroll_controller.scroll.connect(on_scroll);
 		key_controller = new Gtk.EventControllerKey(this);
 		key_controller.key_pressed.connect(on_key_pressed);
+		click_gesture = new Gtk.GestureMultiPress(this);
+		click_gesture.button = 0; // any button takes the focus
+		click_gesture.pressed.connect(on_pressed);
 
 		grid.visible_changed.connect(refresh);
 		App.covers.cover_changed.connect(() => { surfaces.remove_all(); queue_draw(); });
@@ -292,20 +295,21 @@ public class BeatBox.CoverFlow : DrawingArea {
 		return target + ((x < center) ? -steps : steps);
 	}
 
-	public override bool button_press_event(Gdk.EventButton event) {
+	void on_pressed(int n_press, double x, double y) {
 		grab_focus();
-		if (event.button != 1 || albums.length == 0)
-			return false;
-		int index = index_at(event.x);
-		if (event.type == Gdk.EventType.2BUTTON_PRESS && index == target)
+		if (click_gesture.get_current_button() != 1 || albums.length == 0)
+			return;
+		int index = index_at(x);
+		if (n_press == 2 && index == target)
 			album_activated(albums[target]);
-		else if (event.type == Gdk.EventType.BUTTON_PRESS)
+		else if (n_press == 1)
 			go_to(index);
-		return true;
+		click_gesture.set_state(Gtk.EventSequenceState.CLAIMED);
 	}
 
 	Gtk.EventControllerScroll scroll_controller;
 	Gtk.EventControllerKey key_controller;
+	Gtk.GestureMultiPress click_gesture;
 	double scroll_accum = 0;
 	
 	// wheel clicks arrive as deltas of ±1, touchpads as fractions
