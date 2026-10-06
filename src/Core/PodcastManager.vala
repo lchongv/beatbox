@@ -275,10 +275,7 @@ public class BeatBox.PodcastManager : GLib.Object, BeatBox.PodcastInterface {
 						}
 					}
 					else if(item_iter->name == "pubDate") {
-						GLib.Time tm = GLib.Time ();
-						tm.strptime (item_iter->get_content(),
-									"%a, %d %b %Y %H:%M:%S %Z");
-						new_p.date_released = int.parse(tm.format("%s"));
+						new_p.date_released = (int)TimeUtils.from_rfc822 (item_iter->get_content());
 					}
 					else if(item_iter->name == "duration") {
 						string[] dur_pieces = item_iter->get_content().split(":", 0);
