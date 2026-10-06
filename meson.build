@@ -1,4 +1,4 @@
-project('beatbox', 'vala', 'c', version: '0.16.5')
+project('beatbox', 'vala', 'c', version: '0.16.6')
 
 gnome = import('gnome')
 i18n = import('i18n')
@@ -355,6 +355,7 @@ test('ellipsize', executable('test-ellipsize', 'tests/ellipsize.vala', dependenc
 test('list-utils', executable('test-list-utils', 'tests/list-utils.vala', dependencies: core_dep))
 test('shortcuts', executable('test-shortcuts', 'tests/shortcuts.vala', dependencies: core_dep))
 test('http-json', executable('test-http-json', 'tests/http-json.vala', dependencies: core_dep))
+test('rfc822', executable('test-rfc822', 'tests/rfc822.vala', dependencies: core_dep))
 # BeatBox itself under Xvfb, driven through MPRIS (skipped without Xvfb, dbus-run-session, GStreamer's tools)
 test('smoke', find_program('python3'), args: [files('tests/smoke.py'), beatbox_exe],
   is_parallel: false, timeout: 240)
