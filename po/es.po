@@ -2596,7 +2596,7 @@ msgid "Edited"
 msgstr "Editada"
 
 msgid "Embed in File"
-msgstr "Incrustar en el archivo"
+msgstr "Incrustar en archivo"
 
 msgid "Embedded pictures"
 msgstr "Imágenes incrustadas"
@@ -2791,3 +2791,144 @@ msgid "Written into %d file."
 msgid_plural "Written into %d files."
 msgstr[0] "Escrita en %d archivo."
 msgstr[1] "Escrita en %d archivos."
+
+msgid "%s audio file"
+msgstr "Archivo de audio %s"
+
+msgid "%u channels"
+msgstr "%u canales"
+
+msgid "Add Artwork…"
+msgstr "Añadir carátula…"
+
+msgid "Album artist:"
+msgstr "Artista del álbum:"
+
+msgid "Album:"
+msgstr "Álbum:"
+
+msgid "Also write changes to the file"
+msgstr "Escribir los cambios también en el archivo"
+
+msgid "Apply this field to all the selected songs"
+msgstr "Aplicar este campo a todas las canciones seleccionadas"
+
+msgid "Artist:"
+msgstr "Artista:"
+
+msgid "Audio file"
+msgstr "Archivo de audio"
+
+msgid "BPM:"
+msgstr "PPM:"
+
+msgid "Bit rate:"
+msgstr "Tasa de bits:"
+
+msgid "Channels:"
+msgstr "Canales:"
+
+msgid "Comments"
+msgstr "Comentarios"
+
+msgid "Composer:"
+msgstr "Compositor:"
+
+msgid "Date modified:"
+msgstr "Fecha de modificación:"
+
+msgid "Details"
+msgstr "Detalles"
+
+msgid "Disc number:"
+msgstr "Nº de disco:"
+
+msgid "Download Artwork"
+msgstr "Descargar carátula"
+
+msgid "Encoded with:"
+msgstr "Codificado con:"
+
+msgid "Format:"
+msgstr "Formato:"
+
+msgid "Genre:"
+msgstr "Género:"
+
+msgid "Grouping:"
+msgstr "Agrupación:"
+
+msgid "Info for %d Songs"
+msgstr "Información de %d canciones"
+
+msgid "Kind:"
+msgstr "Tipo:"
+
+msgid "Last played:"
+msgstr "Última reproducción:"
+
+msgid "Not known"
+msgstr "Desconocido"
+
+msgid "OK"
+msgstr "Aceptar"
+
+msgid "Pictures"
+msgstr "Imágenes"
+
+msgid "Plays:"
+msgstr "Reproducciones:"
+
+msgid "Rating:"
+msgstr "Valoración:"
+
+msgid "Sample rate:"
+msgstr "Frecuencia de muestreo:"
+
+msgid "Save the changes and show the next song (Alt+Right)"
+msgstr "Guardar los cambios y mostrar la canción siguiente (Alt+Derecha)"
+
+msgid "Save the changes and show the previous song (Alt+Left)"
+msgstr "Guardar los cambios y mostrar la canción anterior (Alt+Izquierda)"
+
+msgid "Size:"
+msgstr "Tamaño:"
+
+msgid "Song Info"
+msgstr "Información de la canción"
+
+msgid "Sort album artist:"
+msgstr "Ordenar artista del álbum:"
+
+msgid "Sort album:"
+msgstr "Ordenar álbum:"
+
+msgid "Sort artist:"
+msgstr "Ordenar artista:"
+
+msgid "Sort composer:"
+msgstr "Ordenar compositor:"
+
+msgid "Sort name:"
+msgstr "Ordenar nombre:"
+
+msgid "Summary"
+msgstr "Resumen"
+
+msgid "This file has no pictures inside it."
+msgstr "Este archivo no tiene imágenes incrustadas."
+
+msgid "Track number:"
+msgstr "Nº de pista:"
+
+msgid "Volume adjustment:"
+msgstr "Ajuste de volumen:"
+
+msgid "Write the cover into the music files (the whole album)"
+msgstr "Escribir la carátula en los archivos de música (todo el álbum)"
+
+msgid "Year:"
+msgstr "Año:"
+
+msgid "Otherwise the changes stay in BeatBox's library and the tags in the files are left as they are (the same option as in Preferences)"
+msgstr "Si no, los cambios quedan solo en la colección de BeatBox y las etiquetas de los archivos no se tocan (es la misma opción de Preferencias)"

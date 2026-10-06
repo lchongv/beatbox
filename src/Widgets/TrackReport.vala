@@ -16,8 +16,13 @@ public class BeatBox.TrackReport : ScrolledWindow {
 	Box content;
 	uint request = 0; // drops reports of songs no longer playing
 
-	/* What the file says, read on a worker thread: plain data, the widgets are made on the main loop */
-	class FileFacts {
+	/* What the file says, read on a worker thread: plain data, the widgets are made on the main loop
+	 * (the song editor's Summary and Pictures tabs use it too) */
+	public class FileFacts {
+		public string codec = "";     // "MPEG-1 Layer 3 (MP3)"
+		public string channels = "";
+		public string encoder = "";
+		public uint bitrate = 0;      // kbps, the average: size over length
 		public string[] format = {};  // label, value, label, value...
 		public string[] tags = {};
 		public Gdk.Pixbuf[] images = {};
@@ -198,7 +203,7 @@ public class BeatBox.TrackReport : ScrolledWindow {
 	const string[] LOSSLESS = { "audio/x-flac", "audio/x-alac", "audio/x-wavpack", "audio/x-raw", "audio/x-ape", "audio/x-tta", "audio/x-true-hd" };
 
 	/** Blocking */
-	static FileFacts read_file (string uri) {
+	public static FileFacts read_file (string uri, int thumb = 96) {
 		var facts = new FileFacts ();
 		Gst.PbUtils.DiscovererInfo info;
 		try {
@@ -232,22 +237,28 @@ public class BeatBox.TrackReport : ScrolledWindow {
 			var caps = audio.get_caps ();
 			if (caps != null) {
 				string name = caps.get_structure (0).get_name ();
-				f += _("Codec"); f += "%s (%s)".printf (Gst.PbUtils.get_codec_description (caps), (name in LOSSLESS) ? _("lossless") : _("lossy"));
+				facts.codec = Gst.PbUtils.get_codec_description (caps);
+				f += _("Codec"); f += "%s (%s)".printf (facts.codec, (name in LOSSLESS) ? _("lossless") : _("lossy"));
 			}
 			f += _("Sample rate"); f += "%.1f kHz".printf (audio.get_sample_rate () / 1000.0);
 			if (audio.get_depth () > 0 && caps != null && caps.get_structure (0).get_name () in LOSSLESS) { // a lossy one is decoded to whatever depth
 				f += _("Bit depth"); f += "%u bits".printf (audio.get_depth ());
 			}
 			uint ch = audio.get_channels ();
-			f += _("Channels"); f += (ch == 1) ? _("Mono") : (ch == 2) ? _("Stereo") : "%u".printf (ch);
+			facts.channels = (ch == 1) ? _("Mono") : (ch == 2) ? _("Stereo") : _("%u channels").printf (ch);
+			f += _("Channels"); f += facts.channels;
 		}
 
 		// the average is exact: size over length; the file's own figures beside it
 		Gst.TagList? tags = GStreamerTagger.all_tags (info);
+		string encoder = "";
+		if (tags != null && (tags.get_string (Gst.Tags.ENCODER, out encoder) || tags.get_string (Gst.Tags.APPLICATION_NAME, out encoder)))
+			facts.encoder = encoder;
 		try {
 			int64 size = file.query_info (FileAttribute.STANDARD_SIZE, FileQueryInfoFlags.NONE).get_size ();
 			if (duration > 0) {
-				string rate = "%.0f kbps".printf (size * 8.0 / (duration / (double) Gst.SECOND) / 1000.0);
+				facts.bitrate = (uint) (size * 8.0 / (duration / (double) Gst.SECOND) / 1000.0 + 0.5);
+				string rate = "%u kbps".printf (facts.bitrate);
 				uint nominal = 0, min = 0, max = 0;
 				if (tags != null && tags.get_uint (Gst.Tags.MINIMUM_BITRATE, out min) && tags.get_uint (Gst.Tags.MAXIMUM_BITRATE, out max) && min != max)
 					rate += " · " + _("variable (%u–%u kbps)").printf (min / 1000, max / 1000);
@@ -275,6 +286,8 @@ public class BeatBox.TrackReport : ScrolledWindow {
 			});
 			facts.tags = t;
 
+			Gdk.Pixbuf[] thumbs = {};
+			string[] texts = {};
 			foreach (var sample in images.data) {
 				var buffer = sample.get_buffer ();
 				Gst.MapInfo map = {};
@@ -294,13 +307,15 @@ public class BeatBox.TrackReport : ScrolledWindow {
 							kind = (it == Gst.Tag.ImageType.FRONT_COVER) ? _("Front cover") : (it == Gst.Tag.ImageType.BACK_COVER) ? _("Back cover")
 							     : (it == Gst.Tag.ImageType.MEDIUM) ? _("Disc") : it.to_string ().replace ("GST_TAG_IMAGE_TYPE_", "").replace ("_", " ").down ();
 						}
-						facts.image_texts += "%s\n%d × %d px, %s".printf (kind, pix.width, pix.height, format_size (map.size));
-						double k = 96.0 / int.max (pix.width, pix.height);
-						facts.images += pix.scale_simple (int.max (1, (int)(pix.width * k)), int.max (1, (int)(pix.height * k)), Gdk.InterpType.BILINEAR);
+						texts += "%s\n%d × %d px, %s".printf (kind, pix.width, pix.height, format_size (map.size));
+						double k = double.min (1.0, (double) thumb / int.max (pix.width, pix.height));
+						thumbs += pix.scale_simple (int.max (1, (int)(pix.width * k)), int.max (1, (int)(pix.height * k)), Gdk.InterpType.BILINEAR);
 					}
 				} catch (Error err) {}
 				buffer.unmap (map);
 			}
+			facts.images = thumbs;
+			facts.image_texts = texts;
 		}
 		return facts;
 	}

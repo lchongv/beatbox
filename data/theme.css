@@ -278,3 +278,63 @@ button.traffic-light:active   { background-image: none; background-color: shade(
 .app-name { font-size: 8pt; font-weight: bold; opacity: .6; }
 /* the information panel at the right of the lists */
 .track-report { background-color: @bb_detail_bg; border-left: 1px solid @bb_detail_border; }
+
+/* ===== Song info window (MediaEditor): capsule tabs over a rounded panel ===== */
+window.song-info stackswitcher.tiger-tabs > button {
+  background: none;
+  box-shadow: none;
+  outline: none;
+  margin: 0;
+  border-radius: 0;
+  border-top: 1px solid #8c8c8c;
+  border-bottom: 1px solid #8c8c8c;
+  border-left: none;
+  border-right: 1px solid #a8a8a8;
+  padding: 2px 16px;
+  min-height: 20px;
+  font-weight: bold;
+  color: #1f1f1f;
+  text-shadow: none;
+  background-image:
+    linear-gradient(to bottom, alpha(white, .92) 0%, alpha(white, 0) 48%),
+    linear-gradient(to bottom, #fafafa 0%, #f4f4f4 48%, #dcdcdc 100%);
+}
+window.song-info stackswitcher.tiger-tabs > button:first-child {
+  border-left: 1px solid #8c8c8c;
+  border-radius: 5px 0 0 5px;
+  padding-left: 20px;
+}
+window.song-info stackswitcher.tiger-tabs > button:last-child {
+  border-right: 1px solid #8c8c8c;
+  border-radius: 0 5px 5px 0;
+  padding-right: 20px;
+}
+window.song-info stackswitcher.tiger-tabs > button:hover {
+  background-image:
+    linear-gradient(to bottom, alpha(white, .92) 0%, alpha(white, 0) 48%),
+    linear-gradient(to bottom, #f3f8fe 0%, #e7f1fb 48%, #d2e4f6 100%);
+}
+window.song-info stackswitcher.tiger-tabs > button:checked {
+  background-image:
+    linear-gradient(to bottom, alpha(white, .78) 0%, alpha(white, 0) 50%),
+    linear-gradient(to bottom, #d6ecff 0%, #a7d0f7 48%, #6aa9e8 52%, #93c4f3 100%);
+  box-shadow: inset 0 1px 1px alpha(white, .8), inset 0 -1px 2px alpha(#2a6cc0, .3);
+  border-color: #5e84ad;
+  color: #0c2a4a;
+}
+window.song-info .tiger-panel {
+  background-color: alpha(white, .45);
+  border: 1px solid #9e9e9e;
+  border-radius: 9px;
+  padding: 14px 6px 6px 6px; /* room under the tabs, which cross its top edge */
+  box-shadow: inset 0 1px alpha(white, .8);
+}
+window.song-info .tiger-panel > stack > viewport { background: none; border: none; }
+window.song-info .ti-field-label { color: #2a2a2a; font-weight: bold; }
+window.song-info .ti-sum-key { color: #2a2a2a; }
+window.song-info .ti-summary-title { font-weight: bold; font-size: 11pt; }
+window.song-info .ti-uri { font-size: 9pt; color: #666; }
+window.song-info .ti-meta { font-size: 9.5pt; color: #555; }
+window.song-info button.ti-cover-btn { font-size: 8pt; padding: 1px 5px; min-height: 0; }
+window.song-info .album-cell-frame { border: 1px solid #9a9a9a; box-shadow: 0 1px 3px alpha(black, .25); }
+window.song-info .album-cell-frame > border { border: none; }
