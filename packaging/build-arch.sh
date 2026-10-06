@@ -16,6 +16,9 @@ tar -C "$SRC" --exclude=./.git --exclude=./build --exclude='./build-*' --exclude
 sed "s/^pkgver=.*/pkgver=$BB_VERSION/" "$SRC/packaging/arch/PKGBUILD" > "$WORK/PKGBUILD"
 
 if [ "$(id -u)" = 0 ]; then
+  # the container's only mirror drops connections now and then: others to fall back on
+  printf 'Server = %s/$repo/os/$arch\n' https://geo.mirror.pkgbuild.com https://mirror.rackspace.com/archlinux \
+         https://mirrors.kernel.org/archlinux >> /etc/pacman.d/mirrorlist
   pacman -Syu --noconfirm --needed base-devel $(source "$WORK/PKGBUILD"; echo "${depends[@]} ${makedepends[@]}")
   id builder >/dev/null 2>&1 || useradd -m builder
   chown -R builder "$WORK"
