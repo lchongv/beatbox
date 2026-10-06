@@ -1,4 +1,4 @@
-# Builds the AppImage, the Flatpak bundle and the .deb and .rpm packages. Every push
+# Builds the AppImage, the Flatpak bundle and the .deb, .rpm and Arch packages. Every push
 # to master leaves them on the run's page (Actions > Packages > the run > Artifacts);
 # a vX.Y.Z tag also attaches them to that release, creating it if needed.
 name: Packages
@@ -93,9 +93,21 @@ jobs:
           path: dist/*.rpm
           if-no-files-found: error
 
+  arch:
+    runs-on: ubuntu-latest
+    container: archlinux:latest
+    steps:
+      - uses: actions/checkout@v7
+      - run: packaging/build-arch.sh dist
+      - uses: actions/upload-artifact@v7
+        with:
+          name: arch
+          path: dist/*.pkg.tar.zst
+          if-no-files-found: error
+
   release:
     if: startsWith(github.ref, 'refs/tags/v')
-    needs: [appimage, flatpak, deb, rpm]
+    needs: [appimage, flatpak, deb, rpm, arch]
     runs-on: ubuntu-latest
     permissions:
       contents: write
