@@ -17,11 +17,21 @@ namespace BeatBox.Skins {
 		public string author;
 		public File css;
 		public bool native;
+		public string? theme; // a GTK theme to use instead of the system's (Theme=)
+		public bool dark;     // its dark variant (Dark=true)
+		public bool square_icon; // the app menu button shows the square app icon (MenuIcon=square)
 	}
+
+	/** The skin used when none was chosen: plain GTK with Adwaita */
+	public const string DEFAULT = "adwaita";
 
 	const string RESOURCE = "/net/launchpad/beatbox/skins";
 	Gtk.CssProvider? provider = null;
 	Gtk.CssProvider? base_look = null;
+	/** Whether the skin applied last wants the square app icon on the menu button */
+	public bool square_menu_icon = false;
+	string? system_theme = null; // what the desktop asked for, restored by skins without Theme=
+	bool system_dark;
 
 	public string user_dir () {
 		return Path.build_filename (Environment.get_user_data_dir (), "beatbox", "skins");
@@ -82,15 +92,29 @@ namespace BeatBox.Skins {
 				skin.description = ini.get_locale_string ("Skin", "Description");
 			if (ini.has_key ("Skin", "Native"))
 				skin.native = ini.get_boolean ("Skin", "Native");
+			if (ini.has_key ("Skin", "Theme"))
+				skin.theme = ini.get_string ("Skin", "Theme");
+			if (ini.has_key ("Skin", "Dark"))
+				skin.dark = ini.get_boolean ("Skin", "Dark");
+			if (ini.has_key ("Skin", "MenuIcon"))
+				skin.square_icon = ini.get_string ("Skin", "MenuIcon") == "square";
 			if (ini.has_key ("Skin", "Author"))
 				skin.author = ini.get_string ("Skin", "Author");
 		} catch (Error err) {}
 		return skin;
 	}
 
-	/** Lay the skin over the base look; "" (or an unknown skin) goes back to the built-in look */
+	/** Apply a skin: a native one replaces the built-in look, any other is laid over it.
+	 * "" (never chosen) is the default skin; an unknown one leaves the built-in look alone. */
 	public void apply (string id) {
+		if (id == "")
+			id = DEFAULT;
 		var screen = Gdk.Screen.get_default ();
+		var gtk = Gtk.Settings.get_default ();
+		if (system_theme == null) {
+			system_theme = gtk.gtk_theme_name;
+			system_dark = gtk.gtk_application_prefer_dark_theme;
+		}
 		if (provider != null)
 			Gtk.StyleContext.remove_provider_for_screen (screen, provider);
 		provider = null;
@@ -105,8 +129,11 @@ namespace BeatBox.Skins {
 		Gtk.StyleContext.remove_provider_for_screen (screen, base_look);
 		if (found == null || !found.native)
 			Gtk.StyleContext.add_provider_for_screen (screen, base_look, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION + 1);
-		if (id == "")
-			return;
+		string theme = (found != null && found.theme != null) ? found.theme : system_theme;
+		if (gtk.gtk_theme_name != theme)
+			gtk.gtk_theme_name = theme;
+		gtk.gtk_application_prefer_dark_theme = (found != null && found.dark) || system_dark;
+		square_menu_icon = found != null && found.square_icon;
 
 		foreach (var skin in available ()) {
 			if (skin.id != id)

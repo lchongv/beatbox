@@ -6,14 +6,24 @@
 @define-color bb_detail_bg     @theme_base_color;
 @define-color bb_detail_border @borders;
 
-/* the window buttons are drawn by the built-in look: give them theme icons */
+/* the window buttons are drawn by the built-in look: give them theme icons, flat
+ * and round like the theme's title buttons, small enough to stay above the
+ * transport buttons */
 button.traffic-light {
-  min-width: 24px;
-  min-height: 24px;
+  min-width: 20px;
+  min-height: 20px;
+  padding: 0;
+  margin: 0;
+  border: none;
+  border-radius: 50%;
+  box-shadow: none;
+  background-color: transparent;
   background-repeat: no-repeat;
   background-position: center;
-  background-size: 16px 16px;
+  background-size: 14px 14px;
 }
+button.traffic-light:hover  { background-color: alpha(@theme_fg_color, .1); }
+button.traffic-light:active { background-color: alpha(@theme_fg_color, .2); }
 button.traffic-light.close    { background-image: -gtk-icontheme("window-close-symbolic"); }
 button.traffic-light.minimize { background-image: -gtk-icontheme("window-minimize-symbolic"); }
 button.traffic-light.maximize { background-image: -gtk-icontheme("window-maximize-symbolic"); }

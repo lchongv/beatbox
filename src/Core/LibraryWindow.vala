@@ -184,13 +184,14 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		object_to_view = new HashMap<Object, View>();
 	}
 
-	/* The round version of the app icon (images/icons/128x128/apps/beatbox-round.svg),
-	 * drawn to fill the round menu button exactly. */
-	static Gdk.Pixbuf? round_app_icon (int size) {
+	/* The app icon on the menu button: the round version (beatbox-round.svg), drawn to
+	 * fill the round button exactly, or the square one in skins with MenuIcon=square */
+	static Gdk.Pixbuf? app_menu_icon (int size) {
+		var file = Skins.square_menu_icon ? "beatbox.svg" : "beatbox-round.svg";
 		try {
-			return new Gdk.Pixbuf.from_resource_at_scale ("/net/launchpad/beatbox/icons/128x128/apps/beatbox-round.svg", size, size, true);
+			return new Gdk.Pixbuf.from_resource_at_scale ("/net/launchpad/beatbox/icons/128x128/apps/" + file, size, size, true);
 		} catch (Error err) {
-			warning ("Could not load the round app icon: %s", err.message);
+			warning ("Could not load the app icon %s: %s", file, err.message);
 			return null;
 		}
 	}
@@ -389,7 +390,7 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		topControls.insert(top_displayBin, -1);
 		topControls.insert(searchFieldBin, -1);
 		var appmenu_button = new Gtk.MenuButton ();
-		var appmenu_icon = new Gtk.Image.from_pixbuf (round_app_icon (38));
+		var appmenu_icon = new Gtk.Image.from_pixbuf (app_menu_icon (38));
 		appmenu_button.image = appmenu_icon;
 		appmenu_button.get_style_context ().add_class ("round-menu");
 		appmenu_button.set_size_request (40, 40);
@@ -401,11 +402,16 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 				return;
 			appmenu_size = size;
 			Idle.add (() => {
-				appmenu_icon.pixbuf = round_app_icon (size - 2); // minus the 1px border
+				appmenu_icon.pixbuf = app_menu_icon (size - 2); // minus the 1px border
 				appmenu_button.set_size_request (size, size);
 				return false;
 			});
 		});
+		// a skin picked in Preferences may want the other shape (after Skins.apply has run)
+		App.settings.main.notify["skin"].connect (() => Idle.add (() => {
+			appmenu_icon.pixbuf = app_menu_icon ((appmenu_size > 0 ? appmenu_size : 40) - 2);
+			return false;
+		}));
 		appmenu_button.valign = appmenu_button.halign = Gtk.Align.CENTER;
 		appmenu_button.menu_model = settingsMenu;
 		var appmenu = new Gtk.ToolItem ();

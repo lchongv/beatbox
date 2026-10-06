@@ -12,15 +12,30 @@ A skin is a folder with two files:
   Author=You
   ```
 
-  `Native=true` drops the built-in look so only the system's GTK theme and `skin.css` apply (see `skins/native`).
+  - `Native=true` drops BeatBox's own look (the Classic skin, `data/theme.css`) so only the GTK theme and `skin.css` apply (see `skins/native`).
+  - `Theme=Adwaita` uses that GTK theme instead of the desktop's; `Dark=true` asks for its dark variant (see `skins/adwaita` and `skins/adwaita-dark`).
+  - `MenuIcon=square` shows the square app icon on the menu button (top right) instead of the round one.
 
-- `skin.css`: GTK 3 CSS loaded on top of the built-in look (`data/theme.css`).
+- `skin.css`: GTK 3 CSS. Unless the skin is native it is loaded on top of the Classic look (`data/theme.css`).
 
-To install a skin, copy its folder to `~/.local/share/beatbox/skins/`, then pick it in Preferences › Behavior › Appearance. "Open Skins Folder" in that section creates and opens the folder.
+The default skin is Adwaita: plain GTK with its own theme. The bundled ones:
+
+| Skin | Kind | Look |
+| --- | --- | --- |
+| Adwaita (default) | native | GTK's own theme, no custom styling |
+| Adwaita dark | native | the same, dark |
+| Native | native | the desktop's GTK theme |
+| Classic | over `theme.css` | aluminium chrome, blue accents, green LCD |
+| Graphite | over Classic | Classic in grey |
+| Midnight | over Classic | dark chrome and lists, blue LCD |
+| Vinyl | over Classic | walnut chrome, cream lists, amber LCD |
+| High contrast | over Classic | black and white, yellow selections and LCD |
+
+To install a skin, copy its folder to `~/.local/share/beatbox/skins/`, then pick it in Preferences › Appearance. "Open Skins Folder" in that section creates and opens the folder.
 
 ## Recoloring
 
-The simplest skin only redefines the palette. Every rule of the base theme uses these colors, so it follows them:
+The simplest skin (over Classic) only redefines the palette. Every rule of the Classic look uses these colors, so it follows them:
 
 | Color | Used for |
 | --- | --- |

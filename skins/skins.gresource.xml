@@ -2,6 +2,16 @@
 <!-- Skins bundled with BeatBox (more can be dropped into ~/.local/share/beatbox/skins) -->
 <gresources>
   <gresource prefix="/net/launchpad/beatbox/skins">
+    <file>adwaita/skin.ini</file>
+    <file>adwaita/skin.css</file>
+    <file>adwaita-dark/skin.ini</file>
+    <file>adwaita-dark/skin.css</file>
+    <file>classic/skin.ini</file>
+    <file>classic/skin.css</file>
+    <file>high-contrast/skin.ini</file>
+    <file>high-contrast/skin.css</file>
+    <file>vinyl/skin.ini</file>
+    <file>vinyl/skin.css</file>
     <file>graphite/skin.ini</file>
     <file>graphite/skin.css</file>
     <file>midnight/skin.ini</file>
