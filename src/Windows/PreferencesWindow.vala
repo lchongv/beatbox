@@ -108,9 +108,12 @@ public class BeatBox.PreferencesWindow : Gtk.Window {
 	}
 	
 	void add_sections() {
-		var behavior_pref = new BehaviorPreferences();
-		add_section(behavior_pref);
+		var library_pref = new LibraryPreferences();
+		add_section(library_pref);
+		add_section(new PlaybackPreferences());
 		add_section(new AppearancePreferences());
+		add_section(new LcdPreferences());
+		add_section(new MiniPlayerPreferences());
 		add_section(new CoverPreferences());
 		add_section(new ShortcutsPreferences());
 		add_section(new LastfmPreferences());
@@ -122,7 +125,7 @@ public class BeatBox.PreferencesWindow : Gtk.Window {
 			}
 		}
 		
-		side_bar.setSelectedIter(side_bar.convertToFilter(sections.get(behavior_pref)));
+		side_bar.setSelectedIter(side_bar.convertToFilter(sections.get(library_pref)));
 	}
 	
 	public void add_section(PreferencesSection section) {
