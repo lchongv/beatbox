@@ -34,6 +34,13 @@ BeatBox and haven't been tested with current devices, so back up an iPod before
 syncing it. The library database is copied to ~/.local/share/beatbox/beatbox.db.bak
 the first time a new version opens it.
 
+    meson test -C build
+
+runs the unit tests and a smoke test: BeatBox in a private Xvfb, D-Bus
+session and home, importing three generated songs and playing them through
+MPRIS, silently (it needs Xvfb, dbus-run-session and gst-launch-1.0, and is
+skipped without them).
+
 Packages
 --------
 
