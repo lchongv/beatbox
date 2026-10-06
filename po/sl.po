@@ -3,14 +3,20 @@
 # This file is distributed under the same license as the beat-box package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2012.
 #
+#. if less than one hour, show minutes + seconds
+#. There is obviously more than one minute. Otherwise we would have returned
+#. waay earlier
+#: core/Utils/TimeUtils.vala:82
+#, fuzzy, c-format
 msgid ""
 msgstr ""
 "Project-Id-Version: beat-box\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-10-28 11:18-0400\n"
+"POT-Creation-Date: 2026-10-06 12:49-0300\n"
 "PO-Revision-Date: 2012-05-04 09:43+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Slovenian <sl@li.org>\n"
+"Language: sl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -18,814 +24,2088 @@ msgstr ""
 "n%100==4 ? 3 : 0);\n"
 "X-Launchpad-Export-Date: 2012-11-20 05:11+0000\n"
 "X-Generator: Launchpad (build 16286)\n"
-"Language: sl\n"
 
-#: /home/scott/beat-box/po/../src//Core/LibraryWindow.vala:321
-msgid "Resolve"
+#: core/CellRenderers/CellDataFunctionHelper.vala:132
+msgid " kbps"
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//Core/LibraryWindow.vala:766
-#: /home/scott/beat-box/po/../src//Devices/CDRomDevice.vala:340
-msgid "Import Complete"
-msgstr "Uvoz je končan"
+#: core/Media/Preview.vala:57 src/Media/Podcast.vala:77 src/Media/Song.vala:57
+#: src/NowPlayingView/PodcastSummarySection.vala:292
+#: src/NowPlayingView/SongSummarySection.vala:312
+#: src/Widgets/TopDisplay/MetadataDisplay.vala:133
+msgid "Unknown Artist"
+msgstr "Neznan izvajalec"
 
-#: /home/scott/beat-box/po/../src//Core/LibraryWindow.vala:766
+#: core/Media/Preview.vala:57 src/Media/Podcast.vala:77 src/Media/Song.vala:57
+#: src/Media/Station.vala:77
+msgid " by "
+msgstr " od "
+
+#: core/Media/Preview.vala:58 src/Media/Podcast.vala:78 src/Media/Song.vala:58
+#: src/NowPlayingView/PodcastSummarySection.vala:293
+#: src/NowPlayingView/PodcastSummarySection.vala:301
+#: src/NowPlayingView/SongSummarySection.vala:313
+#: src/Widgets/TopDisplay/MetadataDisplay.vala:135
+msgid "Unknown Album"
+msgstr "Neznan album"
+
+#: core/Media/Preview.vala:58 src/Media/Podcast.vala:78 src/Media/Song.vala:58
+#: src/Media/Station.vala:78
+msgid " on "
+msgstr " na "
+
+#: core/Playlists/SmartQuery.vala:51 src/Lists/DuplicateList.vala:123
+#: src/Lists/GenericList.vala:126 src/Lists/MusicList.vala:160
+#: src/Widgets/StatusBar.vala:78 src/Windows/Editors/SongEditor.vala:582
+msgid "Album"
+msgstr "Album"
+
+#: core/Playlists/SmartQuery.vala:53 src/Lists/DuplicateList.vala:122
+#: src/Lists/GenericList.vala:126 src/Lists/MusicList.vala:159
+#: src/Lists/PodcastList.vala:107 src/Widgets/StatusBar.vala:79
+#: src/Windows/Editors/SongEditor.vala:582
+msgid "Artist"
+msgstr "Izvajalec"
+
+#: core/Playlists/SmartQuery.vala:55 src/Lists/DuplicateList.vala:126
+#: src/Lists/GenericList.vala:127 src/Lists/MusicList.vala:163
+msgid "Bitrate"
+msgstr "Bitna hitrost"
+
+#: core/Playlists/SmartQuery.vala:57 src/Lists/GenericList.vala:128
+#: src/Lists/PodcastList.vala:111 src/Windows/Editors/PodcastEditor.vala:74
+msgid "Comment"
+msgstr ""
+
+#: core/Playlists/SmartQuery.vala:59
+msgid "Composer"
+msgstr ""
+
+#: core/Playlists/SmartQuery.vala:61 src/Lists/DuplicateList.vala:130
+#: src/Lists/GenericList.vala:127 src/Lists/MusicList.vala:167
+msgid "Date Added"
+msgstr "Dodano dne"
+
+#: core/Playlists/SmartQuery.vala:63
+msgid "Date Released"
+msgstr ""
+
+#: core/Playlists/SmartQuery.vala:65 src/Lists/DuplicateList.vala:124
+#: src/Lists/GenericList.vala:126 src/Lists/MusicList.vala:161
+#: src/Lists/RadioList.vala:78 src/Windows/DirectoryDialog.vala:68
+#: src/Windows/DirectoryDialog.vala:69
+#: src/Windows/Editors/PodcastEditor.vala:73
+#: src/Windows/Editors/StationEditor.vala:62
+msgid "Genre"
+msgstr "Zvrst"
+
+#: core/Playlists/SmartQuery.vala:67
+msgid "Grouping"
+msgstr ""
+
+#: core/Playlists/SmartQuery.vala:69 src/Lists/DuplicateList.vala:131
+#: src/Lists/GenericList.vala:128 src/Lists/MusicList.vala:168
+msgid "Last Played"
+msgstr "Nazadnje predvajano"
+
+#: core/Playlists/SmartQuery.vala:71 src/Lists/DuplicateList.vala:121
+#: src/Lists/GenericList.vala:126 src/Lists/MusicList.vala:158
+#: src/Lists/PodcastList.vala:106
+msgid "Length"
+msgstr "Čas trajanja"
+
+#: core/Playlists/SmartQuery.vala:73
+msgid "Media Type"
+msgstr ""
+
+#: core/Playlists/SmartQuery.vala:75
+msgid "Play Count"
+msgstr ""
+
+#: core/Playlists/SmartQuery.vala:77 src/Lists/DuplicateList.vala:127
+#: src/Lists/GenericList.vala:127 src/Lists/MusicList.vala:164
+#: src/Lists/PodcastList.vala:112 src/Lists/RadioList.vala:79
+#: src/Widgets/TrackReport.vala:173 src/Windows/Editors/PodcastEditor.vala:76
+#: src/Windows/Editors/StationEditor.vala:63
+msgid "Rating"
+msgstr "Ocena"
+
+#: core/Playlists/SmartQuery.vala:79 src/Windows/Editors/InfoViewport.vala:70
+msgid "Skip Count"
+msgstr ""
+
+#. Column titles are translated at runtime (see add_columns); listed here for xgettext
+#. if(s.media_type != sum.media_type)
+#. sum.media_type = MediaType.SONG;
+#: core/Playlists/SmartQuery.vala:81 src/Lists/DuplicateList.vala:120
+#: src/Lists/GenericList.vala:126 src/Lists/MusicList.vala:157
+#: src/Windows/Editors/PodcastEditor.vala:70
+#: src/Windows/Editors/SongEditor.vala:582
+msgid "Title"
+msgstr "Naslov"
+
+#: core/Playlists/SmartQuery.vala:83 src/Lists/DuplicateList.vala:125
+#: src/Lists/GenericList.vala:127 src/Lists/MusicList.vala:162
+msgid "Year"
+msgstr "Leto"
+
+#: core/Playlists/SmartQuery.vala:154
+msgid "is"
+msgstr "je"
+
+#: core/Playlists/SmartQuery.vala:156
+msgid "is exactly"
+msgstr ""
+
+#: core/Playlists/SmartQuery.vala:158
+msgid "is not"
+msgstr "ni"
+
+#: core/Playlists/SmartQuery.vala:160
+msgid "is at least"
+msgstr ""
+
+#: core/Playlists/SmartQuery.vala:162
+msgid "is at most"
+msgstr ""
+
+#: core/Playlists/SmartQuery.vala:164
+msgid "is within"
+msgstr ""
+
+#: core/Playlists/SmartQuery.vala:166
+msgid "is before"
+msgstr ""
+
+#: core/Playlists/SmartQuery.vala:168
+msgid "contains"
+msgstr "vsebuje"
+
+#: core/Playlists/SmartQuery.vala:170
+msgid "does not contain"
+msgstr "ne vsebuje"
+
+#: core/Playlists/StaticPlaylist.vala:39 src/Lists/MusicList.vala:181
+#: src/Lists/PodcastList.vala:120
+msgid "New Playlist"
+msgstr "Nov seznam predvajanja"
+
+#: core/Utils/TimeUtils.vala:44
 #, c-format
-msgid "BeatBox has imported your %s library."
-msgstr ""
+msgid "%d second"
+msgid_plural "%d seconds"
+msgstr[0] ""
+msgstr[1] ""
 
-#: /home/scott/beat-box/po/../src//Core/LibraryWindow.vala:859
-#: /home/scott/beat-box/po/../src//Core/LibraryWindow.vala:866
+#: core/Utils/TimeUtils.vala:66
 #, c-format
-msgid "%s media files could not be found."
-msgstr ""
+msgid "%i day"
+msgid_plural "%i days"
+msgstr[0] ""
+msgstr[1] ""
 
-#: /home/scott/beat-box/po/../src//Core/FileOperator.vala:459
+#: core/Utils/TimeUtils.vala:70
 #, c-format
-msgid "Copying files to %s Folder..."
-msgstr ""
+msgid "%i hour"
+msgid_plural "%i hours"
+msgstr[0] ""
+msgstr[1] ""
 
-#: /home/scott/beat-box/po/../src//Core/FileOperator.vala:479
+#: core/Utils/TimeUtils.vala:74
 #, c-format
-msgid "Copying %s to %s Folder"
-msgstr ""
+msgid "%i minute"
+msgid_plural "%i minutes"
+msgstr[0] ""
+msgstr[1] ""
 
-#: /home/scott/beat-box/po/../src//Core/PodcastManager.vala:36
-msgid "Cancelling remaining downloads..."
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Core/PodcastManager.vala:37
-msgid "Fetching new podcast episodes"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Core/PodcastManager.vala:38
+#: core/Utils/TimeUtils.vala:84 core/Utils/TimeUtils.vala:94
+#: core/Utils/TimeUtils.vala:98 core/Utils/TimeUtils.vala:106
 #, c-format
-msgid "Searching for new %s podcast episodes..."
+msgid "%s and %s"
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//Core/PodcastManager.vala:39
+#: core/Utils/TimeUtils.vala:92
 #, c-format
-msgid "Fetching podcast from %s"
+msgid "%s, %s and %s"
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//Core/PodcastManager.vala:40
+#: core/Utils/UI.vala:154
+msgid "Experimental:"
+msgstr ""
+
+#: src/Core/AcoustId.vala:39
+#, fuzzy
+msgid "Could not compute the fingerprint of this file."
+msgstr "BeatBox ne more prebrati vsebine tega zvočnega CD-ja."
+
+#: src/Core/AcoustId.vala:50
+msgid "AcoustID could not be reached."
+msgstr ""
+
+#: src/Core/AcoustId.vala:55
 #, c-format
-msgid "Downloading %s (%d of %d)"
+msgid "AcoustID answered: %s"
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//Core/PodcastManager.vala:48
-msgid "Downloading new Podcasts"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Core/PodcastManager.vala:138
-msgid "Parsing new Podcast RSS"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Core/PodcastManager.vala:339
-msgid "Downloading Podcast Episodes"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Core/PodcastManager.vala:349
-msgid "Downloading Podcast Episodes..."
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Core/PlaylistManager.vala:179
-msgid "Adding playlist to Library"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Core/PlaylistManager.vala:199
-#, c-format
-msgid "Importing %s to Library..."
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Core/Actions.vala:41
+#: src/Core/Actions.vala:50
 msgid "Create Playlist"
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//Core/Actions.vala:41
-msgid "Create a new Playlist"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Core/Actions.vala:42
+#: src/Core/Actions.vala:51
 msgid "Create Smart Playlist"
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//Core/Actions.vala:42
-msgid "Create a new Smart Playlist"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Core/Actions.vala:43
+#: src/Core/Actions.vala:52
 msgid "Import Playlist"
 msgstr "Uvozi seznam predvajanja"
 
-#: /home/scott/beat-box/po/../src//Core/Actions.vala:43
-msgid "Import playlist from file"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Core/Actions.vala:44
+#: src/Core/Actions.vala:53
 msgid "Import Station"
 msgstr "Uvozi postajo"
 
-#: /home/scott/beat-box/po/../src//Core/Actions.vala:44
-msgid "Import station from file"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Core/Actions.vala:45
-#: /home/scott/beat-box/po/../src//Windows/AddPodcastWindow.vala:51
+#: src/Core/Actions.vala:54 src/Windows/AddPodcastWindow.vala:51
 msgid "Add RSS Feed"
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//Core/Actions.vala:45
-msgid "Add a new RSS Podcast Feed to your library"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Core/Actions.vala:46
+#: src/Core/Actions.vala:55 src/SourceViews/PodcastSourceView.vala:57
 msgid "Download new Episodes"
 msgstr "Prejmi nove epizode"
 
-#: /home/scott/beat-box/po/../src//Core/Actions.vala:46
-msgid "Download new Podcast Episodes"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Core/Actions.vala:47
-#: /home/scott/beat-box/po/../src//DBus/UnityIntegration.vala:60
-#: /home/scott/beat-box/po/../src//Windows/PreferencesWindow.vala:54
+#: src/Core/Actions.vala:56 src/Core/LibraryWindow.vala:828
+#: src/DBus/UnityIntegration.vala:60 src/Windows/PreferencesWindow.vala:52
 msgid "Preferences"
 msgstr "Nastavitve"
 
-#: /home/scott/beat-box/po/../src//Core/Actions.vala:48
-#: /home/scott/beat-box/po/../src//DBus/UnityIntegration.vala:61
-#: /home/scott/beat-box/po/../src//Windows/EqualizerWindow.vala:80
+#: src/Core/Actions.vala:57 src/Core/LibraryWindow.vala:827
+#: src/DBus/UnityIntegration.vala:61 src/Windows/EqualizerWindow.vala:80
 msgid "Equalizer"
 msgstr "Izenačevalnik"
 
-#: /home/scott/beat-box/po/../src//Core/Actions.vala:49
-#: /home/scott/beat-box/po/../src//DBus/UnityIntegration.vala:59
+#: src/Core/Actions.vala:58 src/DBus/UnityIntegration.vala:59
+#: src/Windows/Editors/MediaEditor.vala:93
 msgid "Next"
 msgstr "Naslednje"
 
-#: /home/scott/beat-box/po/../src//Core/Actions.vala:50
+#: src/Core/Actions.vala:59
 msgid "Play/Pause"
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//Core/Actions.vala:51
-#: /home/scott/beat-box/po/../src//DBus/UnityIntegration.vala:57
+#: src/Core/Actions.vala:60 src/DBus/UnityIntegration.vala:57
+#: src/Windows/Editors/MediaEditor.vala:92
 msgid "Previous"
 msgstr "Prejšnje"
 
-#: /home/scott/beat-box/po/../src//Core/Actions.vala:52
-msgid "Ban"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Core/Actions.vala:52
-#: /home/scott/beat-box/po/../src//Core/Actions.vala:53
+#: src/Core/Actions.vala:61
 msgid "Love"
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//Core/Actions.vala:54
+#: src/Core/Actions.vala:62
 msgid "Show Duplicates"
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//Core/Actions.vala:55
+#: src/Core/Actions.vala:63
 msgid "Hide Duplicates"
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//Core/Actions.vala:56
+#: src/Core/Actions.vala:64
 msgid "Exit"
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//Core/Actions.vala:129
+#: src/Core/Actions.vala:133
 #, c-format
 msgid "Choose %s Folder"
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//Core/Actions.vala:147
-#: /home/scott/beat-box/po/../src//Core/Actions.vala:299
+#: src/Core/Actions.vala:135 src/Core/Actions.vala:153
+#: src/Core/Actions.vala:292 src/Dialogs/FileNotFoundDialog.vala:154
+#: src/Dialogs/RemoveFilesDialog.vala:60
+#: src/Dialogs/SetLibraryFolderConfirmation.vala:72
+#: src/Dialogs/SetLibraryFolderConfirmation.vala:135
+#: src/Utils/PlaylistUtils.vala:231
+#, fuzzy
+msgid "_Cancel"
+msgstr "Prekliči"
+
+#: src/Core/Actions.vala:136 src/Core/Actions.vala:154
+#: src/Core/Actions.vala:293 src/Dialogs/FileNotFoundDialog.vala:155
+#: src/Dialogs/SetLibraryFolderConfirmation.vala:136
+msgid "_Open"
+msgstr ""
+
+#: src/Core/Actions.vala:151 src/Core/Actions.vala:290
 #, c-format
 msgid "Import %s"
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//Core/Actions.vala:175
+#: src/Core/Actions.vala:179
 msgid "Import Failed"
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//Core/Actions.vala:175
+#: src/Core/Actions.vala:179
 #, c-format
 msgid ""
 "Your library's %s folder could not be found. Please make sure your %s folder "
 "is mounted before importing."
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//Core/Actions.vala:179
+#: src/Core/Actions.vala:183
 msgid "Doing Partial Import"
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//Core/Actions.vala:179
+#: src/Core/Actions.vala:183
 #, c-format
 msgid ""
 "Some of the folders you selected to import are already in your %s Folder. "
 "Please rescan instead."
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//Core/Actions.vala:266
-#: /home/scott/beat-box/po/../src//DBus/UnityIntegration.vala:129
-msgid "Pause"
+#: src/Core/Actions.vala:326
+msgid "Invalid Playlist"
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//Core/Actions.vala:270
-#: /home/scott/beat-box/po/../src//DBus/UnityIntegration.vala:58
-#: /home/scott/beat-box/po/../src//DBus/UnityIntegration.vala:129
-#: /home/scott/beat-box/po/../src//Windows/Editors/InfoViewport.vala:190
+#: src/Core/Actions.vala:326
+msgid "Unrecognized playlist file. Import failed."
+msgstr ""
+
+#. If the user wants their imports to be copied to their music folder, transition
+#. into that copy right now. If they don't, finish.
+#: src/Core/FileOperator.vala:494
+#, c-format
+msgid "Copying files to %s Folder..."
+msgstr ""
+
+#: src/Core/FileOperator.vala:514
+#, c-format
+msgid "Copying %s to %s Folder"
+msgstr ""
+
+#. an Image gets no clicks of its own
+#: src/Core/LibraryWindow.vala:325
+msgid "Click to enlarge; drag to copy it into another application or folder"
+msgstr ""
+
+#: src/Core/LibraryWindow.vala:376
+msgid "_Mini Player"
+msgstr ""
+
+#: src/Core/LibraryWindow.vala:419
+msgid "Resolve"
+msgstr ""
+
+#: src/Core/LibraryWindow.vala:470
+msgid "Information about the song playing (Ctrl+Shift+I)"
+msgstr ""
+
+#: src/Core/LibraryWindow.vala:526 src/Windows/DirectoryDialog.vala:108
+msgid "Close"
+msgstr ""
+
+#: src/Core/LibraryWindow.vala:526
+msgid "Minimize"
+msgstr ""
+
+#: src/Core/LibraryWindow.vala:526
+msgid "Maximize (Alt: mini player)"
+msgstr ""
+
+#: src/Core/LibraryWindow.vala:815
+msgid "Play / Pause"
+msgstr ""
+
+#: src/Core/LibraryWindow.vala:816
+#, fuzzy
+msgid "Next song"
+msgstr "Naslednje"
+
+#: src/Core/LibraryWindow.vala:817
+#, fuzzy
+msgid "Previous song"
+msgstr "Prejšnje"
+
+#: src/Core/LibraryWindow.vala:818
+msgid "Volume up"
+msgstr ""
+
+#: src/Core/LibraryWindow.vala:819
+msgid "Volume down"
+msgstr ""
+
+#: src/Core/LibraryWindow.vala:820
+msgid "Mini player"
+msgstr ""
+
+#: src/Core/LibraryWindow.vala:821
+msgid "Search"
+msgstr ""
+
+#: src/Core/LibraryWindow.vala:825
+msgid "Now playing"
+msgstr ""
+
+#: src/Core/LibraryWindow.vala:826
+msgid "Information panel"
+msgstr ""
+
+#: src/Core/LibraryWindow.vala:829
+msgid "Quit"
+msgstr ""
+
+#. FIXME: We already do this and more in the library_manager import_operation_finished. Use that
+#. and use the same text as here for CD imports
+#: src/Core/LibraryWindow.vala:940 src/Devices/CDRomDevice.vala:339
+msgid "Import Complete"
+msgstr "Uvoz je končan"
+
+#: src/Core/LibraryWindow.vala:940
+#, c-format
+msgid "BeatBox has imported your %s library."
+msgstr ""
+
+#: src/Core/LibraryWindow.vala:1033 src/Core/LibraryWindow.vala:1040
+#, c-format
+msgid "%s media files could not be found."
+msgstr ""
+
+#: src/Core/PlaylistManager.vala:179
+msgid "Adding playlist to Library"
+msgstr ""
+
+#: src/Core/PlaylistManager.vala:199
+#, c-format
+msgid "Importing %s to Library..."
+msgstr ""
+
+#: src/Core/PodcastManager.vala:36
+msgid "Cancelling remaining downloads..."
+msgstr ""
+
+#: src/Core/PodcastManager.vala:37
+msgid "Fetching new podcast episodes"
+msgstr ""
+
+#: src/Core/PodcastManager.vala:38
+#, c-format
+msgid "Searching for new %s podcast episodes..."
+msgstr ""
+
+#: src/Core/PodcastManager.vala:39
+#, c-format
+msgid "Fetching podcast from %s"
+msgstr ""
+
+#: src/Core/PodcastManager.vala:40
+#, c-format
+msgid "Downloading %s (%d of %d)"
+msgstr ""
+
+#: src/Core/PodcastManager.vala:48
+msgid "Downloading new Podcasts"
+msgstr ""
+
+#: src/Core/PodcastManager.vala:135
+msgid "Parsing new Podcast RSS"
+msgstr ""
+
+#: src/Core/PodcastManager.vala:334
+msgid "Downloading Podcast Episodes"
+msgstr ""
+
+#: src/Core/PodcastManager.vala:344
+msgid "Downloading Podcast Episodes..."
+msgstr ""
+
+#: src/DBus/UnityIntegration.vala:58 src/DBus/UnityIntegration.vala:129
+#: src/Widgets/AlbumWall.vala:373 src/Windows/Editors/InfoViewport.vala:191
 msgid "Play"
 msgid_plural "Plays"
 msgstr[0] ""
 msgstr[1] ""
 
-#: /home/scott/beat-box/po/../src//Core/Actions.vala:335
-msgid "Invalid Playlist"
+#: src/DBus/UnityIntegration.vala:129
+msgid "Pause"
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//Core/Actions.vala:335
-msgid "Unrecognized playlist file. Import failed."
+#: src/Devices/AndroidDevice.vala:63
+msgid "No Description"
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//Media/Podcast.vala:77
-#: /home/scott/beat-box/po/../src//Media/Song.vala:57
-#: /home/scott/beat-box/po/../src//NowPlayingView/SongSummarySection.vala:326
-#: /home/scott/beat-box/po/../src//NowPlayingView/PodcastSummarySection.vala:290
-#: /home/scott/beat-box/po/../core//Media/Preview.vala:57
-#: /home/scott/beat-box/po/../plugins//Store/Widgets/AlbumView.vala:338
-msgid "Unknown Artist"
-msgstr "Neznan izvajalec"
-
-#: /home/scott/beat-box/po/../src//Media/Podcast.vala:77
-#: /home/scott/beat-box/po/../src//Media/Station.vala:77
-#: /home/scott/beat-box/po/../src//Media/Song.vala:57
-#: /home/scott/beat-box/po/../core//Media/Preview.vala:57
-msgid " by "
-msgstr " od "
-
-#: /home/scott/beat-box/po/../src//Media/Podcast.vala:78
-#: /home/scott/beat-box/po/../src//Media/Song.vala:58
-#: /home/scott/beat-box/po/../src//NowPlayingView/SongSummarySection.vala:327
-#: /home/scott/beat-box/po/../src//NowPlayingView/PodcastSummarySection.vala:291
-#: /home/scott/beat-box/po/../src//NowPlayingView/PodcastSummarySection.vala:299
-#: /home/scott/beat-box/po/../core//Media/Preview.vala:58
-msgid "Unknown Album"
-msgstr "Neznan album"
-
-#: /home/scott/beat-box/po/../src//Media/Podcast.vala:78
-#: /home/scott/beat-box/po/../src//Media/Station.vala:78
-#: /home/scott/beat-box/po/../src//Media/Song.vala:58
-#: /home/scott/beat-box/po/../core//Media/Preview.vala:58
-msgid " on "
-msgstr " na "
-
-#: /home/scott/beat-box/po/../src//Media/Station.vala:76
-msgid "Unknown Song"
+#: src/Devices/AndroidDevice.vala:91 src/Devices/CDRomDevice.vala:129
+msgid "Unknown capacity"
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//Preferences/BehaviorPreferences.vala:45
-#: /home/scott/beat-box/po/../src//Preferences/BehaviorPreferences.vala:51
-#: /home/scott/beat-box/po/../src//Preferences/PodcastPreferences.vala:51
-#: /home/scott/beat-box/po/../src//Preferences/PodcastPreferences.vala:57
-msgid "Library Management"
+#: src/Devices/CDRomDevice.vala:97
+msgid "Multimedia Disc"
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//Preferences/BehaviorPreferences.vala:46
-msgid "Keep media folders organized"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Preferences/BehaviorPreferences.vala:47
-msgid "Write metadata to file"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Preferences/BehaviorPreferences.vala:48
-msgid "Copy files to library folder when imported"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Preferences/LastfmPreferences.vala:52
-msgid "Login"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Preferences/LastfmPreferences.vala:53
-msgid "Logout"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Preferences/LastfmPreferences.vala:56
-#: /home/scott/beat-box/po/../src//Preferences/LastfmPreferences.vala:60
-msgid "Authentication"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Preferences/LastfmPreferences.vala:73
-msgid "Username:"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Preferences/LastfmPreferences.vala:74
-msgid "Password:"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Preferences/LastfmPreferences.vala:161
+#: src/Devices/CDRomDevice.vala:212
 #, c-format
-msgid "You are logged in as %s."
+msgid "Ripping from %s"
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//Preferences/LastfmPreferences.vala:169
+#: src/Devices/CDRomDevice.vala:269
 #, c-format
-msgid "BeatBox was unable to log in as %s. Please try again."
+msgid "CD Import cancelled. Finishing ripping track %s..."
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//Preferences/PodcastPreferences.vala:46
-#: /home/scott/beat-box/po/../src//Preferences/PodcastPreferences.vala:56
-msgid "Podcast Library Location"
+#: src/Devices/CDRomDevice.vala:339
+#, c-format
+msgid "BeatBox has finished importing %d song(s) from Audio CD"
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//Preferences/PodcastPreferences.vala:47
-msgid "Podcast Folder"
+#: src/Devices/iPodDevice.vala:208
+msgid "Unknown Capacity"
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//Preferences/PodcastPreferences.vala:48
-#: /home/scott/beat-box/po/../src//Preferences/MusicPreferences.vala:47
-msgid "Import..."
+#: src/Devices/iPodDevice.vala:282 src/Devices/iPodDevice.vala:465
+#: src/Devices/iPodDevice.vala:597
+#, c-format
+msgid "Syncing %s"
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//Preferences/PodcastPreferences.vala:49
-#: /home/scott/beat-box/po/../src//Preferences/MusicPreferences.vala:48
-msgid "Rescan"
+#: src/Devices/iPodDevice.vala:292
+msgid "Syncing "
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//Preferences/PodcastPreferences.vala:52
-msgid "Automatically download new podcast episodes"
+#. for each song that is on device, but not in this.list, remove
+#: src/Devices/iPodDevice.vala:307
+msgid "Removing old medias from iPod and updating current ones"
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//Preferences/PodcastPreferences.vala:109
-#: /home/scott/beat-box/po/../src//Preferences/MusicPreferences.vala:95
-msgid "Could not find Music Folder"
-msgstr "Ni možno najti glasbene mape"
-
-#: /home/scott/beat-box/po/../src//Preferences/PodcastPreferences.vala:109
-#: /home/scott/beat-box/po/../src//Preferences/MusicPreferences.vala:95
-msgid "Please make sure that your Music folder is accessible and mounted."
+#. now add all in list that weren't in medias
+#: src/Devices/iPodDevice.vala:357
+msgid "Adding new media to iPod..."
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//Preferences/PodcastPreferences.vala:125
+#: src/Devices/iPodDevice.vala:393 src/Devices/iPodDevice.vala:497
+#: src/Devices/iPodDevice.vala:644
+msgid "Cancelling Sync..."
+msgstr ""
+
+#: src/Devices/iPodDevice.vala:393 src/Devices/iPodDevice.vala:497
+#: src/Devices/iPodDevice.vala:644
+msgid "Finishing sync process..."
+msgstr ""
+
+#: src/Devices/iPodDevice.vala:475
+msgid "Syncing"
+msgstr ""
+
+#: src/Devices/iPodDevice.vala:533
+msgid "Adding"
+msgstr ""
+
+#: src/Devices/iPodDevice.vala:534 src/Devices/iPodDevice.vala:673
+msgid "by"
+msgstr ""
+
+#: src/Devices/iPodDevice.vala:535
+msgid "to"
+msgstr ""
+
+#: src/Devices/iPodDevice.vala:607
+msgid "Removing from "
+msgstr ""
+
+#: src/Devices/iPodDevice.vala:672
+msgid "Removing"
+msgstr ""
+
+#: src/Devices/iPodDevice.vala:674
+msgid "from"
+msgstr ""
+
+#. should be called from thread
+#. index = 75 at this point. will go to 95
+#: src/Devices/iPodDevice.vala:739
+msgid "Syncing playlists"
+msgstr ""
+
+#: src/Devices/iPodDevice.vala:792
+#, c-format
+msgid "Transferring from %s"
+msgstr ""
+
+#: src/Devices/iPodDevice.vala:803
+#, c-format
+msgid "Importing %s items to library..."
+msgstr ""
+
+#: src/Devices/iPodDevice.vala:822
+msgid "Importing"
+msgstr ""
+
+#: src/Devices/iPodDevice.vala:822
+msgid "to library"
+msgstr ""
+
+#: src/Dialogs/FileNotFoundDialog.vala:80 src/Lists/MusicList.vala:93
+#: src/Lists/PodcastList.vala:77
+msgid "Remove from Library"
+msgstr ""
+
+#: src/Dialogs/FileNotFoundDialog.vala:81
+#, fuzzy
+msgid "Rescan Library"
+msgstr "Knjižnica"
+
+#: src/Dialogs/FileNotFoundDialog.vala:82
+#, fuzzy
+msgid "Locate File…"
+msgstr "Lociraj"
+
+#: src/Dialogs/FileNotFoundDialog.vala:83
+#: src/Dialogs/InstallGstreamerPluginsDialog.vala:65
+msgid "Do Nothing"
+msgstr ""
+
+#. pretty up labels
+#: src/Dialogs/FileNotFoundDialog.vala:87
+#, fuzzy
+msgid "Could not find the file"
+msgid_plural "Could not find the files"
+msgstr[0] "Ni možno najti glasbene mape"
+msgstr[1] "Ni možno najti glasbene mape"
+msgstr[2] "Ni možno najti glasbene mape"
+msgstr[3] "Ni možno najti glasbene mape"
+
+#: src/Dialogs/FileNotFoundDialog.vala:91
+#, c-format
+msgid "The file for %s by %s could not be found. What would you like to do?"
+msgstr ""
+
+#: src/Dialogs/FileNotFoundDialog.vala:93
+#, c-format
+msgid "%s files could not be found. What would you like to do?"
+msgstr ""
+
+#: src/Dialogs/FileNotFoundDialog.vala:152
+msgid "Locate Music File"
+msgstr ""
+
+#: src/Dialogs/InstallGstreamerPluginsDialog.vala:64
+msgid "Install Plugin"
+msgstr ""
+
+#. pretty up labels
+#: src/Dialogs/InstallGstreamerPluginsDialog.vala:69
+msgid "Required GStreamer plugin not installed"
+msgstr ""
+
+#: src/Dialogs/InstallGstreamerPluginsDialog.vala:72
+#, c-format
 msgid ""
-"Please wait until all operations finish before setting your podcast folder."
+"The plugin for media type %s is not installed.\n"
+" What would you like to do?"
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//Preferences/MusicPreferences.vala:45
-#: /home/scott/beat-box/po/../src//Preferences/MusicPreferences.vala:51
-msgid "Music Library Location"
+#: src/Dialogs/NotImportedDialog.vala:52
+#, fuzzy
+msgid "Not Imported Files"
+msgstr "Ne uvozi"
+
+#: src/Dialogs/NotImportedDialog.vala:70
+#, fuzzy
+msgid "BeatBox could not read it. It may be damaged or not be audio."
+msgid_plural ""
+"BeatBox could not read them. They may be damaged or not be audio."
+msgstr[0] "BeatBox ne more prebrati vsebine tega zvočnega CD-ja."
+msgstr[1] "BeatBox ne more prebrati vsebine tega zvočnega CD-ja."
+msgstr[2] "BeatBox ne more prebrati vsebine tega zvočnega CD-ja."
+msgstr[3] "BeatBox ne more prebrati vsebine tega zvočnega CD-ja."
+
+#: src/Dialogs/NotImportedDialog.vala:71
+msgid "Move all corrupted files to trash"
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//Preferences/MusicPreferences.vala:46
-msgid "Music Folder"
+#: src/Dialogs/NotImportedDialog.vala:76 src/Dialogs/RemoveFilesDialog.vala:58
+msgid "Move to Trash"
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//Preferences/MusicPreferences.vala:111
-msgid ""
-"Please wait until all operations finish before setting your music folder."
+#: src/Dialogs/NotImportedDialog.vala:77
+msgid "Ignore"
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//SourceViews/SourceView.vala:280
-msgid "No Results"
+#. pretty up labels
+#: src/Dialogs/NotImportedDialog.vala:81
+#, fuzzy, c-format
+msgid "Could not import %d file"
+msgid_plural "Could not import %d files"
+msgstr[0] "Ni možno najti glasbene mape"
+msgstr[1] "Ni možno najti glasbene mape"
+msgstr[2] "Ni možno najti glasbene mape"
+msgstr[3] "Ni možno najti glasbene mape"
+
+#: src/Dialogs/NotImportedDialog.vala:104
+msgid "File Location"
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//SourceViews/SourceView.vala:280
-msgid "Your search query returned no results."
+#: src/Dialogs/NotImportedDialog.vala:137
+msgid "Select individual files to move to trash:"
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//SourceViews/SimilarSourceView.vala:45
-#: /home/scott/beat-box/po/../src//SourceViews/DeviceSourceView.vala:46
-#: /home/scott/beat-box/po/../src//SourceViews/MusicSourceView.vala:37
-#: /home/scott/beat-box/po/../src//Widgets/StatusBar.vala:120
-#: /home/scott/beat-box/po/../src//Dialogs/RemoveFilesDialog.vala:67
+#: src/Dialogs/RemoveFilesDialog.vala:59
+msgid "Remove from BeatBox"
+msgstr ""
+
+#: src/Dialogs/RemoveFilesDialog.vala:66
+#: src/SourceViews/DeviceSourceView.vala:44
+#: src/SourceViews/MusicSourceView.vala:37
+#: src/SourceViews/SimilarSourceView.vala:43 src/Widgets/StatusBar.vala:150
 msgid "song"
 msgid_plural "songs"
 msgstr[0] ""
 msgstr[1] ""
 
-#: /home/scott/beat-box/po/../src//SourceViews/SimilarSourceView.vala:54
-#: /home/scott/beat-box/po/../src//SourceViews/HistorySourceView.vala:46
-#: /home/scott/beat-box/po/../src//SourceViews/QueueSourceView.vala:46
-msgid "Save as Playlist"
-msgstr "Shrani kot seznam predvajanja"
-
-#: /home/scott/beat-box/po/../src//SourceViews/SimilarSourceView.vala:55
-#: /home/scott/beat-box/po/../src//SourceViews/HistorySourceView.vala:47
-#: /home/scott/beat-box/po/../src//SourceViews/SmartPlaylistSourceView.vala:62
-#: /home/scott/beat-box/po/../src//SourceViews/PlaylistSourceView.vala:61
-#: /home/scott/beat-box/po/../src//SourceViews/QueueSourceView.vala:47
-msgid "Export..."
-msgstr "Izvozi ..."
-
-#: /home/scott/beat-box/po/../src//SourceViews/SimilarSourceView.vala:113
-#: /home/scott/beat-box/po/../src//SourceViews/SimilarSourceView.vala:220
-#, c-format
-msgid "Similar to %s"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//SourceViews/SimilarSourceView.vala:147
-#, c-format
-msgid "BeatBox is finding songs similar to <b>%s</b> by <b>%s</b>"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//SourceViews/SimilarSourceView.vala:148
-msgid "Fetching similar songs"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//SourceViews/SimilarSourceView.vala:156
-#, c-format
-msgid "BeatBox could not find songs similar to <b>%s</b> by <b>%s</b>. "
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//SourceViews/SimilarSourceView.vala:157
-msgid ""
-"Make sure all song info is correct and you are connected to the Internet. "
-"Some songs may not have matches."
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//SourceViews/SimilarSourceView.vala:158
-msgid "No similar songs found"
-msgstr "Ni najdenih podobnih pesmi"
-
-#: /home/scott/beat-box/po/../src//SourceViews/SimilarSourceView.vala:187
-msgid "Similar Songs"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//SourceViews/SimilarSourceView.vala:220
-msgid "Similar list"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//SourceViews/DuplicateSourceView.vala:46
-#: /home/scott/beat-box/po/../src//SourceViews/HistorySourceView.vala:39
-#: /home/scott/beat-box/po/../src//SourceViews/DefaultSourceView.vala:38
-#: /home/scott/beat-box/po/../src//SourceViews/SmartPlaylistSourceView.vala:49
-#: /home/scott/beat-box/po/../src//SourceViews/PlaylistSourceView.vala:48
-#: /home/scott/beat-box/po/../src//SourceViews/QueueSourceView.vala:39
-#: /home/scott/beat-box/po/../src//Widgets/StatusBar.vala:132
-#: /home/scott/beat-box/po/../src//Dialogs/RemoveFilesDialog.vala:80
-msgid "item"
-msgid_plural "items"
+#: src/Dialogs/RemoveFilesDialog.vala:69
+msgid "podcast episode"
+msgid_plural "podcast episodes"
 msgstr[0] ""
 msgstr[1] ""
 
-#: /home/scott/beat-box/po/../src//SourceViews/DuplicateSourceView.vala:51
-msgid "Remove Checked Items"
-msgstr ""
+#: src/Dialogs/RemoveFilesDialog.vala:72 src/Widgets/StatusBar.vala:156
+msgid "audiobook"
+msgid_plural "audiobooks"
+msgstr[0] ""
+msgstr[1] ""
 
-#: /home/scott/beat-box/po/../src//SourceViews/DuplicateSourceView.vala:53
-msgid "Manually select duplicates"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//SourceViews/DuplicateSourceView.vala:54
-msgid "Keep highest bitrate"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//SourceViews/DuplicateSourceView.vala:55
-msgid "Keep largest file"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//SourceViews/DuplicateSourceView.vala:85
-msgid "Victory! No Duplicates!"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//SourceViews/DuplicateSourceView.vala:85
-msgid "Your library has no duplicates."
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//SourceViews/DuplicateSourceView.vala:186
-msgid "Duplicates"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//SourceViews/HistorySourceView.vala:67
-msgid "No songs in History"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//SourceViews/HistorySourceView.vala:67
-msgid ""
-"After a part of a song has been played, it is added to the history list."
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//SourceViews/HistorySourceView.vala:68
-msgid ""
-"You can use this list to see all the songs you have played during the "
-"current session."
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//SourceViews/HistorySourceView.vala:91
-msgid "History"
-msgstr "Zgodovina"
-
-#: /home/scott/beat-box/po/../src//SourceViews/HistorySourceView.vala:112
-#: /home/scott/beat-box/po/../src//SourceViews/HistorySourceView.vala:126
-msgid " play history"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//SourceViews/DefaultSourceView.vala:56
-msgid "No Media Found"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//SourceViews/DefaultSourceView.vala:56
-msgid "There is no media here."
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//SourceViews/PodcastSourceView.vala:40
-msgid "podcast"
-msgstr "podcast"
-
-#: /home/scott/beat-box/po/../src//SourceViews/PodcastSourceView.vala:43
-msgid "Subscribe to Podcasts"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//SourceViews/PodcastSourceView.vala:43
-msgid "No Podcasts were found."
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//SourceViews/PodcastSourceView.vala:46
-#: /home/scott/beat-box/po/../src//SourceViews/StationSourceView.vala:45
-msgid "Search"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//SourceViews/PodcastSourceView.vala:46
-msgid "Find RSS feeds online."
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//SourceViews/PodcastSourceView.vala:74
-#: /home/scott/beat-box/po/../src//SourceViews/DeviceSourceView.vala:81
-msgid "No Podcasts Found"
-msgstr "Ni najdenih podcastov"
-
-#: /home/scott/beat-box/po/../src//SourceViews/PodcastSourceView.vala:74
-msgid ""
-"To add a podcast, visit a website such as Miro Guide to find RSS Feeds."
-msgstr ""
-"Da dodaš podcast, ti predlagamo obiščeš spletno stran kot je Miro Guide, "
-"kjer najdeš RSS vire."
-
-#: /home/scott/beat-box/po/../src//SourceViews/PodcastSourceView.vala:75
-msgid ""
-"You can then copy and paste the feed into the \"Add Podcast\" window by "
-"right clicking on \"Podcasts\"."
-msgstr ""
-"Potem lahko kopiraš in prilepiš vir  v okno \"Dodaj podcast\" z desnim "
-"klikom na \"Podcaste\"."
-
-#: /home/scott/beat-box/po/../src//SourceViews/PodcastSourceView.vala:115
-#: /home/scott/beat-box/po/../src//SourceViews/DeviceSourceView.vala:174
-#: /home/scott/beat-box/po/../src//Views/DeviceSummaryWidget.vala:91
-#: /home/scott/beat-box/po/../src//Libraries/PodcastLibrary.vala:36
-msgid "Podcasts"
-msgstr "Podcasti"
-
-#: /home/scott/beat-box/po/../src//SourceViews/DeviceSourceView.vala:55
-#: /home/scott/beat-box/po/../src//Lists/MusicList.vala:216
-#: /home/scott/beat-box/po/../src//Lists/PodcastList.vala:155
-msgid "Import to Library"
-msgstr "Uvozi v knjižnico"
-
-#: /home/scott/beat-box/po/../src//SourceViews/DeviceSourceView.vala:56
-msgid "Eject"
-msgstr "Izvrzi"
-
-#: /home/scott/beat-box/po/../src//SourceViews/DeviceSourceView.vala:81
-msgid ""
-"This device supports podcasts. To sync podcasts with this device, edit the "
-"device's preferences."
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//SourceViews/DeviceSourceView.vala:86
-msgid "No Music Found"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//SourceViews/DeviceSourceView.vala:86
-msgid "To sync music with this device, edit the device's preferences."
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//SourceViews/DeviceSourceView.vala:94
-msgid "Audio CD Invalid"
-msgstr "Neveljaven zvočni CD"
-
-#: /home/scott/beat-box/po/../src//SourceViews/DeviceSourceView.vala:94
-msgid "BeatBox could not read the contents of this Audio CD."
-msgstr "BeatBox ne more prebrati vsebine tega zvočnega CD-ja."
-
-#: /home/scott/beat-box/po/../src//SourceViews/DeviceSourceView.vala:172
-#: /home/scott/beat-box/po/../src//SourceViews/MusicSourceView.vala:183
-#: /home/scott/beat-box/po/../src//Views/DeviceSummaryWidget.vala:90
-#: /home/scott/beat-box/po/../src//Libraries/SongLibrary.vala:36
-msgid "Music"
-msgstr "Glasba"
-
-#: /home/scott/beat-box/po/../src//SourceViews/DeviceSourceView.vala:176
-msgid "Audiobooks"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//SourceViews/SmartPlaylistSourceView.vala:60
-#: /home/scott/beat-box/po/../src//SourceViews/PlaylistSourceView.vala:59
-msgid "Edit"
-msgstr "Uredi"
-
-#: /home/scott/beat-box/po/../src//SourceViews/SmartPlaylistSourceView.vala:61
-#: /home/scott/beat-box/po/../src//SourceViews/PlaylistSourceView.vala:60
-#: /home/scott/beat-box/po/../src//Windows/Editors/SmartPlaylistEditor.vala:346
-msgid "Remove"
-msgstr "Odstrani"
-
-#: /home/scott/beat-box/po/../src//SourceViews/SmartPlaylistSourceView.vala:134
-#: /home/scott/beat-box/po/../src//SourceViews/PlaylistSourceView.vala:83
-msgid "No Media"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//SourceViews/SmartPlaylistSourceView.vala:134
-msgid ""
-"No media fits this smart playlist's rules. To edit its rules, right click on "
-"it in the sidebar and choose \"Edit\"."
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//SourceViews/StationSourceView.vala:39
-#: /home/scott/beat-box/po/../src//Widgets/StatusBar.vala:129
-#: /home/scott/beat-box/po/../src//Dialogs/RemoveFilesDialog.vala:76
+#: src/Dialogs/RemoveFilesDialog.vala:75
+#: src/SourceViews/StationSourceView.vala:39 src/Widgets/StatusBar.vala:159
 msgid "station"
 msgid_plural "stations"
 msgstr[0] ""
 msgstr[1] ""
 
-#: /home/scott/beat-box/po/../src//SourceViews/StationSourceView.vala:42
-msgid "Turn up the Radio"
+#: src/Dialogs/RemoveFilesDialog.vala:79
+#: src/SourceViews/DefaultSourceView.vala:38
+#: src/SourceViews/DuplicateSourceView.vala:46
+#: src/SourceViews/HistorySourceView.vala:37
+#: src/SourceViews/PlaylistSourceView.vala:45
+#: src/SourceViews/QueueSourceView.vala:37
+#: src/SourceViews/SmartPlaylistSourceView.vala:46
+#: src/Widgets/StatusBar.vala:162
+msgid "item"
+msgid_plural "items"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/Dialogs/RemoveFilesDialog.vala:87
+#, c-format
+msgid "Remove %d %s from BeatBox?"
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//SourceViews/StationSourceView.vala:42
-msgid "No Stations were found."
+#: src/Dialogs/RemoveFilesDialog.vala:92
+#, c-format
+msgid "Remove “%s” from BeatBox?"
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//SourceViews/StationSourceView.vala:45
-msgid "Find radio stations online."
+#: src/Dialogs/RemoveFilesDialog.vala:99
+msgid ""
+"It will be removed from your library and from any device that syncs "
+"automatically with BeatBox."
+msgid_plural ""
+"They will be removed from your library and from any device that syncs "
+"automatically with BeatBox."
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
+
+#: src/Dialogs/SetLibraryFolderConfirmation.vala:70
+msgid "Export Playlists"
+msgstr "Izvozi seznam predvajanja"
+
+#: src/Dialogs/SetLibraryFolderConfirmation.vala:71
+#, c-format
+msgid "Set %s Folder"
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//SourceViews/StationSourceView.vala:72
-msgid "No Internet Radio Stations Found"
+#. pretty up labels
+#: src/Dialogs/SetLibraryFolderConfirmation.vala:78
+#, c-format
+msgid "Set %s Folder?"
+msgstr ""
+
+#: src/Dialogs/SetLibraryFolderConfirmation.vala:81
+#, c-format
+msgid ""
+"Are you sure you want to set the %s folder to %s? This will reset your %s "
+"library."
+msgstr ""
+
+#: src/Dialogs/SetLibraryFolderConfirmation.vala:133
+msgid "Choose Music Folder"
+msgstr "Izberi mapo z glasbo"
+
+#: src/Dialogs/SyncWarningDialog.vala:43
+#, c-format
+msgid "Sync will remove %d medias from %s"
+msgstr ""
+
+#: src/Dialogs/SyncWarningDialog.vala:44
+#, c-format
+msgid ""
+"If you continue to sync, medias will be removed from %s since they are not "
+"on the sync list. Would you like to import them to your library first?"
+msgstr ""
+
+#: src/Dialogs/SyncWarningDialog.vala:70
+msgid "Import medias to Library"
+msgstr "Uvozi glasbo v knjižnico"
+
+#: src/Dialogs/SyncWarningDialog.vala:71
+msgid "Continue Syncing"
+msgstr "Nadaljuj usklajevanje"
+
+#: src/Dialogs/SyncWarningDialog.vala:72
+msgid "Dont Sync"
+msgstr ""
+
+#: src/Dialogs/TransferFromDeviceDialog.vala:54 src/Views/DeviceView.vala:75
+msgid "Import from Device"
+msgstr "Uvozi iz naprave"
+
+#. initialize controls
+#: src/Dialogs/TransferFromDeviceDialog.vala:71
+msgid "Import medias from"
+msgstr ""
+
+#: src/Dialogs/TransferFromDeviceDialog.vala:72
+#, c-format
+msgid ""
+"The following files were found on %s, but are not in your library. Check all "
+"files you would like to import."
+msgstr ""
+
+#: src/Dialogs/TransferFromDeviceDialog.vala:73
+msgid "Import all medias"
+msgstr "Uvozi vse"
+
+#: src/Dialogs/TransferFromDeviceDialog.vala:78
+msgid "Import"
+msgstr "Uvozi"
+
+#: src/Dialogs/TransferFromDeviceDialog.vala:79
+msgid "Don't Import"
+msgstr "Ne uvozi"
+
+#: src/Dialogs/TransferFromDeviceDialog.vala:84
+#, c-format
+msgid "Import %s from %s"
+msgstr ""
+
+#: src/Dialogs/TransferFromDeviceDialog.vala:86
+#, c-format
+msgid "Import %d medias from %s"
+msgstr ""
+
+#: src/Dialogs/TransferFromDeviceDialog.vala:173
+msgid "Select individual medias to import:"
+msgstr "Selektivo izberi datoteke za uvoz"
+
+#: src/Dialogs/TransferFromDeviceDialog.vala:283
+msgid "Cannot Import"
+msgstr ""
+
+#: src/Dialogs/TransferFromDeviceDialog.vala:283
+msgid ""
+"BeatBox is already doing file operations. Please wait until those finish to "
+"import from "
+msgstr ""
+
+#. if(!App.operations.doing_ops) {
+#: src/Libraries/BaseLibrary.vala:149
+#, c-format
+msgid "Setting %s Folder"
+msgstr ""
+
+#: src/Libraries/BaseLibrary.vala:163
+#, c-format
+msgid "Importing %s from %s..."
+msgstr ""
+
+#: src/Libraries/BaseLibrary.vala:187
+#, c-format
+msgid "Adding files to %s Library"
+msgstr ""
+
+#: src/Libraries/BaseLibrary.vala:199
+#, c-format
+msgid "Adding files to %s library..."
+msgstr ""
+
+#: src/Libraries/BaseLibrary.vala:214
+#, c-format
+msgid "Add folders to %s Library"
+msgstr ""
+
+#: src/Libraries/BaseLibrary.vala:228
+#, c-format
+msgid "Adding media from %s to %s library..."
+msgstr ""
+
+#: src/Libraries/BaseLibrary.vala:231
+#, c-format
+msgid "Adding media from %s folders to %s library..."
+msgstr ""
+
+#: src/Libraries/BaseLibrary.vala:253
+#, c-format
+msgid "Rescanning %s Folder"
+msgstr ""
+
+#: src/Libraries/BaseLibrary.vala:264
+#, c-format
+msgid "Rescanning %s folder for changes..."
+msgstr ""
+
+#: src/Libraries/PodcastLibrary.vala:36
+#: src/Preferences/PodcastPreferences.vala:32
+#: src/SourceViews/DeviceSourceView.vala:169
+#: src/SourceViews/PodcastSourceView.vala:108
+#: src/Views/DeviceSummaryWidget.vala:91
+msgid "Podcasts"
+msgstr "Podcasti"
+
+#: src/Libraries/PodcastLibrary.vala:440
+msgid "Unheard Podcasts"
+msgstr ""
+
+#: src/Libraries/SongLibrary.vala:38 src/Preferences/MusicPreferences.vala:32
+#: src/SourceViews/DeviceSourceView.vala:167
+#: src/SourceViews/MusicSourceView.vala:182
+#: src/Views/DeviceSummaryWidget.vala:90
+msgid "Music"
+msgstr "Glasba"
+
+#: src/Libraries/SongLibrary.vala:524
+msgid "Favorite Songs"
+msgstr ""
+
+#: src/Libraries/SongLibrary.vala:533
+msgid "Recently Added"
+msgstr ""
+
+#: src/Libraries/SongLibrary.vala:541
+msgid "Recently Played"
+msgstr ""
+
+#: src/Libraries/SongLibrary.vala:549
+msgid "Recent Favorites"
+msgstr ""
+
+#: src/Libraries/SongLibrary.vala:559 src/Windows/Editors/InfoViewport.vala:174
+msgid "Never Played"
+msgstr ""
+
+#: src/Libraries/SongLibrary.vala:568
+msgid "Over Played"
+msgstr ""
+
+#: src/Libraries/SongLibrary.vala:577
+msgid "Not Recently Played"
+msgstr ""
+
+#: src/Libraries/StationLibrary.vala:36
+msgid "Stations"
+msgstr ""
+
+#. column chooser menu (header right click)
+#. column chooser menu (header right click)
+#. the library has no order of its own: no "#"
+#: src/Lists/DuplicateList.vala:118 src/Lists/MusicList.vala:155
+msgid "#"
+msgstr "#"
+
+#: src/Lists/DuplicateList.vala:119 src/Lists/GenericList.vala:127
+#: src/Lists/MusicList.vala:156 src/Windows/Editors/PodcastEditor.vala:75
+msgid "Track"
+msgstr "Skladba"
+
+#: src/Lists/DuplicateList.vala:128 src/Lists/GenericList.vala:127
+#: src/Lists/MusicList.vala:165 src/Widgets/TrackReport.vala:171
+msgid "Plays"
+msgstr "Predvajanj"
+
+#: src/Lists/DuplicateList.vala:129 src/Lists/GenericList.vala:127
+#: src/Lists/MusicList.vala:166 src/Widgets/TrackReport.vala:172
+msgid "Skips"
+msgstr "Preskokov"
+
+#: src/Lists/DuplicateList.vala:132 src/Lists/MusicList.vala:169
+msgid "BPM"
+msgstr "udarcev/min"
+
+#. media list right click menu
+#: src/Lists/DuplicateList.vala:136
+msgid "Check"
+msgstr ""
+
+#: src/Lists/DuplicateList.vala:137
+msgid "Uncheck"
+msgstr ""
+
+#: src/Lists/DuplicateList.vala:138 src/Lists/MusicList.vala:174
+#: src/Lists/PodcastList.vala:118
+msgid "Show in File Browser"
+msgstr ""
+
+#: src/Lists/DuplicateList.vala:139
+msgid "Remove Media"
+msgstr ""
+
+#. column chooser menu (header right click)
+#: src/Lists/GenericList.vala:128 src/Lists/PodcastList.vala:104
+msgid "Episode"
+msgstr ""
+
+#: src/Lists/GenericList.vala:128 src/Lists/PodcastList.vala:105
+msgid "Name"
+msgstr ""
+
+#: src/Lists/GenericList.vala:128 src/Lists/PodcastList.vala:108
+#: src/Windows/DirectoryDialog.vala:69
+#: src/Windows/Editors/PodcastEditor.vala:72
+msgid "Podcast"
+msgstr ""
+
+#: src/Lists/GenericList.vala:128 src/Lists/PodcastList.vala:109
+msgid "Date"
+msgstr ""
+
+#: src/Lists/GenericList.vala:129 src/Lists/PodcastList.vala:110
+msgid "Category"
+msgstr ""
+
+#. column chooser menu (header right click)
+#: src/Lists/GenericList.vala:129 src/Lists/RadioList.vala:77
+#: src/Windows/DirectoryDialog.vala:68
+#: src/Windows/Editors/StationEditor.vala:61
+msgid "Station"
+msgstr ""
+
+#: src/Lists/GenericList.vala:300
+msgid "Playing not Supported"
+msgstr ""
+
+#: src/Lists/GenericList.vala:300
+msgid ""
+"Due to issues with playing songs on certain iOS devices, playing songs on "
+"devices is currently not supported."
+msgstr ""
+
+#: src/Lists/GenericList.vala:446
+msgid "Media Editor"
+msgstr ""
+
+#: src/Lists/GenericList.vala:446
+msgid "Editing of multiple media types is not allowed"
+msgstr ""
+
+#: src/Lists/MusicList.vala:102
+msgid "Remove from Queue"
+msgstr ""
+
+#: src/Lists/MusicList.vala:122 src/Lists/PodcastList.vala:82
+msgid "Remove from Device"
+msgstr ""
+
+#. media list right click menu
+#: src/Lists/MusicList.vala:173
+msgid "Edit Song Info"
+msgstr ""
+
+#: src/Lists/MusicList.vala:175 src/Lists/PodcastList.vala:119
+msgid "Add to Queue"
+msgstr ""
+
+#: src/Lists/MusicList.vala:176
+#, fuzzy
+msgid "Play Next"
+msgstr "Naslednje"
+
+#: src/Lists/MusicList.vala:177
+msgid "Move Up"
+msgstr ""
+
+#: src/Lists/MusicList.vala:178
+msgid "Move Down"
+msgstr ""
+
+#: src/Lists/MusicList.vala:179
+#, fuzzy
+msgid "Clear Queue"
+msgstr "Vrsta"
+
+#: src/Lists/MusicList.vala:180
+msgid "Save Album Art into the Files"
+msgstr ""
+
+#: src/Lists/MusicList.vala:182 src/Lists/PodcastList.vala:121
+msgid "Add to Playlist"
+msgstr ""
+
+#: src/Lists/MusicList.vala:183
+msgid "Remove Song"
+msgstr ""
+
+#. Setup context menu for this view
+#: src/Lists/MusicList.vala:184 src/Lists/PodcastList.vala:124
+#: src/SourceViews/DeviceSourceView.vala:59
+msgid "Import to Library"
+msgstr "Uvozi v knjižnico"
+
+#: src/Lists/MusicList.vala:185
+msgid "Scroll to Current Song"
+msgstr ""
+
+#: src/Lists/MusicList.vala:357 src/Lists/PodcastList.vala:268
+#: src/Lists/RadioList.vala:149
+#, c-format
+msgid "Edit %s"
+msgstr ""
+
+#: src/Lists/MusicList.vala:500
+msgid "Album art not saved"
+msgstr ""
+
+#: src/Lists/MusicList.vala:500
+#, c-format
+msgid ""
+"%d file could not be changed (it may be read-only, or of a kind that has no "
+"room for pictures)."
+msgid_plural ""
+"%d files could not be changed (they may be read-only, or of a kind that has "
+"no room for pictures)."
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
+
+#: src/Lists/MusicList.vala:503
+msgid "Album art saved"
+msgstr ""
+
+#: src/Lists/MusicList.vala:503
+#, c-format
+msgid "Written into %d file"
+msgid_plural "Written into %d files"
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
+
+#. media list right click menu
+#: src/Lists/PodcastList.vala:117
+msgid "Edit Podcast"
+msgstr ""
+
+#: src/Lists/PodcastList.vala:122
+msgid "Remove Episode"
+msgstr ""
+
+#: src/Lists/PodcastList.vala:123
+msgid "Download"
+msgstr ""
+
+#: src/Lists/PodcastList.vala:365
+msgid "Stopping File Browse"
+msgstr ""
+
+#: src/Lists/PodcastList.vala:365
+msgid ""
+"Too many medias have already been opened in File Browser. Stopping any more "
+"openings."
+msgstr ""
+
+#: src/Lists/RadioList.vala:63 src/Lists/RadioList.vala:85
+msgid "Remove Station"
+msgstr "Odstrani postajo"
+
+#. media list right click menu
+#: src/Lists/RadioList.vala:84
+msgid "Edit Station"
+msgstr ""
+
+#: src/Media/Station.vala:76
+msgid "Unknown Song"
+msgstr ""
+
+#: src/Preferences/BehaviorPreferences.vala:75 src/Views/SideTreeView.vala:94
+#: src/Widgets/TrackReport.vala:82
+msgid "Library"
+msgstr "Knjižnica"
+
+#: src/Preferences/BehaviorPreferences.vala:78
+#: src/Preferences/PodcastPreferences.vala:51
+#: src/Preferences/PodcastPreferences.vala:57
+msgid "Library Management"
+msgstr ""
+
+#: src/Preferences/BehaviorPreferences.vala:79
+msgid "Keep media folders organized"
+msgstr ""
+
+#: src/Preferences/BehaviorPreferences.vala:80
+msgid "Write metadata to file"
+msgstr ""
+
+#: src/Preferences/BehaviorPreferences.vala:81
+msgid "Import songs that appear in the music folder"
+msgstr ""
+
+#: src/Preferences/BehaviorPreferences.vala:83
+msgid "Copy files to library folder when imported"
+msgstr ""
+
+#: src/Preferences/BehaviorPreferences.vala:92
+#: src/Preferences/BehaviorPreferences.vala:95
+#, fuzzy
+msgid "Playback"
+msgstr "Predvajanj"
+
+#: src/Preferences/BehaviorPreferences.vala:97 src/Widgets/StatusBar.vala:76
+#: src/Widgets/StatusBar.vala:83
+msgid "Off"
+msgstr "Izključeno"
+
+#: src/Preferences/BehaviorPreferences.vala:98
+#, fuzzy
+msgid "Per song"
+msgstr "skladbe"
+
+#: src/Preferences/BehaviorPreferences.vala:99
+#, fuzzy
+msgid "Per album"
+msgstr "Označi album"
+
+#: src/Preferences/BehaviorPreferences.vala:102
+msgid "Volume normalization (ReplayGain):"
+msgstr ""
+
+#: src/Preferences/BehaviorPreferences.vala:102
+msgid "from the next song"
+msgstr ""
+
+#: src/Preferences/BehaviorPreferences.vala:107
+msgid "Crossfade between songs:"
+msgstr ""
+
+#: src/Preferences/BehaviorPreferences.vala:107
+msgid "seconds (0: none, songs follow without a gap)"
+msgstr ""
+
+#: src/Preferences/BehaviorPreferences.vala:113
+msgid "Appearance"
+msgstr ""
+
+#. Skins (plugins: folders in ~/.local/share/beatbox/skins)
+#: src/Preferences/BehaviorPreferences.vala:117
+msgid "Skin"
+msgstr ""
+
+#: src/Preferences/BehaviorPreferences.vala:125
+#: src/Widgets/TrackReport.vala:117 src/Widgets/TrackReport.vala:120
+#: src/Widgets/TrackReport.vala:173 src/Windows/Editors/SongEditor.vala:178
+msgid "None"
+msgstr ""
+
+#: src/Preferences/BehaviorPreferences.vala:130
+#, fuzzy
+msgid "Open Skins Folder"
+msgstr "Ponovno preišči mapo z glasbo"
+
+#: src/Preferences/BehaviorPreferences.vala:139
+msgid "Skin:"
+msgstr ""
+
+#. live preview
+#: src/Preferences/BehaviorPreferences.vala:147
+#, c-format
+msgid "Add more skins by copying them into %s"
+msgstr ""
+
+#: src/Preferences/BehaviorPreferences.vala:158
+msgid "LCD"
+msgstr ""
+
+#: src/Preferences/BehaviorPreferences.vala:161
+msgid "Display"
+msgstr ""
+
+#: src/Preferences/BehaviorPreferences.vala:163
+msgid "Two lines, artist and album taking turns"
+msgstr ""
+
+#: src/Preferences/BehaviorPreferences.vala:164
+msgid "One line"
+msgstr ""
+
+#: src/Preferences/BehaviorPreferences.vala:167
+msgid "Song information in the LCD:"
+msgstr ""
+
+#: src/Preferences/BehaviorPreferences.vala:169
+msgid "Show synced lyrics on the second line when available (lrclib.net)"
+msgstr ""
+
+#: src/Preferences/BehaviorPreferences.vala:172
+msgid "Show the album cover at the left edge of the LCD"
+msgstr ""
+
+#: src/Preferences/BehaviorPreferences.vala:177
+msgid "Switch between artist and album every:"
+msgstr ""
+
+#. helper for units
+#: src/Preferences/BehaviorPreferences.vala:177
+#: src/Windows/Editors/SmartPlaylistEditor.vala:491
+msgid "seconds"
+msgstr "sekund"
+
+#: src/Preferences/BehaviorPreferences.vala:182
+msgid "Duration of the slide:"
+msgstr ""
+
+#: src/Preferences/BehaviorPreferences.vala:182
+#, fuzzy
+msgid "milliseconds"
+msgstr "sekund"
+
+#: src/Preferences/BehaviorPreferences.vala:185
+msgid "Position bar"
+msgstr ""
+
+#: src/Preferences/BehaviorPreferences.vala:188
+msgid "Width of the track:"
+msgstr ""
+
+#: src/Preferences/BehaviorPreferences.vala:188
+#: src/Preferences/BehaviorPreferences.vala:203
+msgid "pixels"
+msgstr ""
+
+#: src/Preferences/BehaviorPreferences.vala:190
+msgid "Diamond"
+msgstr ""
+
+#: src/Preferences/BehaviorPreferences.vala:191
+msgid "Circle"
+msgstr ""
+
+#: src/Preferences/BehaviorPreferences.vala:192
+msgid "Cup"
+msgstr ""
+
+#: src/Preferences/BehaviorPreferences.vala:193
+msgid "Nyan cat"
+msgstr ""
+
+#: src/Preferences/BehaviorPreferences.vala:196
+msgid "Shape of the position marker:"
+msgstr ""
+
+#: src/Preferences/BehaviorPreferences.vala:203
+msgid "Size of the position marker:"
+msgstr ""
+
+#: src/Preferences/BehaviorPreferences.vala:217
+#: src/Preferences/BehaviorPreferences.vala:220
+msgid "Mini Player"
+msgstr ""
+
+#: src/Preferences/BehaviorPreferences.vala:221
+msgid "Keep the mini player above other windows"
+msgstr ""
+
+#. GTK 3 can't ask a Wayland compositor for that
+#: src/Preferences/BehaviorPreferences.vala:226
+msgid ""
+"On Wayland the desktop keeps windows on top: right-click the toolbar and "
+"choose “Always on Top”."
+msgstr ""
+
+#: src/Preferences/BehaviorPreferences.vala:238
+#: src/Preferences/BehaviorPreferences.vala:241 src/Views/SideTreeView.vala:97
+msgid "Plugins"
+msgstr ""
+
+#: src/Preferences/BehaviorPreferences.vala:243
+msgid "No plugins are installed."
+msgstr ""
+
+#: src/Preferences/BehaviorPreferences.vala:270
+#, fuzzy
+msgid "Album Art"
+msgstr "Album"
+
+#: src/Preferences/BehaviorPreferences.vala:273
+msgid "Cover Grid"
+msgstr ""
+
+#: src/Preferences/BehaviorPreferences.vala:275
+msgid "Unfold it inline, under its row"
+msgstr ""
+
+#: src/Preferences/BehaviorPreferences.vala:276
+msgid "Open it in a popup window"
+msgstr ""
+
+#: src/Preferences/BehaviorPreferences.vala:279
+msgid "Clicking an album in the cover grid:"
+msgstr ""
+
+#: src/Preferences/BehaviorPreferences.vala:285
+msgid "hidden"
+msgstr ""
+
+#: src/Preferences/BehaviorPreferences.vala:287
+msgid "Size of the cover in the unfolded album:"
+msgstr ""
+
+#: src/Preferences/BehaviorPreferences.vala:288
+msgid "Share of the band's width; 0 shows no cover"
+msgstr ""
+
+#: src/Preferences/BehaviorPreferences.vala:294
+msgid "Missing Album Art"
+msgstr ""
+
+#: src/Preferences/BehaviorPreferences.vala:295
+msgid "Download missing album art from the internet (MusicBrainz, Apple Music)"
+msgstr ""
+
+#: src/Preferences/BehaviorPreferences.vala:306
+msgid "About"
+msgstr ""
+
+#: src/Preferences/BehaviorPreferences.vala:313
+#, c-format
+msgid "Version %s"
+msgstr ""
+
+#: src/Preferences/BehaviorPreferences.vala:314
+msgid "A music player for your collection, podcasts and internet radio."
+msgstr ""
+
+#: src/Preferences/BehaviorPreferences.vala:318
+msgid "Authors"
+msgstr ""
+
+#: src/Preferences/BehaviorPreferences.vala:320
+msgid "Contributions"
+msgstr ""
+
+#: src/Preferences/BehaviorPreferences.vala:321
+#, c-format
+msgid "Di Weng (%s): shortening texts by characters instead of bytes"
+msgstr ""
+
+#: src/Preferences/BehaviorPreferences.vala:322
+#: src/Windows/Editors/MediaEditor.vala:148
+#: src/Windows/Editors/SongEditor.vala:234
+#, fuzzy
+msgid "Artwork"
+msgstr "Omrežje"
+
+#: src/Preferences/BehaviorPreferences.vala:324
+msgid "2026 update"
+msgstr ""
+
+#: src/Preferences/BehaviorPreferences.vala:325
+msgid ""
+"Ported to GTK 3, GStreamer 1.0 and libsoup 3, with a new look, Cover Flow, "
+"the inline cover grid, internet radio and podcast directories, online album "
+"art and skins."
+msgstr ""
+
+#: src/Preferences/BehaviorPreferences.vala:327
+#, fuzzy
+msgid "Services"
+msgstr "Naprave"
+
+#: src/Preferences/BehaviorPreferences.vala:328
+#, fuzzy, c-format
+msgid "Internet radio stations: %s"
 msgstr "Ni najdenih radijskih postaj."
 
-#: /home/scott/beat-box/po/../src//SourceViews/StationSourceView.vala:72
-msgid ""
-"To add a station, visit a website such as SomaFM to find PLS or M3U files."
+#: src/Preferences/BehaviorPreferences.vala:329
+#, fuzzy, c-format
+msgid "Podcasts: %s"
+msgstr "Podcasti"
+
+#: src/Preferences/BehaviorPreferences.vala:330
+#, c-format
+msgid "Album art: %s, with %s as fallback"
 msgstr ""
-"Da dodaš postajo, obišči spletno stran kot je SomaFM, kjer najdeš PLS ali "
-"M3U datoteke."
 
-#: /home/scott/beat-box/po/../src//SourceViews/StationSourceView.vala:73
-msgid "You can then import the file to add the station."
-msgstr "Nato lahko uvoziš datoteko, da dodaš postajo."
+#: src/Preferences/BehaviorPreferences.vala:331
+#, c-format
+msgid "Lyrics: %s"
+msgstr ""
 
-#: /home/scott/beat-box/po/../src//SourceViews/StationSourceView.vala:113
-msgid "Internet Radio"
-msgstr "Internetni radio"
+#: src/Preferences/BehaviorPreferences.vala:332
+#, c-format
+msgid "Scrobbling: %s"
+msgstr ""
 
-#: /home/scott/beat-box/po/../src//SourceViews/PlaylistSourceView.vala:83
+#: src/Preferences/BehaviorPreferences.vala:334
+msgid "License"
+msgstr ""
+
+#: src/Preferences/BehaviorPreferences.vala:335
+#, c-format
+msgid "Free software under the %s."
+msgstr ""
+
+#: src/Preferences/BehaviorPreferences.vala:335
+msgid "GNU General Public License, version 3"
+msgstr ""
+
+#: src/Preferences/LastfmPreferences.vala:32
+msgid "Scrobbling"
+msgstr ""
+
+#: src/Preferences/LastfmPreferences.vala:57
+msgid "Login"
+msgstr ""
+
+#: src/Preferences/LastfmPreferences.vala:58
+msgid "Logout"
+msgstr ""
+
+#: src/Preferences/LastfmPreferences.vala:78
+msgid "Username:"
+msgstr ""
+
+#: src/Preferences/LastfmPreferences.vala:79
+msgid "Password:"
+msgstr ""
+
+#: src/Preferences/LastfmPreferences.vala:145
+#, c-format
+msgid ""
+"To identify songs by their sound (Edit Song Info › Identify), register an "
+"application at %s and paste its key here."
+msgstr ""
+
+#: src/Preferences/LastfmPreferences.vala:150
+msgid "Application key"
+msgstr ""
+
+#: src/Preferences/LastfmPreferences.vala:172
+msgid "User token"
+msgstr ""
+
+#: src/Preferences/LastfmPreferences.vala:174
+msgid "Connect"
+msgstr ""
+
+#: src/Preferences/LastfmPreferences.vala:175
+msgid "Disconnect"
+msgstr ""
+
+#: src/Preferences/LastfmPreferences.vala:202
+#, c-format
+msgid "Your listens are sent to ListenBrainz as %s."
+msgstr ""
+
+#: src/Preferences/LastfmPreferences.vala:205
+#, c-format
+msgid "Paste the user token from %s to send your listens there."
+msgstr ""
+
+#: src/Preferences/LastfmPreferences.vala:220
+msgid "ListenBrainz didn't accept that token (or couldn't be reached)."
+msgstr ""
+
+#: src/Preferences/LastfmPreferences.vala:264
+#, c-format
+msgid "You are logged in as %s."
+msgstr ""
+
+#: src/Preferences/LastfmPreferences.vala:272
+#, c-format
+msgid "BeatBox was unable to log in as %s. Please try again."
+msgstr ""
+
+#: src/Preferences/MusicPreferences.vala:45
+#: src/Preferences/MusicPreferences.vala:51
+msgid "Music Library Location"
+msgstr ""
+
+#: src/Preferences/MusicPreferences.vala:46
+msgid "Music Folder"
+msgstr ""
+
+#: src/Preferences/MusicPreferences.vala:47
+#: src/Preferences/PodcastPreferences.vala:48
+msgid "Import..."
+msgstr ""
+
+#: src/Preferences/MusicPreferences.vala:48
+#: src/Preferences/PodcastPreferences.vala:49
+msgid "Rescan"
+msgstr ""
+
+#: src/Preferences/MusicPreferences.vala:95
+#: src/Preferences/PodcastPreferences.vala:109
+msgid "Could not find Music Folder"
+msgstr "Ni možno najti glasbene mape"
+
+#: src/Preferences/MusicPreferences.vala:95
+#: src/Preferences/PodcastPreferences.vala:109
+msgid "Please make sure that your Music folder is accessible and mounted."
+msgstr ""
+
+#: src/Preferences/MusicPreferences.vala:111
+msgid ""
+"Please wait until all operations finish before setting your music folder."
+msgstr ""
+
+#: src/Preferences/PodcastPreferences.vala:46
+#: src/Preferences/PodcastPreferences.vala:56
+msgid "Podcast Library Location"
+msgstr ""
+
+#: src/Preferences/PodcastPreferences.vala:47
+msgid "Podcast Folder"
+msgstr ""
+
+#: src/Preferences/PodcastPreferences.vala:52
+msgid "Automatically download new podcast episodes"
+msgstr ""
+
+#: src/Preferences/PodcastPreferences.vala:125
+msgid ""
+"Please wait until all operations finish before setting your podcast folder."
+msgstr ""
+
+#: src/Preferences/ShortcutsPreferences.vala:14
+msgid "Shortcuts"
+msgstr ""
+
+#: src/Preferences/ShortcutsPreferences.vala:22
+msgid "Keyboard Shortcuts"
+msgstr ""
+
+#: src/Preferences/ShortcutsPreferences.vala:23
+msgid ""
+"Click a shortcut and press the new keys; Backspace leaves the action without "
+"one."
+msgstr ""
+
+#: src/Preferences/ShortcutsPreferences.vala:53
+msgid "Restore the Defaults"
+msgstr ""
+
+#: src/Preferences/ShortcutsPreferences.vala:85
+#, c-format
+msgid "“%s” used those keys; it has no shortcut now."
+msgstr ""
+
+#: src/SourceViews/DefaultSourceView.vala:56
+msgid "No Media Found"
+msgstr ""
+
+#: src/SourceViews/DefaultSourceView.vala:56
+msgid "There is no media here."
+msgstr ""
+
+#: src/SourceViews/DeviceSourceView.vala:52
+msgid "importing audio CDs hasn't been tested on current systems."
+msgstr ""
+
+#: src/SourceViews/DeviceSourceView.vala:80
+#: src/SourceViews/PodcastSourceView.vala:84
+msgid "No Podcasts Found"
+msgstr "Ni najdenih podcastov"
+
+#: src/SourceViews/DeviceSourceView.vala:80
+msgid ""
+"This device supports podcasts. To sync podcasts with this device, edit the "
+"device's preferences."
+msgstr ""
+
+#: src/SourceViews/DeviceSourceView.vala:84
+msgid "No Music Found"
+msgstr ""
+
+#: src/SourceViews/DeviceSourceView.vala:84
+msgid "To sync music with this device, edit the device's preferences."
+msgstr ""
+
+#: src/SourceViews/DeviceSourceView.vala:91
+msgid "Audio CD Invalid"
+msgstr "Neveljaven zvočni CD"
+
+#: src/SourceViews/DeviceSourceView.vala:91
+msgid "BeatBox could not read the contents of this Audio CD."
+msgstr "BeatBox ne more prebrati vsebine tega zvočnega CD-ja."
+
+#: src/SourceViews/DeviceSourceView.vala:171
+msgid "Audiobooks"
+msgstr ""
+
+#: src/SourceViews/DuplicateSourceView.vala:51
+msgid "Remove Checked Items"
+msgstr ""
+
+#: src/SourceViews/DuplicateSourceView.vala:53
+msgid "Manually select duplicates"
+msgstr ""
+
+#: src/SourceViews/DuplicateSourceView.vala:54
+msgid "Keep highest bitrate"
+msgstr ""
+
+#: src/SourceViews/DuplicateSourceView.vala:55
+msgid "Keep largest file"
+msgstr ""
+
+#: src/SourceViews/DuplicateSourceView.vala:86
+msgid "Victory! No Duplicates!"
+msgstr ""
+
+#: src/SourceViews/DuplicateSourceView.vala:86
+msgid "Your library has no duplicates."
+msgstr ""
+
+#: src/SourceViews/DuplicateSourceView.vala:187
+msgid "Duplicates"
+msgstr ""
+
+#. similar songs right click menu
+#: src/SourceViews/HistorySourceView.vala:44
+#: src/SourceViews/QueueSourceView.vala:44
+#: src/SourceViews/SimilarSourceView.vala:52
+msgid "Save as Playlist"
+msgstr "Shrani kot seznam predvajanja"
+
+#: src/SourceViews/HistorySourceView.vala:45
+#: src/SourceViews/PlaylistSourceView.vala:58
+#: src/SourceViews/QueueSourceView.vala:45
+#: src/SourceViews/SimilarSourceView.vala:53
+#: src/SourceViews/SmartPlaylistSourceView.vala:59
+msgid "Export..."
+msgstr "Izvozi ..."
+
+#: src/SourceViews/HistorySourceView.vala:62
+msgid "No songs in History"
+msgstr ""
+
+#: src/SourceViews/HistorySourceView.vala:62
+msgid ""
+"After a part of a song has been played, it is added to the history list."
+msgstr ""
+
+#: src/SourceViews/HistorySourceView.vala:63
+msgid ""
+"You can use this list to see all the songs you have played during the "
+"current session."
+msgstr ""
+
+#: src/SourceViews/HistorySourceView.vala:85
+msgid "History"
+msgstr "Zgodovina"
+
+#: src/SourceViews/HistorySourceView.vala:106
+#: src/SourceViews/HistorySourceView.vala:120
+msgid " play history"
+msgstr ""
+
+#. Setup welcome screen
+#: src/SourceViews/MusicSourceView.vala:40
+msgid "Get Some Tunes"
+msgstr "Pridobi nekaj melodij"
+
+#: src/SourceViews/MusicSourceView.vala:40
+msgid "BeatBox can't find your music."
+msgstr ""
+
+#: src/SourceViews/MusicSourceView.vala:43
+msgid "Locate"
+msgstr "Lociraj"
+
+#: src/SourceViews/MusicSourceView.vala:43
+msgid "Change your music folder."
+msgstr "Spremeni svojo mapo z glasbo"
+
+#. add option to import in welcome screen
+#: src/SourceViews/MusicSourceView.vala:77
+msgid "Import songs from audio CD"
+msgstr "Uvozi pesmi iz zvočnega CD-ja"
+
+#: src/SourceViews/MusicSourceView.vala:77
+msgid "Import media from device"
+msgstr "Uvozi predstavnost iz naprave"
+
+#: src/SourceViews/MusicSourceView.vala:149 src/Views/DeviceView.vala:104
+msgid "No External Songs"
+msgstr ""
+
+#: src/SourceViews/MusicSourceView.vala:149 src/Views/DeviceView.vala:104
+msgid "There were no songs found on this device that are not in your library."
+msgstr ""
+
+#. playlist right click menu
+#: src/SourceViews/PlaylistSourceView.vala:56
+#: src/SourceViews/SmartPlaylistSourceView.vala:57
+msgid "Edit"
+msgstr "Uredi"
+
+#: src/SourceViews/PlaylistSourceView.vala:57
+#: src/SourceViews/SmartPlaylistSourceView.vala:58
+#: src/Windows/Editors/SmartPlaylistEditor.vala:351
+msgid "Remove"
+msgstr "Odstrani"
+
+#: src/SourceViews/PlaylistSourceView.vala:76
+#: src/SourceViews/SmartPlaylistSourceView.vala:127
+msgid "No Media"
+msgstr ""
+
+#: src/SourceViews/PlaylistSourceView.vala:76
 msgid ""
 "To add to this playlist, drag and drop songs from a list onto the sidebar "
 "item or\n"
 "right click on an item and choose \"Add to Playlist\"."
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//SourceViews/QueueSourceView.vala:67
+#: src/SourceViews/PodcastSourceView.vala:40
+msgid "podcast"
+msgstr "podcast"
+
+#. Setup welcome screen
+#: src/SourceViews/PodcastSourceView.vala:43
+msgid "Subscribe to Podcasts"
+msgstr ""
+
+#: src/SourceViews/PodcastSourceView.vala:43
+msgid "No Podcasts were found."
+msgstr ""
+
+#: src/SourceViews/PodcastSourceView.vala:46
+#: src/Windows/DirectoryDialog.vala:50
+#, fuzzy
+msgid "Find Podcasts"
+msgstr "Podcasti"
+
+#: src/SourceViews/PodcastSourceView.vala:46
+msgid "Search the Apple Podcasts directory."
+msgstr ""
+
+#: src/SourceViews/PodcastSourceView.vala:47
+msgid "Subscribe by Address"
+msgstr ""
+
+#: src/SourceViews/PodcastSourceView.vala:47
+msgid "Paste the address of a podcast RSS feed."
+msgstr ""
+
+#. Setup context menu
+#: src/SourceViews/PodcastSourceView.vala:55
+#: src/SourceViews/PodcastSourceView.vala:65
+#, fuzzy
+msgid "Find Podcasts…"
+msgstr "Dodaj podcast"
+
+#: src/SourceViews/PodcastSourceView.vala:56
+msgid "Subscribe by Address…"
+msgstr ""
+
+#: src/SourceViews/PodcastSourceView.vala:84
+msgid ""
+"Use “Find Podcasts…” above to search the directory, or “Subscribe by "
+"Address…” to paste an RSS feed."
+msgstr ""
+
+#: src/SourceViews/QueueSourceView.vala:62
 msgid "No songs in Queue"
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//SourceViews/QueueSourceView.vala:67
+#: src/SourceViews/QueueSourceView.vala:62
 msgid ""
 "To queue a song, drag and drop a song from a list onto the queue sidebar "
 "item."
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//SourceViews/QueueSourceView.vala:68
+#: src/SourceViews/QueueSourceView.vala:63
 msgid ""
 "When a song finishes, the queued songs will be played first before the next "
 "song in the currently playing list."
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//SourceViews/QueueSourceView.vala:90
-#: /home/scott/beat-box/po/../src//Lists/MusicList.vala:212
-#: /home/scott/beat-box/po/../src//Lists/PodcastList.vala:150
+#: src/SourceViews/QueueSourceView.vala:84
 msgid "Queue"
 msgstr "Vrsta"
 
-#: /home/scott/beat-box/po/../src//SourceViews/QueueSourceView.vala:125
-#: /home/scott/beat-box/po/../src//SourceViews/QueueSourceView.vala:139
+#: src/SourceViews/QueueSourceView.vala:119
+#: src/SourceViews/QueueSourceView.vala:133
 msgid " play queue"
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//SourceViews/MusicSourceView.vala:40
-msgid "Get Some Tunes"
-msgstr "Pridobi nekaj melodij"
-
-#: /home/scott/beat-box/po/../src//SourceViews/MusicSourceView.vala:40
-msgid "BeatBox can't find your music."
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//SourceViews/MusicSourceView.vala:43
-msgid "Locate"
-msgstr "Lociraj"
-
-#: /home/scott/beat-box/po/../src//SourceViews/MusicSourceView.vala:43
-msgid "Change your music folder."
-msgstr "Spremeni svojo mapo z glasbo"
-
-#: /home/scott/beat-box/po/../src//SourceViews/MusicSourceView.vala:78
-msgid "Import songs from audio CD"
-msgstr "Uvozi pesmi iz zvočnega CD-ja"
-
-#: /home/scott/beat-box/po/../src//SourceViews/MusicSourceView.vala:78
-msgid "Import media from device"
-msgstr "Uvozi predstavnost iz naprave"
-
-#: /home/scott/beat-box/po/../src//SourceViews/MusicSourceView.vala:150
-#: /home/scott/beat-box/po/../src//Views/DeviceView.vala:100
-msgid "No External Songs"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//SourceViews/MusicSourceView.vala:150
-#: /home/scott/beat-box/po/../src//Views/DeviceView.vala:100
-msgid ""
-"There were no songs found on this device that are not in your library."
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Views/DeviceView.vala:73
-#: /home/scott/beat-box/po/../src//Dialogs/TransferFromDeviceDialog.vala:59
-msgid "Import from Device"
-msgstr "Uvozi iz naprave"
-
-#: /home/scott/beat-box/po/../src//Views/DeviceView.vala:74
-#: /home/scott/beat-box/po/../src//Widgets/SpaceWidget.vala:207
-msgid "Sync"
-msgstr "Uskladi"
-
-#: /home/scott/beat-box/po/../src//Views/DeviceView.vala:75
-msgid "Unmount"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Views/SideTreeView.vala:91
-msgid "Library"
-msgstr "Knjižnica"
-
-#: /home/scott/beat-box/po/../src//Views/SideTreeView.vala:92
-msgid "Devices"
-msgstr "Naprave"
-
-#: /home/scott/beat-box/po/../src//Views/SideTreeView.vala:93
-msgid "Network"
-msgstr "Omrežje"
-
-#: /home/scott/beat-box/po/../src//Views/SideTreeView.vala:94
-#: /home/scott/beat-box/po/../src//Windows/PreferencesWindow.vala:101
-msgid "Plugins"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Views/SideTreeView.vala:95
-msgid "Playlists"
-msgstr "Seznami predvajanja"
-
-#: /home/scott/beat-box/po/../src//Views/PopupListView.vala:197
+#: src/SourceViews/SimilarSourceView.vala:108
+#: src/SourceViews/SimilarSourceView.vala:213
 #, c-format
-msgid "%s by %s"
+msgid "Similar to %s"
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//Views/DeviceSummaryWidget.vala:64
+#. still fetching similar media
+#: src/SourceViews/SimilarSourceView.vala:140
+#, c-format
+msgid "BeatBox is finding songs similar to <b>%s</b> by <b>%s</b>"
+msgstr ""
+
+#: src/SourceViews/SimilarSourceView.vala:141
+msgid "Fetching similar songs"
+msgstr ""
+
+#. say we could not find similar media
+#: src/SourceViews/SimilarSourceView.vala:149
+#, c-format
+msgid "BeatBox could not find songs similar to <b>%s</b> by <b>%s</b>. "
+msgstr ""
+
+#: src/SourceViews/SimilarSourceView.vala:150
+msgid ""
+"Make sure all song info is correct and you are connected to the Internet. "
+"Some songs may not have matches."
+msgstr ""
+
+#: src/SourceViews/SimilarSourceView.vala:151
+msgid "No similar songs found"
+msgstr "Ni najdenih podobnih pesmi"
+
+#: src/SourceViews/SimilarSourceView.vala:180
+msgid "Similar Songs"
+msgstr ""
+
+#: src/SourceViews/SimilarSourceView.vala:213
+msgid "Similar list"
+msgstr ""
+
+#: src/SourceViews/SmartPlaylistSourceView.vala:127
+msgid ""
+"No media fits this smart playlist's rules. To edit its rules, right click on "
+"it in the sidebar and choose \"Edit\"."
+msgstr ""
+
+#: src/SourceViews/SourceView.vala:352
+msgid "No Results"
+msgstr ""
+
+#: src/SourceViews/SourceView.vala:352
+msgid "Your search query returned no results."
+msgstr ""
+
+#. Setup welcome screen
+#: src/SourceViews/StationSourceView.vala:42
+msgid "Turn up the Radio"
+msgstr ""
+
+#: src/SourceViews/StationSourceView.vala:42
+msgid "No Stations were found."
+msgstr ""
+
+#: src/SourceViews/StationSourceView.vala:45
+#, fuzzy
+msgid "Find Stations"
+msgstr "postaje"
+
+#: src/SourceViews/StationSourceView.vala:45
+msgid "Search thousands of stations on radio-browser.info."
+msgstr ""
+
+#: src/SourceViews/StationSourceView.vala:46
+msgid "Add by Address"
+msgstr ""
+
+#: src/SourceViews/StationSourceView.vala:46
+msgid "Type the address of a station's stream."
+msgstr ""
+
+#: src/SourceViews/StationSourceView.vala:47
+#, fuzzy
+msgid "Import File"
+msgstr "Uvozi"
+
+#: src/SourceViews/StationSourceView.vala:47
+msgid "Add the stations of a .pls or .m3u file."
+msgstr ""
+
+#. Setup context menu
+#: src/SourceViews/StationSourceView.vala:55
+#: src/SourceViews/StationSourceView.vala:65
+msgid "Find Stations…"
+msgstr ""
+
+#: src/SourceViews/StationSourceView.vala:56
+#: src/SourceViews/StationSourceView.vala:67
+msgid "Add by Address…"
+msgstr ""
+
+#: src/SourceViews/StationSourceView.vala:57
+#, fuzzy
+msgid "Import File…"
+msgstr "Uvoz je končan"
+
+#: src/SourceViews/StationSourceView.vala:85
+msgid "No Internet Radio Stations Found"
+msgstr "Ni najdenih radijskih postaj."
+
+#: src/SourceViews/StationSourceView.vala:85
+msgid "Use “Find Stations…” above to search the radio-browser.info directory."
+msgstr ""
+
+#: src/SourceViews/StationSourceView.vala:111
+msgid "Internet Radio"
+msgstr "Internetni radio"
+
+#: src/Utils/PlaylistUtils.vala:229
+msgid "Export Playlist"
+msgstr ""
+
+#: src/Utils/PlaylistUtils.vala:232
+msgid "_Save"
+msgstr ""
+
+#. options at top
+#: src/Views/DeviceSummaryWidget.vala:64
 msgid "Device Name"
 msgstr "Ime naprave"
 
-#: /home/scott/beat-box/po/../src//Views/DeviceSummaryWidget.vala:82
+#: src/Views/DeviceSummaryWidget.vala:82
 msgid "Device Name:"
 msgstr "Ime naprave:"
 
-#: /home/scott/beat-box/po/../src//Views/DeviceSummaryWidget.vala:83
+#: src/Views/DeviceSummaryWidget.vala:83
 msgid "Automatically sync when plugged in:"
 msgstr "Samodejno uskladi ob priklopu:"
 
-#: /home/scott/beat-box/po/../src//Views/DeviceSummaryWidget.vala:84
+#: src/Views/DeviceSummaryWidget.vala:84
 msgid "Sync:"
 msgstr "Uskladi:"
 
-#: /home/scott/beat-box/po/../src//Views/DeviceSummaryWidget.vala:93
+#. audiobook_index = spaceWidget.add_item("Audiobooks", 0.0, SpaceWidget.ItemColor.GREEN);
+#: src/Views/DeviceSummaryWidget.vala:93
 msgid "Other"
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//Views/DeviceSummaryWidget.vala:336
+#: src/Views/DeviceSummaryWidget.vala:338
 msgid "All Music"
 msgstr "Vsa glasba"
 
-#: /home/scott/beat-box/po/../src//Views/DeviceSummaryWidget.vala:338
+#: src/Views/DeviceSummaryWidget.vala:340
 msgid "All Podcasts"
 msgstr "Vse poddaje"
 
-#: /home/scott/beat-box/po/../src//Views/DeviceSummaryWidget.vala:428
-#: /home/scott/beat-box/po/../src//Views/DeviceSummaryWidget.vala:455
+#: src/Views/DeviceSummaryWidget.vala:430
+#: src/Views/DeviceSummaryWidget.vala:457
 msgid "Sync Failed"
 msgstr "Uskladitev spodletela"
 
-#: /home/scott/beat-box/po/../src//Views/DeviceSummaryWidget.vala:428
-#: /home/scott/beat-box/po/../src//Views/DeviceSummaryWidget.vala:455
+#: src/Views/DeviceSummaryWidget.vala:430
+#: src/Views/DeviceSummaryWidget.vala:457
 #, c-format
 msgid ""
 "The playlist named %s is used to sync device %s, but could not be found."
@@ -833,1226 +2113,1147 @@ msgstr ""
 "Seznam predvajana, imenovan %s, je uporabljen da uskladi napravo %s, a ga ni "
 "možno najti."
 
-#: /home/scott/beat-box/po/../src//Views/DeviceSummaryWidget.vala:501
-#: /home/scott/beat-box/po/../src//Views/DeviceSummaryWidget.vala:504
+#: src/Views/DeviceSummaryWidget.vala:503
+#: src/Views/DeviceSummaryWidget.vala:506
 msgid "Cannot Sync"
 msgstr "Ni možno uskladiti"
 
-#: /home/scott/beat-box/po/../src//Views/DeviceSummaryWidget.vala:501
+#: src/Views/DeviceSummaryWidget.vala:503
 msgid ""
 "Cannot sync device with selected sync settings. Not enough space on disk"
 msgstr ""
 "Mi možno uskladiti naprave z izbranimi nastavitvami. Ni dovolj prostora na "
 "disku"
 
-#: /home/scott/beat-box/po/../src//Views/DeviceSummaryWidget.vala:504
+#: src/Views/DeviceSummaryWidget.vala:506
 msgid "Device is already being synced."
 msgstr "Naprava se že usklajuje."
 
-#: /home/scott/beat-box/po/../src//Libraries/StationLibrary.vala:36
-msgid "Stations"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Libraries/BaseLibrary.vala:149
-#, c-format
-msgid "Setting %s Folder"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Libraries/BaseLibrary.vala:163
-#, c-format
-msgid "Importing %s from %s..."
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Libraries/BaseLibrary.vala:187
-#, c-format
-msgid "Adding files to %s Library"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Libraries/BaseLibrary.vala:199
-#, c-format
-msgid "Adding files to %s library..."
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Libraries/BaseLibrary.vala:214
-#, c-format
-msgid "Add folders to %s Library"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Libraries/BaseLibrary.vala:228
-#, c-format
-msgid "Adding media from %s to %s library..."
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Libraries/BaseLibrary.vala:231
-#, c-format
-msgid "Adding media from %s folders to %s library..."
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Libraries/BaseLibrary.vala:253
-#, c-format
-msgid "Rescanning %s Folder"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Libraries/BaseLibrary.vala:264
-#, c-format
-msgid "Rescanning %s folder for changes..."
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Libraries/PodcastLibrary.vala:450
-msgid "Unheard Podcasts"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Libraries/SongLibrary.vala:483
-msgid "Favorite Songs"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Libraries/SongLibrary.vala:492
-msgid "Recently Added"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Libraries/SongLibrary.vala:500
-msgid "Recently Played"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Libraries/SongLibrary.vala:508
-msgid "Recent Favorites"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Libraries/SongLibrary.vala:518
-#: /home/scott/beat-box/po/../src//Windows/Editors/InfoViewport.vala:173
-msgid "Never Played"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Libraries/SongLibrary.vala:527
-msgid "Over Played"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Libraries/SongLibrary.vala:536
-msgid "Not Recently Played"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//NowPlayingView/SongArtistSection.vala:89
-#: /home/scott/beat-box/po/../src//Lists/MusicList.vala:164
-#: /home/scott/beat-box/po/../src//Lists/DuplicateList.vala:139
-#: /home/scott/beat-box/po/../src//Windows/Editors/SongEditor.vala:103
-#: /home/scott/beat-box/po/../src//Widgets/StatusBar.vala:56
-#: /home/scott/beat-box/po/../core//Playlists/SmartQuery.vala:53
-msgid "Artist"
-msgstr "Izvajalec"
-
-#: /home/scott/beat-box/po/../src//NowPlayingView/SongArtistSection.vala:135
-#, c-format
-msgid "Top Tracks"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//config.vala:18
-#: /home/scott/beat-box/po/../core//config.vala:18
-msgid "Listen to music, podcasts and stations"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//config.vala:19
-#: /home/scott/beat-box/po/../core//config.vala:19
-msgid "Audio Player"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//config.vala:20
-#: /home/scott/beat-box/po/../core//config.vala:20
-msgid "BeatBox Audio Player"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Devices/AndroidDevice.vala:64
-msgid "No Description"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Devices/AndroidDevice.vala:92
-#: /home/scott/beat-box/po/../src//Devices/CDRomDevice.vala:130
-msgid "Unknown capacity"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Devices/CDRomDevice.vala:98
-msgid "Multimedia Disc"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Devices/CDRomDevice.vala:213
-#, c-format
-msgid "Ripping from %s"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Devices/CDRomDevice.vala:270
-#, c-format
-msgid "CD Import cancelled. Finishing ripping track %s..."
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Devices/CDRomDevice.vala:340
-#, c-format
-msgid "BeatBox has finished importing %d song(s) from Audio CD"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Devices/iPodDevice.vala:208
-msgid "Unknown Capacity"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Devices/iPodDevice.vala:282
-#: /home/scott/beat-box/po/../src//Devices/iPodDevice.vala:465
-#: /home/scott/beat-box/po/../src//Devices/iPodDevice.vala:597
-#, c-format
-msgid "Syncing %s"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Devices/iPodDevice.vala:292
-msgid "Syncing "
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Devices/iPodDevice.vala:307
-msgid "Removing old medias from iPod and updating current ones"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Devices/iPodDevice.vala:357
-msgid "Adding new media to iPod..."
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Devices/iPodDevice.vala:393
-#: /home/scott/beat-box/po/../src//Devices/iPodDevice.vala:497
-#: /home/scott/beat-box/po/../src//Devices/iPodDevice.vala:644
-msgid "Cancelling Sync..."
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Devices/iPodDevice.vala:393
-#: /home/scott/beat-box/po/../src//Devices/iPodDevice.vala:497
-#: /home/scott/beat-box/po/../src//Devices/iPodDevice.vala:644
-msgid "Finishing sync process..."
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Devices/iPodDevice.vala:475
-msgid "Syncing"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Devices/iPodDevice.vala:533
-msgid "Adding"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Devices/iPodDevice.vala:534
-#: /home/scott/beat-box/po/../src//Devices/iPodDevice.vala:673
-msgid "by"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Devices/iPodDevice.vala:535
-msgid "to"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Devices/iPodDevice.vala:607
-msgid "Removing from "
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Devices/iPodDevice.vala:672
-msgid "Removing"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Devices/iPodDevice.vala:674
-msgid "from"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Devices/iPodDevice.vala:739
-msgid "Syncing playlists"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Devices/iPodDevice.vala:792
-#, c-format
-msgid "Transferring from %s"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Devices/iPodDevice.vala:803
-#, c-format
-msgid "Importing %s items to library..."
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Devices/iPodDevice.vala:822
-msgid "Importing"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Devices/iPodDevice.vala:822
-msgid "to library"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Lists/RadioList.vala:68
-#: /home/scott/beat-box/po/../src//Lists/RadioList.vala:98
-msgid "Remove Station"
-msgstr "Odstrani postajo"
-
-#: /home/scott/beat-box/po/../src//Lists/RadioList.vala:82
-#: /home/scott/beat-box/po/../src//Windows/Editors/StationEditor.vala:62
-#: /home/scott/beat-box/po/../core//Media/Media.vala:46
-msgid "Station"
-msgid_plural "Stations"
-msgstr[0] ""
-msgstr[1] ""
-
-#: /home/scott/beat-box/po/../src//Lists/RadioList.vala:83
-#: /home/scott/beat-box/po/../src//Lists/MusicList.vala:166
-#: /home/scott/beat-box/po/../src//Lists/DuplicateList.vala:141
-#: /home/scott/beat-box/po/../src//Windows/Editors/StationEditor.vala:63
-#: /home/scott/beat-box/po/../src//Windows/Editors/PodcastEditor.vala:74
-#: /home/scott/beat-box/po/../src//Windows/Editors/SongEditor.vala:106
-#: /home/scott/beat-box/po/../core//Playlists/SmartQuery.vala:65
-msgid "Genre"
-msgstr "Zvrst"
-
-#: /home/scott/beat-box/po/../src//Lists/RadioList.vala:84
-#: /home/scott/beat-box/po/../src//Lists/MusicList.vala:169
-#: /home/scott/beat-box/po/../src//Lists/DuplicateList.vala:144
-#: /home/scott/beat-box/po/../src//Windows/Editors/StationEditor.vala:64
-#: /home/scott/beat-box/po/../src//Windows/Editors/PodcastEditor.vala:77
-#: /home/scott/beat-box/po/../src//Windows/Editors/SongEditor.vala:113
-#: /home/scott/beat-box/po/../core//Playlists/SmartQuery.vala:77
-msgid "Rating"
-msgstr "Ocena"
-
-#: /home/scott/beat-box/po/../src//Lists/RadioList.vala:97
-msgid "Edit Station"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Lists/RadioList.vala:203
-#: /home/scott/beat-box/po/../src//Lists/MusicList.vala:415
-#: /home/scott/beat-box/po/../src//Lists/PodcastList.vala:351
-#, c-format
-msgid "Edit %s"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Lists/MusicList.vala:101
-#: /home/scott/beat-box/po/../src//Lists/PodcastList.vala:88
-msgid "Remove from Library"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Lists/MusicList.vala:112
-msgid "Remove from Queue"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Lists/MusicList.vala:131
-msgid "Remove from Device"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Lists/MusicList.vala:160
-#: /home/scott/beat-box/po/../src//Lists/DuplicateList.vala:135
-msgid "#"
-msgstr "#"
-
-#: /home/scott/beat-box/po/../src//Lists/MusicList.vala:161
-#: /home/scott/beat-box/po/../src//Lists/DuplicateList.vala:136
-#: /home/scott/beat-box/po/../src//Windows/Editors/PodcastEditor.vala:76
-#: /home/scott/beat-box/po/../src//Windows/Editors/SongEditor.vala:110
-msgid "Track"
-msgstr "Skladba"
-
-#: /home/scott/beat-box/po/../src//Lists/MusicList.vala:162
-#: /home/scott/beat-box/po/../src//Lists/DuplicateList.vala:137
-#: /home/scott/beat-box/po/../src//Windows/Editors/PodcastEditor.vala:71
-#: /home/scott/beat-box/po/../src//Windows/Editors/SongEditor.vala:102
-#: /home/scott/beat-box/po/../core//Playlists/SmartQuery.vala:81
-msgid "Title"
-msgstr "Naslov"
-
-#: /home/scott/beat-box/po/../src//Lists/MusicList.vala:163
-#: /home/scott/beat-box/po/../src//Lists/DuplicateList.vala:138
-#: /home/scott/beat-box/po/../core//Playlists/SmartQuery.vala:71
-msgid "Length"
-msgstr "Čas trajanja"
-
-#: /home/scott/beat-box/po/../src//Lists/MusicList.vala:165
-#: /home/scott/beat-box/po/../src//Lists/DuplicateList.vala:140
-#: /home/scott/beat-box/po/../src//Windows/Editors/SongEditor.vala:105
-#: /home/scott/beat-box/po/../src//Widgets/StatusBar.vala:55
-#: /home/scott/beat-box/po/../core//Playlists/SmartQuery.vala:51
-msgid "Album"
-msgstr "Album"
-
-#: /home/scott/beat-box/po/../src//Lists/MusicList.vala:167
-#: /home/scott/beat-box/po/../src//Lists/DuplicateList.vala:142
-#: /home/scott/beat-box/po/../src//Windows/Editors/SongEditor.vala:112
-#: /home/scott/beat-box/po/../core//Playlists/SmartQuery.vala:83
-msgid "Year"
-msgstr "Leto"
-
-#: /home/scott/beat-box/po/../src//Lists/MusicList.vala:168
-#: /home/scott/beat-box/po/../src//Lists/DuplicateList.vala:143
-#: /home/scott/beat-box/po/../core//Playlists/SmartQuery.vala:55
-msgid "Bitrate"
-msgstr "Bitna hitrost"
-
-#: /home/scott/beat-box/po/../src//Lists/MusicList.vala:170
-#: /home/scott/beat-box/po/../src//Lists/DuplicateList.vala:145
-msgid "Plays"
-msgstr "Predvajanj"
-
-#: /home/scott/beat-box/po/../src//Lists/MusicList.vala:171
-#: /home/scott/beat-box/po/../src//Lists/DuplicateList.vala:146
-msgid "Skips"
-msgstr "Preskokov"
-
-#: /home/scott/beat-box/po/../src//Lists/MusicList.vala:172
-#: /home/scott/beat-box/po/../src//Lists/DuplicateList.vala:147
-#: /home/scott/beat-box/po/../core//Playlists/SmartQuery.vala:61
-msgid "Date Added"
-msgstr "Dodano dne"
-
-#: /home/scott/beat-box/po/../src//Lists/MusicList.vala:173
-#: /home/scott/beat-box/po/../src//Lists/DuplicateList.vala:148
-#: /home/scott/beat-box/po/../core//Playlists/SmartQuery.vala:69
-msgid "Last Played"
-msgstr "Nazadnje predvajano"
-
-#: /home/scott/beat-box/po/../src//Lists/MusicList.vala:174
-#: /home/scott/beat-box/po/../src//Lists/DuplicateList.vala:149
-msgid "BPM"
-msgstr "udarcev/min"
-
-#: /home/scott/beat-box/po/../src//Lists/MusicList.vala:210
-msgid "Edit Song Info"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Lists/MusicList.vala:211
-#: /home/scott/beat-box/po/../src//Lists/DuplicateList.vala:187
-#: /home/scott/beat-box/po/../src//Lists/PodcastList.vala:149
-msgid "Show in File Browser"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Lists/MusicList.vala:213
-#: /home/scott/beat-box/po/../src//Lists/PodcastList.vala:151
-#: /home/scott/beat-box/po/../core//Playlists/StaticPlaylist.vala:39
-msgid "New Playlist"
-msgstr "Nov seznam predvajanja"
-
-#: /home/scott/beat-box/po/../src//Lists/MusicList.vala:214
-#: /home/scott/beat-box/po/../src//Lists/PodcastList.vala:152
-msgid "Add to Playlist"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Lists/MusicList.vala:215
-msgid "Remove Song"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Lists/MusicList.vala:217
-msgid "Scroll to Current Song"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Lists/DuplicateList.vala:185
-msgid "Check"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Lists/DuplicateList.vala:186
-msgid "Uncheck"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Lists/DuplicateList.vala:188
-msgid "Remove Media"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Lists/GenericList.vala:277
-msgid "Playing not Supported"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Lists/GenericList.vala:277
+#: src/Views/DeviceView.vala:68
 msgid ""
-"Due to issues with playing songs on certain iOS devices, playing songs on "
-"devices is currently not supported."
+"syncing hasn't been tested with current devices. Back up your device before "
+"syncing."
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//Lists/GenericList.vala:454
-msgid "Media Editor"
+#: src/Views/DeviceView.vala:76 src/Widgets/SpaceWidget.vala:172
+msgid "Sync"
+msgstr "Uskladi"
+
+#: src/Views/DeviceView.vala:77
+msgid "Unmount"
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//Lists/GenericList.vala:454
-msgid "Editing of multiple media types is not allowed"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Lists/PodcastList.vala:148
-msgid "Edit Podcast"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Lists/PodcastList.vala:153
-msgid "Remove Episode"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Lists/PodcastList.vala:154
-msgid "Download"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Lists/PodcastList.vala:478
-msgid "Stopping File Browse"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Lists/PodcastList.vala:478
-msgid ""
-"Too many medias have already been opened in File Browser. Stopping any more "
-"openings."
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Windows/PreferencesWindow.vala:86
-#: /home/scott/beat-box/po/../src//Windows/PlaylistNameWindow.vala:63
-#: /home/scott/beat-box/po/../src//Windows/EqualizerWindow.vala:149
-#: /home/scott/beat-box/po/../src//Windows/Editors/MediaEditor.vala:94
-#: /home/scott/beat-box/po/../src//Windows/Editors/SmartPlaylistEditor.vala:156
-msgid "Done"
-msgstr "Končano"
-
-#: /home/scott/beat-box/po/../src//Windows/PreferencesWindow.vala:99
-msgid "General"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Windows/PreferencesWindow.vala:100
-msgid "Libraries"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Windows/PlaylistNameWindow.vala:61
-#: /home/scott/beat-box/po/../src//Windows/PlaylistNameWindow.vala:68
-#: /home/scott/beat-box/po/../src//Windows/Editors/SmartPlaylistEditor.vala:74
-#: /home/scott/beat-box/po/../src//Windows/Editors/SmartPlaylistEditor.vala:82
+#: src/Views/PopupListView.vala:177
 #, c-format
-msgid "Name of Playlist"
-msgstr "Ime seznama predvajanja"
+msgid "%s by %s"
+msgstr ""
 
-#: /home/scott/beat-box/po/../src//Windows/PlaylistNameWindow.vala:64
-#: /home/scott/beat-box/po/../src//Windows/AddPodcastWindow.vala:81
-#: /home/scott/beat-box/po/../src//Windows/RemoveDuplicatesDialog.vala:69
-#: /home/scott/beat-box/po/../src//Windows/Editors/MediaEditor.vala:95
-#: /home/scott/beat-box/po/../src//Windows/Editors/SmartPlaylistEditor.vala:157
-msgid "Cancel"
+#: src/Views/SideTreeView.vala:95
+msgid "Devices"
+msgstr "Naprave"
+
+#: src/Views/SideTreeView.vala:96
+msgid "Network"
+msgstr "Omrežje"
+
+#: src/Views/SideTreeView.vala:98
+msgid "Playlists"
+msgstr "Seznami predvajanja"
+
+#: src/Widgets/AdvancedSearchBox.vala:41
+msgid "Search..."
+msgstr "Iskanje ..."
+
+#: src/Widgets/AlbumWall.vala:360
+#, fuzzy, c-format
+msgid "%d song"
+msgid_plural "%d songs"
+msgstr[0] "skladbe"
+msgstr[1] "skladbe"
+msgstr[2] "skladbe"
+msgstr[3] "skladbe"
+
+#: src/Widgets/AlbumWall.vala:361
+#, fuzzy, c-format
+msgid "%d minute"
+msgid_plural "%d minutes"
+msgstr[0] "%s minut"
+msgstr[1] "%s minut"
+msgstr[2] "%s minut"
+msgstr[3] "%s minut"
+
+#. the built-in preset names, for the translations (see Settings.Equalizer.default_presets)
+#: src/Widgets/PresetList.vala:32
+msgid "Flat"
+msgstr ""
+
+#: src/Widgets/PresetList.vala:32
+msgid "Classical"
+msgstr ""
+
+#: src/Widgets/PresetList.vala:32
+msgid "Club"
+msgstr ""
+
+#: src/Widgets/PresetList.vala:32
+#, fuzzy
+msgid "Dance"
 msgstr "Prekliči"
 
-#: /home/scott/beat-box/po/../src//Windows/AddPodcastWindow.vala:76
-#: /home/scott/beat-box/po/../src//Windows/AddPodcastWindow.vala:84
-#, c-format
-msgid "Podcast RSS Source"
-msgstr "RSS vir podcasta"
-
-#: /home/scott/beat-box/po/../src//Windows/AddPodcastWindow.vala:77
-msgid "Podcast Source..."
-msgstr "Vir podcasta"
-
-#: /home/scott/beat-box/po/../src//Windows/AddPodcastWindow.vala:80
-#: /home/scott/beat-box/po/../src//Windows/Editors/SmartPlaylistEditor.vala:134
-msgid "Add"
-msgstr "Dodaj"
-
-#: /home/scott/beat-box/po/../src//Windows/EqualizerWindow.vala:147
-msgid "Save preset"
+#: src/Widgets/PresetList.vala:32
+msgid "Full Bass"
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//Windows/EqualizerWindow.vala:396
-msgid "Custom Preset"
+#: src/Widgets/PresetList.vala:33
+msgid "Full Treble"
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//Windows/EqualizerWindow.vala:401
-msgid "Custom"
+#: src/Widgets/PresetList.vala:33
+msgid "Full Bass + Treble"
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//Windows/EqualizerWindow.vala:401
-msgid " Preset"
+#: src/Widgets/PresetList.vala:33
+msgid "Headphones"
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//Windows/RemoveDuplicatesDialog.vala:44
-#, c-format
-msgid "Analyzing %d of %d..."
+#: src/Widgets/PresetList.vala:33
+msgid "Large Hall"
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//Windows/RemoveDuplicatesDialog.vala:51
-msgid "Duplicates Remover"
+#: src/Widgets/PresetList.vala:33
+msgid "Live"
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//Windows/RemoveDuplicatesDialog.vala:70
-msgid "Analyze..."
+#: src/Widgets/PresetList.vala:33
+msgid "Party"
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//Windows/RemoveDuplicatesDialog.vala:73
-msgid "Media must match by at least "
+#: src/Widgets/PresetList.vala:34
+#, fuzzy
+msgid "Pop"
+msgstr "Na vrh"
+
+#: src/Widgets/PresetList.vala:34
+msgid "Reggae"
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//Windows/RemoveDuplicatesDialog.vala:74
-msgid " percent."
+#: src/Widgets/PresetList.vala:34
+msgid "Rock"
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//Windows/RemoveDuplicatesDialog.vala:93
-msgid "Matching Criteria"
+#: src/Widgets/PresetList.vala:34
+msgid "Soft"
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//Windows/RemoveDuplicatesDialog.vala:94
-msgid "Title and Artist"
+#: src/Widgets/PresetList.vala:34
+msgid "Ska"
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//Windows/RemoveDuplicatesDialog.vala:95
-msgid "Title, Artist, and Album"
+#: src/Widgets/PresetList.vala:34
+msgid "Soft Rock"
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//Windows/Editors/MediaEditor.vala:84
-msgid "Metadata"
+#: src/Widgets/PresetList.vala:34
+msgid "Techno"
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//Windows/Editors/MediaEditor.vala:119
-#: /home/scott/beat-box/po/../src//Windows/Editors/MediaEditor.vala:227
-#, c-format
-msgid "Editing %s"
+#: src/Widgets/PresetList.vala:57
+msgid "Automatic"
+msgstr "Samodejno"
+
+#: src/Widgets/PresetList.vala:58
+msgid "Delete Current"
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//Windows/Editors/MediaEditor.vala:122
-#, c-format
-msgid "Editing %d medias"
+#. * Adding free-space element *
+#: src/Widgets/SpaceWidget.vala:232
+msgid "Free"
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//Windows/Editors/MediaEditor.vala:134
-msgid "Info"
+#: src/Widgets/SpaceWidget.vala:350
+msgid "Using %s of %s (%.0f%)"
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//Windows/Editors/SmartPlaylistEditor.vala:62
-msgid "Smart Playlist Editor"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Windows/Editors/SmartPlaylistEditor.vala:75
-#: /home/scott/beat-box/po/../src//Windows/Editors/SmartPlaylistEditor.vala:83
-#, c-format
-msgid "Rules"
-msgstr "Pravila"
-
-#: /home/scott/beat-box/po/../src//Windows/Editors/SmartPlaylistEditor.vala:76
-#: /home/scott/beat-box/po/../src//Windows/Editors/SmartPlaylistEditor.vala:84
-#, c-format
-msgid "Options"
-msgstr "Možnosti"
-
-#: /home/scott/beat-box/po/../src//Windows/Editors/SmartPlaylistEditor.vala:87
-msgid "Playlist Title"
-msgstr "Naslov seznama predvajanja"
-
-#: /home/scott/beat-box/po/../src//Windows/Editors/SmartPlaylistEditor.vala:93
-msgid "Match"
-msgstr "Ujemanje"
-
-#: /home/scott/beat-box/po/../src//Windows/Editors/SmartPlaylistEditor.vala:95
-msgid "any"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Windows/Editors/SmartPlaylistEditor.vala:96
-msgid "all"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Windows/Editors/SmartPlaylistEditor.vala:97
-msgid "of the following:"
-msgstr "od naslednjih:"
-
-#: /home/scott/beat-box/po/../src//Windows/Editors/SmartPlaylistEditor.vala:140
-msgid "Limit to"
-msgstr "Omeji na"
-
-#: /home/scott/beat-box/po/../src//Windows/Editors/SmartPlaylistEditor.vala:142
-msgid "medias"
-msgstr "viri"
-
-#: /home/scott/beat-box/po/../src//Windows/Editors/SmartPlaylistEditor.vala:483
-msgid "seconds"
-msgstr "sekund"
-
-#: /home/scott/beat-box/po/../src//Windows/Editors/SmartPlaylistEditor.vala:487
-msgid "days ago"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Windows/Editors/SmartPlaylistEditor.vala:491
-msgid "kbps"
-msgstr "kb/s"
-
-#: /home/scott/beat-box/po/../src//Windows/Editors/InfoViewport.vala:64
-msgid "Location:"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Windows/Editors/InfoViewport.vala:65
-msgid "File Size:"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Windows/Editors/InfoViewport.vala:66
-msgid "Date Added:"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Windows/Editors/InfoViewport.vala:67
-msgid "Last Played:"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Windows/Editors/InfoViewport.vala:68
-msgid "Last Modified:"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Windows/Editors/InfoViewport.vala:69
-msgid "Play Count:"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Windows/Editors/InfoViewport.vala:70
-#: /home/scott/beat-box/po/../core//Playlists/SmartQuery.vala:79
-msgid "Skip Count"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Windows/Editors/InfoViewport.vala:71
-msgid "Duration:"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Windows/Editors/InfoViewport.vala:72
-msgid "Audio Bitrate:"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Windows/Editors/InfoViewport.vala:73
-msgid "Sample Rate:"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Windows/Editors/InfoViewport.vala:164
-msgid "Unknown Size"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Windows/Editors/InfoViewport.vala:180
-msgid "Never Modified"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Windows/Editors/InfoViewport.vala:187
-msgid "No Plays"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Windows/Editors/InfoViewport.vala:194
-msgid "No Skips"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Windows/Editors/InfoViewport.vala:197
-msgid "Skip"
-msgid_plural "Skips"
-msgstr[0] ""
-msgstr[1] ""
-
-#: /home/scott/beat-box/po/../src//Windows/Editors/InfoViewport.vala:203
-msgid "Unknown Bitrate"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Windows/Editors/InfoViewport.vala:206
-#, c-format
-msgid "%d kbps"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Windows/Editors/InfoViewport.vala:210
-msgid "Unknown Sample Rate"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Windows/Editors/InfoViewport.vala:213
-#, c-format
-msgid "%d Hz"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Windows/Editors/PodcastEditor.vala:72
-msgid "Author"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Windows/Editors/PodcastEditor.vala:73
-#: /home/scott/beat-box/po/../core//Media/Media.vala:42
-msgid "Podcast"
-msgid_plural "Podcasts"
-msgstr[0] ""
-msgstr[1] ""
-
-#: /home/scott/beat-box/po/../src//Windows/Editors/PodcastEditor.vala:75
-#: /home/scott/beat-box/po/../src//Windows/Editors/SongEditor.vala:109
-#: /home/scott/beat-box/po/../core//Playlists/SmartQuery.vala:57
-msgid "Comment"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Windows/Editors/SongEditor.vala:104
-msgid "Album Artist"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Windows/Editors/SongEditor.vala:107
-#: /home/scott/beat-box/po/../core//Playlists/SmartQuery.vala:59
-msgid "Composer"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Windows/Editors/SongEditor.vala:108
-#: /home/scott/beat-box/po/../core//Playlists/SmartQuery.vala:67
-msgid "Grouping"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Windows/Editors/SongEditor.vala:111
-msgid "Disc"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Windows/Editors/SongEditor.vala:155
-msgid "Lyrics"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Widgets/StatusBar.vala:36
+#: src/Widgets/StatusBar.vala:38
 #, c-format
 msgid "%s, %s, %s"
 msgstr "%s, %s, %s"
 
-#: /home/scott/beat-box/po/../src//Widgets/StatusBar.vala:53
-#: /home/scott/beat-box/po/../src//Widgets/StatusBar.vala:60
-msgid "Off"
-msgstr "Izključeno"
-
-#: /home/scott/beat-box/po/../src//Widgets/StatusBar.vala:53
+#: src/Widgets/StatusBar.vala:76
 msgid "Repeat Off"
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//Widgets/StatusBar.vala:54
-#: /home/scott/beat-box/po/../core//Media/Media.vala:40
+#: src/Widgets/StatusBar.vala:77
 msgid "Song"
-msgid_plural "Songs"
-msgstr[0] ""
-msgstr[1] ""
+msgstr ""
 
-#: /home/scott/beat-box/po/../src//Widgets/StatusBar.vala:54
+#: src/Widgets/StatusBar.vala:77
 msgid "Repeat Song"
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//Widgets/StatusBar.vala:55
+#: src/Widgets/StatusBar.vala:78
 msgid "Repeat Album"
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//Widgets/StatusBar.vala:56
+#: src/Widgets/StatusBar.vala:79
 msgid "Repeat Artist"
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//Widgets/StatusBar.vala:57
-#: /home/scott/beat-box/po/../src//Widgets/StatusBar.vala:61
+#: src/Widgets/StatusBar.vala:80 src/Widgets/StatusBar.vala:84
 msgid "All"
 msgstr "Vse"
 
-#: /home/scott/beat-box/po/../src//Widgets/StatusBar.vala:57
+#: src/Widgets/StatusBar.vala:80
 msgid "Repeat All"
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//Widgets/StatusBar.vala:60
+#: src/Widgets/StatusBar.vala:83
 msgid "Shuffle Disabled"
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//Widgets/StatusBar.vala:61
+#: src/Widgets/StatusBar.vala:84
 msgid "Shuffle Enabled"
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//Widgets/StatusBar.vala:107
+#. less than 1 hour show in minute units
+#: src/Widgets/StatusBar.vala:137
 #, c-format
 msgid "%d minutes"
 msgid_plural "%d minutes"
 msgstr[0] ""
 msgstr[1] ""
 
-#: /home/scott/beat-box/po/../src//Widgets/StatusBar.vala:110
+#. less than 1 day show in hour units
+#: src/Widgets/StatusBar.vala:140
 #, c-format
 msgid "%d hour"
 msgid_plural "%d hours"
 msgstr[0] ""
 msgstr[1] ""
 
-#: /home/scott/beat-box/po/../src//Widgets/StatusBar.vala:113
+#. units in days
+#: src/Widgets/StatusBar.vala:143
 #, c-format
 msgid "%d day"
 msgid_plural "%d days"
 msgstr[0] ""
 msgstr[1] ""
 
-#: /home/scott/beat-box/po/../src//Widgets/StatusBar.vala:123
+#: src/Widgets/StatusBar.vala:153
 msgid "episode"
 msgid_plural "episodes"
 msgstr[0] ""
 msgstr[1] ""
 
-#: /home/scott/beat-box/po/../src//Widgets/StatusBar.vala:126
-#: /home/scott/beat-box/po/../src//Dialogs/RemoveFilesDialog.vala:73
-msgid "audiobook"
-msgid_plural "audiobooks"
-msgstr[0] ""
-msgstr[1] ""
-
-#: /home/scott/beat-box/po/../src//Widgets/PresetList.vala:52
-msgid "Automatic"
-msgstr "Samodejno"
-
-#: /home/scott/beat-box/po/../src//Widgets/PresetList.vala:53
-msgid "Delete Current"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Widgets/AdvancedSearchBox.vala:39
-msgid "Search..."
-msgstr "Iskanje ..."
-
-#: /home/scott/beat-box/po/../src//Widgets/TopDisplay/BufferDisplay.vala:66
+#: src/Widgets/TopDisplay/BufferDisplay.vala:62
 #, c-format
 msgid "Buffering %s..."
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//Widgets/TopDisplay/BufferDisplay.vala:69
+#: src/Widgets/TopDisplay/BufferDisplay.vala:65
 msgid "Buffering..."
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//Widgets/SpaceWidget.vala:264
-msgid "Free"
+#: src/Widgets/TopDisplay/TimeScale.vala:90
+msgid "Click to switch between the time left and the total time"
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//Widgets/SpaceWidget.vala:382
-msgid "Using %s of %s (%.0f%)"
+#: src/Widgets/TrackReport.vala:58
+msgid "Nothing is playing."
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//Dialogs/TransferFromDeviceDialog.vala:76
-msgid "Import medias from"
+#: src/Widgets/TrackReport.vala:77 src/Windows/Editors/SongEditor.vala:410
+msgid "Reading the file…"
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//Dialogs/TransferFromDeviceDialog.vala:77
-#, c-format
-msgid ""
-"The following files were found on %s, but are not in your library. Check all "
-"files you would like to import."
+#. a stream would be opened just to look at it: only files are read
+#: src/Widgets/TrackReport.vala:87
+msgid "An internet stream: there is no file to read."
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//Dialogs/TransferFromDeviceDialog.vala:78
-msgid "Import all medias"
-msgstr "Uvozi vse"
-
-#: /home/scott/beat-box/po/../src//Dialogs/TransferFromDeviceDialog.vala:83
-msgid "Import"
-msgstr "Uvozi"
-
-#: /home/scott/beat-box/po/../src//Dialogs/TransferFromDeviceDialog.vala:84
-msgid "Don't Import"
-msgstr "Ne uvozi"
-
-#: /home/scott/beat-box/po/../src//Dialogs/TransferFromDeviceDialog.vala:89
-#, c-format
-msgid "Import %s from %s"
+#: src/Widgets/TrackReport.vala:106 src/Widgets/TrackReport.vala:218
+msgid "File"
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//Dialogs/TransferFromDeviceDialog.vala:91
-#, c-format
-msgid "Import %d medias from %s"
+#: src/Widgets/TrackReport.vala:106
+msgid "Error"
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//Dialogs/TransferFromDeviceDialog.vala:172
-msgid "Select individual medias to import:"
-msgstr "Selektivo izberi datoteke za uvoz"
-
-#: /home/scott/beat-box/po/../src//Dialogs/TransferFromDeviceDialog.vala:190
-msgid "Check Item"
-msgstr "Označi predmet"
-
-#: /home/scott/beat-box/po/../src//Dialogs/TransferFromDeviceDialog.vala:191
-msgid "Check Album"
-msgstr "Označi album"
-
-#: /home/scott/beat-box/po/../src//Dialogs/TransferFromDeviceDialog.vala:192
-msgid "Check Artist"
-msgstr "Označi izvajalca"
-
-#: /home/scott/beat-box/po/../src//Dialogs/TransferFromDeviceDialog.vala:283
-msgid "Cannot Import"
+#: src/Widgets/TrackReport.vala:116
+msgid "Format and audio"
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//Dialogs/TransferFromDeviceDialog.vala:283
-msgid ""
-"BeatBox is already doing file operations. Please wait until those finish to "
-"import from "
+#: src/Widgets/TrackReport.vala:117
+msgid "Tags in the file"
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//Dialogs/RemoveFilesDialog.vala:59
-#: /home/scott/beat-box/po/../src//Dialogs/NotImportedDialog.vala:76
-msgid "Move to Trash"
+#: src/Widgets/TrackReport.vala:118
+msgid "Embedded pictures"
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//Dialogs/RemoveFilesDialog.vala:60
-msgid "Remove from BeatBox"
+#: src/Widgets/TrackReport.vala:174
+#, fuzzy
+msgid "Added"
+msgstr "Dodano dne"
+
+#: src/Widgets/TrackReport.vala:174
+#, fuzzy
+msgid "Unknown"
+msgstr "Neznan album"
+
+#: src/Widgets/TrackReport.vala:175
+#, fuzzy
+msgid "Last played"
+msgstr "Nazadnje predvajano"
+
+#: src/Widgets/TrackReport.vala:175 src/Windows/Editors/SongEditor.vala:319
+msgid "Never"
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//Dialogs/RemoveFilesDialog.vala:70
-msgid "podcast episode"
-msgid_plural "podcast episodes"
-msgstr[0] ""
-msgstr[1] ""
+#: src/Widgets/TrackReport.vala:178
+#, fuzzy
+msgid "Edited"
+msgstr "Uredi"
 
-#: /home/scott/beat-box/po/../src//Dialogs/RemoveFilesDialog.vala:88
-#, c-format
-msgid "Remove %d %s from BeatBox?"
+#: src/Widgets/TrackReport.vala:182
+msgid "Volume adjustment"
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//Dialogs/RemoveFilesDialog.vala:94
-#: /home/scott/beat-box/po/../src//Dialogs/RemoveFilesDialog.vala:96
-#, c-format
-msgid "Remove %s from BeatBox?"
+#: src/Widgets/TrackReport.vala:186
+msgid "Shuffle"
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//Dialogs/RemoveFilesDialog.vala:103
-#, c-format
-msgid ""
-"This will remove the %s from your library and from any device that "
-"automatically syncs with BeatBox."
+#: src/Widgets/TrackReport.vala:187
+msgid "Skipped when shuffling"
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//Dialogs/SyncWarningDialog.vala:43
-#, c-format
-msgid "Sync will remove %d medias from %s"
+#: src/Widgets/TrackReport.vala:190
+msgid "Resumes at"
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//Dialogs/SyncWarningDialog.vala:44
-#, c-format
-msgid ""
-"If you continue to sync, medias will be removed from %s since they are not "
-"on the sync list. Would you like to import them to your library first?"
+#: src/Widgets/TrackReport.vala:221
+msgid "Size"
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//Dialogs/SyncWarningDialog.vala:70
-msgid "Import medias to Library"
-msgstr "Uvozi glasbo v knjižnico"
-
-#: /home/scott/beat-box/po/../src//Dialogs/SyncWarningDialog.vala:71
-msgid "Continue Syncing"
-msgstr "Nadaljuj usklajevanje"
-
-#: /home/scott/beat-box/po/../src//Dialogs/SyncWarningDialog.vala:72
-msgid "Dont Sync"
+#: src/Widgets/TrackReport.vala:224
+msgid "File modified"
 msgstr ""
 
-#: /home/scott/beat-box/po/../src//Dialogs/SetLibraryFolderConfirmation.vala:70
-msgid "Export Playlists"
-msgstr "Izvozi seznam predvajanja"
-
-#: /home/scott/beat-box/po/../src//Dialogs/SetLibraryFolderConfirmation.vala:71
-#, c-format
-msgid "Set %s Folder"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Dialogs/SetLibraryFolderConfirmation.vala:78
-#, c-format
-msgid "Set %s Folder?"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Dialogs/SetLibraryFolderConfirmation.vala:81
-#, c-format
-msgid ""
-"Are you sure you want to set the %s folder to %s? This will reset your %s "
-"library."
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Dialogs/SetLibraryFolderConfirmation.vala:125
-msgid "Choose Music Folder"
-msgstr "Izberi mapo z glasbo"
-
-#: /home/scott/beat-box/po/../src//Dialogs/InstallGstreamerPluginsDialog.vala:64
-msgid "Install Plugin"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Dialogs/InstallGstreamerPluginsDialog.vala:65
-#: /home/scott/beat-box/po/../src//Dialogs/FileNotFoundDialog.vala:87
-msgid "Do Nothing"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Dialogs/InstallGstreamerPluginsDialog.vala:69
-#, c-format
-msgid "Required GStreamer plugin not installed"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Dialogs/InstallGstreamerPluginsDialog.vala:72
-#, c-format
-msgid ""
-"The plugin for media type %s is not installed.\n"
-" What would you like to do?"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Dialogs/NotImportedDialog.vala:70
-#, c-format
-msgid "BeatBox was unable to import %d medias. The files may be damaged."
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Dialogs/NotImportedDialog.vala:71
-msgid "Move all corrupted files to trash"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Dialogs/NotImportedDialog.vala:77
-msgid "Ignore"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Dialogs/NotImportedDialog.vala:81
-#, c-format
-msgid "Unable to import %d medias from %s"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Dialogs/NotImportedDialog.vala:106
-msgid "File Location"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Dialogs/NotImportedDialog.vala:133
-msgid "Select individual files to move to trash:"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Dialogs/FileNotFoundDialog.vala:84
-#, c-format
-msgid "Remove %s"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Dialogs/FileNotFoundDialog.vala:85
-#, c-format
-msgid "Rescan %s Library"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Dialogs/FileNotFoundDialog.vala:86
-#, c-format
-msgid "Locate %s"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Dialogs/FileNotFoundDialog.vala:91
-#, c-format
-msgid "Could not find %s %s"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Dialogs/FileNotFoundDialog.vala:91
-msgid "file"
-msgid_plural "files"
-msgstr[0] ""
-msgstr[1] ""
-
-#: /home/scott/beat-box/po/../src//Dialogs/FileNotFoundDialog.vala:95
-#, c-format
-msgid "The file for %s by %s could not be found. What would you like to do?"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Dialogs/FileNotFoundDialog.vala:97
-#, c-format
-msgid "%s files could not be found. What would you like to do?"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Dialogs/FileNotFoundDialog.vala:121
-#, c-format
-msgid "%s not found:"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Dialogs/FileNotFoundDialog.vala:177
-msgid "Locate Music File"
-msgstr ""
-
-#: /home/scott/beat-box/po/../src//Utils/PlaylistUtils.vala:229
-msgid "Export Playlist"
-msgstr ""
-
-#: /home/scott/beat-box/po/../core//Media/Media.vala:44
-msgid "Audiobook"
-msgid_plural "Audiobooks"
-msgstr[0] ""
-msgstr[1] ""
-
-#: /home/scott/beat-box/po/../core//Media/Media.vala:48
-msgid "Video"
-msgid_plural "Videos"
-msgstr[0] ""
-msgstr[1] ""
-
-#: /home/scott/beat-box/po/../core//Media/Media.vala:50
-msgid "TV Show"
-msgid_plural "TV Shows"
-msgstr[0] ""
-msgstr[1] ""
-
-#: /home/scott/beat-box/po/../core//Media/Media.vala:52
-msgid "Media"
-msgid_plural "Medias"
-msgstr[0] ""
-msgstr[1] ""
-
-#: /home/scott/beat-box/po/../core//CellRenderers/CellDataFunctionHelper.vala:133
-#: /home/scott/beat-box/po/../plugins//Store/Widgets/StoreCellRenderer.vala:177
-msgid " kbps"
-msgstr ""
-
-#: /home/scott/beat-box/po/../core//Utils/TimeUtils.vala:44
-#, c-format
-msgid "%d second"
-msgid_plural "%d seconds"
-msgstr[0] ""
-msgstr[1] ""
-
-#: /home/scott/beat-box/po/../core//Utils/TimeUtils.vala:66
-#, c-format
-msgid "%i day"
-msgid_plural "%i days"
-msgstr[0] ""
-msgstr[1] ""
-
-#: /home/scott/beat-box/po/../core//Utils/TimeUtils.vala:70
-#, c-format
-msgid "%i hour"
-msgid_plural "%i hours"
-msgstr[0] ""
-msgstr[1] ""
-
-#: /home/scott/beat-box/po/../core//Utils/TimeUtils.vala:74
-#, c-format
-msgid "%i minute"
-msgid_plural "%i minutes"
-msgstr[0] ""
-msgstr[1] ""
-
-#: /home/scott/beat-box/po/../core//Utils/TimeUtils.vala:84
-#: /home/scott/beat-box/po/../core//Utils/TimeUtils.vala:94
-#: /home/scott/beat-box/po/../core//Utils/TimeUtils.vala:98
-#: /home/scott/beat-box/po/../core//Utils/TimeUtils.vala:106
-#, c-format
-msgid "%s and %s"
-msgstr ""
-
-#: /home/scott/beat-box/po/../core//Utils/TimeUtils.vala:92
-#, c-format
-msgid "%s, %s and %s"
-msgstr ""
-
-#: /home/scott/beat-box/po/../core//Playlists/SmartQuery.vala:63
-msgid "Date Released"
-msgstr ""
-
-#: /home/scott/beat-box/po/../core//Playlists/SmartQuery.vala:73
-msgid "Media Type"
-msgstr ""
-
-#: /home/scott/beat-box/po/../core//Playlists/SmartQuery.vala:75
-msgid "Play Count"
-msgstr ""
-
-#: /home/scott/beat-box/po/../core//Playlists/SmartQuery.vala:154
-msgid "is"
-msgstr "je"
-
-#: /home/scott/beat-box/po/../core//Playlists/SmartQuery.vala:156
-msgid "is exactly"
-msgstr ""
-
-#: /home/scott/beat-box/po/../core//Playlists/SmartQuery.vala:158
-msgid "is not"
-msgstr "ni"
-
-#: /home/scott/beat-box/po/../core//Playlists/SmartQuery.vala:160
-msgid "is at least"
-msgstr ""
-
-#: /home/scott/beat-box/po/../core//Playlists/SmartQuery.vala:162
-msgid "is at most"
-msgstr ""
-
-#: /home/scott/beat-box/po/../core//Playlists/SmartQuery.vala:164
-msgid "is within"
-msgstr ""
-
-#: /home/scott/beat-box/po/../core//Playlists/SmartQuery.vala:166
-msgid "is before"
-msgstr ""
-
-#: /home/scott/beat-box/po/../core//Playlists/SmartQuery.vala:168
-msgid "contains"
+#: src/Widgets/TrackReport.vala:230
+#, fuzzy
+msgid "Container"
 msgstr "vsebuje"
 
-#: /home/scott/beat-box/po/../core//Playlists/SmartQuery.vala:170
-msgid "does not contain"
-msgstr "ne vsebuje"
+#: src/Widgets/TrackReport.vala:233
+#, fuzzy
+msgid "Duration"
+msgstr "postaje"
 
-#: /home/scott/beat-box/po/../plugins//Store/Widgets/StoreView.vala:184
-msgid "Music Store"
-msgstr "Glasbena Trgovina"
-
-#: /home/scott/beat-box/po/../plugins//Store/Widgets/AlbumView.vala:344
-#, c-format
-msgid "%s  by  %s"
+#: src/Widgets/TrackReport.vala:241
+msgid "Codec"
 msgstr ""
+
+#: src/Widgets/TrackReport.vala:241
+msgid "lossless"
+msgstr ""
+
+#: src/Widgets/TrackReport.vala:241
+msgid "lossy"
+msgstr ""
+
+#: src/Widgets/TrackReport.vala:243
+msgid "Sample rate"
+msgstr ""
+
+#. a lossy one is decoded to whatever depth
+#: src/Widgets/TrackReport.vala:245
+msgid "Bit depth"
+msgstr ""
+
+#: src/Widgets/TrackReport.vala:248
+msgid "Mono"
+msgstr ""
+
+#: src/Widgets/TrackReport.vala:248
+msgid "Stereo"
+msgstr ""
+
+#: src/Widgets/TrackReport.vala:248
+#, c-format
+msgid "%u channels"
+msgstr ""
+
+#: src/Widgets/TrackReport.vala:249
+msgid "Channels"
+msgstr ""
+
+#: src/Widgets/TrackReport.vala:264
+#, c-format
+msgid "variable (%u–%u kbps)"
+msgstr ""
+
+#: src/Widgets/TrackReport.vala:266
+#, c-format
+msgid "nominal %u kbps"
+msgstr ""
+
+#: src/Widgets/TrackReport.vala:267
+msgid "Bitrate (average)"
+msgstr ""
+
+#: src/Widgets/TrackReport.vala:302
+msgid "Picture"
+msgstr ""
+
+#: src/Widgets/TrackReport.vala:307
+msgid "Front cover"
+msgstr ""
+
+#: src/Widgets/TrackReport.vala:307
+msgid "Back cover"
+msgstr ""
+
+#: src/Widgets/TrackReport.vala:308
+msgid "Disc"
+msgstr ""
+
+#. start out by creating all category labels
+#: src/Windows/AddPodcastWindow.vala:76 src/Windows/AddPodcastWindow.vala:84
+msgid "Podcast RSS Source"
+msgstr "RSS vir podcasta"
+
+#: src/Windows/AddPodcastWindow.vala:77
+msgid "Podcast Source..."
+msgstr "Vir podcasta"
+
+#: src/Windows/AddPodcastWindow.vala:80 src/Windows/DirectoryDialog.vala:280
+#: src/Windows/Editors/SmartPlaylistEditor.vala:134
+msgid "Add"
+msgstr "Dodaj"
+
+#: src/Windows/AddPodcastWindow.vala:81 src/Windows/DirectoryDialog.vala:280
+#: src/Windows/Editors/MediaEditor.vala:94
+#: src/Windows/Editors/SmartPlaylistEditor.vala:157
+#: src/Windows/Editors/SongEditor.vala:502
+#: src/Windows/Editors/SongEditor.vala:574
+#: src/Windows/PlaylistNameWindow.vala:64
+#: src/Windows/RemoveDuplicatesDialog.vala:69
+msgid "Cancel"
+msgstr "Prekliči"
+
+#: src/Windows/DirectoryDialog.vala:50
+#, fuzzy
+msgid "Find Radio Stations"
+msgstr "Ni najdenih radijskih postaj."
+
+#: src/Windows/DirectoryDialog.vala:56
+msgid "Station name, city or genre (jazz, news, rock…)"
+msgstr ""
+
+#: src/Windows/DirectoryDialog.vala:57
+msgid "Podcast name, author or topic"
+msgstr ""
+
+#: src/Windows/DirectoryDialog.vala:68
+msgid "Country"
+msgstr ""
+
+#: src/Windows/DirectoryDialog.vala:69
+#: src/Windows/Editors/PodcastEditor.vala:71
+msgid "Author"
+msgstr ""
+
+#: src/Windows/DirectoryDialog.vala:94
+msgid "Stations from radio-browser.info, a free community directory."
+msgstr ""
+
+#: src/Windows/DirectoryDialog.vala:95
+msgid "Podcasts from the Apple Podcasts directory."
+msgstr ""
+
+#: src/Windows/DirectoryDialog.vala:109 src/Windows/DirectoryDialog.vala:279
+#, fuzzy
+msgid "Add Station"
+msgstr "Uvozi postajo"
+
+#: src/Windows/DirectoryDialog.vala:109
+msgid "Subscribe"
+msgstr ""
+
+#: src/Windows/DirectoryDialog.vala:128
+msgid "Type a name or topic and press Enter."
+msgstr ""
+
+#: src/Windows/DirectoryDialog.vala:160 src/Windows/Editors/SongEditor.vala:517
+#: src/Windows/Editors/SongEditor.vala:718
+msgid "Searching…"
+msgstr ""
+
+#: src/Windows/DirectoryDialog.vala:219
+msgid "Could not reach the directory. Check your internet connection."
+msgstr ""
+
+#: src/Windows/DirectoryDialog.vala:221
+#, c-format
+msgid "Nothing found for “%s”."
+msgstr ""
+
+#: src/Windows/DirectoryDialog.vala:223
+msgid "Most popular stations in your country. Double click one to add it."
+msgstr ""
+
+#: src/Windows/DirectoryDialog.vala:225
+#, c-format
+msgid "%d result. Double click to add."
+msgid_plural "%d results. Double click to add."
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
+
+#: src/Windows/DirectoryDialog.vala:249
+#, c-format
+msgid "“%s” is already in your library."
+msgstr ""
+
+#: src/Windows/DirectoryDialog.vala:257
+#, c-format
+msgid "Added “%s” to Internet Radio."
+msgstr ""
+
+#: src/Windows/DirectoryDialog.vala:261
+#, c-format
+msgid "Subscribing to “%s”… its episodes will appear in Podcasts."
+msgstr ""
+
+#: src/Windows/DirectoryDialog.vala:281
+msgid "My favourite station"
+msgstr ""
+
+#: src/Windows/DirectoryDialog.vala:284 src/Windows/Editors/SongEditor.vala:155
+msgid "Name:"
+msgstr ""
+
+#: src/Windows/DirectoryDialog.vala:286
+msgid "Stream address:"
+msgstr ""
+
+#: src/Windows/DirectoryDialog.vala:288
+msgid ""
+"The address of the audio stream itself (often ending in .mp3, .aac or /"
+"stream).\n"
+"To add a .pls or .m3u file use “Import File…”."
+msgstr ""
+
+#: src/Windows/Editors/FieldEditorImpl.vala:182
+msgid "Apply this field to all the selected songs"
+msgstr ""
+
+#: src/Windows/Editors/InfoViewport.vala:64
+msgid "Location:"
+msgstr ""
+
+#: src/Windows/Editors/InfoViewport.vala:65
+msgid "File Size:"
+msgstr ""
+
+#: src/Windows/Editors/InfoViewport.vala:66
+msgid "Date Added:"
+msgstr ""
+
+#: src/Windows/Editors/InfoViewport.vala:67
+msgid "Last Played:"
+msgstr ""
+
+#: src/Windows/Editors/InfoViewport.vala:68
+msgid "Last Modified:"
+msgstr ""
+
+#: src/Windows/Editors/InfoViewport.vala:69
+msgid "Play Count:"
+msgstr ""
+
+#: src/Windows/Editors/InfoViewport.vala:71
+msgid "Duration:"
+msgstr ""
+
+#: src/Windows/Editors/InfoViewport.vala:72
+msgid "Audio Bitrate:"
+msgstr ""
+
+#: src/Windows/Editors/InfoViewport.vala:73
+msgid "Sample Rate:"
+msgstr ""
+
+#: src/Windows/Editors/InfoViewport.vala:165
+msgid "Unknown Size"
+msgstr ""
+
+#: src/Windows/Editors/InfoViewport.vala:181
+msgid "Never Modified"
+msgstr ""
+
+#: src/Windows/Editors/InfoViewport.vala:188
+msgid "No Plays"
+msgstr ""
+
+#: src/Windows/Editors/InfoViewport.vala:195
+msgid "No Skips"
+msgstr ""
+
+#: src/Windows/Editors/InfoViewport.vala:198
+msgid "Skip"
+msgid_plural "Skips"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/Windows/Editors/InfoViewport.vala:204
+msgid "Unknown Bitrate"
+msgstr ""
+
+#: src/Windows/Editors/InfoViewport.vala:207
+#, c-format
+msgid "%d kbps"
+msgstr ""
+
+#: src/Windows/Editors/InfoViewport.vala:211
+msgid "Unknown Sample Rate"
+msgstr ""
+
+#: src/Windows/Editors/InfoViewport.vala:214
+#, c-format
+msgid "%d Hz"
+msgstr ""
+
+#: src/Windows/Editors/MediaEditor.vala:85
+msgid "Also write changes to the file"
+msgstr ""
+
+#: src/Windows/Editors/MediaEditor.vala:87
+msgid ""
+"Otherwise the changes stay in BeatBox's library and the tags in the files "
+"are left as they are (the same option as in Preferences)"
+msgstr ""
+
+#: src/Windows/Editors/MediaEditor.vala:95
+msgid "OK"
+msgstr ""
+
+#: src/Windows/Editors/MediaEditor.vala:96
+msgid "Save the changes and show the previous song (Alt+Left)"
+msgstr ""
+
+#: src/Windows/Editors/MediaEditor.vala:97
+msgid "Save the changes and show the next song (Alt+Right)"
+msgstr ""
+
+#: src/Windows/Editors/MediaEditor.vala:142
+#: src/Windows/Editors/MediaEditor.vala:147
+#: src/Windows/Editors/MediaEditor.vala:159
+msgid "Info"
+msgstr ""
+
+#. the editor's pages in this order, any others after them
+#: src/Windows/Editors/MediaEditor.vala:143
+#: src/Windows/Editors/MediaEditor.vala:147
+#: src/Windows/Editors/MediaEditor.vala:159
+#: src/Windows/Editors/SongEditor.vala:228
+msgid "Summary"
+msgstr ""
+
+#: src/Windows/Editors/MediaEditor.vala:144
+#: src/Windows/Editors/MediaEditor.vala:148
+msgid "Details"
+msgstr ""
+
+#: src/Windows/Editors/MediaEditor.vala:147
+#: src/Windows/Editors/SongEditor.vala:202
+msgid "Comments"
+msgstr ""
+
+#: src/Windows/Editors/MediaEditor.vala:147
+#: src/Windows/Editors/SongEditor.vala:209
+#, fuzzy
+msgid "Sorting"
+msgstr "Ocena"
+
+#: src/Windows/Editors/MediaEditor.vala:147
+#: src/Windows/Editors/SmartPlaylistEditor.vala:76
+#: src/Windows/Editors/SmartPlaylistEditor.vala:84
+#: src/Windows/Editors/SongEditor.vala:225
+msgid "Options"
+msgstr "Možnosti"
+
+#: src/Windows/Editors/MediaEditor.vala:148
+#: src/Windows/Editors/SongEditor.vala:229
+msgid "Lyrics"
+msgstr ""
+
+#: src/Windows/Editors/MediaEditor.vala:148
+#: src/Windows/Editors/SongEditor.vala:230
+msgid "Pictures"
+msgstr ""
+
+#: src/Windows/Editors/MediaEditor.vala:170
+msgid "Song Info"
+msgstr ""
+
+#: src/Windows/Editors/MediaEditor.vala:170
+#, c-format
+msgid "Info for %d Songs"
+msgstr ""
+
+#: src/Windows/Editors/SmartPlaylistEditor.vala:62
+msgid "Smart Playlist Editor"
+msgstr ""
+
+#. start out by creating all category labels
+#: src/Windows/Editors/SmartPlaylistEditor.vala:74
+#: src/Windows/Editors/SmartPlaylistEditor.vala:82
+#: src/Windows/PlaylistNameWindow.vala:61
+#: src/Windows/PlaylistNameWindow.vala:68
+msgid "Name of Playlist"
+msgstr "Ime seznama predvajanja"
+
+#: src/Windows/Editors/SmartPlaylistEditor.vala:75
+#: src/Windows/Editors/SmartPlaylistEditor.vala:83
+msgid "Rules"
+msgstr "Pravila"
+
+#. add the name entry
+#: src/Windows/Editors/SmartPlaylistEditor.vala:87
+msgid "Playlist Title"
+msgstr "Naslov seznama predvajanja"
+
+#: src/Windows/Editors/SmartPlaylistEditor.vala:93
+msgid "Match"
+msgstr "Ujemanje"
+
+#: src/Windows/Editors/SmartPlaylistEditor.vala:95
+msgid "any"
+msgstr ""
+
+#: src/Windows/Editors/SmartPlaylistEditor.vala:96
+msgid "all"
+msgstr ""
+
+#: src/Windows/Editors/SmartPlaylistEditor.vala:97
+msgid "of the following:"
+msgstr "od naslednjih:"
+
+#. create extra option: limiter
+#: src/Windows/Editors/SmartPlaylistEditor.vala:140
+msgid "Limit to"
+msgstr "Omeji na"
+
+#: src/Windows/Editors/SmartPlaylistEditor.vala:142
+msgid "medias"
+msgstr "viri"
+
+#: src/Windows/Editors/SmartPlaylistEditor.vala:156
+#: src/Windows/EqualizerWindow.vala:155 src/Windows/PlaylistNameWindow.vala:63
+#: src/Windows/PreferencesWindow.vala:87
+msgid "Done"
+msgstr "Končano"
+
+#: src/Windows/Editors/SmartPlaylistEditor.vala:495
+msgid "days ago"
+msgstr ""
+
+#: src/Windows/Editors/SmartPlaylistEditor.vala:499
+msgid "kbps"
+msgstr "kb/s"
+
+#: src/Windows/Editors/SongEditor.vala:156
+#, fuzzy
+msgid "Artist:"
+msgstr "Izvajalec"
+
+#: src/Windows/Editors/SongEditor.vala:157
+#, fuzzy
+msgid "Album artist:"
+msgstr "Izvajalec"
+
+#: src/Windows/Editors/SongEditor.vala:158
+#, fuzzy
+msgid "Album:"
+msgstr "Album"
+
+#: src/Windows/Editors/SongEditor.vala:159
+#, fuzzy
+msgid "Genre:"
+msgstr "Zvrst"
+
+#: src/Windows/Editors/SongEditor.vala:160
+msgid "Composer:"
+msgstr ""
+
+#: src/Windows/Editors/SongEditor.vala:161
+msgid "Grouping:"
+msgstr ""
+
+#: src/Windows/Editors/SongEditor.vala:163
+msgid "Track number:"
+msgstr ""
+
+#: src/Windows/Editors/SongEditor.vala:164
+#: src/Windows/Editors/SongEditor.vala:166
+msgid "of"
+msgstr ""
+
+#: src/Windows/Editors/SongEditor.vala:165
+msgid "Disc number:"
+msgstr ""
+
+#: src/Windows/Editors/SongEditor.vala:167
+#, fuzzy
+msgid "Year:"
+msgstr "Leto"
+
+#: src/Windows/Editors/SongEditor.vala:168
+msgid "BPM:"
+msgstr ""
+
+#: src/Windows/Editors/SongEditor.vala:169
+#, fuzzy
+msgid "Rating:"
+msgstr "Ocena"
+
+#: src/Windows/Editors/SongEditor.vala:170
+msgid "Part of a compilation by various artists"
+msgstr ""
+
+#: src/Windows/Editors/SongEditor.vala:172
+msgid "Sort name:"
+msgstr ""
+
+#: src/Windows/Editors/SongEditor.vala:173
+msgid "Sort artist:"
+msgstr ""
+
+#: src/Windows/Editors/SongEditor.vala:174
+msgid "Sort album artist:"
+msgstr ""
+
+#: src/Windows/Editors/SongEditor.vala:175
+msgid "Sort album:"
+msgstr ""
+
+#: src/Windows/Editors/SongEditor.vala:176
+msgid "Sort composer:"
+msgstr ""
+
+#: src/Windows/Editors/SongEditor.vala:178
+msgid "Volume adjustment:"
+msgstr ""
+
+#: src/Windows/Editors/SongEditor.vala:179
+msgid "Skip when shuffling"
+msgstr ""
+
+#: src/Windows/Editors/SongEditor.vala:180
+msgid "Remember the playback position"
+msgstr ""
+
+#: src/Windows/Editors/SongEditor.vala:218
+msgid ""
+"The volume adjustment raises or lowers this song next to the others: +100 % "
+"doubles it, −100 % silences it."
+msgstr ""
+
+#: src/Windows/Editors/SongEditor.vala:312
+msgid "Kind:"
+msgstr ""
+
+#: src/Windows/Editors/SongEditor.vala:312
+#, c-format
+msgid "%s audio file"
+msgstr ""
+
+#: src/Windows/Editors/SongEditor.vala:312
+msgid "Audio file"
+msgstr ""
+
+#: src/Windows/Editors/SongEditor.vala:313
+msgid "Format:"
+msgstr ""
+
+#: src/Windows/Editors/SongEditor.vala:314
+msgid "Size:"
+msgstr ""
+
+#: src/Windows/Editors/SongEditor.vala:315
+#, fuzzy
+msgid "Bit rate:"
+msgstr "Bitna hitrost"
+
+#: src/Windows/Editors/SongEditor.vala:316
+msgid "Sample rate:"
+msgstr ""
+
+#: src/Windows/Editors/SongEditor.vala:317
+msgid "Channels:"
+msgstr ""
+
+#: src/Windows/Editors/SongEditor.vala:318
+#, fuzzy
+msgid "Plays:"
+msgstr "Predvajanj"
+
+#: src/Windows/Editors/SongEditor.vala:319
+#, fuzzy
+msgid "Last played:"
+msgstr "Nazadnje predvajano"
+
+#: src/Windows/Editors/SongEditor.vala:320
+#, fuzzy
+msgid "Date modified:"
+msgstr "Dodano dne"
+
+#: src/Windows/Editors/SongEditor.vala:321
+msgid "Encoded with:"
+msgstr ""
+
+#. "Identify": fills the name, artist and album from the song's sound (AcoustID)
+#: src/Windows/Editors/SongEditor.vala:341
+#: src/Windows/Editors/SongEditor.vala:554
+msgid "Identify…"
+msgstr ""
+
+#: src/Windows/Editors/SongEditor.vala:343
+msgid "Look the song up by its sound on AcoustID"
+msgstr ""
+
+#: src/Windows/Editors/SongEditor.vala:344
+msgid ""
+"Needs fpcalc, from Chromaprint (the chromaprint or libchromaprint-tools "
+"package)"
+msgstr ""
+
+#: src/Windows/Editors/SongEditor.vala:379
+msgid "Not known"
+msgstr ""
+
+#: src/Windows/Editors/SongEditor.vala:385
+msgid "This file has no pictures inside it."
+msgstr ""
+
+#: src/Windows/Editors/SongEditor.vala:427
+msgid "Add Artwork…"
+msgstr ""
+
+#: src/Windows/Editors/SongEditor.vala:428
+msgid "Download Artwork"
+msgstr ""
+
+#: src/Windows/Editors/SongEditor.vala:429
+msgid "Embed in File"
+msgstr ""
+
+#: src/Windows/Editors/SongEditor.vala:430
+msgid "Look the cover up on MusicBrainz and the Apple catalogue"
+msgstr ""
+
+#: src/Windows/Editors/SongEditor.vala:431
+msgid "Write the cover into the music files (the whole album)"
+msgstr ""
+
+#: src/Windows/Editors/SongEditor.vala:432
+msgid "This build of BeatBox can't write covers into files (it needs TagLib 2)"
+msgstr ""
+
+#: src/Windows/Editors/SongEditor.vala:443
+msgid "Writing…"
+msgstr ""
+
+#: src/Windows/Editors/SongEditor.vala:445
+#, c-format
+msgid "Written into %d file."
+msgid_plural "Written into %d files."
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
+
+#: src/Windows/Editors/SongEditor.vala:446
+#, c-format
+msgid "Written into %d files; %d failed."
+msgstr ""
+
+#: src/Windows/Editors/SongEditor.vala:470
+msgid "Changes here apply to the albums of all the selected songs."
+msgstr ""
+
+#: src/Windows/Editors/SongEditor.vala:502
+msgid "Choose Image"
+msgstr ""
+
+#: src/Windows/Editors/SongEditor.vala:502
+msgid "Open"
+msgstr ""
+
+#: src/Windows/Editors/SongEditor.vala:510
+#, c-format
+msgid "Could not open the image: %s"
+msgstr ""
+
+#: src/Windows/Editors/SongEditor.vala:526
+#, c-format
+msgid "No cover found for “%s”."
+msgstr ""
+
+#: src/Windows/Editors/SongEditor.vala:538
+msgid "Identifying songs needs an AcoustID application key"
+msgstr ""
+
+#: src/Windows/Editors/SongEditor.vala:539
+msgid ""
+"Register a free application at acoustid.org/new-application and paste its "
+"key in Preferences › Last.fm."
+msgstr ""
+
+#: src/Windows/Editors/SongEditor.vala:548
+msgid "Identifying…"
+msgstr ""
+
+#: src/Windows/Editors/SongEditor.vala:567
+msgid "Identification failed"
+msgstr ""
+
+#: src/Windows/Editors/SongEditor.vala:567
+#, fuzzy
+msgid "No matches found"
+msgstr "Ni najdenih podcastov"
+
+#: src/Windows/Editors/SongEditor.vala:568
+msgid "AcoustID doesn't know this recording."
+msgstr ""
+
+#: src/Windows/Editors/SongEditor.vala:573
+msgid "Identification results"
+msgstr ""
+
+#: src/Windows/Editors/SongEditor.vala:574
+msgid "Apply"
+msgstr ""
+
+#: src/Windows/Editors/SongEditor.vala:582
+msgid "Score"
+msgstr ""
+
+#: src/Windows/Editors/SongEditor.vala:590
+msgid "Select a result to apply its title, artist and album to this song:"
+msgstr ""
+
+#: src/Windows/Editors/SongEditor.vala:629
+#, fuzzy
+msgid "Download Lyrics"
+msgstr "Prejmi nove epizode"
+
+#: src/Windows/Editors/SongEditor.vala:630
+msgid "Look the lyrics up on lrclib.net (they replace the ones here)"
+msgstr ""
+
+#: src/Windows/Editors/SongEditor.vala:726
+msgid "From lrclib.net"
+msgstr ""
+
+#: src/Windows/Editors/SongEditor.vala:729
+#, c-format
+msgid "No lyrics found for “%s”."
+msgstr ""
+
+#: src/Windows/EqualizerWindow.vala:153
+msgid "Save preset"
+msgstr ""
+
+#: src/Windows/EqualizerWindow.vala:407
+msgid "Custom Preset"
+msgstr ""
+
+#: src/Windows/EqualizerWindow.vala:412
+msgid "Custom"
+msgstr ""
+
+#: src/Windows/EqualizerWindow.vala:412
+msgid " Preset"
+msgstr ""
+
+#: src/Windows/PreferencesWindow.vala:103
+msgid "General"
+msgstr ""
+
+#: src/Windows/PreferencesWindow.vala:104
+msgid "Libraries"
+msgstr ""
+
+#: src/Windows/RemoveDuplicatesDialog.vala:44
+#, c-format
+msgid "Analyzing %d of %d..."
+msgstr ""
+
+#: src/Windows/RemoveDuplicatesDialog.vala:51
+msgid "Duplicates Remover"
+msgstr ""
+
+#: src/Windows/RemoveDuplicatesDialog.vala:70
+msgid "Analyze..."
+msgstr ""
+
+#: src/Windows/RemoveDuplicatesDialog.vala:73
+msgid "Media must match by at least "
+msgstr ""
+
+#: src/Windows/RemoveDuplicatesDialog.vala:74
+msgid " percent."
+msgstr ""
+
+#. fancy up the category labels
+#: src/Windows/RemoveDuplicatesDialog.vala:93
+msgid "Matching Criteria"
+msgstr ""
+
+#: src/Windows/RemoveDuplicatesDialog.vala:94
+msgid "Title and Artist"
+msgstr ""
+
+#: src/Windows/RemoveDuplicatesDialog.vala:95
+msgid "Title, Artist, and Album"
+msgstr ""
+
+#~ msgid ""
+#~ "To add a podcast, visit a website such as Miro Guide to find RSS Feeds."
+#~ msgstr ""
+#~ "Da dodaš podcast, ti predlagamo obiščeš spletno stran kot je Miro Guide, "
+#~ "kjer najdeš RSS vire."
+
+#~ msgid ""
+#~ "You can then copy and paste the feed into the \"Add Podcast\" window by "
+#~ "right clicking on \"Podcasts\"."
+#~ msgstr ""
+#~ "Potem lahko kopiraš in prilepiš vir  v okno \"Dodaj podcast\" z desnim "
+#~ "klikom na \"Podcaste\"."
+
+#~ msgid "Eject"
+#~ msgstr "Izvrzi"
+
+#~ msgid ""
+#~ "To add a station, visit a website such as SomaFM to find PLS or M3U files."
+#~ msgstr ""
+#~ "Da dodaš postajo, obišči spletno stran kot je SomaFM, kjer najdeš PLS ali "
+#~ "M3U datoteke."
+
+#~ msgid "You can then import the file to add the station."
+#~ msgstr "Nato lahko uvoziš datoteko, da dodaš postajo."
+
+#~ msgid "Check Item"
+#~ msgstr "Označi predmet"
+
+#~ msgid "Check Artist"
+#~ msgstr "Označi izvajalca"
+
+#~ msgid "Music Store"
+#~ msgstr "Glasbena Trgovina"
 
 #~ msgid "Stop Syncing"
 #~ msgstr "Ustavi usklajevanje"
@@ -2068,16 +3269,9 @@ msgstr ""
 #~ msgid "Set Music Folder"
 #~ msgstr "Nastavi mapo z glasbo"
 
-#~ msgid "Add Podcast"
-#~ msgstr "Dodaj podcast"
-
 #, c-format
 #~ msgid "Set Music Folder?"
 #~ msgstr "Nastavi mapo z glasbo?"
-
-#, c-format
-#~ msgid "%s minutes"
-#~ msgstr "%s minut"
 
 #, c-format
 #~ msgid "%s hours"
@@ -2090,14 +3284,8 @@ msgstr ""
 #~ msgid "audiobooks"
 #~ msgstr "zvočne knjige"
 
-#~ msgid "songs"
-#~ msgstr "skladbe"
-
 #~ msgid "podcasts"
 #~ msgstr "podcasti"
-
-#~ msgid "stations"
-#~ msgstr "postaje"
 
 #~ msgid "Similar Media"
 #~ msgstr "Podobna predstavnost"
@@ -2120,9 +3308,6 @@ msgstr ""
 #~ msgid "Genres"
 #~ msgstr "Zvrsti"
 
-#~ msgid "Top"
-#~ msgstr "Na vrh"
-
 #~ msgid "Left"
 #~ msgstr "Levo"
 
@@ -2134,9 +3319,6 @@ msgstr ""
 
 #~ msgid "Similar Media View"
 #~ msgstr "Pogled s podobno predstavnostjo"
-
-#~ msgid "Rescan Music Folder"
-#~ msgstr "Ponovno preišči mapo z glasbo"
 
 #~ msgid "Add Playlist"
 #~ msgstr "Dodaj predvajalni seznam"
@@ -2178,8 +3360,8 @@ msgstr ""
 #~ msgstr "Vse %i %s"
 
 #~ msgid ""
-#~ "In this view, BeatBox will automatically find medias similar to the one you "
-#~ "are playing."
+#~ "In this view, BeatBox will automatically find medias similar to the one "
+#~ "you are playing."
 #~ msgstr "BeatBox v tem pogledu, samodejno najde podobne glasbene datoteke"
 
 #, c-format
