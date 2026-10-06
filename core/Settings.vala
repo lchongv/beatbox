@@ -276,7 +276,7 @@ public class BeatBox.Settings {
         public int lcd_transition_ms { get; set; }   // second LCD line sliding up
         public int lcd_track_width { get; set; }     // px, the groove of the position bar
         public int lcd_marker_size { get; set; }     // px, the marker
-        public string lcd_marker_shape { get; set; } // diamond, circle or cup (data/<shape>.svg)
+        public string lcd_marker_shape { get; set; } // diamond, circle, cup or nyan (data/<shape>.svg)
         public bool album_grid_inline { get; set; }
         public int album_detail_cover_percent { get; set; }
         public bool download_covers { get; set; }

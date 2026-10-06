@@ -123,10 +123,26 @@ public class BeatBox.App : Gtk.Application {
 	public static void apply_lcd_style () {
 		int size = settings.main.lcd_marker_size.clamp (6, 28);
 		string shape = settings.main.lcd_marker_shape;
-		if (!(shape in new string[] { "diamond", "circle", "cup" }))
+		if (!(shape in new string[] { "diamond", "circle", "cup", "nyan" }))
 			shape = "diamond";
 		int track = settings.main.lcd_track_width.clamp (2, 16);
 		try {
+			if (shape == "nyan") {
+				// whole pixels of the 23×13 cat and its 6×7 rainbow (data/nyan.svg, rainbow.svg), so they stay
+				// crisp; the trail sets the track's width, and TimeScale swaps the frames (class nyan-b)
+				int k = size < 20 ? 1 : 2;
+				marker_css.load_from_data (
+					(".lcd scale trough, .lcd scale highlight { min-height: %dpx; border-radius: 0; }" +
+					 ".lcd scale highlight, .lcd scale slider { transition: none; }" + // the theme's would slide between frames
+					 ".lcd scale highlight { background-color: transparent; background-size: auto 100%%; background-repeat: repeat-x;" +
+					 " background-image: url(\"resource:///net/launchpad/beatbox/rainbow.svg\"); }" +
+					 ".lcd scale.nyan-b highlight { background-position: %dpx 0; }" +
+					 ".lcd scale slider { min-width: %dpx; min-height: %dpx; margin: %dpx %dpx %dpx;" +
+					 " background-image: url(\"resource:///net/launchpad/beatbox/nyan.svg\"); background-size: 200%% 100%%; background-position: 0 0; }" +
+					 ".lcd scale.nyan-b slider { background-position: 100%% 0; }")
+					.printf (7 * k, 3 * k, 23 * k, 13 * k, -2 * k, -(23 * k - 8) / 2, -4 * k)); // the trail leaves the body's middle
+				return;
+			}
 			marker_css.load_from_data (
 				(".lcd scale trough, .lcd scale highlight { min-height: %dpx; }" +
 				 ".lcd scale slider { min-width: %dpx; min-height: %dpx; margin: %dpx %dpx;" +

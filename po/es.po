@@ -2313,6 +2313,9 @@ msgstr "Círculo"
 msgid "Cup"
 msgstr "Copa"
 
+msgid "Nyan cat"
+msgstr "Gato Nyan"
+
 msgid "Shape of the position marker:"
 msgstr "Forma del marcador de posición:"
 
