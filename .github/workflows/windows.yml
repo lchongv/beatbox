@@ -1,0 +1,32 @@
+# An experiment: does BeatBox build on Windows (MSYS2, UCRT64)? Build only, no package yet.
+name: Windows
+
+on:
+  push:
+    branches: [windows]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: msys2 {0}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: UCRT64
+          update: true
+          pacboy: >-
+            gcc:p vala:p meson:p ninja:p pkgconf:p gettext-tools:p
+            gtk3:p libgee:p libxml2:p libnotify:p libsoup3:p json-glib:p sqlite3:p taglib:p
+            gstreamer:p gst-plugins-base:p
+      - name: Setup
+        run: meson setup build -Dipod=disabled -Dpython=disabled
+      - name: Build
+        # -k 0: every error, not just the first target's
+        run: ninja -C build -k 0
+      - name: Meson log
+        if: failure()
+        run: cat build/meson-logs/meson-log.txt | tail -80

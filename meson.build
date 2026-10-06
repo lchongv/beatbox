@@ -1,4 +1,4 @@
-project('beatbox', 'vala', 'c', version: '0.16.1')
+project('beatbox', 'vala', 'c', version: '0.16.3')
 
 gnome = import('gnome')
 i18n = import('i18n')
@@ -36,9 +36,7 @@ taglib_dep = dependency('taglib_c')
 deps = [
   dependency('glib-2.0'),
   dependency('gio-2.0'),
-  dependency('gio-unix-2.0'),
   dependency('gtk+-3.0'),
-  dependency('gdk-x11-3.0'),
   dependency('gee-0.8'),
   dependency('gstreamer-1.0'),
   dependency('gstreamer-pbutils-1.0'),
@@ -54,6 +52,11 @@ deps = [
   valac.find_library('posix'),
   meson.get_compiler('c').find_library('m'),
 ]
+# Windows has neither (an experiment: .github/workflows/windows.yml)
+unix_packages = host_machine.system() == 'windows' ? [] : ['gio-unix-2.0', 'gdk-x11-3.0']
+foreach p : unix_packages
+  deps += dependency(p)
+endforeach
 
 core_sources = files(
   'core/SQLHeavy.vala',
@@ -151,7 +154,7 @@ core = shared_library('beatbox-core', core_sources, config_vala,
 core_dep = declare_dependency(link_with: core, dependencies: deps, include_directories: include_directories('.'))
 
 # What a plugin built outside this tree needs: valac --pkg beatbox-core (docs/plugins.md)
-core_packages = ['gio-2.0', 'gio-unix-2.0', 'gtk+-3.0', 'gdk-x11-3.0', 'gee-0.8', 'gstreamer-1.0',
+core_packages = ['gio-2.0'] + unix_packages + ['gtk+-3.0', 'gee-0.8', 'gstreamer-1.0',
   'gstreamer-pbutils-1.0', 'gstreamer-video-1.0', 'gstreamer-tag-1.0', 'taglib_c', 'libxml-2.0',
   'libnotify', 'libsoup-3.0', 'json-glib-1.0', 'sqlite3']
 if gpod_dep.found()
