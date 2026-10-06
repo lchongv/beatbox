@@ -173,15 +173,14 @@ public class BeatBox.App : Gtk.Application {
 		// first); a song already in the library is played right away
 		this.activate ();
 		var to_add = new Gee.LinkedList<File> ();
-		Media? known = null;
+		var known = new Gee.LinkedList<Media> ();
 		for (int i = 0; i < files.length; i++) {
 			var file = files[i];
 			if (file == null)
 				continue;
 			var m = library.media_from_file (file.get_uri ());
 			if (m != null) {
-				if (known == null)
-					known = m;
+				known.add (m);
 			} else {
 				to_add.add (file);
 				message ("Adding file %s", file.get_uri());
@@ -190,8 +189,10 @@ public class BeatBox.App : Gtk.Application {
 		
 		if(to_add.size > 0) {
 			library.song_library.add_files(to_add, true);
-		} else if (known != null) {
-			playback.play_media (known, false);
+		} else if (known.size > 0) {
+			// the opened songs are the list, so Next goes through them (as with new ones)
+			playback.set_playback_list (known, known.first ());
+			playback.play_media (known.first (), false);
 			if (!playback.playing)
 				playback.play ();
 		}

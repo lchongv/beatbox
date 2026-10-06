@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 # Smoke test: BeatBox started for real, in a private X server, D-Bus session and home.
-# It imports three short songs, plays one, goes Next and Previous, lets a song end,
-# quits, and starts again to see the library and the play count kept.
+# It imports three short songs, plays the library from the top, goes Next and
+# Previous, lets a song end, quits, and starts again with two of the songs opened
+# as files: the library and the play count are kept, and Next goes from one to
+# the other.
 # Driven through MPRIS; nothing is heard (the real audio outputs are ranked out).
 # Usage: smoke.py path/to/beatbox   (skipped, exit 77, without Xvfb, dbus-run-session
 # or GStreamer's tools; a failure instead with SMOKE_REQUIRED=1)
@@ -69,13 +71,13 @@ def player(method, *args):
 def songs(db):
     try:
         with sqlite3.connect('file:%s?mode=ro' % db, uri=True, timeout=1) as c:
-            return c.execute('SELECT uri, playcount FROM songs').fetchall()
+            return c.execute('SELECT rowid, uri, playcount FROM songs').fetchall()
     except sqlite3.Error:
         return []  # not there yet, or being written
 
 
-def start(app, home, log):
-    proc = subprocess.Popen([app], stdout=log, stderr=subprocess.STDOUT)
+def start(app, home, log, files=()):
+    proc = subprocess.Popen([app, *files], stdout=log, stderr=subprocess.STDOUT)
     wait_for('BeatBox on D-Bus', lambda: proc.poll() is None and
              gdbus('org.freedesktop.DBus.Peer.Ping') is not None or proc.poll() is not None, 90)
     if proc.poll() is not None:
@@ -92,6 +94,16 @@ def quit(proc):
         fail('BeatBox did not quit')
     if code != 0:
         fail('BeatBox quit with %d' % code)
+
+
+def track_of(db, path):
+    uri = 'file://' + path.replace(' ', '%20')
+    return ['/org/gnome/BeatBox/Track/%d' % rowid for rowid, u, count in songs(db) if u == uri][0]
+
+
+def play_from_top():
+    gdbus('org.mpris.MediaPlayer2.Player.Play')  # until the list shows the imported songs
+    return status() == 'Playing'
 
 
 def run(app, home):
@@ -114,9 +126,7 @@ def run(app, home):
         wait_for('the import', lambda: len(songs(db)) == SONGS, 90)
         print('imported', SONGS, 'songs')
 
-        first = 'file://' + os.path.join(music, 'Song 1.ogg').replace(' ', '%20')
-        player('OpenUri', first)
-        wait_for('playback', lambda: status() == 'Playing', 20)
+        wait_for('playback', play_from_top, 20)
         a = track()
         p = position()
         wait_for('the position to move', lambda: position() > p, 10)
@@ -134,17 +144,24 @@ def run(app, home):
         print('a song ended and', track(), 'followed')
 
         quit(proc)
-        played = [count for uri, count in songs(db) if uri == first]
+        played = [count for rowid, uri, count in songs(db) if a.endswith('/%d' % rowid)]
         if not played or not played[0]:
-            fail('the play of Song 1 was not counted: %s' % songs(db))
-        print('quit; Song 1 played', played[0], 'times')
+            fail('the play of %s was not counted: %s' % (a, songs(db)))
+        print('quit;', a, 'played', played[0], 'times')
 
-        # second run: the library and the last song are still there
-        proc = start(app, home, log)
-        wait_for('the last song', lambda: track() is not None, 20)
+        # second run, with two songs of the library opened as files
+        # opened 3 then 2: not the library's order, where Next after 3 wraps around or stops
+        three, two = (os.path.join(music, 'Song %d.ogg' % n) for n in (3, 2))
+        proc = start(app, home, log, [three, two])
+        wait_for('the opened song', lambda: track() == track_of(db, three) and status() == 'Playing', 20)
         if len(songs(db)) != SONGS:
             fail('the library has %d songs after a restart' % len(songs(db)))
-        print('restarted with', track())
+        time.sleep(1)  # past the startup restore, which must leave it alone
+        if track() != track_of(db, three):
+            fail('the opened song was replaced by %s' % track())
+        player('Next')
+        wait_for('Next to the other opened song', lambda: track() == track_of(db, two), 10)
+        print('restarted with two songs opened; Next went from one to the other')
         quit(proc)
     finally:
         log.close()
