@@ -57,6 +57,7 @@ patchelf --remove-rpath %{buildroot}%{_bindir}/beatbox
 %doc README AUTHORS
 %{_bindir}/beatbox
 %{_libdir}/libbeatbox-core.so
+%{_libdir}/beatbox/
 %{_datadir}/applications/net.launchpad.beatbox.desktop
 %{_datadir}/icons/hicolor/*/apps/beatbox.svg
 %{_metainfodir}/net.launchpad.beatbox.metainfo.xml

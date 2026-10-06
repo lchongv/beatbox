@@ -117,6 +117,7 @@ public class BeatBox.PreferencesWindow : Gtk.Window {
 		add_section(new CoverPreferences());
 		add_section(new ShortcutsPreferences());
 		add_section(new LastfmPreferences());
+		add_section(new PluginsPreferences());
 		add_section(new AboutPreferences());
 		
 		foreach(var library in App.library.all_libraries()) {

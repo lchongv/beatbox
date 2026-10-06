@@ -99,6 +99,7 @@ public class BeatBox.App : Gtk.Application {
 	public static BeatBox.InfoInterface info { get; private set; }
 	public static BeatBox.Settings settings { get; private set; }
 	public static BeatBox.DeviceInterface devices { get; private set; }
+	public static BeatBox.PluginManager plugins { get; private set; }
 	static FolderWatcher folder_watcher;
 
 	/*private const OptionEntry[] app_options = {
@@ -231,6 +232,7 @@ public class BeatBox.App : Gtk.Application {
 		Launcher.ensure ();
 		
 		((CoverManager)covers).setup_signals();
+		plugins = new PluginManager(new PluginHost(playback, library, window, settings));
 		
 		// Quit cleanly (saving state) on logout/kill as well
 		foreach (int sig in new int[] { Posix.Signal.TERM, Posix.Signal.INT }) {

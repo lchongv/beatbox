@@ -1,0 +1,6 @@
+[Plugin]
+Module=nowplayingfile
+Name=Now playing file
+Name[es]=Archivo de reproducción actual
+Description=Writes the playing song to ~/.cache/beatbox/now-playing.txt, for streaming overlays (OBS) and status bars.
+Description[es]=Escribe la canción que suena en ~/.cache/beatbox/now-playing.txt, para superposiciones de transmisión (OBS) y barras de estado.

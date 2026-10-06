@@ -1,4 +1,4 @@
-project('beatbox', 'vala', 'c', version: '0.14.4')
+project('beatbox', 'vala', 'c', version: '0.14.5')
 
 gnome = import('gnome')
 i18n = import('i18n')
@@ -17,6 +17,9 @@ conf.set('RELEASE_NAME', 'Everlong')
 conf.set('VERSION', meson.project_version())
 conf.set('VERSION_INFO', 'Pre-Release')
 conf.set('CMAKE_INSTALL_PREFIX', prefix)
+plugin_subdir = get_option('libdir') / meson.project_name() / 'plugins'
+conf.set('PLUGIN_SUBDIR', plugin_subdir)
+conf.set('PLUGIN_DIR', prefix / plugin_subdir)
 config_vala = configure_file(input: 'config.vala.in', output: 'config.vala', configuration: conf)
 
 add_project_arguments('-DGETTEXT_PACKAGE="beatbox"', '-w', language: 'c')
@@ -52,6 +55,7 @@ deps = [
 core_sources = files(
   'core/SQLHeavy.vala',
   'core/Settings.vala',
+  'core/Plugin.vala',
   'core/EqualizerPreset.vala',
   'core/SideTreeCategory.vala',
   'core/LibraryInterface.vala',
@@ -143,6 +147,7 @@ app_sources = files(
   'src/Core/FileOperator.vala',
   'src/Core/PodcastManager.vala',
   'src/Core/PlaybackManager.vala',
+  'src/Core/PluginManager.vala',
   'src/Core/OperationsManager.vala',
   'src/Core/CoverManager.vala',
   'src/Core/Info.vala',
@@ -297,6 +302,7 @@ install_data('data/beatbox.desktop', install_dir: datadir / 'applications', rena
 install_data('data/net.launchpad.beatbox.metainfo.xml', install_dir: datadir / 'metainfo')
 gnome.post_install(gtk_update_icon_cache: true)
 subdir('po')
+subdir('plugins')
 
 test('ellipsize', executable('test-ellipsize', 'tests/ellipsize.vala', dependencies: core_dep))
 test('list-utils', executable('test-list-utils', 'tests/list-utils.vala', dependencies: core_dep))
