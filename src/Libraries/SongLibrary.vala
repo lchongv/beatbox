@@ -29,7 +29,9 @@ using Gee;
 using SQLHeavy;
 
 public class BeatBox.SongLibrary : BaseLibrary {
-	const string LOAD_SONGS_QUERY = "SELECT rowid,* FROM 'songs'";
+	// by name, in the order the fields are read below: a library whose columns were
+	// added in another order still loads right
+	const string LOAD_SONGS_QUERY = "SELECT rowid, uri, file_size, title, artist, composer, album_artist, album, grouping, genre, comment, lyrics, album_path, has_embedded, year, track, track_count, album_number, album_count, bitrate, length, samplerate, rating, playcount, skipcount, dateadded, lastplayed, lastmodified, mediatype, podcast_rss, podcast_url, podcast_date, is_new_podcast, resume_pos, is_video, bpm, sort_title, sort_artist, sort_album_artist, sort_album, sort_composer, compilation, skip_shuffle, volume_adjust, remember_position FROM 'songs'";
 	
 	Song ref_song = new Song("");
 	public override string key { get { return ref_song.key; } }

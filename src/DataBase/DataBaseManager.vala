@@ -247,9 +247,14 @@ CREATE TABLE IF NOT EXISTS list_setups (
 		
 		// Open the database and create any missing table
 		try {
-			_db = new SQLHeavy.Database (GLib.Path.build_filename(user_database_folder.get_path(), "beatbox.db"));
+			var path = GLib.Path.build_filename(user_database_folder.get_path(), "beatbox.db");
+			bool existed = FileUtils.test(path, FileTest.EXISTS);
+			_db = new SQLHeavy.Database (path);
+			if(existed)
+				backup_on_new_version(path);
 			_db.execute (SCHEMA);
 			add_song_columns ();
+			_db.execute ("PRAGMA user_version = %d".printf(version_number()));
 		}
 		catch (SQLHeavy.Error err) {
 			critical("Could not load database: %s", err.message);
@@ -257,6 +262,36 @@ CREATE TABLE IF NOT EXISTS list_setups (
 		
 		// Every 15 seconds, do the periodic saves
 		Timeout.add(15000, periodic_save);
+	}
+	
+	/** A copy of the library as the previous version left it (beatbox.db.bak),
+	 * taken the first time a new version opens it, before anything changes it */
+	void backup_on_new_version(string path) {
+		try {
+			if(user_version() == version_number())
+				return;
+			var backup = path + ".bak";
+			FileUtils.remove(backup); // VACUUM INTO refuses an existing file
+			_db.execute("VACUUM INTO '%s'".printf(backup.replace("'", "''")));
+			message("Library backed up to %s", backup);
+		}
+		catch (SQLHeavy.Error err) {
+			warning("Could not back up the library: %s", err.message);
+		}
+	}
+	
+	// a function of its own: the query is finished when it returns (VACUUM refuses open ones)
+	int user_version() throws SQLHeavy.Error {
+		var r = new Query(_db, "PRAGMA user_version").execute();
+		return r.finished ? 0 : r.fetch_int(0);
+	}
+	
+	static int version_number() {
+		var parts = Build.VERSION.split(".");
+		int n = 0;
+		for(int i = 0; i < 3; i++)
+			n = n * 1000 + (i < parts.length ? int.parse(parts[i]) : 0);
+		return n;
 	}
 	
 	void add_song_columns() throws SQLHeavy.Error {
