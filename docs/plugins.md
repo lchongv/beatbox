@@ -156,9 +156,11 @@ the reason is in BeatBox's log (start it from a terminal).
 BeatBox describes `libbeatbox-core` with GObject Introspection (the
 `BeatBox-1.0` typelib) and loads Python plugins with libpeas. A build has
 Python support when libpeas-2 and gobject-introspection were found
-(`meson setup -Dpython=enabled` to require them); the Debian, Ubuntu, Fedora
-and Arch packages have it. The AppImage doesn't (its base, Ubuntu 22.04, has no
-libpeas-2): there Python plugins are skipped and Install Plugin… refuses them.
+(`meson setup -Dpython=enabled` to require them); the Debian 13, Ubuntu 26.04,
+Fedora and Arch packages have it. The AppImage (built on Ubuntu 22.04, which
+has no libpeas-2) and the Ubuntu 24.04 package (its libpeas 2.0 has no Vala
+bindings) don't: there Python plugins are skipped and Install Plugin… refuses
+them.
 At run time PyGObject is needed (`python3-gi`, `python3-gobject` or
 `python-gobject`, depending on the distribution).
 
