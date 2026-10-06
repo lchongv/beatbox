@@ -25,6 +25,7 @@
  * BeatBox is covered by.
  */
 
+[GIR (visible = false)] // internal: plugins don't see it
 namespace BeatBox.UI {
 
     /**

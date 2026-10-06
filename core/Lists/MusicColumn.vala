@@ -1,4 +1,4 @@
-public enum MusicColumn {
+public enum BeatBox.MusicColumn {
 	ROWID,
 	ICON,
 	NUMBER,

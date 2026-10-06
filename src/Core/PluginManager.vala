@@ -20,7 +20,7 @@ public class BeatBox.PluginInfo : Object {
 	/** The code next to the .plugin file: lib<id>.so, or <id>.py / the <id> package */
 	public string code_path() {
 		if(!is_python)
-			return Path.build_filename(folder, "lib" + id + "." + Module.SUFFIX);
+			return Path.build_filename(folder, "lib" + id + ".so");
 		var package = Path.build_filename(folder, id);
 		return FileUtils.test(package, FileTest.IS_DIR) ? package : package + ".py";
 	}

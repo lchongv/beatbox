@@ -9,6 +9,7 @@
  * version 2 of the License, or (at your option) any later version.
  */
 
+[GIR (visible = false)] // internal: plugins don't see it
 namespace BeatBox.Shortcuts {
 	public delegate void ActionFunc ();
 

@@ -1,4 +1,4 @@
-public enum RadioColumn {
+public enum BeatBox.RadioColumn {
 	ROWID = 0,
 	ICON = 1,
 	STATION = 2,
