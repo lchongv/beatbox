@@ -3622,3 +3622,29 @@ msgstr "Título, artista y álbum"
 
 #~ msgid "Write the cover into the music files"
 #~ msgstr "Escribir la carátula en los archivos de música"
+
+msgid "Install Plugin…"
+msgstr "Instalar complemento…"
+
+msgid "Install"
+msgstr "Instalar"
+
+msgid "BeatBox plugins (*.plugin)"
+msgstr "Complementos de BeatBox (*.plugin)"
+
+msgid "Plugin updated"
+msgstr "Complemento actualizado"
+
+msgid "A plugin with the same name is in use: restart BeatBox to use the one just installed."
+msgstr "Hay un complemento con el mismo nombre en uso: reinicia BeatBox para usar el que acabas de instalar."
+
+msgid "Could not install the plugin"
+msgstr "No se pudo instalar el complemento"
+
+#, c-format
+msgid "“%s” is not a valid plugin id"
+msgstr "«%s» no es un identificador de complemento válido"
+
+#, c-format
+msgid "%s is missing next to %s"
+msgstr "Falta %s junto a %s"

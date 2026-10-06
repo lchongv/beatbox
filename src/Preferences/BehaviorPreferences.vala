@@ -233,34 +233,69 @@ public class BeatBox.MiniPlayerPreferences : SimplePreferences {
 	}
 }
 
-/** Turning the plugins found on disk on and off (see core/Plugin.vala) */
+/** Turning the plugins found on disk on and off, and installing more (see docs/plugins.md) */
 public class BeatBox.PluginsPreferences : SimplePreferences {
 	public override string title { get { return _("Plugins"); } }
 	
+	Box list = new Box(Orientation.VERTICAL, 10);
+	Label none = new Label(_("No plugins are installed."));
+	
 	public PluginsPreferences() {
 		add_heading(_("Plugins"));
-		if(App.plugins.plugins.size == 0) {
-			var none = new Label(_("No plugins are installed."));
-			none.get_style_context().add_class("dim-label");
-			none.xalign = 0.0f;
-			add_row(none);
+		none.get_style_context().add_class("dim-label");
+		none.xalign = 0.0f;
+		none.no_show_all = true;
+		list.add(none);
+		add_row(list);
+		foreach(var p in App.plugins.plugins)
+			add_plugin(p);
+		none.visible = App.plugins.plugins.size == 0;
+		
+		var install = new Button.with_label(_("Install Plugin…"));
+		install.clicked.connect(choose_plugin);
+		var row = new Box(Orientation.HORIZONTAL, 0); // add_row stretches what it gets
+		row.add(install);
+		add_row(row);
+	}
+	
+	void add_plugin(PluginInfo p) {
+		var check = new CheckButton.with_label(p.name);
+		check.active = p.active;
+		check.toggled.connect(() => {
+			App.plugins.set_enabled(p, check.active);
+			if(check.active != p.active) // it couldn't be loaded
+				check.active = p.active;
+		});
+		list.add(check);
+		if(p.description != "") {
+			var text = new Label(p.description);
+			text.get_style_context().add_class("dim-label");
+			text.xalign = 0.0f;
+			text.wrap = true;
+			text.max_width_chars = 60;
+			text.margin_start = 24;
+			list.add(text);
 		}
-		foreach(var p in App.plugins.plugins) {
-			var check = add_check(p.name, p.active);
-			check.toggled.connect(() => {
-				App.plugins.set_enabled(p, check.active);
-				if(check.active != p.active) // it couldn't be loaded
-					check.active = p.active;
-			});
-			if(p.description != "") {
-				var text = new Label(p.description);
-				text.get_style_context().add_class("dim-label");
-				text.xalign = 0.0f;
-				text.wrap = true;
-				text.max_width_chars = 60;
-				text.margin_start = 24;
-				add_row(text);
-			}
+		list.show_all();
+		none.hide();
+	}
+	
+	void choose_plugin() {
+		var chooser = new FileChooserNative(_("Install Plugin"), (Window)list.get_toplevel(), FileChooserAction.OPEN, _("Install"), _("Cancel"));
+		var filter = new FileFilter();
+		filter.set_filter_name(_("BeatBox plugins (*.plugin)"));
+		filter.add_pattern("*.plugin");
+		chooser.add_filter(filter);
+		if(chooser.run() != ResponseType.ACCEPT)
+			return;
+		try {
+			var p = App.plugins.install(chooser.get_file());
+			if(p != null)
+				add_plugin(p);
+			else
+				App.window.doAlert(_("Plugin updated"), _("A plugin with the same name is in use: restart BeatBox to use the one just installed."));
+		} catch (Error err) {
+			App.window.doAlert(_("Could not install the plugin"), err.message);
 		}
 	}
 }
