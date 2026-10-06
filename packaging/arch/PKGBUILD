@@ -1,0 +1,26 @@
+# Built by packaging/build-arch.sh, which sets pkgver from meson.build and puts the source tarball next to it
+pkgname=beatbox
+pkgver=0
+pkgrel=1
+pkgdesc="Music player with Cover Flow, podcasts and internet radio"
+arch=('x86_64')
+url="https://github.com/lchongv/beatbox"
+license=('GPL-3.0-or-later')
+depends=('gtk3' 'libgee' 'taglib' 'libxml2' 'libnotify' 'libsoup3' 'json-glib' 'sqlite' 'libgpod'
+         'gstreamer' 'gst-plugins-base-libs' 'gst-plugins-base' 'gst-plugins-good' 'glib-networking' 'hicolor-icon-theme')
+makedepends=('meson' 'vala' 'gettext')
+source=("beatbox-$pkgver.tar.gz")
+sha256sums=('SKIP')
+
+build() {
+  arch-meson "beatbox-$pkgver" build
+  meson compile -C build
+}
+
+check() {
+  meson test -C build --print-errorlogs
+}
+
+package() {
+  meson install -C build --destdir "$pkgdir"
+}
