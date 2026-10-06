@@ -200,14 +200,7 @@ public class BeatBox.FastList : TreeView {
 		if(search != null)
 			last_search = search;
 		
-		//if(last_search == "") {
-		//	for(int i = 0; i < table.size(); ++i) {
-		//		showing.set(i, table.get(i));
-		//	}
-		//}
-		//else {
-			search_func(last_search, table, ref showing);
-		//}
+		search_func(last_search, table, ref showing);
 		
 		if(showing.size() == old_size) {
 			fm.set_table(showing);
@@ -286,23 +279,11 @@ public class BeatBox.FastList : TreeView {
 		rows_reordered();
 	}
 	
-	public void resort (bool threaded = false) {
-		if(threaded) {
-			try {
-				new Thread<void*>.try (null, () => {
-					quicksort(0, (int)(table.size() - 1));
-					
-					Idle.add( () => { do_search (null); return false; });
-					
-					return null;
-				});
-			}
-			catch(Error err) {}
-		}
-		else {
-			quicksort(0, (int)(table.size() - 1));
-			do_search (null);
-		}
+	// On the main thread: sorting in a thread raced with the UI and with
+	// add_medias/set_table, which use the same table
+	public void resort () {
+		quicksort(0, (int)(table.size() - 1));
+		do_search (null);
 	}
 	
 	public void set_compare_func (SortCompareFunc func) {

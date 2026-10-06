@@ -41,7 +41,7 @@ public abstract class BeatBox.GenericList : FastList {
 	public int relative_id;
 	protected bool is_current_list;
 	
-	int timeout_count; // increases for every timeout added, decreases once timeout is executed
+	uint scroll_back_id; // the pending return to the playing song after a scroll
 	protected bool scrolled_recently;
 	Gtk.GestureMultiPress click_gesture; // GTK3 controllers need a reference
 	protected bool dragging;
@@ -87,7 +87,6 @@ public abstract class BeatBox.GenericList : FastList {
 		// drag source
 		TargetEntry te = { "text/uri-list", TargetFlags.SAME_APP, 0};
 		drag_source_set(this, Gdk.ModifierType.BUTTON1_MASK, { te }, Gdk.DragAction.COPY);
-		//enable_model_drag_source(Gdk.ModifierType.BUTTON1_MASK, {te}, Gdk.DragAction.COPY);
 		
 		// allow selecting multiple rows
 		get_selection().set_mode(SelectionMode.MULTIPLE);
@@ -146,8 +145,6 @@ public abstract class BeatBox.GenericList : FastList {
 				else if(tvc.title == "Last Played")
 					insert_column_with_data_func(-1, tvc.title, new CellRendererText(), cellHelper.dateTreeViewFiller);
 				else if(tvc.title == "Rating") {
-					//var rating_renderer = new CellRendererRating();
-					//rating_renderer.rating_changed.connect(on_rating_cell_changed);
 					insert_column_with_data_func(-1, tvc.title, new CellRendererPixbuf() , cellHelper.ratingTreeViewFiller);
 				}
 				else if(tvc.title == "Year")
@@ -339,46 +336,12 @@ public abstract class BeatBox.GenericList : FastList {
 		}
 	}
 	
-	// When the user clicks over a cell in the rating column, that cell renderer
-	// emits the rating_changed signal. We need to update that rating...
-	/*void on_rating_cell_changed (int new_rating, Gtk.Widget widget, string path, Gtk.CellRendererState flags) {
-		var m = get_media_from_index(int.parse(path));
-
-		if(m == null)
-			return;
-
-		m.rating = new_rating;
-		
-		App.library.update_media(m, true, true, true);
-	}*/
-	
 	public void* take_action () {
 		Media s = get_selected_medias().nth_data(0);
 		if(s == null)
 			return null;
 		
-		/*if(Option.enable_store) {
-			Store.store store = new Store.store();
-			
-			for(int i = 0; i < 3; ++i) {
-				foreach(var track in store.searchTracks(s.title, i)) {
-					if(track.title != null && track.title.down() == s.title.down() && 
-					track.artist != null && track.artist.name.down() == s.artist.down() &&
-					track.getPreviewLink() != null) {
-						
-						s.uri = track.getPreviewLink();
-						Idle.add( () => {
-							App.library.playMedia(s, false);
-							return false;
-						});
-						
-						return null;
-					}
-				}
-			}
-		}*/
-		
-		// fall back to just opening the last fm page
+		// open the song's last.fm page
 		if(s != null && s.lastfm_url != null && s.lastfm_url != "") {
 			try {
 				GLib.AppInfo.launch_default_for_uri (s.lastfm_url, null);
@@ -410,6 +373,10 @@ public abstract class BeatBox.GenericList : FastList {
 	}
 	
 	public void medias_updated(Collection<Media> updates) {
+		// a hidden list reads the songs anew when it's drawn again
+		if(!get_mapped())
+			return;
+
 		var map = new HashMap<int, int>();
 		foreach(Media m in updates)
 			map.set(m.rowid, 1);
@@ -447,19 +414,15 @@ public abstract class BeatBox.GenericList : FastList {
 		
 		scrolled_recently = true;
 		
-		++timeout_count;
-		Timeout.add(20000, () => {
-			--timeout_count;
-			
+		// one timer, restarted by every scroll (not one per scroll event)
+		if(scroll_back_id != 0)
+			Source.remove(scroll_back_id);
+		scroll_back_id = Timeout.add_seconds(20, () => {
+			scroll_back_id = 0;
 			// User has gone on to something else. Scroll to current
 			// media, and if we can't find it, remove any filtering
-			// and try again. Only executing on timeout_count == 0 
-			// ensure that we only execute the last timeout that was
-			// added
-			if(timeout_count == 0) {
-				scroll_to_current_media(true);
-			}
-
+			// and try again.
+			scroll_to_current_media(true);
 			return false;
 		});
 	}

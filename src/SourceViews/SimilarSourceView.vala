@@ -119,7 +119,6 @@ public class BeatBox.SimilarSourceView : SourceView {
 	
 	public new void set_media (Collection<Media> new_media) {
 		if(!list_view.get_is_current_list()) {
-			in_update.lock ();
 			
 			/** We don't want to populate with songs if there are not
 			enough for it to be valid. Only populate to set 0 songs or
@@ -135,7 +134,6 @@ public class BeatBox.SimilarSourceView : SourceView {
 			
 			set_statusbar_info ();
 			update_library_window_widgets ();
-			in_update.unlock ();
 			
 			if(base_media != null) {
 				if(!fetched) { // still fetching similar media
