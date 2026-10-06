@@ -533,8 +533,9 @@ public abstract class BeatBox.SourceView : Box, View {
 				}
 			}
 			
-			// if some additions or removals, combine existing, added, and new to make the new table
-			if(to_remove.size() > 0 || to_add.size() > 0) {
+			// if some additions or removals, combine existing, added, and new to make the new table.
+			// Edited tags also regroup the albums: an Album keeps the names it was created with
+			if(to_remove.size() > 0 || to_add.size() > 0 || (metadata_changed && have_album_view)) {
 				var new_list = new HashTable<int, Media>(null, null);
 				var new_grid = new HashTable<int, Album>(null, null);
 				
