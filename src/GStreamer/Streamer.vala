@@ -56,6 +56,9 @@ public class BeatBox.Streamer : GLib.Object {
 	public signal void current_position_update(int64 position);
 	public signal void media_not_found();
 	public signal void video_enabled();
+	public signal void spectrum_update(float[] magnitudes);
+	
+	bool spectrum_wanted = false;
 	
 	public Streamer() {
 		pipe = new BeatBox.Pipeline();
@@ -152,6 +155,7 @@ public class BeatBox.Streamer : GLib.Object {
 		pipe = new BeatBox.Pipeline();
 		listen_to(pipe);
 		pipe.copy_equalizer_from(fade_out);
+		want_spectrum(spectrum_wanted);
 		pipe.playbin.volume = 0.0;
 		pipe.playbin.uri = next.uri.replace("#", "%23");
 		pipe.playbin.set_state(State.PLAYING);
@@ -294,6 +298,12 @@ public class BeatBox.Streamer : GLib.Object {
 	}
 	
 	/* Extra stuff */
+	/** The spectrum costs an FFT and a bus message every 40 ms: only while it is on screen */
+	public void want_spectrum(bool wanted) {
+		spectrum_wanted = wanted;
+		pipe.want_spectrum(wanted);
+	}
+	
 	public void setEqualizerGain(int index, int val) {
 		pipe.eq.setGain(index, val);
 	}
@@ -337,6 +347,15 @@ public class BeatBox.Streamer : GLib.Object {
 			
 			break;
 		case Gst.MessageType.ELEMENT:
+			unowned Structure? s = message.get_structure();
+			if(s != null && s.has_name("spectrum")) {
+				unowned GLib.Value? bands = s.get_value("magnitude"); // dB, one per band
+				var magnitudes = new float[Gst.ValueList.get_size(bands)];
+				for(uint i = 0; i < magnitudes.length; i++)
+					magnitudes[i] = Gst.ValueList.get_value(bands, i).get_float();
+				spectrum_update(magnitudes);
+				break;
+			}
 		
 			// This is where we 'make it official' that the next media is
 			// playing, during gapless playback transition.

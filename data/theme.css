@@ -99,7 +99,15 @@ toolbar.app-header toolitem button.round-menu {
 /* the album cover covers the LCD's padding on the top, bottom and left */
 .lcd .lcd-cover { margin: -2px 8px -2px -8px; }
 .lcd .lcd-logo { color: @bb_lcd_dim; font-weight: bold; font-size: 13pt; }
-.lcd button { background: none; border: none; box-shadow: none; }
+/* the LCD's buttons (the display switch, cancel) are bare glyphs, whatever the header's buttons look like */
+toolbar.app-header .lcd button:not(.traffic-light),
+toolbar.app-header .lcd button:not(.traffic-light):active {
+  background-image: none;
+  border-color: transparent;
+  box-shadow: none;
+  padding: 0 2px;
+  min-width: 0;
+}
 .lcd progressbar trough, .lcd scale trough {
   background-image: none;
   background-color: alpha(@bb_lcd_text, .12);
