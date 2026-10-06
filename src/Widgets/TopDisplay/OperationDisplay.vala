@@ -28,20 +28,16 @@
 using Gtk;
 
 public class BeatBox.OperationDisplay : BeatBox.Display, Box {
-	private Label operation_status;
+	private Marquee operation_status;
 	private ProgressBar operation_bar;
 	
 	bool _is_enabled;
 	public bool is_enabled { get { return _is_enabled; } }
 	
 	public OperationDisplay() {
-		operation_status = new Label("");
+		operation_status = new Marquee();
 		operation_bar = new ProgressBar();
 		
-		operation_status.xalign = 0.5f;
-		operation_status.set_justify(Justification.CENTER);
-		operation_status.margin_start = 0;
-		operation_status.ellipsize = Pango.EllipsizeMode.END;
 		
 		var left_box = new Box(Orientation.VERTICAL, 0);
 		left_box.add(operation_status);

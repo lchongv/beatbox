@@ -31,17 +31,13 @@ public class BeatBox.BufferDisplay : BeatBox.Display, Box {
 	bool _is_enabled;
 	public bool is_enabled { get { return _is_enabled; } }
 	
-	private Label buffering_status;
+	private Marquee buffering_status;
 	private ProgressBar buffering_bar;
 	
 	public BufferDisplay() {
-		buffering_status = new Label("");
+		buffering_status = new Marquee();
 		buffering_bar = new ProgressBar();
 		
-		buffering_status.xalign = 0.5f;
-		buffering_status.set_justify(Justification.CENTER);
-		buffering_status.margin_start = 0;
-		buffering_status.ellipsize = Pango.EllipsizeMode.END;
 		
 		this.set_orientation(Orientation.VERTICAL);
 		add(buffering_status);

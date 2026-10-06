@@ -31,11 +31,11 @@ public class BeatBox.MetadataDisplay : BeatBox.Display, Box {
 	bool _is_enabled;
 	public bool is_enabled { get { return _is_enabled; } }
 	
-	private Label label;
+	private Marquee label;
 	private Stack second_line;    // two-line mode: artist and album, sliding up in turn
-	private Label[] second_labels;
+	private Marquee[] second_labels;
 	private bool second_shows_b = false;
-	private Label station_label;
+	private Marquee station_label;
 	private string[] second_texts = {};
 	private int second_index = 0;
 	private uint alternate_id = 0;
@@ -45,25 +45,16 @@ public class BeatBox.MetadataDisplay : BeatBox.Display, Box {
 	private uint lyrics_request = 0; // drops answers for songs no longer playing
 	
 	public MetadataDisplay() {
-		label = new Label("");
-		station_label = new Label("");
+		label = new Marquee();
+		station_label = new Marquee();
         time_scale = new TimeScale();
-		
-		label.xalign = 0.5f;
-		label.set_justify(Justification.LEFT);
-		label.ellipsize = Pango.EllipsizeMode.END;
-		
-		station_label.xalign = 0.5f;
-		station_label.set_justify(Justification.LEFT);
-		station_label.ellipsize = Pango.EllipsizeMode.END;
 		
 		station_label.set_no_show_all(true);
         
 		second_line = new Stack();
 		second_line.vhomogeneous = true;
-		second_labels = { new Label(""), new Label("") };
+		second_labels = { new Marquee(), new Marquee() };
 		foreach(var l in second_labels) {
-			l.ellipsize = Pango.EllipsizeMode.END;
 			l.show();
 		}
 		second_line.add_named(second_labels[0], "a");
