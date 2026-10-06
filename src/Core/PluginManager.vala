@@ -57,20 +57,57 @@ public class BeatBox.PluginManager : Object {
 			if(!FileUtils.test(info_file, FileTest.EXISTS))
 				continue;
 			try {
-				var kf = new KeyFile();
-				kf.load_from_file(info_file, KeyFileFlags.NONE);
-				var p = new PluginInfo();
-				p.id = kf.get_string("Plugin", "Module");
-				if(plugins.any_match((other) => other.id == p.id))
-					continue; // already found in a folder that comes first
-				p.name = kf.get_locale_string("Plugin", "Name");
-				p.description = kf.has_key("Plugin", "Description") ? kf.get_locale_string("Plugin", "Description") : "";
-				p.library = Path.build_filename(folder, sub, "lib" + p.id + "." + Module.SUFFIX);
-				plugins.add(p);
+				var p = read_info(info_file);
+				if(!plugins.any_match((other) => other.id == p.id)) // else found in a folder that comes first
+					plugins.add(p);
 			} catch (Error err) {
 				warning("Ignoring the plugin %s: %s", info_file, err.message);
 			}
 		}
+	}
+	
+	static PluginInfo read_info(string info_file) throws Error {
+		var kf = new KeyFile();
+		kf.load_from_file(info_file, KeyFileFlags.NONE);
+		var p = new PluginInfo();
+		p.id = kf.get_string("Plugin", "Module");
+		if(p.id == "" || "/" in p.id || p.id.has_prefix("."))
+			throw new KeyFileError.INVALID_VALUE(_("“%s” is not a valid plugin id").printf(p.id));
+		p.name = kf.get_locale_string("Plugin", "Name");
+		p.description = kf.has_key("Plugin", "Description") ? kf.get_locale_string("Plugin", "Description") : "";
+		p.library = Path.build_filename(Path.get_dirname(info_file), "lib" + p.id + "." + Module.SUFFIX);
+		return p;
+	}
+	
+	/** Copies a plugin (the chosen .plugin file and the library next to it) into the
+	 * user's plugins folder. Returns the new entry, or null when a plugin with the same
+	 * id is already loaded: its code can't be swapped, so the copy is used after a restart. */
+	public PluginInfo? install(File info_file) throws Error {
+		var p = read_info(info_file.get_path());
+		var library = File.new_for_path(p.library);
+		if(!library.query_exists())
+			throw new IOError.NOT_FOUND(_("%s is missing next to %s").printf(library.get_basename(), info_file.get_basename()));
+		
+		var dest = File.new_for_path(Path.build_filename(Environment.get_user_data_dir(), "beatbox", "plugins", p.id));
+		DirUtils.create_with_parents(dest.get_path(), 0755);
+		var dest_info = dest.get_child(p.id + ".plugin");
+		var dest_library = dest.get_child(library.get_basename());
+		if(!info_file.equal(dest_info)) {
+			info_file.copy(dest_info, FileCopyFlags.OVERWRITE);
+			library.copy(dest_library, FileCopyFlags.OVERWRITE);
+		}
+		p.library = dest_library.get_path();
+		
+		foreach(var other in plugins) {
+			if(other.id != p.id)
+				continue;
+			if(other.instance != null)
+				return null;
+			plugins.remove(other); // not loaded yet: the new copy takes its place
+			break;
+		}
+		plugins.add(p);
+		return p;
 	}
 
 	bool load(PluginInfo p) {

@@ -1,4 +1,4 @@
-project('beatbox', 'vala', 'c', version: '0.15.1')
+project('beatbox', 'vala', 'c', version: '0.15.2')
 
 gnome = import('gnome')
 i18n = import('i18n')
@@ -135,8 +135,27 @@ core = shared_library('beatbox-core', core_sources, config_vala,
   vala_args: gpod_vala_args,
   vala_header: 'beatbox-core.h',
   vala_vapi: 'beatbox-core.vapi',
-  install: true)
+  install: true,
+  install_dir: [true, get_option('includedir') / 'beatbox', true])
 core_dep = declare_dependency(link_with: core, dependencies: deps, include_directories: include_directories('.'))
+
+# What a plugin built outside this tree needs: valac --pkg beatbox-core (docs/plugins.md)
+core_packages = ['gio-2.0', 'gio-unix-2.0', 'gtk+-3.0', 'gdk-x11-3.0', 'gee-0.8', 'gstreamer-1.0',
+  'gstreamer-pbutils-1.0', 'gstreamer-video-1.0', 'gstreamer-tag-1.0', 'taglib_c', 'libxml-2.0',
+  'libnotify', 'libsoup-3.0', 'json-glib-1.0', 'sqlite3']
+if gpod_dep.found()
+  core_packages += 'libgpod-1.0'
+  # no distribution ships a vapi for it: ours goes along
+  install_data('vapi/libgpod-1.0.vapi', 'vapi/libgpod-1.0.deps', install_dir: datadir / 'vala' / 'vapi')
+endif
+configure_file(output: 'beatbox-core.deps', command: ['sh', '-c', 'printf "%s\\n" "$@" posix', 'sh'] + core_packages,
+  capture: true, install: true, install_dir: datadir / 'vala' / 'vapi')
+import('pkgconfig').generate(core,
+  name: 'beatbox-core',
+  description: 'BeatBox library for plugins',
+  subdirs: 'beatbox',
+  requires: core_packages,
+  variables: ['plugindir=${libdir}' / meson.project_name() / 'plugins'])
 
 app_sources = files(
   'src/BeatBox.vala',
