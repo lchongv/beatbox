@@ -93,7 +93,6 @@ public class BeatBox.DeviceSourceView : SourceView {
 	
 	void set_list(Collection<Media> medias) {
 		if(have_list_view) {
-			in_update.lock ();
 			var new_table = new HashTable<int, Media>(null, null);
 			foreach(var m in medias) {
 				new_table.set((int)new_table.size(), m);
@@ -105,7 +104,6 @@ public class BeatBox.DeviceSourceView : SourceView {
 			//check_have_media ();
 			update_library_window_widgets ();
 			
-			in_update.unlock ();
 		}
 	}
 	

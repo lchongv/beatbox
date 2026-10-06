@@ -90,7 +90,6 @@ public abstract class BeatBox.SourceView : Box, View {
 	 **/
 
 	// ALL the media. Data source.
-	protected Mutex in_update;
 	public int media_count { get { return (list_view != null) ? (int)list_view.get_table().size() : 0; } }
 	protected string last_search = "";
 	protected string _artist_filter = "";
@@ -441,7 +440,6 @@ public abstract class BeatBox.SourceView : Box, View {
 		if(!have_list_view && !have_album_view)
 			return;
 		
-		in_update.lock (); // mutual exclusion
 		Collection<Media> to_add = new LinkedList<Media>();
 		if(hint == TreeViewSetup.Hint.MUSIC || hint == TreeViewSetup.Hint.PODCAST || hint == TreeViewSetup.Hint.STATION) { // See if it matches our type
 			App.library.do_search (add, out to_add, null, null, null, null, hint, "");
@@ -479,7 +477,6 @@ public abstract class BeatBox.SourceView : Box, View {
 		if(have_album_view)
 			album_view.add_objects(to_add_grid);
 		
-		in_update.unlock ();
 		
 		update_library_window_widgets ();
 		set_statusbar_info ();
@@ -503,7 +500,6 @@ public abstract class BeatBox.SourceView : Box, View {
 		
 		// otherwise, do slower but smoother update
 		else {
-			in_update.lock ();
 			
 			Collection<Media> should_be = new LinkedList<Media>();
 			if(hint == TreeViewSetup.Hint.SMART_PLAYLIST) {
@@ -589,7 +585,7 @@ public abstract class BeatBox.SourceView : Box, View {
 						list_view.set_table(new_list, true);
 					}
 					else {
-						list_view.resort(true);
+						list_view.resort();
 					}
 				}
 				if(have_album_view) {
@@ -598,10 +594,9 @@ public abstract class BeatBox.SourceView : Box, View {
 			}
 			else {
 				if(have_list_view)
-					list_view.resort (true);
+					list_view.resort ();
 			}
 
-			in_update.unlock ();
 		}
 		
 		update_library_window_widgets ();
@@ -630,7 +625,6 @@ public abstract class BeatBox.SourceView : Box, View {
 		if(!have_list_view && !have_album_view)
 			return;
 		
-		in_update.lock ();
 		
 		var list_remove = new GLib.HashTable<Media, int>(null, null);
 		var grid_remove = new GLib.HashTable<Object, int>(null, null);
@@ -658,7 +652,6 @@ public abstract class BeatBox.SourceView : Box, View {
 		if(have_album_view)
 			album_view.remove_objects(grid_remove);
 		
-		in_update.unlock();
 		
 		update_library_window_widgets ();
 		set_statusbar_info ();
@@ -672,7 +665,6 @@ public abstract class BeatBox.SourceView : Box, View {
 	protected void set_media_sync (Collection<Media> new_media, bool update_grid = false) {
 		update_grid = true;
 		if(have_list_view || have_album_view) {
-			in_update.lock ();
 			
 			current_medias = new HashTable<int, int>(null, null); // rowid, int
 			var media_list = new HashTable<int, Media>(null, null);
@@ -706,7 +698,6 @@ public abstract class BeatBox.SourceView : Box, View {
 			if(have_album_view)
 				album_view.set_table(album_list);
 			
-			in_update.unlock ();
 			
 			set_statusbar_info ();
 			check_have_media ();
