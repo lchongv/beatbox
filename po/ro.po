@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beat-box\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-06 12:49-0300\n"
+"POT-Creation-Date: 2026-10-06 14:24-0300\n"
 "PO-Revision-Date: 2012-02-05 12:12+0000\n"
 "Last-Translator: Codrin Mihai Enea <codrin.enea@yahoo.com>\n"
 "Language-Team: Romanian <ro@li.org>\n"
@@ -271,12 +271,12 @@ msgstr ""
 msgid "Download new Episodes"
 msgstr "Descarcă episoade noi"
 
-#: src/Core/Actions.vala:56 src/Core/LibraryWindow.vala:828
+#: src/Core/Actions.vala:56 src/Core/LibraryWindow.vala:834
 #: src/DBus/UnityIntegration.vala:60 src/Windows/PreferencesWindow.vala:52
 msgid "Preferences"
 msgstr "Preferințe"
 
-#: src/Core/Actions.vala:57 src/Core/LibraryWindow.vala:827
+#: src/Core/Actions.vala:57 src/Core/LibraryWindow.vala:833
 #: src/DBus/UnityIntegration.vala:61 src/Windows/EqualizerWindow.vala:80
 msgid "Equalizer"
 msgstr "Egalizator"
@@ -380,88 +380,88 @@ msgid "Copying %s to %s Folder"
 msgstr ""
 
 #. an Image gets no clicks of its own
-#: src/Core/LibraryWindow.vala:325
+#: src/Core/LibraryWindow.vala:326
 msgid "Click to enlarge; drag to copy it into another application or folder"
 msgstr ""
 
-#: src/Core/LibraryWindow.vala:376
+#: src/Core/LibraryWindow.vala:377
 msgid "_Mini Player"
 msgstr ""
 
-#: src/Core/LibraryWindow.vala:419
+#: src/Core/LibraryWindow.vala:425
 msgid "Resolve"
 msgstr ""
 
-#: src/Core/LibraryWindow.vala:470
+#: src/Core/LibraryWindow.vala:476
 msgid "Information about the song playing (Ctrl+Shift+I)"
 msgstr ""
 
-#: src/Core/LibraryWindow.vala:526 src/Windows/DirectoryDialog.vala:108
+#: src/Core/LibraryWindow.vala:532 src/Windows/DirectoryDialog.vala:108
 msgid "Close"
 msgstr ""
 
-#: src/Core/LibraryWindow.vala:526
+#: src/Core/LibraryWindow.vala:532
 msgid "Minimize"
 msgstr ""
 
-#: src/Core/LibraryWindow.vala:526
+#: src/Core/LibraryWindow.vala:532
 msgid "Maximize (Alt: mini player)"
 msgstr ""
 
-#: src/Core/LibraryWindow.vala:815
+#: src/Core/LibraryWindow.vala:821
 msgid "Play / Pause"
 msgstr ""
 
-#: src/Core/LibraryWindow.vala:816
+#: src/Core/LibraryWindow.vala:822
 #, fuzzy
 msgid "Next song"
 msgstr "Următorul"
 
-#: src/Core/LibraryWindow.vala:817
+#: src/Core/LibraryWindow.vala:823
 #, fuzzy
 msgid "Previous song"
 msgstr "Precedent"
 
-#: src/Core/LibraryWindow.vala:818
+#: src/Core/LibraryWindow.vala:824
 msgid "Volume up"
 msgstr ""
 
-#: src/Core/LibraryWindow.vala:819
+#: src/Core/LibraryWindow.vala:825
 msgid "Volume down"
 msgstr ""
 
-#: src/Core/LibraryWindow.vala:820
+#: src/Core/LibraryWindow.vala:826
 msgid "Mini player"
 msgstr ""
 
-#: src/Core/LibraryWindow.vala:821
+#: src/Core/LibraryWindow.vala:827
 msgid "Search"
 msgstr ""
 
-#: src/Core/LibraryWindow.vala:825
+#: src/Core/LibraryWindow.vala:831
 msgid "Now playing"
 msgstr ""
 
-#: src/Core/LibraryWindow.vala:826
+#: src/Core/LibraryWindow.vala:832
 msgid "Information panel"
 msgstr ""
 
-#: src/Core/LibraryWindow.vala:829
+#: src/Core/LibraryWindow.vala:835
 msgid "Quit"
 msgstr ""
 
 #. FIXME: We already do this and more in the library_manager import_operation_finished. Use that
 #. and use the same text as here for CD imports
-#: src/Core/LibraryWindow.vala:940 src/Devices/CDRomDevice.vala:339
+#: src/Core/LibraryWindow.vala:946 src/Devices/CDRomDevice.vala:339
 msgid "Import Complete"
 msgstr "Import complet"
 
-#: src/Core/LibraryWindow.vala:940
+#: src/Core/LibraryWindow.vala:946
 #, c-format
 msgid "BeatBox has imported your %s library."
 msgstr ""
 
-#: src/Core/LibraryWindow.vala:1033 src/Core/LibraryWindow.vala:1040
+#: src/Core/LibraryWindow.vala:1039 src/Core/LibraryWindow.vala:1046
 #, c-format
 msgid "%s media files could not be found."
 msgstr ""
@@ -682,6 +682,7 @@ msgid "Locate Music File"
 msgstr ""
 
 #: src/Dialogs/InstallGstreamerPluginsDialog.vala:64
+#: src/Preferences/BehaviorPreferences.vala:286
 msgid "Install Plugin"
 msgstr ""
 
@@ -1296,129 +1297,117 @@ msgstr ""
 msgid "Skin"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:125
-#: src/Widgets/TrackReport.vala:117 src/Widgets/TrackReport.vala:120
-#: src/Widgets/TrackReport.vala:173 src/Windows/Editors/SongEditor.vala:178
-msgid "None"
-msgstr ""
-
-#: src/Preferences/BehaviorPreferences.vala:130
+#: src/Preferences/BehaviorPreferences.vala:126
 #, fuzzy
 msgid "Open Skins Folder"
 msgstr "Verifică dosarul cu muzică"
 
-#: src/Preferences/BehaviorPreferences.vala:139
+#: src/Preferences/BehaviorPreferences.vala:135
 msgid "Skin:"
 msgstr ""
 
-#. live preview
-#: src/Preferences/BehaviorPreferences.vala:147
-#, c-format
-msgid "Add more skins by copying them into %s"
-msgstr ""
-
-#: src/Preferences/BehaviorPreferences.vala:158
+#: src/Preferences/BehaviorPreferences.vala:160
 msgid "LCD"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:161
+#: src/Preferences/BehaviorPreferences.vala:163
 msgid "Display"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:163
+#: src/Preferences/BehaviorPreferences.vala:165
 msgid "Two lines, artist and album taking turns"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:164
+#: src/Preferences/BehaviorPreferences.vala:166
 msgid "One line"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:167
+#: src/Preferences/BehaviorPreferences.vala:169
 msgid "Song information in the LCD:"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:169
+#: src/Preferences/BehaviorPreferences.vala:171
 msgid "Show synced lyrics on the second line when available (lrclib.net)"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:172
+#: src/Preferences/BehaviorPreferences.vala:174
 msgid "Show the album cover at the left edge of the LCD"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:177
+#: src/Preferences/BehaviorPreferences.vala:179
 msgid "Switch between artist and album every:"
 msgstr ""
 
 #. helper for units
-#: src/Preferences/BehaviorPreferences.vala:177
+#: src/Preferences/BehaviorPreferences.vala:179
 #: src/Windows/Editors/SmartPlaylistEditor.vala:491
 msgid "seconds"
 msgstr "secunde"
 
-#: src/Preferences/BehaviorPreferences.vala:182
+#: src/Preferences/BehaviorPreferences.vala:184
 msgid "Duration of the slide:"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:182
+#: src/Preferences/BehaviorPreferences.vala:184
 #, fuzzy
 msgid "milliseconds"
 msgstr "secunde"
 
-#: src/Preferences/BehaviorPreferences.vala:185
+#: src/Preferences/BehaviorPreferences.vala:187
 msgid "Position bar"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:188
+#: src/Preferences/BehaviorPreferences.vala:190
 msgid "Width of the track:"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:188
-#: src/Preferences/BehaviorPreferences.vala:203
+#: src/Preferences/BehaviorPreferences.vala:190
+#: src/Preferences/BehaviorPreferences.vala:205
 msgid "pixels"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:190
+#: src/Preferences/BehaviorPreferences.vala:192
 msgid "Diamond"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:191
+#: src/Preferences/BehaviorPreferences.vala:193
 msgid "Circle"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:192
+#: src/Preferences/BehaviorPreferences.vala:194
 msgid "Cup"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:193
+#: src/Preferences/BehaviorPreferences.vala:195
 msgid "Nyan cat"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:196
+#: src/Preferences/BehaviorPreferences.vala:198
 msgid "Shape of the position marker:"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:203
+#: src/Preferences/BehaviorPreferences.vala:205
 msgid "Size of the position marker:"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:217
-#: src/Preferences/BehaviorPreferences.vala:220
+#: src/Preferences/BehaviorPreferences.vala:219
+#: src/Preferences/BehaviorPreferences.vala:222
 msgid "Mini Player"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:221
+#: src/Preferences/BehaviorPreferences.vala:223
 msgid "Keep the mini player above other windows"
 msgstr ""
 
 #. GTK 3 can't ask a Wayland compositor for that
-#: src/Preferences/BehaviorPreferences.vala:226
+#: src/Preferences/BehaviorPreferences.vala:228
 msgid ""
 "On Wayland the desktop keeps windows on top: right-click the toolbar and "
 "choose “Always on Top”."
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:238
-#: src/Preferences/BehaviorPreferences.vala:241 src/Views/SideTreeView.vala:97
+#: src/Preferences/BehaviorPreferences.vala:240
+#: src/Preferences/BehaviorPreferences.vala:246 src/Views/SideTreeView.vala:97
 msgid "Plugins"
 msgstr ""
 
@@ -1426,131 +1415,169 @@ msgstr ""
 msgid "No plugins are installed."
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:270
+#: src/Preferences/BehaviorPreferences.vala:256
+msgid "Install Plugin…"
+msgstr ""
+
+#: src/Preferences/BehaviorPreferences.vala:286
+msgid "Install"
+msgstr ""
+
+#: src/Preferences/BehaviorPreferences.vala:286
+#: src/Windows/AddPodcastWindow.vala:81 src/Windows/DirectoryDialog.vala:280
+#: src/Windows/Editors/MediaEditor.vala:94
+#: src/Windows/Editors/SmartPlaylistEditor.vala:157
+#: src/Windows/Editors/SongEditor.vala:502
+#: src/Windows/Editors/SongEditor.vala:574
+#: src/Windows/PlaylistNameWindow.vala:64
+#: src/Windows/RemoveDuplicatesDialog.vala:69
+msgid "Cancel"
+msgstr "Anulează"
+
+#: src/Preferences/BehaviorPreferences.vala:288
+msgid "BeatBox plugins (*.plugin)"
+msgstr ""
+
+#: src/Preferences/BehaviorPreferences.vala:298
+msgid "Plugin updated"
+msgstr ""
+
+#: src/Preferences/BehaviorPreferences.vala:298
+msgid ""
+"A plugin with the same name is in use: restart BeatBox to use the one just "
+"installed."
+msgstr ""
+
+#: src/Preferences/BehaviorPreferences.vala:300
+#, fuzzy
+msgid "Could not install the plugin"
+msgstr "Nu s-a găsit dosarul cu muzică"
+
+#: src/Preferences/BehaviorPreferences.vala:307
 #, fuzzy
 msgid "Album Art"
 msgstr "Album"
 
-#: src/Preferences/BehaviorPreferences.vala:273
+#: src/Preferences/BehaviorPreferences.vala:310
 msgid "Cover Grid"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:275
+#: src/Preferences/BehaviorPreferences.vala:312
 msgid "Unfold it inline, under its row"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:276
+#: src/Preferences/BehaviorPreferences.vala:313
 msgid "Open it in a popup window"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:279
+#: src/Preferences/BehaviorPreferences.vala:316
 msgid "Clicking an album in the cover grid:"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:285
+#: src/Preferences/BehaviorPreferences.vala:322
 msgid "hidden"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:287
+#: src/Preferences/BehaviorPreferences.vala:324
 msgid "Size of the cover in the unfolded album:"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:288
+#: src/Preferences/BehaviorPreferences.vala:325
 msgid "Share of the band's width; 0 shows no cover"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:294
+#: src/Preferences/BehaviorPreferences.vala:331
 msgid "Missing Album Art"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:295
+#: src/Preferences/BehaviorPreferences.vala:332
 msgid "Download missing album art from the internet (MusicBrainz, Apple Music)"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:306
+#: src/Preferences/BehaviorPreferences.vala:343
 msgid "About"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:313
+#: src/Preferences/BehaviorPreferences.vala:350
 #, c-format
 msgid "Version %s"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:314
+#: src/Preferences/BehaviorPreferences.vala:351
 msgid "A music player for your collection, podcasts and internet radio."
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:318
+#: src/Preferences/BehaviorPreferences.vala:355
 msgid "Authors"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:320
+#: src/Preferences/BehaviorPreferences.vala:357
 msgid "Contributions"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:321
+#: src/Preferences/BehaviorPreferences.vala:358
 #, c-format
 msgid "Di Weng (%s): shortening texts by characters instead of bytes"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:322
+#: src/Preferences/BehaviorPreferences.vala:359
 #: src/Windows/Editors/MediaEditor.vala:148
 #: src/Windows/Editors/SongEditor.vala:234
 #, fuzzy
 msgid "Artwork"
 msgstr "Rețea"
 
-#: src/Preferences/BehaviorPreferences.vala:324
+#: src/Preferences/BehaviorPreferences.vala:361
 msgid "2026 update"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:325
+#: src/Preferences/BehaviorPreferences.vala:362
 msgid ""
 "Ported to GTK 3, GStreamer 1.0 and libsoup 3, with a new look, Cover Flow, "
 "the inline cover grid, internet radio and podcast directories, online album "
 "art and skins."
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:327
+#: src/Preferences/BehaviorPreferences.vala:364
 #, fuzzy
 msgid "Services"
 msgstr "Dispozitive"
 
-#: src/Preferences/BehaviorPreferences.vala:328
+#: src/Preferences/BehaviorPreferences.vala:365
 #, fuzzy, c-format
 msgid "Internet radio stations: %s"
 msgstr "Nu s-a găsit nici un post de radio de pe internet."
 
-#: src/Preferences/BehaviorPreferences.vala:329
+#: src/Preferences/BehaviorPreferences.vala:366
 #, fuzzy, c-format
 msgid "Podcasts: %s"
 msgstr "Podcast-uri"
 
-#: src/Preferences/BehaviorPreferences.vala:330
+#: src/Preferences/BehaviorPreferences.vala:367
 #, c-format
 msgid "Album art: %s, with %s as fallback"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:331
+#: src/Preferences/BehaviorPreferences.vala:368
 #, c-format
 msgid "Lyrics: %s"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:332
+#: src/Preferences/BehaviorPreferences.vala:369
 #, c-format
 msgid "Scrobbling: %s"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:334
+#: src/Preferences/BehaviorPreferences.vala:371
 msgid "License"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:335
+#: src/Preferences/BehaviorPreferences.vala:372
 #, c-format
 msgid "Free software under the %s."
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:335
+#: src/Preferences/BehaviorPreferences.vala:372
 msgid "GNU General Public License, version 3"
 msgstr ""
 
@@ -2372,6 +2399,11 @@ msgstr ""
 msgid "Tags in the file"
 msgstr ""
 
+#: src/Widgets/TrackReport.vala:117 src/Widgets/TrackReport.vala:120
+#: src/Widgets/TrackReport.vala:173 src/Windows/Editors/SongEditor.vala:178
+msgid "None"
+msgstr ""
+
 #: src/Widgets/TrackReport.vala:118
 msgid "Embedded pictures"
 msgstr ""
@@ -2514,16 +2546,6 @@ msgstr "Sursa podcast-ului"
 #: src/Windows/Editors/SmartPlaylistEditor.vala:134
 msgid "Add"
 msgstr "Adaugă"
-
-#: src/Windows/AddPodcastWindow.vala:81 src/Windows/DirectoryDialog.vala:280
-#: src/Windows/Editors/MediaEditor.vala:94
-#: src/Windows/Editors/SmartPlaylistEditor.vala:157
-#: src/Windows/Editors/SongEditor.vala:502
-#: src/Windows/Editors/SongEditor.vala:574
-#: src/Windows/PlaylistNameWindow.vala:64
-#: src/Windows/RemoveDuplicatesDialog.vala:69
-msgid "Cancel"
-msgstr "Anulează"
 
 #: src/Windows/DirectoryDialog.vala:50
 #, fuzzy
