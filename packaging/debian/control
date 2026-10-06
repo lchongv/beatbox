@@ -17,7 +17,10 @@ Build-Depends: debhelper-compat (= 13),
                libsqlite3-dev,
                libgpod-dev,
                libgstreamer1.0-dev,
-               libgstreamer-plugins-base1.0-dev
+               libgstreamer-plugins-base1.0-dev,
+               libpeas-2-dev,
+               gobject-introspection,
+               libgirepository1.0-dev | gir1.2-glib-2.0-dev
 Standards-Version: 4.7.0
 Homepage: https://github.com/lchongv/beatbox
 Rules-Requires-Root: no
@@ -29,7 +32,8 @@ Depends: ${shlibs:Depends},
          gstreamer1.0-plugins-base,
          gstreamer1.0-plugins-good,
          glib-networking
-Recommends: gstreamer1.0-libav, libchromaprint-tools
+Recommends: gstreamer1.0-libav, libchromaprint-tools,
+            python3-gi, gir1.2-gtk-3.0, gir1.2-gee-0.8, gir1.2-json-1.0, gir1.2-gst-plugins-base-1.0
 Description: music player with Cover Flow, podcasts and internet radio
  BeatBox is a music player for GTK: a library with smart playlists,
  Cover Flow and an inline cover grid, synced lyrics, podcasts, internet

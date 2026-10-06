@@ -413,6 +413,7 @@ public class BeatBox.TreeViewSetup : GLib.Object {
 	
 	// TODO: FIXME from sort_column to sort_column_id
 #if HAVE_GPOD
+	[GIR (visible = false)]
 	public GPod.PlaylistSortOrder get_gpod_sortorder() {
 		warning("FIXME");
 		/*if(sort_column == "#")

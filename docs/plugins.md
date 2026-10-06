@@ -1,11 +1,13 @@
 # Writing BeatBox plugins
 
-A plugin is a shared library that BeatBox loads when the user turns it on in
-Preferences › Plugins. It is written in Vala (or C) against `libbeatbox-core`,
-the library BeatBox itself is built on, and gets the player, the library, the
-window and the settings to work with.
+A plugin is code that BeatBox loads when the user turns it on in
+Preferences › Plugins: a shared library written in Vala (or C) against
+`libbeatbox-core`, the library BeatBox itself is built on, or a Python module.
+Either way it gets the player, the library, the window and the settings to work
+with.
 
-`plugins/nowplayingfile` in this repository is a complete, working example; the
+Two complete, working examples are in this repository:
+`plugins/nowplayingfile` (Vala) and `plugins/listeninglog` (Python). The
 interface is in `core/Plugin.vala`.
 
 ## What a plugin is made of
@@ -133,7 +135,8 @@ and is installed and packaged with it.
 ## Installing
 
 - From BeatBox: Preferences › Plugins › **Install Plugin…**, then choose the
-  `.plugin` file. It and the `lib<id>.so` next to it are copied to
+  `.plugin` file. It and its code next to it (`lib<id>.so`, or the Python
+  module) are copied to
   `~/.local/share/beatbox/plugins/<id>/`; then turn the plugin on.
 - By hand: copy the folder to `~/.local/share/beatbox/plugins/`.
 
@@ -148,7 +151,65 @@ A plugin is built for one version of `libbeatbox-core`: rebuild it when
 BeatBox's interfaces change. If it can't be loaded, the checkbox stays off and
 the reason is in BeatBox's log (start it from a terminal).
 
-## Languages other than Vala and C
+## Python
 
-Not yet. Python plugins would need BeatBox's interfaces described with GObject
-Introspection (a typelib for libbeatbox-core) and a loader for them.
+BeatBox describes `libbeatbox-core` with GObject Introspection (the
+`BeatBox-1.0` typelib) and loads Python plugins with libpeas. A build has
+Python support when libpeas-2 and gobject-introspection were found
+(`meson setup -Dpython=enabled` to require them); the Debian, Ubuntu, Fedora
+and Arch packages have it. The AppImage doesn't (its base, Ubuntu 22.04, has no
+libpeas-2): there Python plugins are skipped and Install Plugin… refuses them.
+At run time PyGObject is needed (`python3-gi`, `python3-gobject` or
+`python-gobject`, depending on the distribution).
+
+The folder holds the `.plugin` file with `Loader=python`, and the code as
+`<id>.py` or as a package `<id>/__init__.py`:
+
+```
+myplugin/
+├── myplugin.plugin
+└── myplugin.py
+```
+
+```ini
+[Plugin]
+Module=myplugin
+Loader=python
+Name=My plugin
+Description=What it does.
+```
+
+```python
+import gi
+gi.require_version('BeatBox', '1.0')
+from gi.repository import BeatBox, GObject
+
+
+class MyPlugin(GObject.Object, BeatBox.Plugin):
+
+    def do_activate(self, host):
+        self.playback = host.props.playback
+        self.handler = self.playback.connect('media-played', self.media_played)
+
+    def do_deactivate(self):
+        self.playback.disconnect(self.handler)
+        self.playback = None
+
+    def media_played(self, playback, media, old):
+        print('Now playing', media.props.title, 'by', media.props.artist)
+```
+
+- The class implements `BeatBox.Plugin` through `do_activate` and
+  `do_deactivate`, with the same rules as in Vala.
+- Properties are read with `.props` (`media.props.title`,
+  `host.props.playback`); methods and signals keep their names
+  (`playback.connect('media-played', …)`, `playback.get_current_media()`).
+- `python3 -c "import gi; gi.require_version('BeatBox', '1.0')"` with
+  `GI_TYPELIB_PATH` pointing to the typelib checks the setup outside BeatBox;
+  BeatBox sets that path itself.
+- Not every part of `libbeatbox-core` is visible from Python: the list and
+  grid widgets, the operations and the database are internal.
+
+Nothing is built: install it with Install Plugin… (choosing the `.plugin`
+file; the `.py` file or the package folder next to it is copied too) or copy
+the folder to `~/.local/share/beatbox/plugins/`.

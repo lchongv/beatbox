@@ -105,6 +105,7 @@ public class BeatBox.StaticPlaylist : BasePlaylist {
 	}
 	
 #if HAVE_GPOD
+	[GIR (visible = false)]
 	public override GPod.Playlist get_gpod_playlist() {
 		GPod.Playlist rv = new GPod.Playlist(name, false);
 		

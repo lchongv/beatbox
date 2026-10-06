@@ -124,6 +124,7 @@ public class BeatBox.SmartPlaylist : BasePlaylist {
 	}
 	
 #if HAVE_GPOD
+	[GIR (visible = false)]
 	public override GPod.Playlist get_gpod_playlist() {
 		GPod.Playlist rv = new GPod.Playlist(name, false);
 		
@@ -132,6 +133,7 @@ public class BeatBox.SmartPlaylist : BasePlaylist {
 #endif
 	
 #if HAVE_GPOD
+	[GIR (visible = false)]
 	public void set_playlist_properties(GPod.Playlist rv) {
 		foreach(var sq in queries) {
 			rv.splr_add_new(-1);

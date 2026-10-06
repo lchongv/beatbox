@@ -25,10 +25,15 @@ BuildRequires:  pkgconfig(gstreamer-1.0)
 BuildRequires:  pkgconfig(gstreamer-pbutils-1.0)
 BuildRequires:  pkgconfig(gstreamer-video-1.0)
 BuildRequires:  pkgconfig(gstreamer-tag-1.0)
+BuildRequires:  pkgconfig(libpeas-2)
+BuildRequires:  gobject-introspection-devel
 Requires:       gstreamer1-plugins-base
 Requires:       gstreamer1-plugins-good
 Requires:       glib-networking
 Requires:       hicolor-icon-theme
+# Python plugins (Preferences > Plugins)
+Recommends:     python3-gobject
+Recommends:     libpeas-loader-python
 Recommends:     chromaprint-tools
 
 %description
@@ -61,6 +66,8 @@ patchelf --remove-rpath %{buildroot}%{_bindir}/beatbox
 %{_libdir}/pkgconfig/beatbox-core.pc
 %{_includedir}/beatbox/
 %{_datadir}/vala/vapi/*
+%{_libdir}/girepository-1.0/BeatBox-1.0.typelib
+%{_datadir}/gir-1.0/BeatBox-1.0.gir
 %{_datadir}/applications/net.launchpad.beatbox.desktop
 %{_datadir}/icons/hicolor/*/apps/beatbox.svg
 %{_metainfodir}/net.launchpad.beatbox.metainfo.xml

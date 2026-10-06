@@ -25,6 +25,7 @@
  * BeatBox is covered by.
  */
  
+[GIR (visible = false)] // internal, not for plugins
 public class BeatBox.Operation : GLib.Object {
 	public delegate void OperationFunc(Operation op);
 	

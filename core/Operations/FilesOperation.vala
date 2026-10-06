@@ -27,6 +27,7 @@
 
 using Gee;
 
+[GIR (visible = false)] // internal, not for plugins
 public class BeatBox.FilesOperation : Operation {
 	public Library library { get; set; }
 	public Collection<File> files { get; set; }

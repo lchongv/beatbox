@@ -25,7 +25,7 @@
  * BeatBox is covered by.
  */
 
-public enum SideTreeCategory {
+public enum BeatBox.SideTreeCategory {
 	LIBRARY,
 	DEVICE,
 	NETWORK,

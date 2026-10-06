@@ -1,1 +1,2 @@
 option('ipod', type: 'feature', value: 'auto', description: 'iPod sync (needs libgpod)')
+option('python', type: 'feature', value: 'auto', description: 'Plugins written in Python (needs libpeas-2 and gobject-introspection)')

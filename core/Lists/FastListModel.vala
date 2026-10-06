@@ -31,6 +31,7 @@ using Gtk;
  * this model is low level and optimized. We are not worried about stupid
  * users here.
 **/
+[GIR (visible = false)] // internal, not for plugins
 public class BeatBox.FastListModel : GLib.Object, TreeModel, TreeSortable, TreeDragSource {
 	int stamp; // all iters must match this
 	

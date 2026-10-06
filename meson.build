@@ -20,6 +20,9 @@ conf.set('CMAKE_INSTALL_PREFIX', prefix)
 plugin_subdir = get_option('libdir') / meson.project_name() / 'plugins'
 conf.set('PLUGIN_SUBDIR', plugin_subdir)
 conf.set('PLUGIN_DIR', prefix / plugin_subdir)
+typelib_subdir = get_option('libdir') / 'girepository-1.0'
+conf.set('TYPELIB_SUBDIR', typelib_subdir)
+conf.set('TYPELIB_DIR', prefix / typelib_subdir)
 config_vala = configure_file(input: 'config.vala.in', output: 'config.vala', configuration: conf)
 
 add_project_arguments('-DGETTEXT_PACKAGE="beatbox"', '-w', language: 'c')
@@ -130,13 +133,19 @@ core_sources = files(
   'core/Widgets/StyledBox.vala',
 )
 
+# Python plugins: libpeas-2 loads them, and the typelib describes libbeatbox-core to them
+peas_dep = dependency('libpeas-2', required: get_option('python'))
+gir_compiler = find_program('g-ir-compiler', required: get_option('python'))
+python_plugins = peas_dep.found() and gir_compiler.found()
+
 core = shared_library('beatbox-core', core_sources, config_vala,
   dependencies: deps,
   vala_args: gpod_vala_args,
   vala_header: 'beatbox-core.h',
   vala_vapi: 'beatbox-core.vapi',
+  vala_gir: 'BeatBox-1.0.gir',
   install: true,
-  install_dir: [true, get_option('includedir') / 'beatbox', true])
+  install_dir: [true, get_option('includedir') / 'beatbox', true, python_plugins ? datadir / 'gir-1.0' : false])
 core_dep = declare_dependency(link_with: core, dependencies: deps, include_directories: include_directories('.'))
 
 # What a plugin built outside this tree needs: valac --pkg beatbox-core (docs/plugins.md)
@@ -296,6 +305,17 @@ skin_resources = gnome.compile_resources('beatbox-skins', 'skins/skins.gresource
 # Writing album art and the full set of tags into files needs TagLib 2.0's C property API
 embed_cover_sources = []
 app_vala_args = gpod_vala_args
+app_deps = [core_dep]
+if python_plugins
+  app_vala_args += ['-D', 'HAVE_PEAS']
+  app_deps += peas_dep
+  custom_target('BeatBox-1.0.typelib',
+    command: [gir_compiler, '--shared-library', 'libbeatbox-core.so', '--output', '@OUTPUT@', meson.current_build_dir() / 'BeatBox-1.0.gir'],
+    output: 'BeatBox-1.0.typelib',
+    depends: core,
+    install: true,
+    install_dir: typelib_subdir)
+endif
 if gpod_dep.found()
   app_sources += files('src/Devices/iPodDevice.vala')
 endif
@@ -305,7 +325,7 @@ if taglib_dep.version().version_compare('>= 2.0')
 endif
 
 executable('beatbox', app_sources, embed_cover_sources, resources, icon_resources, skin_resources,
-  dependencies: core_dep,
+  dependencies: app_deps,
   vala_args: app_vala_args,
   install_rpath: prefix / get_option('libdir'),
   export_dynamic: true,

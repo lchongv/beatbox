@@ -27,6 +27,7 @@
 
 using Gtk;
 
+[GIR (visible = false)] // internal, not for plugins
 public class BeatBox.FastList : TreeView {
 	public const int OPTIMAL_COLUMN = -2;
 	FastListModel fm;

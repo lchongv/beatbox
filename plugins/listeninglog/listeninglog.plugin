@@ -1,0 +1,7 @@
+[Plugin]
+Module=listeninglog
+Loader=python
+Name=Listening log
+Name[es]=Registro de escuchas
+Description=Adds a line with the date, artist and title of every song played to ~/.local/share/beatbox/listening-log.txt. Written in Python.
+Description[es]=Añade una línea con la fecha, el artista y el título de cada canción que suena a ~/.local/share/beatbox/listening-log.txt. Escrito en Python.
