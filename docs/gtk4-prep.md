@@ -106,11 +106,13 @@ Total fases 1–8: ~20–25 h. Fase 9: +8 h.
 reproductor. 0.10.0 (5 oct 2026) trajo el resto de esta lista, la preparación para GTK4 y los
 paquetes. 0.11.0 (5 oct 2026) quita Granite y suma paquetes .deb y .rpm; 0.12.0 (5 oct 2026), el
 espectro en el LCD y el gato Nyan; 0.13.0 (5 oct 2026), la radio en el LCD (barra de barbero y logotipo
-de la emisora) y el paquete de Arch. Lo siguiente es la migración real a GTK4 (ver «Fuera de alcance»).
+de la emisora) y el paquete de Arch; 0.14.0 (6 oct 2026), el panel de información, un editor de canciones
+más completo, el texto del LCD que se desplaza, Preferencias en páginas más pequeñas y listas que conservan
+su posición. Lo siguiente es la migración real a GTK4 (ver «Fuera de alcance»).
 
 ## Hecho en 0.9 y 0.10
-1. [x] Reproducción sin cortes (ya existía; verificada) + ReplayGain + fundido entre canciones (0–12 s, Preferencias › Comportamiento; segundo pipeline con curva de potencia constante).
-2. [x] Letras sincronizadas (LRCLIB) en la segunda línea del LCD; caché en ~/.cache/beatbox/lyrics (Preferencias › Apariencia).
+1. [x] Reproducción sin cortes (ya existía; verificada) + ReplayGain + fundido entre canciones (0–12 s, Preferencias › Reproducción; segundo pipeline con curva de potencia constante).
+2. [x] Letras sincronizadas (LRCLIB) en la segunda línea del LCD; caché en ~/.cache/beatbox/lyrics (Preferencias › LCD).
 3. [x] Mini reproductor: Ctrl+M, Alt+botón verde o menú; deja solo controles y LCD.
 4. [x] Cola editable: «Reproducir a continuación» y «Añadir a la cola» en las listas; en la Cola, Subir, Bajar, Vaciar y arrastrar para reordenar; se guarda al cambiar y vuelve al abrir.
 5. [x] Biblioteca: vigila la carpeta de música (importa lo nuevo; sigue borrados, renombres y movimientos conservando reproducciones; desmarca los que vuelven). Duplicados y edición por lotes revisados y corregidos. «Guardar la carátula en los archivos» (menú contextual; TagLib ≥ 2.0).
