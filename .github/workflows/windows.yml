@@ -1,4 +1,5 @@
-# An experiment: does BeatBox build on Windows (MSYS2, UCRT64)? Build only, no package yet.
+# An experiment: BeatBox on Windows (MSYS2, UCRT64). Builds it, runs the tests, bundles
+# it with everything it loads into a .zip (the run's Artifacts) and starts it once from there.
 name: Windows
 
 on:
@@ -21,12 +22,46 @@ jobs:
           pacboy: >-
             gcc:p vala:p meson:p ninja:p pkgconf:p gettext-tools:p
             gtk3:p libgee:p libxml2:p libnotify:p libsoup3:p json-glib:p sqlite3:p taglib:p
-            gstreamer:p gst-plugins-base:p
+            gstreamer:p gst-plugins-base:p gst-plugins-good:p glib-networking:p librsvg:p adwaita-icon-theme:p
       - name: Setup
-        run: meson setup build -Dipod=disabled -Dpython=disabled
+        run: meson setup build -Dipod=disabled -Dpython=disabled --prefix=C:/BeatBox
       - name: Build
-        # -k 0: every error, not just the first target's
-        run: ninja -C build -k 0
-      - name: Meson log
-        if: failure()
-        run: cat build/meson-logs/meson-log.txt | tail -80
+        run: ninja -C build
+      - name: Test
+        run: meson test -C build --print-errorlogs
+      - name: Bundle
+        run: |
+          meson install -C build
+          cd /c/BeatBox
+          M=/ucrt64
+          # what GTK, GStreamer and GIO load at run time, found relative to bin\
+          mkdir -p lib/gstreamer-1.0 lib/gio/modules libexec/gstreamer-1.0 share/glib-2.0/schemas share/icons
+          cp $M/lib/gstreamer-1.0/*.dll lib/gstreamer-1.0/
+          cp $M/libexec/gstreamer-1.0/gst-plugin-scanner.exe libexec/gstreamer-1.0/
+          cp $M/lib/gio/modules/libgiognutls.dll lib/gio/modules/
+          cp -r $M/lib/gdk-pixbuf-2.0 lib/
+          cp $M/share/glib-2.0/schemas/gschemas.compiled share/glib-2.0/schemas/
+          cp -r $M/share/icons/Adwaita $M/share/icons/hicolor share/icons/
+          # every DLL any of those links to, until no new one turns up
+          while :; do
+            new=$(find . -name '*.exe' -o -name '*.dll' | xargs ldd 2>/dev/null | awk '$3 ~ /^\/ucrt64\// {print $3}' | sort -u |
+                  while read d; do [ -e bin/$(basename $d) ] || echo $d; done)
+            [ -z "$new" ] && break
+            cp $new bin/
+          done
+          cat lib/gdk-pixbuf-2.0/2.10.0/loaders.cache | grep -i '^"' || true
+          du -sh .
+      - name: Start from the bundle
+        shell: pwsh
+        # MSYS2 isn't on this PATH: a DLL missing from the bundle shows here
+        run: |
+          $p = Start-Process C:\BeatBox\bin\beatbox.exe -PassThru -RedirectStandardOutput out.txt -RedirectStandardError err.txt
+          Start-Sleep 20
+          $alive = -not $p.HasExited
+          if ($alive) { Stop-Process $p } else { "exited with $($p.ExitCode)" }
+          Get-Content out.txt, err.txt
+          if (-not $alive) { exit 1 }
+      - uses: actions/upload-artifact@v7
+        with:
+          name: BeatBox-windows
+          path: C:/BeatBox

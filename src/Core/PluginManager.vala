@@ -20,7 +20,7 @@ public class BeatBox.PluginInfo : Object {
 	/** The code next to the .plugin file: lib<id>.so, or <id>.py / the <id> package */
 	public string code_path() {
 		if(!is_python)
-			return Path.build_filename(folder, "lib" + id + ".so");
+			return Path.build_filename(folder, "lib" + id + (Exe.UNIX ? ".so" : ".dll"));
 		var package = Path.build_filename(folder, id);
 		return FileUtils.test(package, FileTest.IS_DIR) ? package : package + ".py";
 	}
@@ -63,11 +63,11 @@ public class BeatBox.PluginManager : Object {
 	 * tree, an AppImage or a portable bundle), then where meson installed them */
 	static string[] folders() {
 		string[] rv = { Path.build_filename(Environment.get_user_data_dir(), "beatbox", "plugins") };
-		try {
-			var exe_dir = Path.get_dirname(FileUtils.read_link("/proc/self/exe"));
+		var exe_dir = Exe.dir();
+		if(exe_dir != null) {
 			rv += Path.build_filename(exe_dir, "plugins");
 			rv += Path.build_filename(Path.get_dirname(exe_dir), Build.PLUGIN_SUBDIR);
-		} catch (FileError err) {}
+		}
 		rv += Build.PLUGIN_DIR;
 		return rv;
 	}
@@ -77,16 +77,16 @@ public class BeatBox.PluginManager : Object {
 	 * Must run before anything loads Python. */
 	public static void set_typelib_path() {
 		string[] dirs = {};
-		try {
-			var exe_dir = Path.get_dirname(FileUtils.read_link("/proc/self/exe"));
+		var exe_dir = Exe.dir();
+		if(exe_dir != null) {
 			dirs += exe_dir; // the build tree
 			dirs += Path.build_filename(Path.get_dirname(exe_dir), Build.TYPELIB_SUBDIR);
-		} catch (FileError err) {}
+		}
 		dirs += Build.TYPELIB_DIR;
 		var old = Environment.get_variable("GI_TYPELIB_PATH");
 		if(old != null && old != "")
 			dirs += old;
-		Environment.set_variable("GI_TYPELIB_PATH", string.joinv(":", dirs), true);
+		Environment.set_variable("GI_TYPELIB_PATH", string.joinv(Path.SEARCHPATH_SEPARATOR_S, dirs), true);
 	}
 
 	void scan(string folder) {

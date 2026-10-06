@@ -58,8 +58,8 @@ public static int main (string[] args) {
     string langpack_dir = Path.build_filename (Build.DATADIR, "locale");
     // Started from the build tree: use the translations built next to the program
     // (build/po/<language>/LC_MESSAGES), which may be newer than the installed ones
-    try {
-        var exe_dir = Path.get_dirname (FileUtils.read_link ("/proc/self/exe"));
+    var exe_dir = BeatBox.Exe.dir ();
+    if (exe_dir != null) {
         if (FileUtils.test (Path.build_filename (exe_dir, "build.ninja"), FileTest.EXISTS))
             langpack_dir = Path.build_filename (exe_dir, "po");
         // portable bundle (the release tarball): translations in ./locale
@@ -68,7 +68,7 @@ public static int main (string[] args) {
         // installed anywhere (an AppImage, another prefix): <prefix>/bin and <prefix>/share/locale
         else if (FileUtils.test (Path.build_filename (exe_dir, "..", "share", "locale", "es", "LC_MESSAGES", package_name + ".mo"), FileTest.EXISTS))
             langpack_dir = Path.build_filename (Path.get_dirname (exe_dir), "share", "locale");
-    } catch (FileError err) {}
+    }
     Intl.setlocale (LocaleCategory.ALL, "");
     BeatBox.App.locale_dir = langpack_dir;
     Intl.bindtextdomain (package_name, langpack_dir);
@@ -80,6 +80,28 @@ public static int main (string[] args) {
 	return app.run (args);
 }
 
+
+namespace BeatBox.Exe {
+#if HAVE_UNIX
+	public const bool UNIX = true;
+#else
+	public const bool UNIX = false;
+#endif
+
+	/** The folder of the running program, or null */
+	public string? dir () {
+#if HAVE_UNIX
+		try {
+			return Path.get_dirname (FileUtils.read_link ("/proc/self/exe"));
+		} catch (FileError err) {
+			return null;
+		}
+#else
+		// ponytail: assumes <prefix>\bin\beatbox.exe, the layout of the Windows bundle
+		return Path.build_filename (Win32.get_package_installation_directory_of_module (null), "bin");
+#endif
+	}
+}
 
 /**
  * Application class
