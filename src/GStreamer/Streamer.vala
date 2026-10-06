@@ -519,8 +519,9 @@ public class BeatBox.Streamer : GLib.Object {
 			next_gapless_media = s;
 			doing_gapless = true;
 		}
-		else {
-			GLib.message("not doing gapless in streamer because no next song\n");
+		else if(s != null) {
+			// already taken from the list: played when this one ends, so nothing is skipped
+			next_after_eos = s;
 		}
 	}
 	
