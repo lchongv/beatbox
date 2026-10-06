@@ -50,6 +50,7 @@ The simplest skin only redefines the palette. Every rule of the base theme uses 
 | `iconview.albumgrid` | cover grid in popup mode |
 | `.albumwall` | cover grid in inline mode |
 | `.album-detail` | album band in inline mode |
+| `.track-report` | information panel at the right of the lists |
 | `.coverflow` | Cover Flow |
 | `.source-actions` | button bar above Podcasts and Internet Radio |
 | `.source-page` | welcome screens and empty-list messages |

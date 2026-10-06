@@ -29,7 +29,7 @@ Depends: ${shlibs:Depends},
          gstreamer1.0-plugins-base,
          gstreamer1.0-plugins-good,
          glib-networking
-Recommends: gstreamer1.0-libav
+Recommends: gstreamer1.0-libav, libchromaprint-tools
 Description: music player with Cover Flow, podcasts and internet radio
  BeatBox is a music player for GTK: a library with smart playlists,
  Cover Flow and an inline cover grid, synced lyrics, podcasts, internet

@@ -276,3 +276,5 @@ button.traffic-light.maximize { background-image: radial-gradient(circle at 50% 
 button.traffic-light:hover    { box-shadow: inset 0 1px 1px alpha(white, .8), 0 0 0 1px alpha(black, .15); }
 button.traffic-light:active   { background-image: none; background-color: shade(#888, .9); }
 .app-name { font-size: 8pt; font-weight: bold; opacity: .6; }
+/* the information panel at the right of the lists */
+.track-report { background-color: @bb_detail_bg; border-left: 1px solid @bb_detail_border; }

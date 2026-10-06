@@ -217,6 +217,11 @@ CREATE TABLE IF NOT EXISTS list_setups (
 );
 """;
 
+	/* Columns of 'songs' added since BeatBox 0.13, in this order after is_video (the
+	 * library reads them by position): databases without them get them at startup */
+	const string[] SONG_COLUMNS_ADDED = { "bpm INT", "sort_title TEXT", "sort_artist TEXT", "sort_album_artist TEXT",
+		"sort_album TEXT", "sort_composer TEXT", "compilation INT", "skip_shuffle INT", "volume_adjust INT", "remember_position INT" };
+	
 	SQLHeavy.Database _db;
 	
 	LinkedList<DatabaseTransactionFiller> periodic_transactions;
@@ -244,6 +249,7 @@ CREATE TABLE IF NOT EXISTS list_setups (
 		try {
 			_db = new SQLHeavy.Database (GLib.Path.build_filename(user_database_folder.get_path(), "beatbox.db"));
 			_db.execute (SCHEMA);
+			add_song_columns ();
 		}
 		catch (SQLHeavy.Error err) {
 			critical("Could not load database: %s", err.message);
@@ -251,6 +257,15 @@ CREATE TABLE IF NOT EXISTS list_setups (
 		
 		// Every 15 seconds, do the periodic saves
 		Timeout.add(15000, periodic_save);
+	}
+	
+	void add_song_columns() throws SQLHeavy.Error {
+		var have = new HashSet<string>();
+		for (var r = new Query(_db, "PRAGMA table_info(songs)").execute(); !r.finished; r.next())
+			have.add(r.fetch_string(1));
+		foreach (var column in SONG_COLUMNS_ADDED)
+			if (!(column.split(" ")[0] in have))
+				_db.execute("ALTER TABLE songs ADD COLUMN %s DEFAULT %s".printf(column, column.has_suffix("TEXT") ? "''" : "0"));
 	}
 	
 	public QueryResult execute(string statement) {

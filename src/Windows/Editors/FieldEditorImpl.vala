@@ -33,7 +33,8 @@ public class BeatBox.FieldEditorImpl : Box, FieldEditor {
 		STRING,
 		LONG_STRING,
 		RATING,
-		OPTIONS
+		OPTIONS,
+		BOOL
 	}
 	
 	FieldEditorType type;
@@ -124,6 +125,22 @@ public class BeatBox.FieldEditorImpl : Box, FieldEditor {
 		edit_widget = rating_widget;
 		rating_widget.vexpand = true;
 		this.add(rating_widget);
+	}
+	
+	/** A yes/no option: the check box's own label says what it means */
+	public FieldEditorImpl.for_bool(string field_name, string description, bool original) {
+		this.basic(field_name);
+		
+		this.original = Value(typeof(bool));
+		this.original.set_boolean(original);
+		type = FieldEditorType.BOOL;
+		
+		var toggle = new CheckButton.with_label(description);
+		toggle.active = original;
+		toggle.toggled.connect(() => { check.set_active(toggle.active != this.original.get_boolean()); });
+		
+		edit_widget = toggle;
+		this.add(toggle);
 	}
 	
 	private FieldEditorImpl.basic(string field_name) {
@@ -244,6 +261,11 @@ public class BeatBox.FieldEditorImpl : Box, FieldEditor {
 			rv.set_int(((RatingWidget)edit_widget).get_rating());
 			return rv;
 		}
+		else if(type == FieldEditorType.BOOL) {
+			Value rv = Value(typeof(bool));
+			rv.set_boolean(((CheckButton)edit_widget).active);
+			return rv;
+		}
 		
 		return null;
 	}
@@ -260,6 +282,9 @@ public class BeatBox.FieldEditorImpl : Box, FieldEditor {
 		}
 		else if(type == FieldEditorType.RATING) {
 			((RatingWidget)edit_widget).set_rating(val.get_int());
+		}
+		else if(type == FieldEditorType.BOOL) {
+			((CheckButton)edit_widget).active = val.get_boolean();
 		}
 	}
 }

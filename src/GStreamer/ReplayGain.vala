@@ -28,7 +28,8 @@
 /**
  * Volume normalization from the files' ReplayGain tags (rgvolume ! rglimiter).
  * Off = the ReplayGain tags are stripped before rgvolume, so it applies no gain.
- * A mode change takes effect with the next song.
+ * A mode change takes effect with the next song. It also applies the song's own
+ * volume adjustment (the editor's Options tab) as extra gain.
  */
 public class BeatBox.ReplayGain : GLib.Object {
 	public const int OFF = 0;
@@ -36,7 +37,9 @@ public class BeatBox.ReplayGain : GLib.Object {
 	public const int ALBUM = 2;
 	
 	public Gst.Element? element { get; private set; }
+	public unowned Gst.Element? playbin = null; // to know which song the stream is (set by Pipeline)
 	dynamic Gst.Element rgvolume;
+	string adjusted_uri = "";
 	
 	public ReplayGain () {
 		var convert = Gst.ElementFactory.make ("audioconvert", null);
@@ -60,8 +63,28 @@ public class BeatBox.ReplayGain : GLib.Object {
 	
 	/** Reads the mode from the settings */
 	public void apply () {
-		if (element != null)
-			rgvolume.album_mode = App.settings.equalizer.replaygain == ALBUM;
+		if (element == null)
+			return;
+		rgvolume.album_mode = App.settings.equalizer.replaygain == ALBUM;
+		
+		// playbin's current-uri is already the next song when a gapless switch's tags come
+		string? uri = (playbin != null) ? (string?)((dynamic Gst.Element)playbin).current_uri : null;
+		if (uri == null || uri == adjusted_uri)
+			return;
+		adjusted_uri = uri;
+		var m = App.library.media_from_file (uri);
+		double gain = (m != null) ? adjustment_db (m.volume_adjust) : 0.0;
+		// pre-amp adds to the tags' gain and to the fallback gain alike (songs without tags,
+		// and every song with ReplayGain off); a boost needs headroom, else it is cut back
+		// to 0 dB, and rglimiter keeps it from clipping
+		rgvolume.pre_amp = gain;
+		rgvolume.headroom = double.max (0.0, gain);
+	}
+	
+	/** -100..100 % of the song's loudness as dB: +100 % doubles it (+6 dB), -100 % mutes it (-60 dB) */
+	public static double adjustment_db (int percent) {
+		double factor = 1.0 + percent.clamp (-100, 100) / 100.0;
+		return (factor <= 0.001) ? -60.0 : double.max (-60.0, 20 * Math.log10 (factor));
 	}
 	
 	const string[] RG_TAGS = { Gst.Tags.TRACK_GAIN, Gst.Tags.TRACK_PEAK, Gst.Tags.ALBUM_GAIN, Gst.Tags.ALBUM_PEAK, Gst.Tags.REFERENCE_LEVEL };

@@ -111,8 +111,18 @@ public class BeatBox.SongLibrary : BaseLibrary {
 				//s.podcast_url = results.fetch_string(30);
 				//s.podcast_date = results.fetch_int(31);
 				//s.is_new_podcast = (results.fetch_int(32) == 1) ? true : false;
-				//s.resume_pos = results.fetch_int(33);
+				s.resume_pos = results.fetch_int(33);
 				s.is_video = (results.fetch_int(34) == 1) ? true : false;
+				s.bpm = (uint)results.fetch_int(35);
+				s.sort_title = results.fetch_string(36);
+				s.sort_artist = results.fetch_string(37);
+				s.sort_album_artist = results.fetch_string(38);
+				s.sort_album = results.fetch_string(39);
+				s.sort_composer = results.fetch_string(40);
+				s.compilation = results.fetch_int(41) == 1;
+				s.skip_shuffle = results.fetch_int(42) == 1;
+				s.volume_adjust = results.fetch_int(43);
+				s.remember_position = results.fetch_int(44) == 1;
 				
 				//lock(_medias) {
 					App.library.assign_id_to_media(s);
@@ -140,11 +150,13 @@ public class BeatBox.SongLibrary : BaseLibrary {
 			Query query = transaction.prepare ("""INSERT INTO 'songs' ('rowid', 'uri', 'file_size', 'title', 'artist', 'composer', 'album_artist',
 'album', 'grouping', 'genre', 'comment', 'lyrics', 'has_embedded', 'year', 'track', 'track_count', 'album_number', 'album_count',
 'bitrate', 'length', 'samplerate', 'rating', 'playcount', 'skipcount', 'dateadded', 'lastplayed', 'lastmodified', 'mediatype', 'podcast_rss',
-'podcast_url', 'podcast_date', 'is_new_podcast', 'resume_pos', 'is_video') 
+'podcast_url', 'podcast_date', 'is_new_podcast', 'resume_pos', 'is_video', 'bpm', 'sort_title', 'sort_artist', 'sort_album_artist',
+'sort_album', 'sort_composer', 'compilation', 'skip_shuffle', 'volume_adjust', 'remember_position') 
 VALUES (:rowid, :uri, :file_size, :title, :artist, :composer, :album_artist, :album, :grouping, 
 :genre, :comment, :lyrics, :has_embedded, :year, :track, :track_count, :album_number, :album_count, :bitrate, :length, :samplerate, 
 :rating, :playcount, :skipcount, :dateadded, :lastplayed, :lastmodified, :mediatype, :podcast_rss, :podcast_url, :podcast_date, :is_new_podcast,
-:resume_pos, :is_video);""");
+:resume_pos, :is_video, :bpm, :sort_title, :sort_artist, :sort_album_artist, :sort_album, :sort_composer, :compilation,
+:skip_shuffle, :volume_adjust, :remember_position);""");
 			
 			foreach(Media s in added) {
 				if(s.rowid > 0 && !s.isTemporary) {
@@ -182,6 +194,16 @@ VALUES (:rowid, :uri, :file_size, :title, :artist, :composer, :album_artist, :al
 					query.set_int(":is_new_podcast", s.is_new_podcast ? 1 : 0);
 					query.set_int(":resume_pos", s.resume_pos);
 					query.set_int(":is_video", s.is_video ? 1 : 0);
+					query.set_int(":bpm", (int)s.bpm);
+					query.set_string(":sort_title", s.sort_title);
+					query.set_string(":sort_artist", s.sort_artist);
+					query.set_string(":sort_album_artist", s.sort_album_artist);
+					query.set_string(":sort_album", s.sort_album);
+					query.set_string(":sort_composer", s.sort_composer);
+					query.set_int(":compilation", s.compilation ? 1 : 0);
+					query.set_int(":skip_shuffle", s.skip_shuffle ? 1 : 0);
+					query.set_int(":volume_adjust", s.volume_adjust);
+					query.set_int(":remember_position", s.remember_position ? 1 : 0);
 					
 					query.execute();
 				}
@@ -209,7 +231,9 @@ composer=:composer, album_artist=:album_artist, album=:album, grouping=:grouping
 has_embedded=:has_embedded, year=:year, track=:track, track_count=:track_count, album_number=:album_number, 
 album_count=:album_count,bitrate=:bitrate, length=:length, samplerate=:samplerate, rating=:rating, playcount=:playcount, skipcount=:skipcount, 
 dateadded=:dateadded, lastplayed=:lastplayed, lastmodified=:lastmodified, mediatype=:mediatype, podcast_rss=:podcast_rss, podcast_url=:podcast_url,
-podcast_date=:podcast_date, is_new_podcast=:is_new_podcast, resume_pos=:resume_pos, is_video=:is_video WHERE rowid=:rowid""");
+podcast_date=:podcast_date, is_new_podcast=:is_new_podcast, resume_pos=:resume_pos, is_video=:is_video, bpm=:bpm,
+sort_title=:sort_title, sort_artist=:sort_artist, sort_album_artist=:sort_album_artist, sort_album=:sort_album, sort_composer=:sort_composer,
+compilation=:compilation, skip_shuffle=:skip_shuffle, volume_adjust=:volume_adjust, remember_position=:remember_position WHERE rowid=:rowid""");
 			
 			foreach(Media s in updated) {
 				if(s.rowid != -2 && s.rowid > 0) {
@@ -248,6 +272,16 @@ podcast_date=:podcast_date, is_new_podcast=:is_new_podcast, resume_pos=:resume_p
 					query.set_int(":is_new_podcast", s.is_new_podcast ? 1 : 0);
 					query.set_int(":resume_pos", s.resume_pos);
 					query.set_int(":is_video", s.is_video ? 1 : 0);
+					query.set_int(":bpm", (int)s.bpm);
+					query.set_string(":sort_title", s.sort_title);
+					query.set_string(":sort_artist", s.sort_artist);
+					query.set_string(":sort_album_artist", s.sort_album_artist);
+					query.set_string(":sort_album", s.sort_album);
+					query.set_string(":sort_composer", s.sort_composer);
+					query.set_int(":compilation", s.compilation ? 1 : 0);
+					query.set_int(":skip_shuffle", s.skip_shuffle ? 1 : 0);
+					query.set_int(":volume_adjust", s.volume_adjust);
+					query.set_int(":remember_position", s.remember_position ? 1 : 0);
 					
 					query.execute();
 				}
@@ -341,6 +375,17 @@ podcast_date=:podcast_date, is_new_podcast=:is_new_podcast, resume_pos=:resume_p
 				s.rating = (int)((rating > 0 && rating <= 5) ? rating : 0);
 			if(tags.get_double(Gst.Tags.BEATS_PER_MINUTE, out bpm))
 				s.bpm = (int)bpm;
+			string sort;
+			if(tags.get_string(Gst.Tags.TITLE_SORTNAME, out sort))
+				s.sort_title = sort;
+			if(tags.get_string(Gst.Tags.ARTIST_SORTNAME, out sort))
+				s.sort_artist = sort;
+			if(tags.get_string(Gst.Tags.ALBUM_ARTIST_SORTNAME, out sort))
+				s.sort_album_artist = sort;
+			if(tags.get_string(Gst.Tags.ALBUM_SORTNAME, out sort))
+				s.sort_album = sort;
+			if(tags.get_string(Gst.Tags.COMPOSER_SORTNAME, out sort))
+				s.sort_composer = sort;
 			if(info.get_audio_streams().length() > 0)
 				s.samplerate = ((Gst.PbUtils.DiscovererAudioInfo) info.get_audio_streams().nth_data(0)).get_sample_rate();
 			

@@ -5,6 +5,7 @@ core/Playlists/SmartQuery.vala
 core/Playlists/StaticPlaylist.vala
 core/Utils/TimeUtils.vala
 src/BeatBox.vala
+src/Core/AcoustId.vala
 src/Core/Actions.vala
 src/Core/FileOperator.vala
 src/Core/LibraryWindow.vala
@@ -58,11 +59,16 @@ src/Views/DeviceView.vala
 src/Views/PopupListView.vala
 src/Views/SideTreeView.vala
 src/Widgets/AdvancedSearchBox.vala
+src/Widgets/AlbumWall.vala
 src/Widgets/PresetList.vala
 src/Widgets/SpaceWidget.vala
 src/Widgets/StatusBar.vala
 src/Widgets/TopDisplay/BufferDisplay.vala
+src/Widgets/TopDisplay/LcdCover.vala
+src/Widgets/TopDisplay/TimeScale.vala
+src/Widgets/TrackReport.vala
 src/Windows/AddPodcastWindow.vala
+src/Windows/DirectoryDialog.vala
 src/Windows/Editors/InfoViewport.vala
 src/Windows/Editors/MediaEditor.vala
 src/Windows/Editors/PodcastEditor.vala
@@ -73,5 +79,3 @@ src/Windows/EqualizerWindow.vala
 src/Windows/PlaylistNameWindow.vala
 src/Windows/PreferencesWindow.vala
 src/Windows/RemoveDuplicatesDialog.vala
-src/Windows/DirectoryDialog.vala
-src/Widgets/AlbumWall.vala

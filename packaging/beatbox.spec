@@ -29,6 +29,7 @@ Requires:       gstreamer1-plugins-base
 Requires:       gstreamer1-plugins-good
 Requires:       glib-networking
 Requires:       hicolor-icon-theme
+Recommends:     chromaprint-tools
 
 %description
 BeatBox is a music player for GTK: a library with smart playlists, Cover Flow

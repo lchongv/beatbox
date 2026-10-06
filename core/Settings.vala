@@ -202,12 +202,14 @@ public class BeatBox.Settings {
         public string username { get; set; }
         public string listenbrainz_token { get; set; }
         public string listenbrainz_user { get; set; }
+        public string acoustid_key { get; set; }     // an application key from acoustid.org, for the editor's Identify
         
         public LastFM () {
             session_key = "";
             username = "";
             listenbrainz_token = "";
             listenbrainz_user = "";
+            acoustid_key = "";
             init_config ("lastfm", "net.launchpad.beatbox.LastFM");
         }
     }
@@ -277,6 +279,7 @@ public class BeatBox.Settings {
         public int lcd_track_width { get; set; }     // px, the groove of the position bar
         public int lcd_marker_size { get; set; }     // px, the marker
         public string lcd_marker_shape { get; set; } // diamond, circle, cup or nyan (data/<shape>.svg)
+        public bool lcd_total_time { get; set; }     // the right time shows the length instead of what remains (click it)
         public bool album_grid_inline { get; set; }
         public int album_detail_cover_percent { get; set; }
         public bool download_covers { get; set; }

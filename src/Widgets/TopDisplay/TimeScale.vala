@@ -32,6 +32,8 @@ public class BeatBox.TimeScale : Box {
 	private Label right_time;
 	private Scale scale;
 	private GestureMultiPress click_gesture; // GTK3 controllers need a reference
+	private GestureMultiPress right_click_gesture;
+	private EventBox right_box;
 	private uint nyan_id = 0;
 	private bool live = false;
 	
@@ -82,7 +84,16 @@ public class BeatBox.TimeScale : Box {
 		add(left_time);
 		scale.hexpand = true;
 		add(scale);
-		add(right_time);
+		// clicking the right time switches between the time left and the song's length
+		right_box = new EventBox();
+		right_box.add(right_time);
+		right_box.tooltip_text = _("Click to switch between the time left and the total time");
+		add(right_box);
+		right_click_gesture = new GestureMultiPress(right_box);
+		right_click_gesture.released.connect(() => {
+			App.settings.main.lcd_total_time = !App.settings.main.lcd_total_time;
+			value_changed();
+		});
 		
 		// pressing and releasing jump there (instead of the scale's own handling, dragging included)
 		click_gesture = new GestureMultiPress(scale);
@@ -128,7 +139,7 @@ public class BeatBox.TimeScale : Box {
 	/** A radio station has no position: no times, a barber pole (see theme.css) and the marker in its middle */
 	public void set_live(bool live) {
 		this.live = live;
-		left_time.visible = right_time.visible = !live;
+		left_time.visible = right_box.visible = !live;
 		if(live) {
 			scale.get_style_context().add_class("live");
 			set_scale_range(0, 2);
@@ -197,16 +208,17 @@ public class BeatBox.TimeScale : Box {
 		
 		current_time = minute.to_string() + ":" + ((seconds < 10 ) ? "0" + seconds.to_string() : seconds.to_string());
 		
-		//make pretty remaining time
+		//make pretty remaining time (or the total)
 		minute = 0;
-		seconds = (int)App.playback.current_media.length - (int)scale.get_value();
+		bool total = App.settings.main.lcd_total_time;
+		seconds = (int)App.playback.current_media.length - (total ? 0 : (int)scale.get_value());
 		
 		while(seconds >= 60) {
 			++minute;
 			seconds -= 60;
 		}
 		
-		total_time = minute.to_string() + ":" + ((seconds < 10 ) ? "0" + seconds.to_string() : seconds.to_string());
+		total_time = (total ? "" : "-") + minute.to_string() + ":" + ((seconds < 10 ) ? "0" + seconds.to_string() : seconds.to_string());
 		
 		int length = (int)App.playback.current_media.length;
 		left_time.width_chars = right_time.width_chars = "%d:00".printf(length / 60).length + 2; // two spare digits: glyph widths vary

@@ -71,6 +71,7 @@ public class BeatBox.Pipeline : GLib.Object {
 		
 		pipe = new Gst.Pipeline("pipeline");
 		playbin = ElementFactory.make("playbin", null);
+		replaygain.playbin = playbin;
 		
 		audiosink = ElementFactory.make("autoaudiosink", null);
 		//audiosink.set("profile", 1); // says we handle music and movies

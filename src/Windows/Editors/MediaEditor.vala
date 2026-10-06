@@ -81,10 +81,9 @@ public class BeatBox.MediaEditor : Window {
 		editor_container.add(editor_widget);
 		
 		notebook.append_page(editor_container, new Label(_("Metadata")));
-		if(current_medias.size == 1) {
+		if(current_medias.size == 1)
 			add_info_viewport(current_medias.get(0));
-			add_extra_views();
-		}
+		add_extra_views(); // with several songs too: their fields carry "apply" check boxes
 		
 		var buttonSep = new ButtonBox(Orientation.HORIZONTAL);
 		buttonSep.set_layout(ButtonBoxStyle.END);
@@ -109,6 +108,7 @@ public class BeatBox.MediaEditor : Window {
 		add(padding);
 		
 		show_all();
+		notebook.page = 0; // the metadata: showing the other pages made the last one current
 		
 		nav_arrows.sensitive = entire_media_list.size > 1;
 		if(current_medias.size == 1) {
@@ -140,9 +140,17 @@ public class BeatBox.MediaEditor : Window {
 	}
 	
 	void add_extra_views() {
-		foreach(var entry in editor.get_extra_views().entries) {
-			int added = notebook.append_page(entry.value, new Label(entry.key));
-			entry.value.show_all();
+		// the editor's pages in this order, any others after them
+		var views = editor.get_extra_views();
+		var names = new ArrayList<string>.wrap({ _("Sorting"), _("Options"), _("Artwork"), _("Lyrics") });
+		foreach(var name in views.keys)
+			if(!(name in names))
+				names.add(name);
+		foreach(var name in names) {
+			if(!views.has_key(name))
+				continue;
+			int added = notebook.append_page(views[name], new Label(name));
+			views[name].show_all();
 			extra_views.add(added);
 		}
 		
@@ -150,9 +158,9 @@ public class BeatBox.MediaEditor : Window {
 	}
 	
 	void remove_extra_views() {
-		foreach(int index in extra_views) {
-			notebook.remove_page(index);
-		}
+		var indices = extra_views.to_array();
+		for(int i = indices.length - 1; i >= 0; i--) // from the last: removing a page renumbers the ones after it
+			notebook.remove_page(indices[i]);
 		
 		extra_views.clear();
 	}

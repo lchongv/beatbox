@@ -41,7 +41,7 @@ public class BeatBox.Song : BeatBox.Media {
 	public override bool is_local { 
 		get { return !isTemporary; } 
 	}
-	public override bool uses_resume_pos { get { return false; } }
+	public override bool uses_resume_pos { get { return remember_position; } } // Options tab
 	public override bool supports_gapless { get { return true; } }
 	public override bool can_save_metadata { get { return true; } }
 	public override bool can_seek { get { return true; } }
@@ -91,6 +91,16 @@ public class BeatBox.Song : BeatBox.Media {
 		rv.date_added = date_added;
 		rv.last_played = last_played;
 		rv.lyrics = lyrics; 
+		rv.sort_title = sort_title;
+		rv.sort_artist = sort_artist;
+		rv.sort_album_artist = sort_album_artist;
+		rv.sort_album = sort_album;
+		rv.sort_composer = sort_composer;
+		rv.compilation = compilation;
+		rv.skip_shuffle = skip_shuffle;
+		rv.volume_adjust = volume_adjust;
+		rv.remember_position = remember_position;
+		rv.resume_pos = resume_pos;
 		//rv.isPreview = isPreview;
 		rv.isTemporary = isTemporary;
 		rv.last_modified = last_modified;

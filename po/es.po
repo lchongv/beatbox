@@ -2528,3 +2528,266 @@ msgid "BeatBox could not read it. It may be damaged or not be audio."
 msgid_plural "BeatBox could not read them. They may be damaged or not be audio."
 msgstr[0] "BeatBox no pudo leerlo. Puede que esté dañado o que no sea audio."
 msgstr[1] "BeatBox no pudo leerlos. Puede que estén dañados o que no sean audio."
+
+msgid "AcoustID answered: %s"
+msgstr "AcoustID respondió: %s"
+
+msgid "AcoustID could not be reached."
+msgstr "No se pudo contactar con AcoustID."
+
+msgid "AcoustID doesn't know this recording."
+msgstr "AcoustID no conoce esta grabación."
+
+msgid "Added"
+msgstr "Añadida"
+
+msgid "An internet stream: there is no file to read."
+msgstr "Una emisión por internet: no hay archivo que leer."
+
+msgid "Application key"
+msgstr "Clave de aplicación"
+
+msgid "Apply"
+msgstr "Aplicar"
+
+msgid "Bit depth"
+msgstr "Profundidad"
+
+msgid "Bitrate (average)"
+msgstr "Tasa de bits (media)"
+
+msgid "Changes here apply to the albums of all the selected songs."
+msgstr "Los cambios aquí se aplican a los álbumes de todas las canciones seleccionadas."
+
+msgid "Channels"
+msgstr "Canales"
+
+msgid "Choose Image"
+msgstr "Elegir imagen"
+
+msgid "Choose Image…"
+msgstr "Elegir imagen…"
+
+msgid "Click to switch between the time left and the total time"
+msgstr "Clic para alternar entre el tiempo restante y la duración total"
+
+msgid "Codec"
+msgstr "Códec"
+
+msgid "Compilation"
+msgstr "Compilación"
+
+msgid "Container"
+msgstr "Contenedor"
+
+msgid "Could not compute the fingerprint of this file."
+msgstr "No se pudo calcular la huella acústica de este archivo."
+
+msgid "Could not open the image: %s"
+msgstr "No se pudo abrir la imagen: %s"
+
+msgid "Download Lyrics"
+msgstr "Descargar letra"
+
+msgid "Duration"
+msgstr "Duración"
+
+msgid "Edited"
+msgstr "Editada"
+
+msgid "Embed in File"
+msgstr "Incrustar en el archivo"
+
+msgid "Embedded pictures"
+msgstr "Imágenes incrustadas"
+
+msgid "Error"
+msgstr "Error"
+
+msgid "File"
+msgstr "Archivo"
+
+msgid "File modified"
+msgstr "Archivo modificado"
+
+msgid "Format and audio"
+msgstr "Formato y audio"
+
+msgid "From lrclib.net"
+msgstr "De lrclib.net"
+
+msgid "Identification failed"
+msgstr "La identificación falló"
+
+msgid "Identification results"
+msgstr "Resultados de la identificación"
+
+msgid "Identifying songs needs an AcoustID application key"
+msgstr "Identificar canciones necesita una clave de aplicación de AcoustID"
+
+msgid "Identifying…"
+msgstr "Identificando…"
+
+msgid "Identify…"
+msgstr "Identificar…"
+
+msgid "Information about the song playing (Ctrl+Shift+I)"
+msgstr "Información de la canción en reproducción (Ctrl+Mayús+I)"
+
+msgid "Information panel"
+msgstr "Panel de información"
+
+msgid "Last played"
+msgstr "Última reproducción"
+
+msgid "Look the cover up on MusicBrainz and the Apple catalogue"
+msgstr "Buscar la carátula en MusicBrainz y en el catálogo de Apple"
+
+msgid "Look the lyrics up on lrclib.net (they replace the ones here)"
+msgstr "Buscar la letra en lrclib.net (reemplaza la que hay aquí)"
+
+msgid "Look the song up by its sound on AcoustID"
+msgstr "Buscar la canción por su sonido en AcoustID"
+
+msgid "Minimize"
+msgstr "Minimizar"
+
+msgid "Mono"
+msgstr "Mono"
+
+msgid "Never"
+msgstr "Nunca"
+
+msgid "No cover found for “%s”."
+msgstr "No se encontró carátula para «%s»."
+
+msgid "No lyrics found for “%s”."
+msgstr "No se encontró letra para «%s»."
+
+msgid "No matches found"
+msgstr "Sin coincidencias"
+
+msgid "Nothing is playing."
+msgstr "No se está reproduciendo nada."
+
+msgid "Open"
+msgstr "Abrir"
+
+msgid "Part of a compilation by various artists"
+msgstr "Parte de una compilación de varios artistas"
+
+msgid "Picture"
+msgstr "Imagen"
+
+msgid "Reading the file…"
+msgstr "Leyendo el archivo…"
+
+msgid "Remember the playback position"
+msgstr "Recordar la posición de reproducción"
+
+msgid "Resumes at"
+msgstr "Continúa en"
+
+msgid "Sample rate"
+msgstr "Frecuencia de muestreo"
+
+msgid "Score"
+msgstr "Coincidencia"
+
+msgid "Select a result to apply its title, artist and album to this song:"
+msgstr "Elija un resultado para aplicar su título, artista y álbum a esta canción:"
+
+msgid "Shuffle"
+msgstr "Aleatorio"
+
+msgid "Size"
+msgstr "Tamaño"
+
+msgid "Skip when shuffling"
+msgstr "Omitir en reproducción aleatoria"
+
+msgid "Skipped when shuffling"
+msgstr "Se omite en reproducción aleatoria"
+
+msgid "Sort Album"
+msgstr "Ordenar álbum"
+
+msgid "Sort Album Artist"
+msgstr "Ordenar artista del álbum"
+
+msgid "Sort Artist"
+msgstr "Ordenar artista"
+
+msgid "Sort Composer"
+msgstr "Ordenar compositor"
+
+msgid "Sort Title"
+msgstr "Ordenar título"
+
+msgid "Sorting"
+msgstr "Ordenación"
+
+msgid "Stereo"
+msgstr "Estéreo"
+
+msgid "Tags in the file"
+msgstr "Etiquetas del archivo"
+
+msgid "This build of BeatBox can't write covers into files (it needs TagLib 2)"
+msgstr "Esta compilación de BeatBox no puede escribir carátulas en los archivos (necesita TagLib 2)"
+
+msgid "Unknown"
+msgstr "Desconocida"
+
+msgid "Volume Adjustment (%)"
+msgstr "Ajuste de volumen (%)"
+
+msgid "Volume adjustment"
+msgstr "Ajuste de volumen"
+
+msgid "Write the cover into the music files"
+msgstr "Escribir la carátula en los archivos de música"
+
+msgid "Writing…"
+msgstr "Escribiendo…"
+
+msgid "Written into %d files; %d failed."
+msgstr "Escrita en %d archivos; %d fallaron."
+
+msgid "lossless"
+msgstr "sin pérdida"
+
+msgid "lossy"
+msgstr "con pérdida"
+
+msgid "nominal %u kbps"
+msgstr "nominal %u kbps"
+
+msgid "of"
+msgstr "de"
+
+msgid "variable (%u–%u kbps)"
+msgstr "variable (%u–%u kbps)"
+
+msgid "Front cover"
+msgstr "Portada"
+
+msgid "Back cover"
+msgstr "Contraportada"
+
+msgid "The volume adjustment raises or lowers this song next to the others: +100 % doubles it, −100 % silences it."
+msgstr "El ajuste de volumen sube o baja esta canción respecto de las demás: +100 % la duplica, −100 % la silencia."
+
+msgid "Needs fpcalc, from Chromaprint (the chromaprint or libchromaprint-tools package)"
+msgstr "Necesita fpcalc, de Chromaprint (el paquete chromaprint o libchromaprint-tools)"
+
+msgid "Register a free application at acoustid.org/new-application and paste its key in Preferences › Last.fm."
+msgstr "Registre una aplicación gratuita en acoustid.org/new-application y pegue su clave en Preferencias › Last.fm."
+
+msgid "To identify songs by their sound (Edit Song Info › Identify), register an application at %s and paste its key here."
+msgstr "Para identificar canciones por su sonido (Editar canción › Identificar), registre una aplicación en %s y pegue aquí su clave."
+
+msgid "Written into %d file."
+msgid_plural "Written into %d files."
+msgstr[0] "Escrita en %d archivo."
+msgstr[1] "Escrita en %d archivos."

@@ -379,6 +379,22 @@ public class BeatBox.PlaybackManager : GLib.Object, BeatBox.PlaybackInterface {
 	// Moves the current index to the next song and returns that media
 	// Only plays if play is true
 	public Media? getNext(bool play) {
+		Media? rv = step_next(play);
+		// songs marked "skip when shuffling" (Options tab) are passed by, one round at most
+		for(int i = 0; rv != null && skipped_in_shuffle(rv) && i < playback_used_list.size; i++)
+			rv = step_next(play);
+		
+		if(play && rv != null) // none when the song playing isn't in the list
+			play_media(rv, false);
+		
+		return rv;
+	}
+	
+	bool skipped_in_shuffle(Media m) {
+		return m.skip_shuffle && shuffle_mode == ShuffleMode.ALL && !_playing_queued_song;
+	}
+	
+	Media? step_next(bool play) {
 		Media rv = null;
 		
 		// next check if user has queued medias
@@ -425,15 +441,23 @@ public class BeatBox.PlaybackManager : GLib.Object, BeatBox.PlaybackInterface {
 			}
 		}
 		
-		if(play && rv != null) // none when the song playing isn't in the list
-			play_media(rv, false);
-		
 		return rv;
 	}
 	
 	// Moves the current index to the previous song and returns that media
 	// Only plays if play is true
 	public Media? getPrevious(bool play) {
+		Media? rv = step_previous();
+		for(int i = 0; rv != null && skipped_in_shuffle(rv) && i < playback_used_list.size; i++)
+			rv = step_previous();
+		
+		if(play && rv != null)
+			play_media(rv, false);
+		
+		return rv;
+	}
+	
+	Media? step_previous() {
 		Media rv = null;
 		
 		_playing_queued_song = false;
@@ -470,9 +494,6 @@ public class BeatBox.PlaybackManager : GLib.Object, BeatBox.PlaybackInterface {
 			
 			rv = playback_used_list.get(current_index);
 		}
-		
-		if(play && rv != null)
-			play_media(rv, false);
 		
 		return rv;
 	}
@@ -554,6 +575,8 @@ public class BeatBox.PlaybackManager : GLib.Object, BeatBox.PlaybackInterface {
 		Media? old_media = null;
 		if(media_active)
 			old_media = current_media;
+		if(old_media != null && old_media != m && old_media.uses_resume_pos)
+			App.library.update_media(old_media, false, false, false); // where it was left goes to the database
 		
 		// set the current media info. Do this here rather than in info
 		// so that this information is correct when media_played signal

@@ -55,6 +55,24 @@ public class BeatBox.SyncedLyrics : GLib.Object {
 		return Path.build_filename (App.settings.get_cache_dir (), "lyrics", key + ".lrc");
 	}
 
+	/** Blocking: the plain (unsynced) lyrics from lrclib.net, "" when it has none */
+	public static string fetch_plain (Media m) {
+		var url = "https://lrclib.net/api/get?artist_name=%s&track_name=%s&album_name=%s&duration=%u".printf (
+			Uri.escape_string (m.artist), Uri.escape_string (m.title), Uri.escape_string (m.album), m.length);
+		var obj = Http.json_object (Http.fetch (url));
+		string plain = (obj != null) ? (obj.get_string_member_with_default ("plainLyrics", "") ?? "") : "";
+		if (plain != "")
+			return plain;
+		// no exact match (another album, a different length): the best one by artist and title
+		var found = Http.json_objects (Http.fetch ("https://lrclib.net/api/search?artist_name=%s&track_name=%s".printf (
+			Uri.escape_string (m.artist), Uri.escape_string (m.title))));
+		if (found != null)
+			foreach (var o in found)
+				if ((plain = o.get_string_member_with_default ("plainLyrics", "") ?? "") != "")
+					return plain;
+		return "";
+	}
+
 	/** Blocking: cache first, then lrclib.net. Returns null when there are no synced lyrics.
 	 *  A miss is cached as an empty file so the server is asked only once per song. */
 	public static SyncedLyrics? fetch (Media m) {
