@@ -92,7 +92,7 @@ public class BeatBox.PlaybackManager : GLib.Object, BeatBox.PlaybackInterface {
 	public void load_and_play_last_playing() {
 		int i = App.settings.main.last_media_playing;
 		Media restore_song = App.library.media_from_id(i);
-		if(restore_song != null) {
+		if(restore_song != null && !media_active) { // else a file opened at startup is already on
 			play_media(restore_song, true);
 			
 			// make sure we don't re-count stats
