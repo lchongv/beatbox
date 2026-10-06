@@ -1,0 +1,34 @@
+/* Vinyl: an old hi-fi over the Classic look: walnut chrome, cream lists,
+ * an amber LCD. Mostly the palette, plus light text on the dark top bar. */
+
+@define-color bb_chrome_top      #8a5f3f;
+@define-color bb_chrome_mid      #6e4a30;
+@define-color bb_chrome_bottom   #563823;
+@define-color bb_chrome_border   #2e1d11;
+@define-color bb_accent          #b5652b;
+@define-color bb_accent_light    #d08a52;
+@define-color bb_sidebar_top     #f1e6d2;
+@define-color bb_sidebar_bottom  #e0cfb2;
+@define-color bb_sidebar_border  #a88d68;
+@define-color bb_sidebar_text    #3a2a1a;
+@define-color bb_sidebar_heading #7a5c3a;
+@define-color bb_row_a           #fffaf0;
+@define-color bb_row_b           #f3e8d4;
+@define-color bb_detail_bg       #fbf4e6;
+@define-color bb_detail_border   #cbb593;
+@define-color bb_lcd_top         #3a2410;
+@define-color bb_lcd_mid         #4a2f15;
+@define-color bb_lcd_bottom      #2c1b0b;
+@define-color bb_lcd_border      #1a0f06;
+@define-color bb_lcd_text        #ffbf5e;
+@define-color bb_lcd_dim         #c98d3e;
+@define-color theme_selected_bg_color @bb_accent;
+
+toolbar.app-header .app-name,
+toolbar.app-header label { color: #f6e9d6; text-shadow: 0 -1px 0 alpha(black, .35); }
+
+actionbar.app-statusbar > revealer > box {
+  background-image: linear-gradient(to bottom, #7a5236, #5a3b25);
+  border-top-color: #2e1d11;
+}
+actionbar.app-statusbar label, actionbar.app-statusbar image { color: #f6e9d6; text-shadow: none; }

@@ -1,4 +1,4 @@
-/* Graphite: Mac OS X's grey appearance applied to the default look.
+/* Graphite: a grey appearance applied to the Classic look.
  * Only the palette changes; every rule of the base theme picks it up. */
 
 @define-color bb_accent          #6b7480;

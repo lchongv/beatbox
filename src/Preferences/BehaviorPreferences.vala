@@ -122,11 +122,10 @@ public class BeatBox.AppearancePreferences : SimplePreferences {
 		skinInfo.max_width_chars = 60;
 		skinInfo.get_style_context().add_class("dim-label");
 		var skins = Skins.available();
-		skinChooser.append("", _("None"));
 		foreach (var skin in skins)
 			skinChooser.append(skin.id, skin.name);
 		if (!skinChooser.set_active_id(App.settings.main.skin))
-			skinChooser.active_id = "";
+			skinChooser.active_id = Skins.DEFAULT;
 		var openSkins = new Button.with_label(_("Open Skins Folder"));
 		openSkins.clicked.connect(() => {
 			DirUtils.create_with_parents(Skins.user_dir(), 0755);
@@ -141,7 +140,7 @@ public class BeatBox.AppearancePreferences : SimplePreferences {
 		add_row(skinBox);
 		add_row(skinInfo);
 		skinChooser.changed.connect(() => {
-			string id = skinChooser.active_id ?? "";
+			string id = skinChooser.active_id ?? Skins.DEFAULT;
 			App.settings.main.skin = id;
 			Skins.apply(id); // live preview
 			skinInfo.label = _("Add more skins by copying them into %s").printf(Skins.user_dir());

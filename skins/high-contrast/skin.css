@@ -1,0 +1,61 @@
+/* High contrast: black and white with yellow selections over the Classic
+ * look; no gradients, no stripes, strong borders and a visible focus. */
+
+@define-color bb_chrome_top      #000000;
+@define-color bb_chrome_mid      #000000;
+@define-color bb_chrome_bottom   #000000;
+@define-color bb_chrome_border   #ffffff;
+@define-color bb_accent          #ffd400;
+@define-color bb_accent_light    #ffe566;
+@define-color bb_sidebar_top     #000000;
+@define-color bb_sidebar_bottom  #000000;
+@define-color bb_sidebar_border  #ffffff;
+@define-color bb_sidebar_text    #ffffff;
+@define-color bb_sidebar_heading #ffd400;
+@define-color bb_row_a           #ffffff;
+@define-color bb_row_b           #ffffff;
+@define-color bb_detail_bg       #ffffff;
+@define-color bb_detail_border   #000000;
+@define-color bb_lcd_top         #000000;
+@define-color bb_lcd_mid         #000000;
+@define-color bb_lcd_bottom      #000000;
+@define-color bb_lcd_border      #ffd400;
+@define-color bb_lcd_text        #ffd400;
+@define-color bb_lcd_dim         #ffffff;
+@define-color theme_selected_bg_color @bb_accent;
+@define-color theme_selected_fg_color #000000;
+
+toolbar.app-header label { color: #ffffff; text-shadow: none; }
+
+toolbar.app-header button:not(.traffic-light),
+toolbar.app-header toolbutton.transport-button > button,
+toolbar.app-header toolitem button.round-menu {
+  background-image: none;
+  background-color: #000000;
+  border: 2px solid #ffffff;
+  color: #ffffff;
+  box-shadow: none;
+}
+toolbar.app-header toolbutton.transport-button > button:hover,
+toolbar.app-header button:not(.traffic-light):hover { background-color: #333333; }
+
+treeview.tracklist, treeview.tracklist.view { color: #000000; }
+treeview.view header button { background-image: none; background-color: #ffffff; color: #000000; border-color: #000000; }
+
+*:focus { outline: 2px solid #ffd400; outline-offset: -2px; }
+
+entry.search-bar { background-color: #ffffff; color: #000000; border: 2px solid #000000; }
+
+actionbar.app-statusbar > revealer > box {
+  background-image: none;
+  background-color: #000000;
+  border-top: 2px solid #ffffff;
+  box-shadow: none;
+}
+actionbar.app-statusbar label, actionbar.app-statusbar image { color: #ffffff; text-shadow: none; }
+
+/* the app name sits on the black title bar, outside the toolbar */
+.app-name { color: #ffffff; opacity: 1; }
+
+/* black on the yellow selection, like the track lists */
+treeview.sidebar:selected, treeview.sidebar.view:selected { color: #000000; }

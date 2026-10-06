@@ -1,5 +1,5 @@
-/* Native: the built-in look is dropped (Native=true in skin.ini).
- * Only the colors BeatBox paints by hand follow the GTK theme here. */
+/* Adwaita dark: as the Adwaita skin, with Dark=true in skin.ini.
+ * Only the colors BeatBox paints by hand follow the theme here. */
 
 @define-color bb_row_a         @theme_base_color;
 @define-color bb_row_b         shade(@theme_base_color, 0.95);
@@ -37,3 +37,16 @@ toolbar.app-header:backdrop {
   box-shadow: none;
   border-bottom: 1px solid @borders;
 }
+
+/* the app menu shows the square app icon here (MenuIcon=square in skin.ini):
+ * no frame around it, just a hover like the title buttons */
+toolbar.app-header toolitem button.round-menu {
+  padding: 0;
+  border: none;
+  border-radius: 8px;
+  background: none;
+  box-shadow: none;
+}
+toolbar.app-header toolitem button.round-menu:hover  { background-color: alpha(@theme_fg_color, .1); }
+toolbar.app-header toolitem button.round-menu:active,
+toolbar.app-header toolitem button.round-menu:checked { background-color: alpha(@theme_fg_color, .2); }
