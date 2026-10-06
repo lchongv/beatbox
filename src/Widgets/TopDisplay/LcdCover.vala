@@ -2,7 +2,8 @@
  * The playing album's cover at the left edge of the LCD, as tall as the LCD
  * itself: it touches the top, bottom and left borders (its outer corners
  * follow the LCD's rounded ones). Shown only when Preferences ask for it and
- * the playing media is a song.
+ * the playing media is a song, or a station: its logo from radio-browser.info,
+ * or a generic radio.
  */
 
 using Gtk;
@@ -14,6 +15,7 @@ public class BeatBox.LcdCover : Image {
 
 	Gdk.Pixbuf? source = null;  // the cover, unscaled
 	int side = 0;               // current size of the rendered square
+	static Gee.HashSet<string> logos_asked = new Gee.HashSet<string> (); // one lookup per station and run
 
 	public LcdCover () {
 		no_show_all = true;
@@ -29,9 +31,17 @@ public class BeatBox.LcdCover : Image {
 
 	void refresh () {
 		var m = App.playback.media_active ? App.playback.current_media : null;
-		if (!App.settings.main.lcd_show_cover || m == null || m.media_type != MediaType.SONG) {
+		if (!App.settings.main.lcd_show_cover || m == null || (m.media_type != MediaType.SONG && m.media_type != MediaType.STATION)) {
 			source = null;
 			hide ();
+			return;
+		}
+
+		if (m.media_type == MediaType.STATION) {
+			source = station_logo (m);
+			side = 0;
+			render (side_for_now ());
+			show ();
 			return;
 		}
 
@@ -131,17 +141,87 @@ public class BeatBox.LcdCover : Image {
 		win.show_all ();
 	}
 
+	static string logo_path (Media station) {
+		return Path.build_filename (App.settings.get_cache_dir (), "station-logos", Checksum.compute_for_string (ChecksumType.MD5, station.uri));
+	}
+
+	/** The station's logo if it is in the cache, otherwise a generic radio while the logo is looked up */
+	Gdk.Pixbuf? station_logo (Media station) {
+		var path = logo_path (station);
+		try {
+			return new Gdk.Pixbuf.from_file (path);
+		} catch (Error err) {}
+
+		if (!(station.uri in logos_asked)) {
+			logos_asked.add (station.uri);
+			string uri = station.uri, name = station.title;
+			try {
+				new Thread<void*>.try (null, () => {
+					if (fetch_logo (uri, name, path))
+						Idle.add (() => {
+							var m = App.playback.media_active ? App.playback.current_media : null;
+							if (m != null && m.uri == uri)
+								refresh ();
+							return Source.REMOVE;
+						});
+					return null;
+				});
+			} catch (Error err) {
+				warning ("Could not start the station logo lookup: %s", err.message);
+			}
+		}
+		try {
+			return new Gdk.Pixbuf.from_resource_at_scale ("/net/launchpad/beatbox/radio.svg", 256, 256, true);
+		} catch (Error err) {
+			return null;
+		}
+	}
+
+	/** Looks the station up on radio-browser.info by its stream, then by its exact name, and saves
+	 *  the first logo that loads into path. Blocking. */
+	static bool fetch_logo (string uri, string name, string path) {
+		string server = DirectoryDialog.radio_server ();
+		string[] queries = { "/json/stations/byurl?url=" + Uri.escape_string (uri, null, false),
+		                     "/json/stations/bynameexact/" + Uri.escape_string (name, null, false) + "?order=votes&reverse=true" };
+		foreach (var query in queries) {
+			var stations = Http.json_objects (Http.fetch (server + query));
+			if (stations == null)
+				continue;
+			foreach (var o in stations) {
+				string favicon = o.get_string_member_with_default ("favicon", "");
+				if (favicon == "")
+					continue;
+				var bytes = Http.fetch_bytes (favicon);
+				if (bytes == null)
+					continue;
+				try {
+					var loader = new Gdk.PixbufLoader ();
+					loader.write (bytes.get_data ());
+					loader.close ();
+					if (loader.get_pixbuf () == null)
+						continue;
+					DirUtils.create_with_parents (Path.get_dirname (path), 0755);
+					FileUtils.set_data (path, bytes.get_data ());
+					return true;
+				} catch (Error err) {} // not an image this build can read
+			}
+		}
+		return false;
+	}
+
 	int side_for_now () {
 		int h = get_allocated_height ();
 		return (h > 16) ? h : 54;  // until the first allocation
 	}
 
-	/** Scale the cover to a square of the given side, rounding its left corners */
+	/** Scale the cover to fit a square of the given side (a logo may not be square), rounding its left corners */
 	void render (int new_side) {
 		if (source == null || new_side == side)
 			return;
 		side = new_side;
-		var scaled = source.scale_simple (side, side, Gdk.InterpType.BILINEAR);
+		double k = double.min ((double)side / source.width, (double)side / source.height);
+		int w = int.max (1, (int)(source.width * k)), h = int.max (1, (int)(source.height * k));
+		var scaled = source.scale_simple (w, h, Gdk.InterpType.BILINEAR);
 
 		var surface = new Cairo.ImageSurface (Cairo.Format.ARGB32, side, side);
 		var cr = new Cairo.Context (surface);
@@ -152,7 +232,7 @@ public class BeatBox.LcdCover : Image {
 		cr.arc (CORNER, side - CORNER, CORNER, 0.5 * Math.PI, Math.PI);
 		cr.close_path ();
 		cr.clip ();
-		Gdk.cairo_set_source_pixbuf (cr, scaled, 0, 0);
+		Gdk.cairo_set_source_pixbuf (cr, scaled, (side - w) / 2, (side - h) / 2);
 		cr.paint ();
 		set_from_pixbuf (Gdk.pixbuf_get_from_surface (surface, 0, 0, side, side));
 	}

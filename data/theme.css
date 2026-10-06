@@ -123,7 +123,8 @@ toolbar.app-header .lcd button:not(.traffic-light):active {
   min-height: 6px;
 }
 .lcd scale slider {
-  /* diamond position marker */
+  /* diamond position marker; GTK3 rasterizes a CSS image at the SVG's own size and then
+     scales the pixels, so the marker SVGs are 96 px: shrinking keeps them crisp */
   background-image: url("resource:///net/launchpad/beatbox/diamond.svg");
   background-color: transparent;
   background-size: 100% 100%;
@@ -134,6 +135,15 @@ toolbar.app-header .lcd button:not(.traffic-light):active {
   margin: -5px -4px;
   box-shadow: none;
 }
+/* a radio station: no position, a barber pole running left with the marker in its middle */
+.lcd scale.live trough {
+  background-image: repeating-linear-gradient(-45deg, alpha(@bb_lcd_text, .45) 0px, alpha(@bb_lcd_text, .45) 3.5355px,
+                                              alpha(@bb_lcd_text, .12) 3.5355px, alpha(@bb_lcd_text, .12) 7.0711px);
+  background-size: 10px 10px; /* two stripes on the diagonal: the tiles meet seamlessly */
+  animation: lcd-barber-pole 0.5s linear infinite;
+}
+.lcd scale.live highlight { background-color: transparent; }
+@keyframes lcd-barber-pole { from { background-position: 0 0; } to { background-position: -10px 0; } }
 
 /* ===== View toggle (segmented) and generic header buttons ===== */
 toolbar.app-header button:not(.traffic-light) {
@@ -265,3 +275,4 @@ button.traffic-light.minimize { background-image: radial-gradient(circle at 50% 
 button.traffic-light.maximize { background-image: radial-gradient(circle at 50% 35%, #a6ec8f, #3fb52c 60%, #288a19); }
 button.traffic-light:hover    { box-shadow: inset 0 1px 1px alpha(white, .8), 0 0 0 1px alpha(black, .15); }
 button.traffic-light:active   { background-image: none; background-color: shade(#888, .9); }
+.app-name { font-size: 8pt; font-weight: bold; opacity: .6; }

@@ -33,6 +33,7 @@ public class BeatBox.TimeScale : Box {
 	private Scale scale;
 	private GestureMultiPress click_gesture; // GTK3 controllers need a reference
 	private uint nyan_id = 0;
+	private bool live = false;
 	
 	private const string WIDGET_STYLESHEET = """
         .scale.slider,
@@ -124,6 +125,21 @@ public class BeatBox.TimeScale : Box {
 		}
 	}
 	
+	/** A radio station has no position: no times, a barber pole (see theme.css) and the marker in its middle */
+	public void set_live(bool live) {
+		this.live = live;
+		left_time.visible = right_time.visible = !live;
+		if(live) {
+			scale.get_style_context().add_class("live");
+			set_scale_range(0, 2);
+			set_scale_value(1);
+		}
+		else {
+			scale.get_style_context().remove_class("live");
+			value_changed();
+		}
+	}
+	
 	/** scale functions **/
 	public void set_scale_range(double min, double max) {
 		scale.set_range(min, max);
@@ -139,6 +155,8 @@ public class BeatBox.TimeScale : Box {
 	
 	// the point of the media at x pixels from the scale's left
 	void seek_to(double x) {
+		if(live)
+			return;
 		int point_x = (int)x;
 		double mediatime = ((double)point_x / (double)scale.get_allocated_width()) * scale.get_adjustment().upper;
 		
@@ -156,13 +174,15 @@ public class BeatBox.TimeScale : Box {
 	
 	void player_position_update(int64 position) {
 		double sec = 0.0;
-		if(App.playback.current_media != null) {
+		if(App.playback.current_media != null && !live) {
 			sec = ((double)position/1000000000);
 			set_scale_value(sec);
 		}
 	}
 	
 	void value_changed() {
+		if(live)
+			return;
 		string current_time = "";
 		string total_time = "";
 		
@@ -195,7 +215,7 @@ public class BeatBox.TimeScale : Box {
 	}
 	
 	void medias_updated(Gee.Collection<Media> ids) {
-		if(App.playback.current_media != null) {
+		if(App.playback.current_media != null && !live) {
 			set_scale_range(0.0, (double)App.playback.current_media.length);
 			value_changed();
 		}

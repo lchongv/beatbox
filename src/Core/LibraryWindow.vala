@@ -520,6 +520,10 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 				else maximize();
 			});
 		}
+		var name = new Label("BeatBox " + Build.VERSION); // the merged title bar has no title of its own
+		name.get_style_context().add_class("app-name");
+		name.margin_start = 4;
+		box.add(name);
 		return box;
 	}
 	

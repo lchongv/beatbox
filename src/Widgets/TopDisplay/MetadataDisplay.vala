@@ -73,9 +73,8 @@ public class BeatBox.MetadataDisplay : BeatBox.Display, Box {
         this.set_orientation(Orientation.VERTICAL);
         add(label);
         add(second_line);
-        add(time_scale);
-        station_label.vexpand = true;
         add(station_label);
+        add(time_scale);
         
         App.library.medias_updated.connect(medias_updated);
 		App.playback.media_played.connect(media_played);
@@ -155,19 +154,18 @@ public class BeatBox.MetadataDisplay : BeatBox.Display, Box {
 					fetch_lyrics(m);
 			}
 			
-			if(!App.playback.current_media.can_seek) {
-				label.margin_top = 2;
-				time_scale.hide();
+			label.margin_top = 2;
+			time_scale.show_all();
+			time_scale.set_live(!m.can_seek);
+			if(!m.can_seek) {
 				station_label.show();
 				
-				if(App.playback.current_media.get_secondary_display_text() != null) {
-					station_label.set_markup(App.playback.current_media.get_secondary_display_text());
+				if(m.get_secondary_display_text() != null) {
+					station_label.set_markup(m.get_secondary_display_text());
 				}
 			}
 			else {
-				label.margin_top = 2;
 				station_label.hide();
-				time_scale.show_all();
 			}
 		}
 		else {
