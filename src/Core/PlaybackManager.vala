@@ -337,8 +337,8 @@ public class BeatBox.PlaybackManager : GLib.Object, BeatBox.PlaybackInterface {
 			return;
 		}
 		
-		for(int i = 0; i < playback_reference_list.size; ++i) {
-			if(playback_reference_list.get(i) == current_media) {
+		for(int i = 0; i < playback_used_list.size; ++i) {
+			if(playback_used_list.get(i) == current_media) {
 				current_index = i;
 				return;
 			}
@@ -391,7 +391,8 @@ public class BeatBox.PlaybackManager : GLib.Object, BeatBox.PlaybackInterface {
 	}
 	
 	bool skipped_in_shuffle(Media m) {
-		return m.skip_shuffle && shuffle_mode == ShuffleMode.ALL && !_playing_queued_song;
+		// and songs with no file (last.fm suggestions in Similar) can't be played in a row
+		return (m.skip_shuffle && shuffle_mode == ShuffleMode.ALL && !_playing_queued_song) || m.uri == "";
 	}
 	
 	Media? step_next(bool play) {
@@ -427,11 +428,11 @@ public class BeatBox.PlaybackManager : GLib.Object, BeatBox.PlaybackInterface {
 			else if(current_index >= 0 && current_index < (playback_used_list.size - 1)){
 				// make sure we are repeating what we need to be
 				if(repeat_mode == RepeatMode.ARTIST && playback_used_list.get(current_index + 1).artist != playback_used_list.get(current_index).artist) {
-					while(playback_used_list.get(current_index - 1).artist == current_media.artist)
+					while(current_index > 0 && playback_used_list.get(current_index - 1).artist == current_media.artist)
 						--current_index;
 				}
 				else if(repeat_mode == RepeatMode.ALBUM && playback_used_list.get(current_index + 1).album != playback_used_list.get(current_index).album) {
-					while(playback_used_list.get(current_index - 1).album == current_media.album)
+					while(current_index > 0 && playback_used_list.get(current_index - 1).album == current_media.album)
 						--current_index;
 				}
 				else
@@ -482,11 +483,11 @@ public class BeatBox.PlaybackManager : GLib.Object, BeatBox.PlaybackInterface {
 		else if(current_index > 0 && current_index < playback_used_list.size){
 			// make sure we are repeating what we need to be
 			if(repeat_mode == RepeatMode.ARTIST && playback_used_list.get(current_index - 1).artist != playback_used_list.get(current_index).artist) {
-				while(playback_used_list.get(current_index + 1).artist == current_media.artist)
+				while(current_index < playback_used_list.size - 1 && playback_used_list.get(current_index + 1).artist == current_media.artist)
 					++current_index;
 			}
 			else if(repeat_mode == RepeatMode.ALBUM && playback_used_list.get(current_index - 1).album != playback_used_list.get(current_index).album) {
-				while(playback_used_list.get(current_index + 1).album == current_media.album)
+				while(current_index < playback_used_list.size - 1 && playback_used_list.get(current_index + 1).album == current_media.album)
 					++current_index;
 			}
 			else
