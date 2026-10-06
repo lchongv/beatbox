@@ -81,6 +81,19 @@ It bundles the libraries of the system that builds it, so it runs on
 distributions with that glibc or a newer one; GitHub's is built on Ubuntu
 22.04 (glibc 2.35: Debian 12, Fedora 36 and later).
 
+Plugins
+-------
+
+Plugins are turned on and off in Preferences › Plugins. Each one is a folder
+in ~/.local/share/beatbox/plugins (or in the plugins folder installed with
+BeatBox) holding `<id>.plugin`, a key file with Module, Name and Description,
+and `lib<id>.so`, built against libbeatbox-core and exporting
+`BeatBox.Plugin beatbox_plugin_create ()`. The plugin gets the playback, the
+library, the window and the settings in `activate (PluginHost host)` and
+undoes what it did in `deactivate ()`. plugins/nowplayingfile is a complete
+example (it keeps the playing song in ~/.cache/beatbox/now-playing.txt) and
+core/Plugin.vala describes the interface.
+
 Files
 -----
 

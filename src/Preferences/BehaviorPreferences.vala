@@ -233,6 +233,38 @@ public class BeatBox.MiniPlayerPreferences : SimplePreferences {
 	}
 }
 
+/** Turning the plugins found on disk on and off (see core/Plugin.vala) */
+public class BeatBox.PluginsPreferences : SimplePreferences {
+	public override string title { get { return _("Plugins"); } }
+	
+	public PluginsPreferences() {
+		add_heading(_("Plugins"));
+		if(App.plugins.plugins.size == 0) {
+			var none = new Label(_("No plugins are installed."));
+			none.get_style_context().add_class("dim-label");
+			none.xalign = 0.0f;
+			add_row(none);
+		}
+		foreach(var p in App.plugins.plugins) {
+			var check = add_check(p.name, p.active);
+			check.toggled.connect(() => {
+				App.plugins.set_enabled(p, check.active);
+				if(check.active != p.active) // it couldn't be loaded
+					check.active = p.active;
+			});
+			if(p.description != "") {
+				var text = new Label(p.description);
+				text.get_style_context().add_class("dim-label");
+				text.xalign = 0.0f;
+				text.wrap = true;
+				text.max_width_chars = 60;
+				text.margin_start = 24;
+				add_row(text);
+			}
+		}
+	}
+}
+
 /** The cover grid and where album art comes from */
 public class BeatBox.CoverPreferences : SimplePreferences {
 	public override string title { get { return _("Album Art"); } }
