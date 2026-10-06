@@ -109,7 +109,7 @@ espectro en el LCD y el gato Nyan; 0.13.0 (5 oct 2026), la radio en el LCD (barr
 de la emisora) y el paquete de Arch; 0.14.0 (6 oct 2026), el panel de información, un editor de canciones
 más completo, el texto del LCD que se desplaza, Preferencias en páginas más pequeñas y listas que conservan
 su posición; 0.15.0 (6 oct 2026), Siguiente/Anterior corregidos con el aleatorio, copia de la colección
-al actualizar, iPod y CD marcados como experimentales y un sistema de complementos. Lo siguiente es la migración real a GTK4 (ver «Fuera de alcance»).
+al actualizar, iPod y CD marcados como experimentales y un sistema de complementos; 0.16.0 (6 oct 2026), complementos en Python, «Instalar complemento…» y su guía, Adwaita como apariencia por defecto con tres apariencias nuevas y capturas en Preferencias, y una prueba de humo en el CI. Lo siguiente es la migración real a GTK4 (ver «Fuera de alcance»).
 
 ## Hecho en 0.9 y 0.10
 1. [x] Reproducción sin cortes (ya existía; verificada) + ReplayGain + fundido entre canciones (0–12 s, Preferencias › Reproducción; segundo pipeline con curva de potencia constante).
