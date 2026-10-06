@@ -31,6 +31,8 @@
 public class BeatBox.GStreamerTagger : GLib.Object {
 	int size;
 	static int DISCOVER_SET_SIZE = 50;
+	// per file; long files on a slow disk or a network folder need more than 10 s
+	const Gst.ClockTime TIMEOUT = 30 * Gst.SECOND;
 	Gst.PbUtils.Discoverer d;
 	Gst.PbUtils.Discoverer art_d;
 	Gee.HashMap<string, int> uri_to_id;
@@ -42,7 +44,7 @@ public class BeatBox.GStreamerTagger : GLib.Object {
 	
 	public GStreamerTagger() {
 		try {
-			d = new Gst.PbUtils.Discoverer((Gst.ClockTime)(10*Gst.SECOND));
+			d = new Gst.PbUtils.Discoverer(TIMEOUT);
 		}
 		catch(Error err) {
 			critical("Metadata reader could not create discoverer object: %s\n", err.message);
@@ -51,7 +53,7 @@ public class BeatBox.GStreamerTagger : GLib.Object {
 		d.finished.connect(finished);
 		
 		try {
-			art_d = new Gst.PbUtils.Discoverer((Gst.ClockTime)(10*Gst.SECOND));
+			art_d = new Gst.PbUtils.Discoverer(TIMEOUT);
 		}
 		catch(Error err) {
 			critical("Metadata reader could not create discoverer object: %s\n", err.message);
@@ -64,7 +66,7 @@ public class BeatBox.GStreamerTagger : GLib.Object {
 	void finished() {
 		if(!App.operations.operation_cancelled && uri_queue.size > 0) {
 			try {
-				d = new Gst.PbUtils.Discoverer((Gst.ClockTime)(10*Gst.SECOND));
+				d = new Gst.PbUtils.Discoverer(TIMEOUT);
 			}
 			catch(Error err) {
 				critical("Metadata reader could not create discoverer object: %s\n", err.message);
