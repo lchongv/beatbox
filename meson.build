@@ -1,4 +1,4 @@
-project('beatbox', 'vala', 'c', version: '0.15.8')
+project('beatbox', 'vala', 'c', version: '0.15.9')
 
 gnome = import('gnome')
 i18n = import('i18n')
@@ -136,7 +136,9 @@ core_sources = files(
 # Python plugins: libpeas-2 loads them, and the typelib describes libbeatbox-core to them
 peas_dep = dependency('libpeas-2', required: get_option('python'))
 gir_compiler = find_program('g-ir-compiler', required: get_option('python'))
-python_plugins = peas_dep.found() and gir_compiler.found()
+# libpeas 2.0.x (Ubuntu 24.04) has no libpeas-2.vapi
+peas_vapi = meson.get_compiler('vala').find_library('libpeas-2', required: get_option('python'))
+python_plugins = peas_dep.found() and gir_compiler.found() and peas_vapi.found()
 
 core = shared_library('beatbox-core', core_sources, config_vala,
   dependencies: deps,
@@ -324,7 +326,7 @@ if taglib_dep.version().version_compare('>= 2.0')
   app_vala_args += ['-D', 'HAVE_EMBED_COVER']
 endif
 
-executable('beatbox', app_sources, embed_cover_sources, resources, icon_resources, skin_resources,
+beatbox_exe = executable('beatbox', app_sources, embed_cover_sources, resources, icon_resources, skin_resources,
   dependencies: app_deps,
   vala_args: app_vala_args,
   install_rpath: prefix / get_option('libdir'),
@@ -347,3 +349,6 @@ test('ellipsize', executable('test-ellipsize', 'tests/ellipsize.vala', dependenc
 test('list-utils', executable('test-list-utils', 'tests/list-utils.vala', dependencies: core_dep))
 test('shortcuts', executable('test-shortcuts', 'tests/shortcuts.vala', dependencies: core_dep))
 test('http-json', executable('test-http-json', 'tests/http-json.vala', dependencies: core_dep))
+# BeatBox itself under Xvfb, driven through MPRIS (skipped without Xvfb, dbus-run-session, GStreamer's tools)
+test('smoke', find_program('python3'), args: [files('tests/smoke.py'), beatbox_exe],
+  is_parallel: false, timeout: 240)
