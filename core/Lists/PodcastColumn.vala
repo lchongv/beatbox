@@ -1,4 +1,4 @@
-public enum PodcastColumn {
+public enum BeatBox.PodcastColumn {
 	ROWID,
 	ICON,
 	EPISODE,

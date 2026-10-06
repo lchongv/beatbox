@@ -1,4 +1,4 @@
-public enum DuplicateColumn {
+public enum BeatBox.DuplicateColumn {
 	ROWID,
 	CHECKBOX,
 	ICON,
