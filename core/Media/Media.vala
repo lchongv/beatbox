@@ -101,6 +101,25 @@ public abstract class BeatBox.Media : GLib.Object {
 	public uint samplerate { get; set; default = 0; }
 	public string lyrics { get; set; default = ""; }
 	public string lastfm_url { get; set; default = ""; }
+	// the editor's Sorting and Options tabs; an empty sort name sorts by the name itself
+	public string sort_title { get; set; default = ""; }
+	public string sort_artist { get; set; default = ""; }
+	public string sort_album_artist { get; set; default = ""; }
+	public string sort_album { get; set; default = ""; }
+	public string sort_composer { get; set; default = ""; }
+	public bool compilation { get; set; default = false; }
+	public bool skip_shuffle { get; set; default = false; }       // shuffled play passes it by
+	public int volume_adjust { get; set; default = 0; }           // -100..100 %, see ReplayGain.vala
+	public bool remember_position { get; set; default = false; }  // resumes where it was left, like podcasts
+	
+	/* What the lists sort by: the Sorting tab's names, otherwise the names themselves (lower case) */
+	public string title_key { owned get { return (sort_title != "" ? sort_title : title).down(); } }
+	public string album_key { owned get { return (sort_album != "" ? sort_album : album).down(); } }
+	public string album_artist_key { owned get {
+		if (sort_album_artist != "")
+			return sort_album_artist.down();
+		return (album_artist == artist && sort_artist != "") ? sort_artist.down() : album_artist.down();
+	} }
 	
 	// THESE SHOULD ONLY BE IN PODCAST
 	public string rss_uri { get; set; default = ""; }

@@ -127,6 +127,30 @@ public class BeatBox.LastfmPreferences : GLib.Object, PreferencesSection {
 		}
 		
 		build_listenbrainz();
+		build_acoustid();
+	}
+	
+	/* AcoustID: the application key the song editor's Identify button needs */
+	void build_acoustid() {
+		var heading = new Label("");
+		heading.xalign = 0.0f;
+		heading.set_markup("<b>AcoustID</b>");
+		heading.margin_top = 12;
+		content.add(heading);
+		
+		var info = new Label("");
+		info.xalign = 0.0f;
+		info.wrap = true;
+		info.max_width_chars = 60;
+		info.set_markup(_("To identify songs by their sound (Edit Song Info › Identify), register an application at %s and paste its key here.")
+		                .printf("<a href=\"https://acoustid.org/new-application\">acoustid.org</a>"));
+		content.add(UI.wrap_alignment(info, 0, 0, 0, 10));
+		
+		var key = new Entry();
+		key.placeholder_text = _("Application key");
+		key.text = App.settings.lastfm.acoustid_key;
+		key.changed.connect(() => { App.settings.lastfm.acoustid_key = key.text.strip(); });
+		content.add(UI.wrap_alignment(key, 0, 0, 0, 10));
 	}
 	
 	/* ListenBrainz: the user token from listenbrainz.org/settings, checked before it is kept */

@@ -1,4 +1,4 @@
-project('beatbox', 'vala', 'c', version: '0.13.1')
+project('beatbox', 'vala', 'c', version: '0.13.2')
 
 gnome = import('gnome')
 i18n = import('i18n')
@@ -152,6 +152,7 @@ app_sources = files(
   'src/Core/Skins.vala',
   'src/Core/FolderWatcher.vala',
   'src/Core/CoverEmbedder.vala',
+  'src/Core/AcoustId.vala',
   'src/Core/Launcher.vala',
   'src/Core/Logger.vala',
   'src/CellRenderers/SideBarRenderer.vala',
@@ -230,6 +231,7 @@ app_sources = files(
   'src/Widgets/RatingWidget.vala',
   'src/Widgets/SpaceWidget.vala',
   'src/Widgets/StatusBar.vala',
+  'src/Widgets/TrackReport.vala',
   'src/Widgets/CoverFlow.vala',
   'src/Widgets/AlbumWall.vala',
   'src/Widgets/AdvancedSearchBox.vala',
@@ -266,14 +268,14 @@ resources = gnome.compile_resources('beatbox-resources', 'data/beatbox.gresource
 icon_resources = gnome.compile_resources('beatbox-icons', 'images/icons.gresource.xml', source_dir: 'images')
 skin_resources = gnome.compile_resources('beatbox-skins', 'skins/skins.gresource.xml', source_dir: 'skins')
 
-# Writing album art into files needs TagLib's complex properties (TagLib 2.0)
+# Writing album art and the full set of tags into files needs TagLib 2.0's C property API
 embed_cover_sources = []
 app_vala_args = gpod_vala_args
 if gpod_dep.found()
   app_sources += files('src/Devices/iPodDevice.vala')
 endif
 if taglib_dep.version().version_compare('>= 2.0')
-  embed_cover_sources = files('src/C/embed-cover.c')
+  embed_cover_sources = files('src/C/embed-cover.c', 'src/C/write-tags.c')
   app_vala_args += ['-D', 'HAVE_EMBED_COVER']
 endif
 

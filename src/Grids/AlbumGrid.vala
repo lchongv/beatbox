@@ -177,17 +177,30 @@ public class BeatBox.AlbumGrid : GenericGrid {
 		Album a = (Album)o_a;
 		Album b = (Album)o_b;
 		
-		if(a.get_album_artist() == b.get_album_artist()) {
-			if(a.get_album() == b.get_album()) {
+		// by the sort names of a song of each (the Sorting tab), if they have any
+		var ma = first_media(a);
+		var mb = first_media(b);
+		string artist_a = (ma != null) ? ma.album_artist_key : a.get_album_artist().down();
+		string artist_b = (mb != null) ? mb.album_artist_key : b.get_album_artist().down();
+		if(artist_a == artist_b) {
+			string album_a = (ma != null) ? ma.album_key : a.get_album().down();
+			string album_b = (mb != null) ? mb.album_key : b.get_album().down();
+			if(album_a == album_b) {
 				return a.count() - b.count();
 			}
 			else {
-				return advanced_string_compare(a.get_album(), b.get_album());
+				return advanced_string_compare(album_a, album_b);
 			}
 		}
 		else {
-			return advanced_string_compare(a.get_album_artist(), b.get_album_artist());
+			return advanced_string_compare(artist_a, artist_b);
 		}
+	}
+	
+	static Media? first_media(Album album) {
+		foreach(var m in album.get_medias())
+			return m;
+		return null;
 	}
 	
 	int advanced_string_compare(string a, string b) {

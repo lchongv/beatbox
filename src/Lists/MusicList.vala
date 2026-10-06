@@ -631,14 +631,14 @@ public class BeatBox.MusicList : GenericList {
 				rv = (int)((int)a_media.track - (int)b_media.track);
 		}
 		else if(col == MusicColumn.TITLE) {
-			rv = advanced_string_compare(a_media.title.down(), b_media.title.down());
+			rv = advanced_string_compare(a_media.title_key, b_media.title_key);
 		}
 		else if(col == MusicColumn.LENGTH) {
 			rv = (int)(a_media.length - b_media.length);
 		}
 		else if(col == MusicColumn.ARTIST) {
-			if(a_media.album_artist.down() == b_media.album_artist.down()) {
-				if(a_media.album.down() == b_media.album.down()) {
+			if(a_media.album_artist_key == b_media.album_artist_key) {
+				if(a_media.album_key == b_media.album_key) {
 					if(a_media.album_number == b_media.album_number) {
 						if(a_media.track == b_media.track)
 							rv = advanced_string_compare(a_media.uri, b_media.uri);
@@ -649,13 +649,13 @@ public class BeatBox.MusicList : GenericList {
 						rv = (int)((int)a_media.album_number - (int)b_media.album_number);
 				}
 				else
-					rv = advanced_string_compare(a_media.album.down(), b_media.album.down());
+					rv = advanced_string_compare(a_media.album_key, b_media.album_key);
 			}
 			else
-				rv = advanced_string_compare(a_media.album_artist.down(), b_media.album_artist.down());
+				rv = advanced_string_compare(a_media.album_artist_key, b_media.album_artist_key);
 		}
 		else if(col == MusicColumn.ALBUM) {
-			if(a_media.album.down() == b_media.album.down()) {
+			if(a_media.album_key == b_media.album_key) {
 				if(a_media.album_number == b_media.album_number) {
 					if(a_media.track == b_media.track)
 						rv = advanced_string_compare(a_media.uri, b_media.uri);
@@ -670,7 +670,7 @@ public class BeatBox.MusicList : GenericList {
 				if(a_media.album == "")
 					rv = 1;
 				else
-					rv = advanced_string_compare(a_media.album.down(), b_media.album.down());
+					rv = advanced_string_compare(a_media.album_key, b_media.album_key);
 			}
 		}
 		else if(col == MusicColumn.GENRE) {

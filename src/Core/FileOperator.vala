@@ -27,6 +27,11 @@
 
 using Gee;
 
+#if HAVE_EMBED_COVER
+[CCode (cname = "beatbox_write_tags")]
+extern bool beatbox_write_tags (string path, string[] keys, string[] values);
+#endif
+
 public class BeatBox.FileOperator : Object, FileInterface {
 	GStreamerTagger tagger;
 	GStreamerTagger art_tagger;
@@ -184,6 +189,11 @@ public class BeatBox.FileOperator : Object, FileInterface {
 			}
 			
 			if(App.settings.main.write_metadata_to_file) {
+#if HAVE_EMBED_COVER
+				string path = GLib.File.new_for_uri(s.uri).get_path();
+				if(path == null || !write_all_tags(path, s))
+					debug("Could not save %s.", s.uri);
+#else
 				TagLib.File tag_file;
 				tag_file = new TagLib.File(GLib.File.new_for_uri(s.uri).get_path());
 				
@@ -206,12 +216,31 @@ public class BeatBox.FileOperator : Object, FileInterface {
 				else {
 					debug ("Could not save %s.", s.uri);
 				}
+#endif
 			}
 			
 			if(App.settings.main.update_folder_hierarchy)
 				update_file_hierarchy(s, true, false, true);
 		}
 	}
+	
+#if HAVE_EMBED_COVER
+	static string number_of(uint n, uint total) {
+		return n == 0 ? "" : (total == 0 ? n.to_string() : "%u/%u".printf(n, total));
+	}
+	
+	/** Every field the editor shows, under TagLib's property names */
+	static bool write_all_tags(string path, Media s) {
+		string[] keys = { "TITLE", "ARTIST", "ALBUM", "ALBUMARTIST", "COMPOSER", "GROUPING", "GENRE", "COMMENT", "DATE",
+		                  "TRACKNUMBER", "DISCNUMBER", "BPM", "LYRICS", "COMPILATION",
+		                  "TITLESORT", "ARTISTSORT", "ALBUMARTISTSORT", "ALBUMSORT", "COMPOSERSORT" };
+		string[] values = { s.title, s.artist, s.album, s.album_artist, s.composer, s.grouping, s.genre, s.comment,
+		                    s.year == 0 ? "" : s.year.to_string(), number_of(s.track, s.track_count),
+		                    number_of(s.album_number, s.album_count), s.bpm == 0 ? "" : s.bpm.to_string(), s.lyrics,
+		                    s.compilation ? "1" : "", s.sort_title, s.sort_artist, s.sort_album_artist, s.sort_album, s.sort_composer };
+		return beatbox_write_tags(path, keys, values);
+	}
+#endif
 	
 	// TODO: Library's should have some sort of file naming convention function
 	public GLib.File? get_new_destination(Media s) {

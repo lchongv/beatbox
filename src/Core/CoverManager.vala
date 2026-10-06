@@ -380,7 +380,8 @@ public class BeatBox.CoverManager : Object, BeatBox.CoverInterface {
 		}
 	}
 	
-	Gdk.Pixbuf? download_cover(string artist, string album) {
+	/** Blocking: MusicBrainz's Cover Art Archive, then Apple's catalogue */
+	public Gdk.Pixbuf? download_cover(string artist, string album) {
 		return cover_from_musicbrainz(artist, simplify(album)) ?? cover_from_apple(artist, album);
 	}
 	

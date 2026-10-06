@@ -69,6 +69,9 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 	public Notebook mainViews { get; private set; }
 	public Gtk.Paned sourcesToMedias { get; private set; } //allows for draggable
 	Box contentBox;
+	Gtk.Paned contentToReport; // the lists, and the report on the song playing at their right
+	TrackReport report;
+	ToggleButton reportButton;
 	Box sideBox;
 	
 	// Side box
@@ -449,7 +452,24 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		
 		sourcesToMedias.position = App.settings.saved_state.sidebar_width;
 		sourcesToMedias.pack1(sideBox, false, true);
-		sourcesToMedias.pack2(contentBox, true, true);
+		report = new TrackReport();
+		report.no_show_all = true;
+		contentToReport = new Gtk.Paned(Orientation.HORIZONTAL);
+		contentToReport.pack1(contentBox, true, false);
+		contentToReport.pack2(report, false, false);
+		sourcesToMedias.pack2(contentToReport, true, true);
+		report.size_allocate.connect((a) => {
+			if(report.visible && a.width > 1)
+				App.settings.saved_state.more_width = a.width;
+		});
+		
+		reportButton = new ToggleButton();
+		reportButton.image = App.icons.INFO.render_image(IconSize.MENU);
+		reportButton.relief = ReliefStyle.NONE;
+		reportButton.focus_on_click = false;
+		reportButton.tooltip_text = _("Information about the song playing (Ctrl+Shift+I)");
+		reportButton.toggled.connect(() => show_report(reportButton.active));
+		statusBar.insert_widget(reportButton, false);
 		
 		// The toolbar is the window's title bar: no separate system title bar,
 		// traffic lights in the top-left corner, above the transport buttons
@@ -490,6 +510,7 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		searchField.changed.connect(search_field_changed);
 		
 		show_all();
+		reportButton.active = App.settings.saved_state.more_visible;
 		lcd_logo.visible = !top_display.visible;
 		infoBar.hide();
 		update_sensitivities();
@@ -719,6 +740,21 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		statusBar.set_info(media_type, medias, size, seconds);
 	}
 	
+	/** The report panel at the right, as wide as it was left */
+	void show_report(bool show) {
+		App.settings.saved_state.more_visible = show;
+		if(show) {
+			int width = int.max(App.settings.saved_state.more_width, 260);
+			report.set_size_request(200, -1);
+			report.show();
+			contentToReport.position = int.max(200, contentToReport.get_allocated_width() - width);
+		}
+		else
+			report.hide();
+		if(reportButton.active != show)
+			reportButton.active = show;
+	}
+	
 	public void add_statusbar_widget(Widget w, bool left_side) {
 		statusBar.insert_widget(w, left_side);
 	}
@@ -787,6 +823,7 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 				searchField.grab_focus();
 		});
 		Shortcuts.register("now-playing", _("Now playing"), "<Control>i", () => { show_song_info(!songInfoShown); });
+		Shortcuts.register("song-report", _("Information panel"), "<Control><Shift>i", () => { show_report(!report.visible); });
 		Shortcuts.register("equalizer", _("Equalizer"), "<Control>e", () => { App.actions.show_equalizer.activate(null); });
 		Shortcuts.register("preferences", _("Preferences"), "<Control>comma", () => { App.actions.show_preferences.activate(null); });
 		Shortcuts.register("quit", _("Quit"), "<Control>q", () => { destroy(); });
