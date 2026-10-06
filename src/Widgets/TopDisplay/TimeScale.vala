@@ -32,6 +32,7 @@ public class BeatBox.TimeScale : Box {
 	private Label right_time;
 	private Scale scale;
 	private GestureMultiPress click_gesture; // GTK3 controllers need a reference
+	private uint nyan_id = 0;
 	
 	private const string WIDGET_STYLESHEET = """
         .scale.slider,
@@ -97,6 +98,30 @@ public class BeatBox.TimeScale : Box {
 		
 		App.library.medias_updated.connect(medias_updated);
 		App.playback.media_played.connect(media_played);
+		App.playback.playback_played.connect(update_nyan);
+		App.playback.playback_paused.connect(update_nyan); // stopping pauses too
+		App.settings.main.notify["lcd-marker-shape"].connect(() => update_nyan());
+	}
+	
+	/** The Nyan cat marker runs (its two frames take turns, see App.apply_lcd_style) while the music plays */
+	void update_nyan() {
+		bool run = App.playback.playing && App.settings.main.lcd_marker_shape == "nyan";
+		if(run == (nyan_id != 0))
+			return;
+		if(run) {
+			nyan_id = Timeout.add(120, () => {
+				var style = scale.get_style_context();
+				if(style.has_class("nyan-b"))
+					style.remove_class("nyan-b");
+				else
+					style.add_class("nyan-b");
+				return Source.CONTINUE;
+			});
+		}
+		else {
+			Source.remove(nyan_id);
+			nyan_id = 0;
+		}
 	}
 	
 	/** scale functions **/

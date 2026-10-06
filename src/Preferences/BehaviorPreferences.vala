@@ -190,6 +190,7 @@ public class BeatBox.AppearancePreferences : SimplePreferences {
 		markerShape.append("diamond", _("Diamond"));
 		markerShape.append("circle", _("Circle"));
 		markerShape.append("cup", _("Cup"));
+		markerShape.append("nyan", _("Nyan cat"));
 		if (!markerShape.set_active_id(App.settings.main.lcd_marker_shape))
 			markerShape.active_id = "diamond";
 		add_row(labelled(_("Shape of the position marker:"), markerShape));
