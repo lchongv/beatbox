@@ -27,224 +27,164 @@
 
 using Gtk;
 using Gee;
-
+/**
+ * The "Get Info" window: the editor's pages under a row of capsule tabs
+ * centred on a rounded panel, a check box for writing to the files, and
+ * Previous / Next / Cancel / OK. Previous and Next save, then show the
+ * neighbouring song (Alt+Left / Alt+Right).
+ */
 public class BeatBox.MediaEditor : Window {
 	LinkedList<Media> entire_media_list;
 	LinkedList<Media> current_medias;
 	
-	//for padding around notebook mostly
-	Box content;
-	Box padding;
-	Gtk.Notebook notebook;
-	
-	Collection<int> extra_views;
-	bool have_added_extra_views;
-	
 	MediaEditorInterface editor;
-	
-	EventBox editor_container;
-	Widget editor_widget;
-	
-	InfoViewport info_viewport;
-	bool have_added_info_view;
-	
-	private NavigationArrows nav_arrows;
-	private Button _save;
+	Stack pages;
+	StackSwitcher tabs;
+	Box panel;
+	CheckButton write_to_file;
 	
 	public MediaEditor(LinkedList<Media> entire_media_list, LinkedList<Media> medias) {
 		if(medias.size == 0)
 			return;
 		
-		this.window_position = WindowPosition.CENTER;
-		this.type_hint = Gdk.WindowTypeHint.DIALOG;
-		this.set_modal(true);
-		this.set_transient_for(App.window);
-		this.destroy_with_parent = true;
-		this.set_size_request (520, -1);
-		this.set_resizable(false);
-		
-		content = new Box(Orientation.VERTICAL, 10);
-		padding = new Box(Orientation.HORIZONTAL, 10);
-		
-		extra_views = new LinkedList<int>();
-		
 		this.entire_media_list = entire_media_list;
 		this.current_medias = medias;
 		
-		// Assume all medias are of same type
-		editor = medias.get(0).get_editor_widget();
+		window_position = WindowPosition.CENTER_ON_PARENT;
+		type_hint = Gdk.WindowTypeHint.DIALOG;
+		modal = true;
+		transient_for = App.window;
+		destroy_with_parent = true;
+		set_default_size(640, 560);
+		get_style_context().add_class("song-info");
 		
-		notebook = new Gtk.Notebook();
-		editor_container = new EventBox();
-		editor_widget = editor.get_metadata_view(current_medias);
+		var root = new Box(Orientation.VERTICAL, 10);
+		root.margin = 14;
 		
-		editor_container.add(editor_widget);
+		// the tabs float centred over the panel's top edge
+		pages = new Stack();
+		pages.transition_type = StackTransitionType.CROSSFADE;
+		pages.vexpand = true;
+		var panel = new Box(Orientation.VERTICAL, 0);
+		panel.get_style_context().add_class("tiger-panel");
+		panel.margin_top = 13; // half the tabs' height
+		panel.add(pages);
+		var tabs = new StackSwitcher();
+		tabs.stack = pages;
+		tabs.halign = Align.CENTER;
+		tabs.valign = Align.START;
+		tabs.get_style_context().add_class("tiger-tabs");
+		this.tabs = tabs;
+		this.panel = panel;
+		var frame = new Overlay();
+		frame.add(panel);
+		frame.add_overlay(tabs);
+		frame.vexpand = true;
+		root.add(frame);
 		
-		notebook.append_page(editor_container, new Label(_("Metadata")));
-		if(current_medias.size == 1)
-			add_info_viewport(current_medias.get(0));
-		add_extra_views(); // with several songs too: their fields carry "apply" check boxes
+		write_to_file = new CheckButton.with_label(_("Also write changes to the file"));
+		write_to_file.active = App.settings.main.write_metadata_to_file;
+		write_to_file.tooltip_text = _("Otherwise the changes stay in BeatBox's library and the tags in the files are left as they are (the same option as in Preferences)");
+		root.add(write_to_file);
 		
-		var buttonSep = new ButtonBox(Orientation.HORIZONTAL);
-		buttonSep.set_layout(ButtonBoxStyle.END);
-		buttonSep.set_spacing (6);
-		nav_arrows = new NavigationArrows();
-		_save = new Button.with_label(_("Done"));
+		var buttons = new Box(Orientation.HORIZONTAL, 8);
+		buttons.halign = Align.END;
+		var previous = new Button.with_label(_("Previous"));
+		var next = new Button.with_label(_("Next"));
 		var cancel = new Button.with_label(_("Cancel"));
+		var ok = new Button.with_label(_("OK"));
+		previous.tooltip_text = _("Save the changes and show the previous song (Alt+Left)");
+		next.tooltip_text = _("Save the changes and show the next song (Alt+Right)");
+		previous.sensitive = next.sensitive = entire_media_list.size > 1;
+		foreach(var b in new Button[] { previous, next, cancel, ok }) {
+			b.width_request = 96;
+			buttons.add(b);
+		}
+		ok.can_default = true;
+		root.add(buttons);
+		add(root);
 		
-		buttonSep.add(nav_arrows);
-		buttonSep.add(cancel);
-		buttonSep.add(_save);
-		
-		notebook.vexpand = true;
-		content.add(UI.wrap_alignment(notebook, 10, 0, 0, 0));
-		content.add(UI.wrap_alignment(buttonSep, 0, 0, 10, 0));
-		
-		((Gtk.ButtonBox)buttonSep).set_child_secondary(nav_arrows, true);
-		
-		content.hexpand = true;
-		content.margin_start = content.margin_end = 10;
-		padding.add(content);
-		add(padding);
-		
-		show_all();
-		notebook.page = 0; // the metadata: showing the other pages made the last one current
-		
-		nav_arrows.sensitive = entire_media_list.size > 1;
-		if(current_medias.size == 1) {
-			foreach(FieldEditor fe in editor.get_fields()) {
-				fe.set_check_visible(false);
+		previous.clicked.connect(() => move_by(-1));
+		next.clicked.connect(() => move_by(1));
+		cancel.clicked.connect(() => destroy());
+		ok.clicked.connect(() => {
+			save();
+			destroy();
+		});
+		var keys = new EventControllerKey(this);
+		keys.key_pressed.connect((keyval, keycode, state) => {
+			if((state & Gdk.ModifierType.MOD1_MASK) != 0 && previous.sensitive && (keyval == Gdk.Key.Left || keyval == Gdk.Key.Right)) {
+				move_by(keyval == Gdk.Key.Left ? -1 : 1);
+				return true;
 			}
-		}
+			if(keyval == Gdk.Key.Escape) {
+				destroy();
+				return true;
+			}
+			return false;
+		});
+		set_data("key-controller", keys); // GTK3 controllers need a reference
 		
-		if(current_medias.size == 1) {
-			title = _("Editing %s").printf(current_medias.get(0).title);
-		}
-		else {
-			title = _("Editing %d medias").printf(current_medias.size);
-		}
-
-		nav_arrows.previous_clicked.connect(previousClicked);
-		nav_arrows.next_clicked.connect(nextClicked);
-		_save.clicked.connect(saveClicked);
-		cancel.clicked.connect( () => { destroy(); });
+		build_pages(null);
+		show_all();
+		ok.grab_default();
 	}
 	
-	void add_info_viewport(Media m) {
-		int old_page = notebook.page;
-		info_viewport = new InfoViewport(m);
-		notebook.append_page(info_viewport, new Label(_("Info")));
-		notebook.page = old_page;
+	/** The editor's pages for current_medias, showing the one titled like the page that was shown */
+	void build_pages(string? shown) {
+		pages.foreach((w) => w.destroy());
 		
-		have_added_info_view = true;
-	}
-	
-	void add_extra_views() {
-		// the editor's pages in this order, any others after them
+		// Assume all medias are of same type
+		editor = current_medias.get(0).get_editor_widget();
+		bool single = current_medias.size == 1;
+		var metadata = editor.get_metadata_view(current_medias);
 		var views = editor.get_extra_views();
-		var names = new ArrayList<string>.wrap({ _("Sorting"), _("Options"), _("Artwork"), _("Lyrics") });
+		views.set(_("Info"), metadata);
+		if(single && !views.has_key(_("Summary")))
+			views.set(_("Details"), new InfoViewport(current_medias.get(0)));
+		
+		// the editor's pages in this order, any others after them
+		var names = new ArrayList<string>.wrap({ _("Summary"), _("Info"), _("Comments"), _("Sorting"), _("Options"),
+		                                         _("Lyrics"), _("Pictures"), _("Artwork"), _("Details") });
 		foreach(var name in views.keys)
 			if(!(name in names))
 				names.add(name);
 		foreach(var name in names) {
 			if(!views.has_key(name))
 				continue;
-			int added = notebook.append_page(views[name], new Label(name));
-			views[name].show_all();
-			extra_views.add(added);
+			var page = views[name];
+			page.show_all();
+			pages.add_titled(page, name, name);
 		}
+		pages.visible_child_name = (shown != null && views.has_key(shown)) ? shown : (views.has_key(_("Summary")) ? _("Summary") : _("Info"));
 		
-		have_added_extra_views = true;
+		foreach(FieldEditor fe in editor.get_fields())
+			fe.set_check_visible(!single);
+		
+		// the overlay doesn't measure the tabs: the panel is made at least as wide as they are
+		int tabs_width;
+		tabs.show_all();
+		tabs.get_preferred_width(null, out tabs_width);
+		panel.width_request = tabs_width + 40;
+		
+		title = single ? _("Song Info") : _("Info for %d Songs").printf(current_medias.size);
 	}
 	
-	void remove_extra_views() {
-		var indices = extra_views.to_array();
-		for(int i = indices.length - 1; i >= 0; i--) // from the last: removing a page renumbers the ones after it
-			notebook.remove_page(indices[i]);
-		
-		extra_views.clear();
-	}
-	
-	void previousClicked() {
-		Media m = null;
-		int indexOfCurrentFirst = entire_media_list.index_of(current_medias.get(0));
-		
-		if(indexOfCurrentFirst == 0)
-			m = entire_media_list.get(entire_media_list.size - 1);
-		else
-			m = entire_media_list.get(indexOfCurrentFirst - 1);
-		
-		save_and_change_media(m);
-	}
-	
-	void nextClicked() {
-		Media m = null;
-		int indexOfCurrentLast = entire_media_list.index_of(current_medias.get(current_medias.size - 1));
-		
-		if(indexOfCurrentLast == entire_media_list.size - 1)
-			m = entire_media_list.get(0);
-		else
-			m = entire_media_list.get(indexOfCurrentLast + 1);
-			
-		save_and_change_media(m);
-	}
-	
-	void save_and_change_media(Media new_media) {
-		// First save the current medias
+	void save() {
+		App.settings.main.write_metadata_to_file = write_to_file.active;
 		editor.save_medias(current_medias);
-		
-		// See if we need to change the editor
-		if(new_media.media_type != current_medias.get(0).media_type) {
-			current_medias = new LinkedList<Media>();
-			current_medias.add(new_media);
-		
-			editor_container.remove(editor_widget);
-			
-			editor = new_media.get_editor_widget();
-			editor_widget = editor.get_metadata_view(current_medias);
-			
-			editor_container.add(editor_widget);
-			editor_widget.show_all();
-			
-			if(!have_added_info_view) {
-				add_info_viewport(new_media);
-			}
-			else {
-				info_viewport.set_media(new_media);
-			}
-			
-			remove_extra_views();
-			add_extra_views();
-		}
-		else {
-			current_medias = new LinkedList<Media>();
-			current_medias.add(new_media);
-			
-			editor.change_media(new_media);
-			
-			if(!have_added_info_view) {
-				add_info_viewport(new_media);
-			}
-			else {
-				info_viewport.set_media(new_media);
-			}
-			
-			if(!have_added_extra_views) {
-				add_extra_views();
-			}
-		}
-		
-		title = _("Editing %s").printf(new_media.title);
-		
-		// Don't show the checkboxes anymore
-		foreach(FieldEditor fe in editor.get_fields()) {
-			fe.set_check_visible(false);
-		}
 	}
 	
-	void saveClicked() {
-		editor.save_medias(current_medias);
+	/** Saves, then edits the song before (-1) or after (1) the ones edited, going round the list */
+	void move_by(int step) {
+		int i = entire_media_list.index_of(step < 0 ? current_medias.first() : current_medias.last());
+		int n = entire_media_list.size;
+		var m = entire_media_list.get(((i + step) % n + n) % n);
 		
-		this.destroy();
+		save();
+		current_medias = new LinkedList<Media>();
+		current_medias.add(m);
+		build_pages(pages.visible_child_name);
+		pages.show_all();
 	}
 }

@@ -34,14 +34,14 @@ public class BeatBox.FieldEditorImpl : Box, FieldEditor {
 		LONG_STRING,
 		RATING,
 		OPTIONS,
-		BOOL
+		BOOL,
+		SLIDER
 	}
 	
 	FieldEditorType type;
 	string field_name;
 	Value original;
 	
-	Box field_name_box;
 	CheckButton check;
 	Label label;
 	Widget edit_widget;
@@ -56,13 +56,35 @@ public class BeatBox.FieldEditorImpl : Box, FieldEditor {
 		check.set_active(original != 0);
 		
 		var spin_button = new SpinButton.with_range(min, max, 1);
-		spin_button.set_size_request(100, -1);
+		spin_button.width_chars = 5;
 		spin_button.set_value(check.get_active() ? (double)this.original.get_int() : 0.0);
 		spin_button.adjustment.value_changed.connect(spin_button_changed);
 		
 		edit_widget = spin_button;
-		spin_button.vexpand = true;
+		spin_button.valign = Align.CENTER;
 		this.add(spin_button);
+	}
+	
+	/** A number on a slider, with "zero" marked under its middle */
+	public FieldEditorImpl.for_slider(string field_name, int original, int min, int max, string zero_mark) {
+		this.basic(field_name);
+		
+		this.original = Value(typeof(int));
+		this.original.set_int(original);
+		type = FieldEditorType.SLIDER;
+		
+		check.set_active(original != 0);
+		
+		var scale = new Scale.with_range(Orientation.HORIZONTAL, min, max, 1);
+		scale.digits = 0;
+		scale.value_pos = PositionType.RIGHT;
+		scale.add_mark(0, PositionType.BOTTOM, zero_mark);
+		scale.set_value(original);
+		scale.hexpand = true;
+		scale.value_changed.connect(() => { check.set_active((int)scale.get_value() != this.original.get_int()); });
+		
+		edit_widget = scale;
+		this.add(scale);
 	}
 	
 	public FieldEditorImpl.for_string(string field_name, string original) {
@@ -77,9 +99,10 @@ public class BeatBox.FieldEditorImpl : Box, FieldEditor {
 		var entry = new Entry();
 		entry.set_text(original);
 		entry.changed.connect(entry_changed);
+		entry.activates_default = true;
 		
 		edit_widget = entry;
-		entry.vexpand = true;
+		entry.hexpand = true;
 		this.add(entry);
 	}
 	
@@ -94,18 +117,21 @@ public class BeatBox.FieldEditorImpl : Box, FieldEditor {
 			
 		var text_view = new TextView();
 		text_view.set_wrap_mode(WrapMode.WORD_CHAR);
+		text_view.top_margin = text_view.bottom_margin = 6;
+		text_view.left_margin = text_view.right_margin = 8;
 		text_view.get_buffer().text = original;
 		text_view.buffer.changed.connect(text_view_changed);
 		
 		ScrolledWindow scroll = new ScrolledWindow(null, null);
 		Viewport viewport = new Viewport(null, null);
-		viewport.set_shadow_type(ShadowType.ETCHED_IN);
+		viewport.set_shadow_type(ShadowType.NONE);
+		scroll.shadow_type = ShadowType.IN;
 		scroll.set_policy(PolicyType.NEVER, PolicyType.AUTOMATIC);
 		viewport.add(text_view);
 		scroll.add(viewport);
 		
 		edit_widget = text_view;
-		scroll.vexpand = true;
+		scroll.vexpand = scroll.hexpand = true;
 		this.add(scroll);
 	}
 	
@@ -123,7 +149,8 @@ public class BeatBox.FieldEditorImpl : Box, FieldEditor {
 		rating_widget.rating_changed.connect(rating_changed);
 		
 		edit_widget = rating_widget;
-		rating_widget.vexpand = true;
+		rating_widget.valign = Align.CENTER;
+		rating_widget.halign = Align.START;
 		this.add(rating_widget);
 	}
 	
@@ -146,21 +173,29 @@ public class BeatBox.FieldEditorImpl : Box, FieldEditor {
 	private FieldEditorImpl.basic(string field_name) {
 		this.field_name = field_name;
 		
-		this.spacing = 0;
-		this.set_orientation(Orientation.VERTICAL);
-		vexpand = false; // its edit widget fills it; the field doesn't ask for more room
+		// [apply check (several songs only)] label: [edit widget], the labels right-aligned in a column
+		this.spacing = 8;
+		this.set_orientation(Orientation.HORIZONTAL);
+		vexpand = false;
 		
 		check = new CheckButton();
+		check.tooltip_text = _("Apply this field to all the selected songs");
+		check.valign = Align.CENTER;
 		label = new Label(field_name);
-		field_name_box = new Box(Orientation.HORIZONTAL, 4);
+		label.xalign = 1.0f;
+		label.valign = Align.CENTER;
+		label.width_request = 130;
+		label.get_style_context().add_class("ti-field-label");
 		
-		label.justify = Justification.LEFT;
-		label.xalign = 0.0f;
-		label.set_markup("<b>" + Markup.escape_text(field_name) + "</b>");
-		
-		field_name_box.add(check);
-		field_name_box.add(label);
-		this.add(field_name_box);
+		this.add(check);
+		this.add(label);
+	}
+	
+	/** Width of the label column (0: no label, the edit widget takes the row) */
+	public void set_label_width(int width) {
+		label.width_request = width;
+		label.no_show_all = width == 0;
+		label.visible = width != 0;
 	}
 	
 	public void set_width_request(int width) {
@@ -169,7 +204,8 @@ public class BeatBox.FieldEditorImpl : Box, FieldEditor {
 	}
 	
 	public void set_check_visible(bool val) {
-		check.set_visible(false);
+		check.no_show_all = !val;
+		check.visible = val;
 	}
 	
 	void entry_changed() {
@@ -266,6 +302,11 @@ public class BeatBox.FieldEditorImpl : Box, FieldEditor {
 			rv.set_boolean(((CheckButton)edit_widget).active);
 			return rv;
 		}
+		else if(type == FieldEditorType.SLIDER) {
+			Value rv = Value(typeof(int));
+			rv.set_int((int)((Scale)edit_widget).get_value());
+			return rv;
+		}
 		
 		return null;
 	}
@@ -285,6 +326,9 @@ public class BeatBox.FieldEditorImpl : Box, FieldEditor {
 		}
 		else if(type == FieldEditorType.BOOL) {
 			((CheckButton)edit_widget).active = val.get_boolean();
+		}
+		else if(type == FieldEditorType.SLIDER) {
+			((Scale)edit_widget).set_value(val.get_int());
 		}
 	}
 }

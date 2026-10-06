@@ -29,23 +29,31 @@ using Gtk;
 using Gee;
 
 
+/**
+ * The song pages of the "Get Info" window: Summary (one song), Info, Comments,
+ * Sorting, Options, Lyrics and Pictures (one song), Artwork (several songs).
+ */
 public class BeatBox.SongEditor : GLib.Object, MediaEditorInterface {
 	Media current_media;
-	Collection<Media> targets; // what the Artwork tab acts on: the songs being edited
-	bool single = true;        // one song (lyrics and Identify are per song)
+	Collection<Media> targets; // the songs being edited
+	bool single = true;        // one song (lyrics, pictures and Identify are per song)
 	
-	Box horiz; // Contains textVert and numerVert
-	Box textVert; // separates text editors
-	Box numerVert; // separates numerical editors
-	
-	Box lyricsContent;
-	Label lyricsStatus;
 	TextView lyricsText;
+	Label lyricsStatus;
 	uint lyrics_request = 0; // drops answers for a song no longer shown
 	
 	Image artwork;
+	int artwork_size = 120;
 	Label artworkStatus;
 	Button identifyButton;
+	Label identifyStatus;
+	
+	// filled when the file has been read (Summary and Pictures)
+	Label formatValue;
+	Label channelsValue;
+	Label encoderValue;
+	Label bitrateValue;
+	Box picturesBox;
 	
 	HashMap<string, FieldEditor> fields;// a hashmap with each property and corresponding editor
 	
@@ -57,13 +65,40 @@ public class BeatBox.SongEditor : GLib.Object, MediaEditorInterface {
 		return fields.values;
 	}
 	
+	/** A page: its rows one under the other, with the window's margins */
+	static Box page_box(int spacing = 8) {
+		var box = new Box(Orientation.VERTICAL, spacing);
+		box.margin_start = box.margin_end = 14;
+		box.margin_top = 16;
+		box.margin_bottom = 12;
+		return box;
+	}
+	
+	static Viewport wrap(Widget content) {
+		var rv = new Viewport(null, null);
+		rv.shadow_type = ShadowType.NONE;
+		rv.add(content);
+		return rv;
+	}
+	
+	/** Fields side by side on one row; the ones after the first with a short label */
+	Box row(string[] names, int[] label_widths) {
+		var box = new Box(Orientation.HORIZONTAL, 14);
+		for(int i = 0; i < names.length; i++) {
+			var field = (FieldEditorImpl)fields.get(names[i]);
+			if(i < label_widths.length)
+				field.set_label_width(label_widths[i]);
+			box.add(field);
+		}
+		return box;
+	}
+	
 	public Viewport get_metadata_view(Collection<Media> originals) {
-		Viewport rv = new Viewport(null, null);
 		fields = new HashMap<string, FieldEditor>();
 		targets = originals;
 		single = originals.size == 1;
-		Media sum = originals.to_array()[0].copy();
 		current_media = originals.to_array()[0];
+		Media sum = current_media.copy();
 		
 		/** find what these medias have what common, and keep those values **/
 		foreach(Media s in originals) {
@@ -117,145 +152,291 @@ public class BeatBox.SongEditor : GLib.Object, MediaEditorInterface {
 				sum.volume_adjust = 0;
 		}
 		
-		fields.set("Title", new FieldEditorImpl.for_string(_("Title"), sum.title));
-		fields.set("Artist", new FieldEditorImpl.for_string(_("Artist"), sum.artist));
-		fields.set("Album Artist", new FieldEditorImpl.for_string(_("Album Artist"), sum.album_artist));
-		fields.set("Album", new FieldEditorImpl.for_string(_("Album"), sum.album));
-		fields.set("Genre", new FieldEditorImpl.for_string(_("Genre"), sum.genre));
-		fields.set("Composer", new FieldEditorImpl.for_string(_("Composer"), sum.composer));
-		fields.set("Grouping", new FieldEditorImpl.for_string(_("Grouping"), sum.grouping));
-		fields.set("Comment", new FieldEditorImpl.for_long_string(_("Comment"), sum.comment));
-		fields.set("Track", new FieldEditorImpl.for_integer(_("Track"), (int)sum.track, 0, 500));
-		fields.set("Tracks", new FieldEditorImpl.for_integer(_("of"), (int)sum.track_count, 0, 500));
-		fields.set("Disc", new FieldEditorImpl.for_integer(_("Disc"), (int)sum.album_number, 0, 500));
-		fields.set("Discs", new FieldEditorImpl.for_integer(_("of"), (int)sum.album_count, 0, 500));
-		fields.set("Year", new FieldEditorImpl.for_integer(_("Year"), (int)sum.year, 0, 9999));
-		fields.set("BPM", new FieldEditorImpl.for_integer(_("BPM"), (int)sum.bpm, 0, 999));
-		fields.set("Rating", new FieldEditorImpl.for_rating(_("Rating"), (int)sum.rating));
+		fields.set("Title", new FieldEditorImpl.for_string(_("Name:"), sum.title));
+		fields.set("Artist", new FieldEditorImpl.for_string(_("Artist:"), sum.artist));
+		fields.set("Album Artist", new FieldEditorImpl.for_string(_("Album artist:"), sum.album_artist));
+		fields.set("Album", new FieldEditorImpl.for_string(_("Album:"), sum.album));
+		fields.set("Genre", new FieldEditorImpl.for_string(_("Genre:"), sum.genre));
+		fields.set("Composer", new FieldEditorImpl.for_string(_("Composer:"), sum.composer));
+		fields.set("Grouping", new FieldEditorImpl.for_string(_("Grouping:"), sum.grouping));
+		fields.set("Comment", new FieldEditorImpl.for_long_string("", sum.comment));
+		fields.set("Track", new FieldEditorImpl.for_integer(_("Track number:"), (int)sum.track, 0, 999));
+		fields.set("Tracks", new FieldEditorImpl.for_integer(_("of"), (int)sum.track_count, 0, 999));
+		fields.set("Disc", new FieldEditorImpl.for_integer(_("Disc number:"), (int)sum.album_number, 0, 99));
+		fields.set("Discs", new FieldEditorImpl.for_integer(_("of"), (int)sum.album_count, 0, 99));
+		fields.set("Year", new FieldEditorImpl.for_integer(_("Year:"), (int)sum.year, 0, 9999));
+		fields.set("BPM", new FieldEditorImpl.for_integer(_("BPM:"), (int)sum.bpm, 0, 999));
+		fields.set("Rating", new FieldEditorImpl.for_rating(_("Rating:"), (int)sum.rating));
+		fields.set("Compilation", new FieldEditorImpl.for_bool("", _("Part of a compilation by various artists"), sum.compilation));
 		
-		fields.set("Sort Title", new FieldEditorImpl.for_string(_("Sort Title"), sum.sort_title));
-		fields.set("Sort Artist", new FieldEditorImpl.for_string(_("Sort Artist"), sum.sort_artist));
-		fields.set("Sort Album Artist", new FieldEditorImpl.for_string(_("Sort Album Artist"), sum.sort_album_artist));
-		fields.set("Sort Album", new FieldEditorImpl.for_string(_("Sort Album"), sum.sort_album));
-		fields.set("Sort Composer", new FieldEditorImpl.for_string(_("Sort Composer"), sum.sort_composer));
+		fields.set("Sort Title", new FieldEditorImpl.for_string(_("Sort name:"), sum.sort_title));
+		fields.set("Sort Artist", new FieldEditorImpl.for_string(_("Sort artist:"), sum.sort_artist));
+		fields.set("Sort Album Artist", new FieldEditorImpl.for_string(_("Sort album artist:"), sum.sort_album_artist));
+		fields.set("Sort Album", new FieldEditorImpl.for_string(_("Sort album:"), sum.sort_album));
+		fields.set("Sort Composer", new FieldEditorImpl.for_string(_("Sort composer:"), sum.sort_composer));
 		
-		fields.set("Volume", new FieldEditorImpl.for_integer(_("Volume Adjustment (%)"), sum.volume_adjust, -100, 100));
-		fields.set("Compilation", new FieldEditorImpl.for_bool(_("Compilation"), _("Part of a compilation by various artists"), sum.compilation));
-		fields.set("Skip Shuffle", new FieldEditorImpl.for_bool(_("Shuffle"), _("Skip when shuffling"), sum.skip_shuffle));
-		fields.set("Remember Position", new FieldEditorImpl.for_bool(_("Playback"), _("Remember the playback position"), sum.remember_position));
+		fields.set("Volume", new FieldEditorImpl.for_slider(_("Volume adjustment:"), sum.volume_adjust, -100, 100, _("None")));
+		fields.set("Skip Shuffle", new FieldEditorImpl.for_bool("", _("Skip when shuffling"), sum.skip_shuffle));
+		fields.set("Remember Position", new FieldEditorImpl.for_bool("", _("Remember the playback position"), sum.remember_position));
 		
-		horiz = new Box(Orientation.HORIZONTAL, 0);
-		textVert = new Box(Orientation.VERTICAL, 0);
-		numerVert = new Box(Orientation.VERTICAL, 0);
-		
-		textVert.add(fields.get("Title"));
-		foreach(var name in new string[] { "Artist", "Album Artist", "Composer", "Album", "Comment" }) {
-			fields.get(name).margin_top = fields.get(name).margin_bottom = 5;
-			textVert.add(fields.get(name));
-		}
-		foreach(var name in new string[] { "Title", "Artist", "Album Artist", "Composer", "Album", "Comment" })
-			fields.get(name).set_width_request(300);
-		
-		// "Identify": fills the title, artist and album from the song's sound (AcoustID)
-		identifyButton = new Button.with_label(_("Identify…"));
-		identifyButton.halign = Align.START;
-		identifyButton.margin_top = 5;
-		identifyButton.tooltip_text = AcoustId.available() ? _("Look the song up by its sound on AcoustID")
-		                                                   : _("Needs fpcalc, from Chromaprint (the chromaprint or libchromaprint-tools package)");
-		identifyButton.sensitive = single && AcoustId.available();
-		identifyButton.clicked.connect(identify);
-		textVert.add(identifyButton);
-		
-		numerVert.add(pair("Track", "Tracks"));
-		var disc = pair("Disc", "Discs");
-		disc.margin_top = disc.margin_bottom = 5;
-		numerVert.add(disc);
-		foreach(var name in new string[] { "Genre", "Grouping", "Year", "BPM", "Rating" }) {
-			fields.get(name).margin_top = fields.get(name).margin_bottom = 5;
-			numerVert.add(fields.get(name));
-		}
-		
-		horiz.set_size_request(300, -1);
-		fields.get("Comment").set_size_request(-1, 100);
-		
-		horiz.add(UI.wrap_alignment(textVert, 0, 30, 0, 0));
-		numerVert.hexpand = true;
-		numerVert.halign = Align.END; // at the right edge
-		horiz.add(numerVert);
-		rv.add(horiz);
-		
-		return rv;
-	}
-	
-	/** Two fields side by side: a number and its total */
-	Box pair(string a, string b) {
-		var box = new Box(Orientation.HORIZONTAL, 6);
-		box.add(fields.get(a));
-		box.add(fields.get(b));
-		return box;
-	}
-	
-	/** A page of fields one under the other */
-	Viewport page(string[] names) {
-		var box = new Box(Orientation.VERTICAL, 0);
-		box.margin = 10;
-		foreach(var name in names) {
-			fields.get(name).margin_bottom = 10;
-			fields.get(name).set_width_request(380);
+		var box = page_box(6);
+		foreach(var name in new string[] { "Title", "Artist", "Album Artist", "Album", "Composer", "Genre" })
 			box.add(fields.get(name));
-		}
-		var rv = new Viewport(null, null);
-		rv.add(box);
-		return rv;
+		box.add(row({ "Year", "BPM" }, { 130, 0 }));
+		((FieldEditorImpl)fields.get("BPM")).set_label_width(-1); // as wide as its text
+		box.add(row({ "Track", "Tracks" }, { 130, -1 }));
+		box.add(row({ "Disc", "Discs" }, { 130, -1 }));
+		box.add(fields.get("Grouping"));
+		box.add(fields.get("Rating"));
+		box.add(fields.get("Compilation"));
+		return wrap(box);
 	}
 	
 	public HashMap<string, Viewport> get_extra_views() {
 		var rv = new HashMap<string, Viewport>();
 		
-		rv.set(_("Sorting"), page({ "Sort Title", "Sort Artist", "Sort Album Artist", "Sort Album", "Sort Composer" }));
-		var options = page({ "Volume", "Compilation", "Skip Shuffle", "Remember Position" });
+		var comments = page_box();
+		((FieldEditorImpl)fields.get("Comment")).set_label_width(0);
+		fields.get("Comment").vexpand = true;
+		comments.add(fields.get("Comment"));
+		rv.set(_("Comments"), wrap(comments));
+		
+		var sorting = page_box();
+		foreach(var name in new string[] { "Sort Title", "Sort Artist", "Sort Album Artist", "Sort Album", "Sort Composer" }) {
+			((FieldEditorImpl)fields.get(name)).set_label_width(200);
+			sorting.add(fields.get(name));
+		}
+		rv.set(_("Sorting"), wrap(sorting));
+		
+		var options = page_box(10);
+		((FieldEditorImpl)fields.get("Volume")).set_label_width(200);
+		options.add(fields.get("Volume"));
+		foreach(var name in new string[] { "Remember Position", "Skip Shuffle" }) {
+			((FieldEditorImpl)fields.get(name)).set_label_width(200);
+			options.add(fields.get(name));
+		}
 		var hint = new Label(_("The volume adjustment raises or lowers this song next to the others: +100 % doubles it, −100 % silences it."));
 		hint.wrap = true;
-		hint.max_width_chars = 50;
+		hint.max_width_chars = 60;
 		hint.xalign = 0;
-		hint.get_style_context().add_class("dim-label");
-		((Box)options.get_child()).add(hint);
-		rv.set(_("Options"), options);
-		rv.set(_("Artwork"), get_artwork_viewport());
-		rv.set(_("Lyrics"), get_lyrics_viewport());
+		hint.margin_top = 8;
+		hint.get_style_context().add_class("ti-meta");
+		options.add(hint);
+		rv.set(_("Options"), wrap(options));
 		
+		if(single) {
+			rv.set(_("Summary"), get_summary_page());
+			rv.set(_("Lyrics"), get_lyrics_page());
+			rv.set(_("Pictures"), get_pictures_page());
+			read_file();
+		}
+		else
+			rv.set(_("Artwork"), get_artwork_page());
+		
+		return rv;
+	}
+	
+	/* ===== Summary ===== */
+	
+	static Label summary_value(string text) {
+		var l = new Label(text);
+		l.xalign = 0;
+		l.selectable = true;
+		l.can_focus = false;
+		return l;
+	}
+	
+	Viewport get_summary_page() {
+		var m = current_media;
+		var box = page_box(10);
+		
+		var top = new Box(Orientation.HORIZONTAL, 16);
+		var art = new Box(Orientation.VERTICAL, 6);
+		art.valign = Align.START;
+		artwork = new Image();
+		artwork_size = 120;
+		var frame = new Frame(null);
+		frame.get_style_context().add_class("album-cell-frame");
+		frame.halign = Align.START;
+		frame.add(artwork);
+		art.add(frame);
+		art.add(cover_buttons(true));
+		artworkStatus = new Label("");
+		artworkStatus.xalign = 0;
+		artworkStatus.wrap = true;
+		artworkStatus.max_width_chars = 40;
+		artworkStatus.get_style_context().add_class("ti-meta");
+		art.add(artworkStatus);
+		top.add(art);
+		
+		var titles = new Box(Orientation.VERTICAL, 3);
+		titles.valign = Align.START;
+		titles.hexpand = true;
+		var title = new Label(m.length > 0 ? "%s (%s)".printf(m.title, TimeUtils.pretty_time_mins(m.length)) : m.title);
+		title.get_style_context().add_class("ti-summary-title");
+		var artist = new Label(m.artist);
+		var album = new Label(m.album);
+		album.get_style_context().add_class("dim-label");
+		foreach(var l in new Label[] { title, artist, album }) {
+			l.xalign = 0;
+			l.wrap = true;
+			l.max_width_chars = 60;
+			l.selectable = true;
+			l.can_focus = false;
+			titles.add(l);
+		}
+		top.add(titles);
+		box.add(top);
+		box.add(new Separator(Orientation.HORIZONTAL));
+		
+		var file = File.new_for_uri(m.uri);
+		string size = m.file_size > 0 ? format_size(m.file_size) : "—", modified = "—";
+		try {
+			var info = file.query_info(FileAttribute.STANDARD_SIZE + "," + FileAttribute.TIME_MODIFIED, FileQueryInfoFlags.NONE);
+			size = format_size(info.get_size());
+			var date = info.get_modification_date_time();
+			if(date != null)
+				modified = date.to_local().format("%x %H:%M");
+		} catch(Error err) {}
+		string ext = file.get_basename() != null && "." in file.get_basename() ? file.get_basename().substring(file.get_basename().last_index_of(".") + 1).up() : "";
+		
+		formatValue = summary_value("…");
+		channelsValue = summary_value("…");
+		encoderValue = summary_value("…");
+		bitrateValue = summary_value(m.bitrate > 0 ? "%u kbps".printf(m.bitrate) : "…");
+		var grid = new Grid();
+		grid.row_spacing = 5;
+		grid.column_spacing = 14;
+		int r = 0;
+		Widget[] rows = {
+			new Label(_("Kind:")), summary_value(ext != "" ? _("%s audio file").printf(ext) : _("Audio file")),
+			new Label(_("Format:")), formatValue,
+			new Label(_("Size:")), summary_value(size),
+			new Label(_("Bit rate:")), bitrateValue,
+			new Label(_("Sample rate:")), summary_value(m.samplerate > 0 ? "%u Hz".printf(m.samplerate) : "—"),
+			new Label(_("Channels:")), channelsValue,
+			new Label(_("Plays:")), summary_value(m.play_count.to_string()),
+			new Label(_("Last played:")), summary_value(m.last_played > 0 ? TimeUtils.pretty_timestamp_from_uint(m.last_played) : _("Never")),
+			new Label(_("Date modified:")), summary_value(modified),
+			new Label(_("Encoded with:")), encoderValue
+		};
+		for(int i = 0; i < rows.length; i += 2, r++) {
+			((Label)rows[i]).xalign = 1;
+			rows[i].get_style_context().add_class("ti-sum-key");
+			grid.attach(rows[i], 0, r);
+			grid.attach(rows[i + 1], 1, r);
+		}
+		box.add(grid);
+		
+		var where = new Label(file.get_path() ?? m.uri);
+		where.xalign = 0;
+		where.wrap = true;
+		where.wrap_mode = Pango.WrapMode.CHAR;
+		where.selectable = true;
+		where.can_focus = false;
+		where.get_style_context().add_class("ti-uri");
+		box.add(where);
+		
+		// "Identify": fills the name, artist and album from the song's sound (AcoustID)
+		identifyButton = new Button.with_label(_("Identify…"));
+		identifyButton.get_style_context().add_class("ti-cover-btn");
+		identifyButton.tooltip_text = AcoustId.available() ? _("Look the song up by its sound on AcoustID")
+		                                                   : _("Needs fpcalc, from Chromaprint (the chromaprint or libchromaprint-tools package)");
+		identifyButton.sensitive = AcoustId.available() && file.get_path() != null;
+		identifyButton.clicked.connect(identify);
+		identifyStatus = new Label("");
+		identifyStatus.get_style_context().add_class("ti-meta");
+		var id_row = new Box(Orientation.HORIZONTAL, 8);
+		id_row.add(identifyButton);
+		id_row.add(identifyStatus);
+		box.add(id_row);
+		
+		show_artwork();
+		return wrap(box);
+	}
+	
+	/** Reads the file on a worker thread for the Summary and Pictures pages */
+	void read_file() {
+		if(!current_media.uri.has_prefix("file://")) {
+			formatValue.label = channelsValue.label = encoderValue.label = bitrateValue.label = "—";
+			return;
+		}
+		string uri = current_media.uri;
+		new Thread<void*>("song-info", () => {
+			var facts = TrackReport.read_file(uri, 200);
+			Idle.add(() => {
+				if(formatValue.get_toplevel() is Gtk.Window) // the page is still there
+					show_file_facts(facts);
+				return false;
+			});
+			return null;
+		});
+	}
+	
+	void show_file_facts(TrackReport.FileFacts facts) {
+		formatValue.label = facts.codec != "" ? facts.codec : "—";
+		channelsValue.label = facts.channels != "" ? facts.channels : "—";
+		encoderValue.label = facts.encoder != "" ? facts.encoder : _("Not known");
+		if(bitrateValue.label == "…")
+			bitrateValue.label = facts.bitrate > 0 ? "%u kbps".printf(facts.bitrate) : "—";
+		
+		picturesBox.foreach((w) => w.destroy());
+		if(facts.images.length == 0) {
+			var none = new Label(facts.error ?? _("This file has no pictures inside it."));
+			none.get_style_context().add_class("dim-label");
+			none.xalign = 0;
+			picturesBox.add(none);
+		}
+		for(int i = 0; i < facts.images.length; i++) {
+			var row = new Box(Orientation.HORIZONTAL, 14);
+			var frame = new Frame(null);
+			frame.get_style_context().add_class("album-cell-frame");
+			frame.valign = Align.START;
+			frame.add(new Image.from_pixbuf(facts.images[i]));
+			row.add(frame);
+			var text = new Label(facts.image_texts[i]);
+			text.xalign = 0;
+			text.valign = Align.START;
+			text.selectable = true;
+			text.can_focus = false;
+			row.add(text);
+			picturesBox.add(row);
+		}
+		picturesBox.show_all();
+	}
+	
+	Viewport get_pictures_page() {
+		picturesBox = page_box(12);
+		var reading = new Label(_("Reading the file…"));
+		reading.get_style_context().add_class("dim-label");
+		reading.xalign = 0;
+		picturesBox.add(reading);
+		var scroll = new ScrolledWindow(null, null);
+		scroll.hscrollbar_policy = PolicyType.NEVER;
+		scroll.add(picturesBox);
+		scroll.vexpand = true;
+		var rv = new Viewport(null, null);
+		rv.shadow_type = ShadowType.NONE;
+		rv.add(scroll);
 		return rv;
 	}
 	
 	/* ===== Artwork: the album cover of the songs being edited ===== */
 	
-	Viewport get_artwork_viewport() {
-		var box = new Box(Orientation.VERTICAL, 8);
-		box.margin = 10;
-		artwork = new Image();
-		artwork.set_size_request(240, 240);
-		box.add(artwork);
-		
-		var choose = new Button.with_label(_("Choose Image…"));
-		var download = new Button.with_label(_("Download"));
+	Box cover_buttons(bool small) {
+		var choose = new Button.with_label(_("Add Artwork…"));
+		var download = new Button.with_label(_("Download Artwork"));
 		var embed = new Button.with_label(_("Embed in File"));
 		download.tooltip_text = _("Look the cover up on MusicBrainz and the Apple catalogue");
-		embed.tooltip_text = CoverEmbedder.available() ? _("Write the cover into the music files")
+		embed.tooltip_text = CoverEmbedder.available() ? _("Write the cover into the music files (the whole album)")
 		                                               : _("This build of BeatBox can't write covers into files (it needs TagLib 2)");
 		embed.sensitive = CoverEmbedder.available();
-		var buttons = new Box(Orientation.HORIZONTAL, 6);
-		buttons.halign = Align.CENTER;
-		buttons.add(choose);
-		buttons.add(download);
-		buttons.add(embed);
-		box.add(buttons);
-		
-		artworkStatus = new Label("");
-		artworkStatus.wrap = true;
-		artworkStatus.max_width_chars = 50;
-		artworkStatus.get_style_context().add_class("dim-label");
-		box.add(artworkStatus);
-		
+		var buttons = new Box(Orientation.HORIZONTAL, 4);
+		foreach(var b in new Button[] { choose, download, embed }) {
+			if(small)
+				b.get_style_context().add_class("ti-cover-btn");
+			buttons.add(b);
+		}
 		choose.clicked.connect(choose_artwork);
 		download.clicked.connect(download_artwork);
 		embed.clicked.connect(() => {
@@ -265,11 +446,29 @@ public class BeatBox.SongEditor : GLib.Object, MediaEditorInterface {
 				                                    : _("Written into %d files; %d failed.").printf(written, failed);
 			});
 		});
+		return buttons;
+	}
+	
+	Viewport get_artwork_page() {
+		var box = page_box(10);
+		artwork = new Image();
+		artwork_size = 240;
+		var frame = new Frame(null);
+		frame.get_style_context().add_class("album-cell-frame");
+		frame.halign = Align.CENTER;
+		frame.add(artwork);
+		box.add(frame);
+		var buttons = cover_buttons(false);
+		buttons.halign = Align.CENTER;
+		box.add(buttons);
+		artworkStatus = new Label("");
+		artworkStatus.wrap = true;
+		artworkStatus.max_width_chars = 50;
+		artworkStatus.get_style_context().add_class("ti-meta");
+		box.add(artworkStatus);
 		show_artwork();
-		
-		var rv = new Viewport(null, null);
-		rv.add(box);
-		return rv;
+		artworkStatus.label = _("Changes here apply to the albums of all the selected songs.");
+		return wrap(box);
 	}
 	
 	void show_artwork() {
@@ -277,12 +476,13 @@ public class BeatBox.SongEditor : GLib.Object, MediaEditorInterface {
 			return;
 		Gdk.Pixbuf? pix = null;
 		try {
-			pix = new Gdk.Pixbuf.from_file_at_scale(App.covers.get_cached_album_art_path(App.covers.get_media_coverart_key(current_media)), 240, 240, true);
+			pix = new Gdk.Pixbuf.from_file_at_scale(App.covers.get_cached_album_art_path(App.covers.get_media_coverart_key(current_media)), artwork_size, artwork_size, false);
 		} catch(Error err) {}
-		if(pix == null)
-			pix = App.covers.get_album_art_from_media(current_media) ?? App.covers.DEFAULT_COVER_SHADOW;
+		if(pix == null) {
+			var framed = App.covers.get_album_art_from_media(current_media) ?? App.covers.DEFAULT_COVER_SHADOW;
+			pix = framed.scale_simple(artwork_size, artwork_size, Gdk.InterpType.BILINEAR);
+		}
 		artwork.pixbuf = pix;
-		artworkStatus.label = (targets.size > 1) ? _("Changes here apply to the albums of all the selected songs.") : "";
 	}
 	
 	/** The cover of every album among the songs being edited becomes pix */
@@ -294,6 +494,7 @@ public class BeatBox.SongEditor : GLib.Object, MediaEditorInterface {
 				App.covers.set_album_art(m, pix, true);
 			}
 		}
+		artworkStatus.label = "";
 		show_artwork();
 	}
 	
@@ -317,6 +518,8 @@ public class BeatBox.SongEditor : GLib.Object, MediaEditorInterface {
 		new Thread<void*>("cover-download", () => {
 			var pix = ((CoverManager)App.covers).download_cover(m.album_artist != "" ? m.album_artist : m.artist, m.album);
 			Idle.add(() => {
+				if(!(artwork.get_toplevel() is Gtk.Window))
+					return false;
 				if(pix != null)
 					set_artwork(pix);
 				else
@@ -404,14 +607,24 @@ public class BeatBox.SongEditor : GLib.Object, MediaEditorInterface {
 		}
 		dialog.destroy();
 	}
+
 	
 	/* ===== Lyrics ===== */
 	
-	Viewport get_lyrics_viewport() {
-		Viewport rv = new Viewport(null, null);
+	Viewport get_lyrics_page() {
+		var box = page_box(8);
 		
-		var padding = new Box(Orientation.VERTICAL, 10);
-		lyricsContent = new Box(Orientation.VERTICAL, 10);
+		lyricsText = new TextView();
+		lyricsText.set_wrap_mode(WrapMode.WORD_CHAR);
+		lyricsText.top_margin = lyricsText.bottom_margin = 6;
+		lyricsText.left_margin = lyricsText.right_margin = 8;
+		lyricsText.get_buffer().text = current_media.lyrics;
+		var scroll = new ScrolledWindow(null, null);
+		scroll.shadow_type = ShadowType.IN;
+		scroll.hscrollbar_policy = PolicyType.NEVER;
+		scroll.vexpand = true;
+		scroll.add(lyricsText);
+		box.add(scroll);
 		
 		var download = new Button.with_label(_("Download Lyrics"));
 		download.tooltip_text = _("Look the lyrics up on lrclib.net (they replace the ones here)");
@@ -419,81 +632,18 @@ public class BeatBox.SongEditor : GLib.Object, MediaEditorInterface {
 		lyricsStatus = new Label("");
 		lyricsStatus.ellipsize = Pango.EllipsizeMode.END;
 		lyricsStatus.xalign = 0;
-		lyricsStatus.get_style_context().add_class("dim-label");
+		lyricsStatus.get_style_context().add_class("ti-meta");
 		var row = new Box(Orientation.HORIZONTAL, 8);
 		row.add(download);
 		row.add(lyricsStatus);
+		box.add(row);
 		
-		lyricsText = new TextView();
-		lyricsText.set_wrap_mode(WrapMode.WORD_CHAR);
-		if(current_media != null)	lyricsText.get_buffer().text = current_media.lyrics;
-		
-		ScrolledWindow scroll = new ScrolledWindow(null, null);
-		Viewport viewport = new Viewport(null, null);
-		
-		viewport.set_shadow_type(ShadowType.ETCHED_IN);
-		scroll.set_policy(PolicyType.AUTOMATIC, PolicyType.AUTOMATIC);
-		
-		viewport.add(lyricsText);
-		scroll.add(viewport);
-		
-		lyricsContent.add(row);
-		scroll.vexpand = true;
-		lyricsContent.add(scroll);
-		
-		lyricsText.set_size_request(400, -1);
-		scroll.set_size_request(400, -1);
-		viewport.set_size_request(400, -1);
-		
-		lyricsContent.vexpand = true;
-		lyricsContent.sensitive = single; // one song's lyrics
-		padding.add(lyricsContent);
-		rv.add(padding);
-		
-		if(single)
-			fetch_lyrics(false);
-		return rv;
+		fetch_lyrics(false);
+		return wrap(box);
 	}
 	
-	public void change_media(Media sum) {
-		current_media = sum;
-		var list = new LinkedList<Media>();
-		list.add(sum);
-		targets = list;
-		single = true;
-		
-		fields.get("Title").set_value(sum.title);
-		fields.get("Artist").set_value(sum.artist);
-		fields.get("Album Artist").set_value(sum.album_artist);
-		fields.get("Album").set_value(sum.album);
-		fields.get("Genre").set_value(sum.genre);
-		fields.get("Comment").set_value(sum.comment);
-		fields.get("Track").set_value((int)sum.track);
-		fields.get("Tracks").set_value((int)sum.track_count);
-		fields.get("Disc").set_value((int)sum.album_number);
-		fields.get("Discs").set_value((int)sum.album_count);
-		fields.get("Year").set_value((int)sum.year);
-		fields.get("BPM").set_value((int)sum.bpm);
-		fields.get("Rating").set_value((int)sum.rating);
-		fields.get("Composer").set_value(sum.composer);
-		fields.get("Grouping").set_value(sum.grouping);
-		fields.get("Sort Title").set_value(sum.sort_title);
-		fields.get("Sort Artist").set_value(sum.sort_artist);
-		fields.get("Sort Album Artist").set_value(sum.sort_album_artist);
-		fields.get("Sort Album").set_value(sum.sort_album);
-		fields.get("Sort Composer").set_value(sum.sort_composer);
-		fields.get("Volume").set_value(sum.volume_adjust);
-		fields.get("Compilation").set_value(sum.compilation);
-		fields.get("Skip Shuffle").set_value(sum.skip_shuffle);
-		fields.get("Remember Position").set_value(sum.remember_position);
-		
-		identifyButton.sensitive = AcoustId.available();
-		show_artwork();
-		if(lyricsText != null) {
-			lyricsContent.sensitive = true;
-			lyricsText.get_buffer().text = current_media.lyrics;
-			fetch_lyrics(false);
-		}
+	/** The window builds the pages again for another song */
+	public void change_media(Media m) {
 	}
 	
 	public void save_medias(Collection<Media> medias) {
@@ -529,6 +679,8 @@ public class BeatBox.SongEditor : GLib.Object, MediaEditorInterface {
 				s.bpm = fields.get("BPM").get_value().get_int();
 			if(fields.get("Rating").checked())
 				s.rating = fields.get("Rating").get_value().get_int();
+			if(fields.get("Compilation").checked())
+				s.compilation = fields.get("Compilation").get_value().get_boolean();
 			
 			if(fields.get("Sort Title").checked())
 				s.sort_title = fields.get("Sort Title").get_value().get_string();
@@ -543,8 +695,6 @@ public class BeatBox.SongEditor : GLib.Object, MediaEditorInterface {
 			
 			if(fields.get("Volume").checked())
 				s.volume_adjust = fields.get("Volume").get_value().get_int();
-			if(fields.get("Compilation").checked())
-				s.compilation = fields.get("Compilation").get_value().get_boolean();
 			if(fields.get("Skip Shuffle").checked())
 				s.skip_shuffle = fields.get("Skip Shuffle").get_value().get_boolean();
 			if(fields.get("Remember Position").checked())
@@ -569,7 +719,7 @@ public class BeatBox.SongEditor : GLib.Object, MediaEditorInterface {
 		new Thread<void*>("lyrics", () => {
 			string found = SyncedLyrics.fetch_plain(m);
 			Idle.add(() => {
-				if(request != lyrics_request)
+				if(request != lyrics_request || !(lyricsText.get_toplevel() is Gtk.Window))
 					return false;
 				if(found != "") {
 					lyricsText.get_buffer().text = found;
