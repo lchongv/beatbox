@@ -2932,3 +2932,15 @@ msgstr "Año:"
 
 msgid "Otherwise the changes stay in BeatBox's library and the tags in the files are left as they are (the same option as in Preferences)"
 msgstr "Si no, los cambios quedan solo en la colección de BeatBox y las etiquetas de los archivos no se tocan (es la misma opción de Preferencias)"
+
+#: core/Utils/UI.vala
+msgid "Experimental:"
+msgstr "Experimental:"
+
+#: src/Views/DeviceView.vala
+msgid "syncing hasn't been tested with current devices. Back up your device before syncing."
+msgstr "la sincronización no se ha probado con dispositivos actuales. Haz una copia de seguridad del dispositivo antes de sincronizar."
+
+#: src/SourceViews/DeviceSourceView.vala
+msgid "importing audio CDs hasn't been tested on current systems."
+msgstr "la importación de CD de audio no se ha probado en sistemas actuales."

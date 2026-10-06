@@ -145,5 +145,17 @@ namespace BeatBox.UI {
 	public string validate_markup(string s, int max_length) {
 		return Markup.escape_text(String.ellipsize(s, max_length + 2));
 	}
+	
+	/** The warning on top of features nobody could test on today's systems (iPod, CD) */
+	public Gtk.InfoBar experimental_bar(string text) {
+		var bar = new Gtk.InfoBar();
+		bar.message_type = Gtk.MessageType.WARNING;
+		var label = new Gtk.Label(null);
+		label.set_markup("<b>%s</b> %s".printf(Markup.escape_text(_("Experimental:")), Markup.escape_text(text)));
+		label.wrap = true;
+		label.xalign = 0;
+		bar.get_content_area().add(label);
+		bar.show_all();
+		return bar;
+	}
 }
-

@@ -64,6 +64,9 @@ public class BeatBox.DeviceView : Box, View {
 	}
 	
 	void buildUI() {
+		orientation = Orientation.VERTICAL;
+		add(UI.experimental_bar(_("syncing hasn't been tested with current devices. Back up your device before syncing.")));
+		
 		summary = new DeviceSummaryWidget(d);
 		summary.hexpand = true;
 		add(summary);
