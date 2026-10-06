@@ -29,6 +29,10 @@ It runs straight from the build directory (translations included); on first
 start it registers a launcher in ~/.local/share/applications so the desktop
 shows its icon. `ninja -C build install` installs it system-wide instead.
 iPod sync is built when libgpod is found (`-Dipod=enabled|disabled` to force it).
+iPod sync and audio CD import are experimental: they come from the original
+BeatBox and haven't been tested with current devices, so back up an iPod before
+syncing it. The library database is copied to ~/.local/share/beatbox/beatbox.db.bak
+the first time a new version opens it.
 
 Packages
 --------

@@ -48,6 +48,12 @@ public class BeatBox.DeviceSourceView : SourceView {
 		error_box = new EmbeddedAlert();
 		pack_widgets();
 		
+		if(tvs.get_hint() == TreeViewSetup.Hint.CDROM) {
+			var bar = UI.experimental_bar(_("importing audio CDs hasn't been tested on current systems."));
+			add(bar);
+			reorder_child(bar, 0);
+		}
+		
 		// Setup context menu for this view
 		CDMenu = new GLib.Menu();
 		CDMenu.append(_("Import to Library"), "view.import");
