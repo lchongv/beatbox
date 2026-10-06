@@ -71,10 +71,10 @@ public abstract class BeatBox.SimplePreferences : GLib.Object, PreferencesSectio
 }
 
 /** How the library folder is managed */
-public class BeatBox.BehaviorPreferences : SimplePreferences {
-	public override string title { get { return _("Behavior"); } }
+public class BeatBox.LibraryPreferences : SimplePreferences {
+	public override string title { get { return _("Library"); } }
 	
-	public BehaviorPreferences() {
+	public LibraryPreferences() {
 		add_heading(_("Library Management"));
 		var organize = add_check(_("Keep media folders organized"), App.settings.main.update_folder_hierarchy);
 		var write = add_check(_("Write metadata to file"), App.settings.main.write_metadata_to_file);
@@ -84,7 +84,14 @@ public class BeatBox.BehaviorPreferences : SimplePreferences {
 		organize.toggled.connect(() => { App.settings.main.update_folder_hierarchy = organize.active; });
 		write.toggled.connect(() => { App.settings.main.write_metadata_to_file = write.active; });
 		copy.toggled.connect(() => { App.settings.main.copy_imported_music = copy.active; });
-		
+	}
+}
+
+/** ReplayGain and crossfade */
+public class BeatBox.PlaybackPreferences : SimplePreferences {
+	public override string title { get { return _("Playback"); } }
+	
+	public PlaybackPreferences() {
 		add_heading(_("Playback"));
 		var rg = new ComboBoxText();
 		rg.append("0", _("Off"));
@@ -101,7 +108,7 @@ public class BeatBox.BehaviorPreferences : SimplePreferences {
 	}
 }
 
-/** Skins and the LCD position marker */
+/** Skins */
 public class BeatBox.AppearancePreferences : SimplePreferences {
 	public override string title { get { return _("Appearance"); } }
 	
@@ -143,7 +150,14 @@ public class BeatBox.AppearancePreferences : SimplePreferences {
 					skinInfo.label = skin.description + (skin.author != "" ? "  —  " + skin.author : "");
 		});
 		skinChooser.changed();
-		
+	}
+}
+
+/** What the LCD shows and its position bar */
+public class BeatBox.LcdPreferences : SimplePreferences {
+	public override string title { get { return _("LCD"); } }
+	
+	public LcdPreferences() {
 		add_heading(_("Display"));
 		var lcdLines = new ComboBoxText();
 		lcdLines.append("two", _("Two lines, artist and album taking turns"));
@@ -167,20 +181,6 @@ public class BeatBox.AppearancePreferences : SimplePreferences {
 		transition.value = App.settings.main.lcd_transition_ms;
 		add_row(labelled(_("Duration of the slide:"), transition, _("milliseconds")));
 		transition.value_changed.connect(() => { App.settings.main.lcd_transition_ms = (int)transition.value; });
-		
-		add_heading(_("Mini Player"));
-		var keepAbove = add_check(_("Keep the mini player above other windows"), App.settings.main.mini_keep_above);
-		keepAbove.toggled.connect(() => { App.settings.main.mini_keep_above = keepAbove.active; });
-		if (Gdk.Display.get_default().get_type().name() == "GdkWaylandDisplay") {
-			// GTK 3 can't ask a Wayland compositor for that
-			keepAbove.sensitive = false;
-			var hint = new Label(_("On Wayland the desktop keeps windows on top: right-click the toolbar and choose “Always on Top”."));
-			hint.get_style_context().add_class("dim-label");
-			hint.xalign = 0.0f;
-			hint.wrap = true;
-			hint.max_width_chars = 60;
-			add_row(hint);
-		}
 		
 		add_heading(_("Position bar"));
 		var trackWidth = new SpinButton.with_range(2, 16, 1);
@@ -209,6 +209,27 @@ public class BeatBox.AppearancePreferences : SimplePreferences {
 			App.settings.main.lcd_marker_size = (int)markerSize.value;
 			App.apply_lcd_style();
 		});
+	}
+}
+
+/** The compact window */
+public class BeatBox.MiniPlayerPreferences : SimplePreferences {
+	public override string title { get { return _("Mini Player"); } }
+	
+	public MiniPlayerPreferences() {
+		add_heading(_("Mini Player"));
+		var keepAbove = add_check(_("Keep the mini player above other windows"), App.settings.main.mini_keep_above);
+		keepAbove.toggled.connect(() => { App.settings.main.mini_keep_above = keepAbove.active; });
+		if (Gdk.Display.get_default().get_type().name() == "GdkWaylandDisplay") {
+			// GTK 3 can't ask a Wayland compositor for that
+			keepAbove.sensitive = false;
+			var hint = new Label(_("On Wayland the desktop keeps windows on top: right-click the toolbar and choose “Always on Top”."));
+			hint.get_style_context().add_class("dim-label");
+			hint.xalign = 0.0f;
+			hint.wrap = true;
+			hint.max_width_chars = 60;
+			add_row(hint);
+		}
 	}
 }
 
