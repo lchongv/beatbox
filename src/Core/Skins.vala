@@ -1,8 +1,9 @@
 /*
  * Optional skins, installed like plugins: a folder holding
- *   skin.ini  — [Skin] Name=, Description=, Author=, Native=true
+ *   skin.ini  — [Skin] Name=, Author=, Native=true
  *               (Native drops the built-in look and keeps only the GTK theme)
  *   skin.css  — GTK CSS laid over the built-in look
+ *   preview.png — optional, a screenshot shown in Preferences
  * A skin can be as small as a few @define-color lines (see skins/README.md).
  *
  * Bundled skins live in the GResource; anyone can drop more into
@@ -13,9 +14,9 @@ namespace BeatBox.Skins {
 	public class Skin : Object {
 		public string id;
 		public string name;
-		public string description;
 		public string author;
 		public File css;
+		public File? preview; // preview.png, a screenshot
 		public bool native;
 		public string? theme; // a GTK theme to use instead of the system's (Theme=)
 		public bool dark;     // its dark variant (Dark=true)
@@ -78,9 +79,10 @@ namespace BeatBox.Skins {
 		var skin = new Skin ();
 		skin.id = id;
 		skin.name = id;
-		skin.description = "";
 		skin.author = "";
 		skin.css = css;
+		if (folder.get_child ("preview.png").query_exists ())
+			skin.preview = folder.get_child ("preview.png");
 		try {
 			uint8[] data;
 			folder.get_child ("skin.ini").load_contents (null, out data, null);
@@ -88,8 +90,6 @@ namespace BeatBox.Skins {
 			ini.load_from_data ((string)data, data.length, KeyFileFlags.NONE);
 			// Name[es]= and friends are honoured
 			skin.name = ini.get_locale_string ("Skin", "Name");
-			if (ini.has_key ("Skin", "Description"))
-				skin.description = ini.get_locale_string ("Skin", "Description");
 			if (ini.has_key ("Skin", "Native"))
 				skin.native = ini.get_boolean ("Skin", "Native");
 			if (ini.has_key ("Skin", "Theme"))

@@ -116,11 +116,8 @@ public class BeatBox.AppearancePreferences : SimplePreferences {
 		// Skins (plugins: folders in ~/.local/share/beatbox/skins)
 		add_heading(_("Skin"));
 		var skinChooser = new ComboBoxText();
-		var skinInfo = new Label("");
-		skinInfo.xalign = 0.0f;
-		skinInfo.wrap = true;
-		skinInfo.max_width_chars = 60;
-		skinInfo.get_style_context().add_class("dim-label");
+		var preview = new Image();
+		preview.xalign = 0.0f;
 		var skins = Skins.available();
 		foreach (var skin in skins)
 			skinChooser.append(skin.id, skin.name);
@@ -138,15 +135,21 @@ public class BeatBox.AppearancePreferences : SimplePreferences {
 		var skinBox = labelled(_("Skin:"), skinChooser);
 		skinBox.add(openSkins);
 		add_row(skinBox);
-		add_row(skinInfo);
+		add_row(preview);
 		skinChooser.changed.connect(() => {
 			string id = skinChooser.active_id ?? Skins.DEFAULT;
 			App.settings.main.skin = id;
 			Skins.apply(id); // live preview
-			skinInfo.label = _("Add more skins by copying them into %s").printf(Skins.user_dir());
-			foreach (var skin in skins)
-				if (skin.id == id)
-					skinInfo.label = skin.description + (skin.author != "" ? "  —  " + skin.author : "");
+			preview.clear();
+			foreach (var skin in skins) {
+				if (skin.id != id || skin.preview == null)
+					continue;
+				try {
+					preview.pixbuf = new Gdk.Pixbuf.from_stream_at_scale(skin.preview.read(), 440, -1, true);
+				} catch (Error err) {
+					warning("Could not load the preview of %s: %s", id, err.message);
+				}
+			}
 		});
 		skinChooser.changed();
 	}
