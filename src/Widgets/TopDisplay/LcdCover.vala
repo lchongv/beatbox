@@ -115,7 +115,8 @@ public class BeatBox.LcdCover : Image {
 		};
 		set_zoom (fit);
 		var scroll = new Gtk.EventControllerScroll (win, Gtk.EventControllerScrollFlags.VERTICAL);
-		scroll.scroll.connect ((dx, dy) => { set_zoom (dy < 0 ? zoom * 1.15 : zoom / 1.15); });
+		// proportional to dy: a wheel notch (1.0) is one 15% step, a touchpad's small deltas are small steps
+		scroll.scroll.connect ((dx, dy) => { set_zoom (zoom * Math.pow (1.15, -dy)); });
 		win.set_data ("scroll-controller", scroll); // GTK3 controllers need a reference
 		var double_click = new Gtk.GestureMultiPress (win);
 		double_click.button = 0;
