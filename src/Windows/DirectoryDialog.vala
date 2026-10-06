@@ -28,7 +28,7 @@ public class BeatBox.DirectoryDialog : Dialog {
 	/* radio-browser.info asks clients to pick one of its mirrors: the
 	 * all.api name resolves to every one of them. Going through that name
 	 * directly is ~10 s slower when IPv6 isn't routed. Blocking. */
-	static string radio_api () {
+	public static string radio_server () {
 		if (radio_host == null) {
 			radio_host = "de1.api.radio-browser.info";
 			try {
@@ -43,7 +43,7 @@ public class BeatBox.DirectoryDialog : Dialog {
 				warning ("Could not list the radio-browser.info servers: %s", err.message);
 			}
 		}
-		return "https://" + radio_host + RADIO_QUERY;
+		return "https://" + radio_host;
 	}
 
 	public DirectoryDialog (Kind kind) {
@@ -161,7 +161,7 @@ public class BeatBox.DirectoryDialog : Dialog {
 		new Thread<void*> ("directory-search", () => {
 			string[] bodies = {};
 			foreach (var url in urls)
-				bodies += Http.fetch ((kind == Kind.RADIO) ? radio_api () + url : url);
+				bodies += Http.fetch ((kind == Kind.RADIO) ? radio_server () + RADIO_QUERY + url : url);
 			Idle.add (() => {
 				if (my_serial == serial)
 					show_results (bodies, term);

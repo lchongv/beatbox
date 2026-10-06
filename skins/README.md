@@ -41,6 +41,7 @@ The simplest skin only redefines the palette. Every rule of the base theme uses 
 | `toolbar.app-header` | top bar |
 | `toolbutton.transport-button > button` | previous, play and next buttons |
 | `button.round-menu` | app menu button |
+| `.app-name` | app name next to the window buttons |
 | `.lcd` | LCD display |
 | `.lcd scale slider` | position diamond |
 | `entry.search-bar` | search box |

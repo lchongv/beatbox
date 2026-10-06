@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+<!-- the LCD's picture for a station without a logo: a table radio with its antenna -->
+  <path d="M20 21 L46 6" stroke="#1c1f25" stroke-width="2.5" stroke-linecap="round"/>
+  <circle cx="46" cy="6" r="2.5" fill="#1c1f25"/>
+  <rect x="6" y="20" width="52" height="34" rx="6" fill="#1c1f25"/>
+  <rect x="9" y="23" width="46" height="28" rx="4" fill="#3a3f4a"/>
+  <circle cx="23" cy="37" r="10" fill="#1c1f25"/>
+  <g stroke="#5b6270" stroke-width="1.6" stroke-linecap="round">
+    <path d="M16 33 H30 M15 37 H31 M16 41 H30"/>
+  </g>
+  <rect x="38" y="28" width="13" height="7" rx="1.5" fill="#c9d3b6"/>
+  <path d="M42 29.5 V33.5" stroke="#c0392b" stroke-width="1.2"/>
+  <circle cx="41" cy="44" r="3.5" fill="#1c1f25"/>
+  <circle cx="49" cy="44" r="3.5" fill="#1c1f25"/>
+  <rect x="12" y="54" width="8" height="3" rx="1" fill="#1c1f25"/>
+  <rect x="44" y="54" width="8" height="3" rx="1" fill="#1c1f25"/>
+</svg>
