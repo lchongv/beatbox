@@ -593,7 +593,9 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		
 		Idle.add( () => {
 			var view = get_current_view();
-			if(App.playback.media_active) {
+			// a restored song gets the view as its list; songs opened at startup keep theirs
+			var p = App.playback;
+			if(p.media_active && p.media_from_playback_list_index(p.current_index) != p.current_media) {
 				view.set_as_current_list(null);
 			}
 			
