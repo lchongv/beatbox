@@ -104,8 +104,8 @@ Total fases 1–8: ~20–25 h. Fase 9: +8 h.
 # Hoja de ruta
 0.9.0 (4 oct 2026) trajo la limpieza de avisos, ReplayGain, las letras sincronizadas y el mini
 reproductor. 0.10.0 (5 oct 2026) trajo el resto de esta lista, la preparación para GTK4 y los
-paquetes. 0.11.0 (5 oct 2026) quita Granite y suma paquetes .deb y .rpm. Lo siguiente es la
-migración real a GTK4 (ver «Fuera de alcance»).
+paquetes. 0.11.0 (5 oct 2026) quita Granite y suma paquetes .deb y .rpm; 0.12.0 (5 oct 2026), el
+espectro en el LCD y el gato Nyan. Lo siguiente es la migración real a GTK4 (ver «Fuera de alcance»).
 
 ## Hecho en 0.9 y 0.10
 1. [x] Reproducción sin cortes (ya existía; verificada) + ReplayGain + fundido entre canciones (0–12 s, Preferencias › Comportamiento; segundo pipeline con curva de potencia constante).
