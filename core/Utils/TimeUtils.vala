@@ -139,5 +139,26 @@ namespace BeatBox.TimeUtils {
         return pretty_timestamp_from_time (dt);
     }
 
+    /**
+     * Seconds since the epoch of an RSS date ("Tue, 06 Oct 2026 10:00:00 +0200"), 0 if it
+     * isn't one. English names whatever the locale (strptime's follow it, and Windows lacks it).
+     * ponytail: named zones (GMT, EST...) count as UTC; a table if hours off ever matter
+     */
+    public int64 from_rfc822 (string date) {
+        MatchInfo m;
+        if (!/(\d{1,2})\s+([A-Za-z]{3})[A-Za-z]*\s+(\d{4})\s+(\d{1,2}):(\d{2})(?::(\d{2}))?\s*([+-]\d{4})?/.match (date, 0, out m))
+            return 0;
+        int month = "janfebmaraprmayjunjulaugsepoctnovdec".index_of (m.fetch (2).ascii_down ());
+        if (month < 0 || month % 3 != 0)
+            return 0;
+        string? sec = m.fetch (6), zone = m.fetch (7);
+        var dt = new DateTime.utc (int.parse (m.fetch (3)), month / 3 + 1, int.parse (m.fetch (1)),
+                                   int.parse (m.fetch (4)), int.parse (m.fetch (5)), sec == null || sec == "" ? 0 : double.parse (sec));
+        if (dt == null)
+            return 0;
+        int offset = zone == null || zone == "" ? 0 : int.parse (zone.substring (1, 2)) * 3600 + int.parse (zone.substring (3, 2)) * 60;
+        return dt.to_unix () - (zone != null && zone.has_prefix ("-") ? -offset : offset);
+    }
+
 }
 
