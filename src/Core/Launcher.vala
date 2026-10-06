@@ -26,6 +26,7 @@ namespace BeatBox.Launcher {
 	}
 
 	public void ensure () {
+#if HAVE_UNIX // freedesktop launchers: not on Windows
 		string exe;
 		try {
 			exe = FileUtils.read_link ("/proc/self/exe");
@@ -68,5 +69,6 @@ namespace BeatBox.Launcher {
 		} catch (Error err) {
 			warning ("Could not register the launcher: %s", err.message);
 		}
+#endif
 	}
 }

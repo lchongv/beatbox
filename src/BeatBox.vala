@@ -236,10 +236,12 @@ public class BeatBox.App : Gtk.Application {
 		((CoverManager)covers).setup_signals();
 		plugins = new PluginManager(new PluginHost(playback, library, window, settings));
 		
+#if HAVE_UNIX
 		// Quit cleanly (saving state) on logout/kill as well
 		foreach (int sig in new int[] { Posix.Signal.TERM, Posix.Signal.INT }) {
 			Unix.signal_add (sig, () => { ((Gtk.Window)window).destroy (); return false; });
 		}
+#endif
 		
 		// Start playing the last playing song. By waiting 1 second, we
 		// give everything time to finish initializing and avoid sending

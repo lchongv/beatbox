@@ -129,7 +129,7 @@ public class BeatBox.NowPlayingView : Notebook, NowPlayingViewInterface {
 	
 	void video_area_realized() {
 		// only X11 windows have an id to hand to a video sink (and video output is off for now)
-#if HAVE_X11
+#if HAVE_UNIX
 		var window = video_area.get_window();
 		if (window is Gdk.X11.Window)
 			video_area_xid = (ulong)((Gdk.X11.Window)window).get_xid();

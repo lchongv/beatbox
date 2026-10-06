@@ -1,4 +1,4 @@
-project('beatbox', 'vala', 'c', version: '0.16.4')
+project('beatbox', 'vala', 'c', version: '0.16.5')
 
 gnome = import('gnome')
 i18n = import('i18n')
@@ -312,7 +312,7 @@ skin_resources = gnome.compile_resources('beatbox-skins', 'skins/skins.gresource
 
 # Writing album art and the full set of tags into files needs TagLib 2.0's C property API
 embed_cover_sources = []
-app_vala_args = gpod_vala_args + (unix_packages.length() > 0 ? ['-D', 'HAVE_X11'] : [])
+app_vala_args = gpod_vala_args + (unix_packages.length() > 0 ? ['-D', 'HAVE_UNIX'] : [])
 app_deps = [core_dep]
 if python_plugins
   app_vala_args += ['-D', 'HAVE_PEAS']
