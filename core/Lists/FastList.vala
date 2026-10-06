@@ -42,6 +42,7 @@ public class BeatBox.FastList : TreeView {
 	
 	// search stuff
 	string last_search;
+	protected bool restoring_scroll; // true while do_search restores the scroll position
 	public delegate void ViewSearchFunc (string search, HashTable<int, Media> table, ref HashTable<int, Media> showing);
 	private unowned ViewSearchFunc search_func;
 	
@@ -184,6 +185,17 @@ public class BeatBox.FastList : TreeView {
 		
 		var old_size = showing.size();
 		
+		// Remember the top visible song to stay on it (unless the search changed)
+		Media? anchor = null;
+		int anchor_index = -1;
+		TreePath start, end;
+		if(old_size > 0 && (search == null || search == last_search)) {
+			if(get_visible_range(out start, out end)) {
+				anchor_index = start.get_indices()[0];
+				anchor = showing.get(anchor_index);
+			}
+		}
+		
 		showing.remove_all();
 		if(search != null)
 			last_search = search;
@@ -225,6 +237,20 @@ public class BeatBox.FastList : TreeView {
 			
 			fm.set_table(showing);
 			queue_draw();
+		}
+		
+		if(anchor != null) {
+			for(int i = 0; i < showing.size(); ++i) {
+				if(showing.get(i) == anchor) {
+					if(i == anchor_index) // still in its row: leave the scroll alone
+						break;
+					// scroll_to_cell is deferred until the rows are validated
+					restoring_scroll = true;
+					scroll_to_cell(new TreePath.from_indices(i), null, true, 0, 0);
+					Idle.add(() => { restoring_scroll = false; return false; }, Priority.LOW);
+					break;
+				}
+			}
 		}
 	}
 	
