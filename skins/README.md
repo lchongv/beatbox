@@ -1,14 +1,13 @@
 # BeatBox skins
 
-A skin is a folder with two files:
+A skin is a folder with two files, and optionally a third:
 
-- `skin.ini`: its name and description.
+- `skin.ini`: its name.
 
   ```ini
   [Skin]
   Name=My Skin
   Name[es]=Mi skin
-  Description=What it looks like.
   Author=You
   ```
 
@@ -17,19 +16,20 @@ A skin is a folder with two files:
   - `MenuIcon=square` shows the square app icon on the menu button (top right) instead of the round one.
 
 - `skin.css`: GTK 3 CSS. Unless the skin is native it is loaded on top of the Classic look (`data/theme.css`).
+- `preview.png`: a screenshot, shown in Preferences › Appearance when the skin is chosen (about 440 pixels wide).
 
 The default skin is Adwaita: plain GTK with its own theme. The bundled ones:
 
-| Skin | Kind | Look |
+| Skin | Kind | Preview |
 | --- | --- | --- |
-| Adwaita (default) | native | GTK's own theme, no custom styling |
-| Adwaita dark | native | the same, dark |
-| Native | native | the desktop's GTK theme |
-| Classic | over `theme.css` | aluminium chrome, blue accents, green LCD |
-| Graphite | over Classic | Classic in grey |
-| Midnight | over Classic | dark chrome and lists, blue LCD |
-| Vinyl | over Classic | walnut chrome, cream lists, amber LCD |
-| High contrast | over Classic | black and white, yellow selections and LCD |
+| Adwaita (default) | native | ![Adwaita (default)](adwaita/preview.png) |
+| Adwaita dark | native | ![Adwaita dark](adwaita-dark/preview.png) |
+| Native | native | ![Native](native/preview.png) |
+| Classic | over `theme.css` | ![Classic](classic/preview.png) |
+| Graphite | over Classic | ![Graphite](graphite/preview.png) |
+| Midnight | over Classic | ![Midnight](midnight/preview.png) |
+| Vinyl | over Classic | ![Vinyl](vinyl/preview.png) |
+| High contrast | over Classic | ![High contrast](high-contrast/preview.png) |
 
 To install a skin, copy its folder to `~/.local/share/beatbox/skins/`, then pick it in Preferences › Appearance. "Open Skins Folder" in that section creates and opens the folder.
 
