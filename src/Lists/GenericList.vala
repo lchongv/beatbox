@@ -442,6 +442,9 @@ public abstract class BeatBox.GenericList : FastList {
 	}
 	
 	void view_scroll() {
+		if(restoring_scroll) // our own scroll, not the user's
+			return;
+		
 		scrolled_recently = true;
 		
 		++timeout_count;
