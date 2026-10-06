@@ -323,7 +323,11 @@ public abstract class BeatBox.BaseLibrary : GLib.Object, BeatBox.Library {
 		
 		if(file_op.import_type == FilesOperation.ImportType.COMMANDLINE_IMPORT) {
 			if(file_op.imports.size > 0) {
-				App.playback.play_media(file_op.imports.to_array()[0], false);
+				// the opened files are the list, so Next goes through them
+				var opened = new LinkedList<Media>();
+				opened.add_all(file_op.imports);
+				App.playback.set_playback_list(opened, opened.first());
+				App.playback.play_media(opened.first(), false);
 				
 				if(!App.playback.playing) {
 					App.playback.play();

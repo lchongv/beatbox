@@ -420,7 +420,7 @@ public class BeatBox.PlaybackManager : GLib.Object, BeatBox.PlaybackInterface {
 			}
 		}
 		
-		if(play)
+		if(play && rv != null) // none when the song playing isn't in the list
 			play_media(rv, false);
 		
 		return rv;
@@ -466,7 +466,7 @@ public class BeatBox.PlaybackManager : GLib.Object, BeatBox.PlaybackInterface {
 			rv = playback_used_list.get(current_index);
 		}
 		
-		if(play)
+		if(play && rv != null)
 			play_media(rv, false);
 		
 		return rv;
