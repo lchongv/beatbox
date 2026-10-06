@@ -33,6 +33,7 @@ public class BeatBox.TopDisplay : Box, BeatBox.TopDisplayInterface {
 	private Gee.HashMap<Display, bool> display_enabled_map;
 	
 	private MetadataDisplay meta_display;
+	private SpectrumDisplay spectrum_display;
 	private BufferDisplay buffer_display;
 	private OperationDisplay operation_display;
 	
@@ -54,6 +55,7 @@ public class BeatBox.TopDisplay : Box, BeatBox.TopDisplayInterface {
 		
 		switch_button.set_image(App.icons.GO_NEXT.render_image(IconSize.MENU));
 		switch_button.set_relief(Gtk.ReliefStyle.NONE);
+		switch_button.focus_on_click = false; // no focus ring left in the LCD (Tab still reaches it)
 		
 		cancel_button.set_image(App.icons.PROCESS_STOP.render_image (IconSize.MENU));
 		cancel_button.set_relief(Gtk.ReliefStyle.NONE);
@@ -66,10 +68,12 @@ public class BeatBox.TopDisplay : Box, BeatBox.TopDisplayInterface {
 		this.add(cancel_button);
 		
 		meta_display = new MetadataDisplay();
+		spectrum_display = new SpectrumDisplay();
 		buffer_display = new BufferDisplay();
 		operation_display = new OperationDisplay();
 		
 		add_display(meta_display);
+		add_display(spectrum_display); // right after it: the arrow goes there and back
 		add_display(buffer_display);
 		add_display(operation_display);
 		
@@ -107,12 +111,15 @@ public class BeatBox.TopDisplay : Box, BeatBox.TopDisplayInterface {
 	public void set_display_enabled(int key, bool enabled) {
 		Display d = displays.get(key);
 		
-		if(d != null/* && enabled != display_enabled_map.get(d)*/) {
+		if(d != null) {
+			bool was_enabled = display_enabled_map.get(d);
 			display_enabled_map.set(d, enabled);
 			
 			switch_button.set_visible(enabled_displays_count() > 1);
 			
-			if(enabled && key != current_display_key) {
+			// one turning on comes to the front, the spectrum only by the arrow; the metadata
+			// turns on again with each song, which mustn't take the spectrum away
+			if(enabled && !was_enabled && key != current_display_key && d != spectrum_display) {
 				set_current_display(key);
 			}
 			else if(!enabled && key == current_display_key) {

@@ -86,6 +86,7 @@ public class BeatBox.PlaybackManager : GLib.Object, BeatBox.PlaybackInterface {
 		player.buffer_percent_update.connect( (percent) => { buffer_percent_update(percent); } );
 		player.current_position_update.connect(internal_current_position_update);
 		player.video_enabled.connect( () => { video_enabled(); } );
+		player.spectrum_update.connect( (magnitudes) => { spectrum_update(magnitudes); } );
 	}
 	
 	public void load_and_play_last_playing() {
@@ -162,6 +163,10 @@ public class BeatBox.PlaybackManager : GLib.Object, BeatBox.PlaybackInterface {
 	
 	public void set_volume(double val) {
 		player.setVolume(val);
+	}
+	
+	public void want_spectrum(bool wanted) {
+		player.want_spectrum(wanted);
 	}
 	
 	/**************** Video ******************************/

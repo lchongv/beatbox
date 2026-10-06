@@ -60,6 +60,7 @@ public interface BeatBox.PlaybackInterface : GLib.Object {
 	public signal void buffer_percent_update(int percent);
 	public signal void current_position_update(int64 position);
 	public signal void video_enabled();
+	public signal void spectrum_update(float[] magnitudes); // dB of 0 Hz – rate/2 in equal bands, while wanted
 	
 	// Shuffle and Repeat
 	public abstract void set_shuffle_mode(ShuffleMode mode);
@@ -115,4 +116,5 @@ public interface BeatBox.PlaybackInterface : GLib.Object {
 	// Equalizer
 	public abstract void apply_equalizer_preset();
 	public abstract void setEqualizerGain(int index, int val);
+	public abstract void want_spectrum(bool wanted); // spectrum_update runs only while some view wants it
 }

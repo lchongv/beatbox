@@ -9,7 +9,8 @@ This is a fork of BeatBox by Scott Ringwelski and contributors
 The original project is no longer maintained. In 2026 it was ported to
 meson, GTK3, GStreamer 1.0, libgee-0.8 and libsoup-3 (without Granite), and
 given a new look, Cover Flow, an inline cover grid, podcast and radio
-directories, online album art and skins.
+directories, online album art, skins, a live spectrum in the display (the
+arrow at its left) and a Nyan cat for the position marker.
 
 License: GPL version 3 (see COPYING); the sources are "GPL version 2 or
 later". Original authors and the fork's changes are listed in AUTHORS.
@@ -37,7 +38,7 @@ Ubuntu 24.04 and Ubuntu 26.04, and an .rpm for Fedora 44 on every push to
 master (Actions > Packages > the run > Artifacts), and attaches them to the
 release of every vX.Y.Z tag (.github/workflows/packages.yml). To install:
 
-    sudo apt install ./beatbox_<version>-1~ubuntu24.04_amd64.deb
+    sudo apt install ./beatbox_<version>-1.ubuntu24.04_amd64.deb
     sudo dnf install ./beatbox-<version>-1.fc44.x86_64.rpm
     flatpak install --user BeatBox-<version>-x86_64.flatpak
     chmod +x BeatBox-<version>-x86_64.AppImage

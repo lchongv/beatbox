@@ -1,4 +1,4 @@
-project('beatbox', 'vala', 'c', version: '0.11.2')
+project('beatbox', 'vala', 'c', version: '0.11.3')
 
 gnome = import('gnome')
 i18n = import('i18n')
@@ -243,6 +243,7 @@ app_sources = files(
   'src/Widgets/TopDisplay/LcdCover.vala',
   'src/Widgets/TopDisplay/TimeScale.vala',
   'src/Widgets/TopDisplay/MetadataDisplay.vala',
+  'src/Widgets/TopDisplay/SpectrumDisplay.vala',
   'src/Widgets/TopDisplay/SyncedLyrics.vala',
   'src/Widgets/TopDisplay/BufferDisplay.vala',
   'src/Widgets/TopDisplay/OperationDisplay.vala',

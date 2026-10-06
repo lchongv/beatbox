@@ -47,6 +47,8 @@ public class BeatBox.Pipeline : GLib.Object {
 	public CDDA cdda;
 	public ReplayGain replaygain;
 	public Video video;
+	Pad? spectrum_in = null;  // the spectrum branch's way in
+	ulong spectrum_drop = 0;  // the probe dropping its buffers while the LCD doesn't show it
 	
 	public dynamic Gst.Bus bus;
 	//Pad teepad;
@@ -103,6 +105,36 @@ public class BeatBox.Pipeline : GLib.Object {
 		else
 			audiosinkqueue.link_many(audiosink); // link the queue with the real audio sink
 		
+		/* The spectrum on a branch of its own, ending in a sink that keeps the clock: its
+		 * messages come as the sound is heard (in line, before the audio sink's buffer, they
+		 * came ~0.2 s early), and its buffers are dropped before the FFT while not wanted. */
+		dynamic Element? spectrum = ElementFactory.make("spectrum", null);
+		if (spectrum != null) {
+			dynamic Element spectrumqueue = ElementFactory.make("queue", null);
+			dynamic Element spectrumsink = ElementFactory.make("fakesink", null);
+			spectrum.bands = 512; // linear: ~43 Hz each, fine enough for the bass bars
+			spectrum.interval = 40 * Gst.MSECOND;
+			spectrum.threshold = -80;
+			// the decoder runs up to ~1.2 s ahead (the audio queue's second and the sink's buffer):
+			// room for that, or the queue drops buffers and the spectrum starts over at each gap
+			spectrumqueue.max_size_time = 3 * Gst.SECOND;
+			spectrumqueue.max_size_buffers = 0;
+			spectrumqueue.max_size_bytes = 0;
+			spectrumqueue.leaky = 2; // downstream: a stuck branch never holds the music up
+			spectrumsink.sync = true;
+			spectrumsink.async = false; // nothing to preroll while its buffers are dropped
+			((Gst.Bin)audiobin).add_many(spectrumqueue, spectrum, spectrumsink);
+			spectrumqueue.link_many(spectrum, spectrumsink);
+			spectrum_in = spectrumqueue.get_static_pad("sink");
+			audiotee.request_pad_simple("src_%u").link(spectrum_in);
+			// a serialized query (allocation, drain: a new song's format) waits for the queue to
+			// empty, which waits for the clock, which stops with the music: answer it here (on the
+			// queue's pad: the tee sends the allocation query straight to it)
+			spectrum_in.add_probe(PadProbeType.QUERY_DOWNSTREAM, (pad, info) =>
+				(info.get_query().type.get_flags() & QueryTypeFlags.SERIALIZED) != 0 ? PadProbeReturn.HANDLED : PadProbeReturn.OK);
+			want_spectrum(false);
+		}
+		
 		playbin.set("audio-sink", audiobin); 
 		bus = playbin.get_bus();
 		
@@ -143,6 +175,18 @@ public class BeatBox.Pipeline : GLib.Object {
 	/*private void textTagsChanged(Gst.Element sender, int stream_number) {
 		
 	}*/
+	
+	/** The probes capture nothing, so the pipeline isn't kept alive by its own pad */
+	public void want_spectrum(bool wanted) {
+		if(spectrum_in == null || wanted == (spectrum_drop == 0))
+			return;
+		if(wanted) {
+			spectrum_in.remove_probe(spectrum_drop);
+			spectrum_drop = 0;
+		}
+		else
+			spectrum_drop = spectrum_in.add_probe(PadProbeType.BUFFER, (pad, info) => PadProbeReturn.DROP);
+	}
 	
 	public int videoStreamCount() {
 		return playbin.n_video;
