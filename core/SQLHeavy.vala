@@ -3,6 +3,7 @@
  * sqlite3. Only implements the subset BeatBox actually uses.
  */
 
+[GIR (visible = false)] // internal: plugins don't see it
 namespace SQLHeavy {
 	public errordomain Error {
 		ERROR

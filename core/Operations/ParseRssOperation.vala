@@ -27,6 +27,7 @@
 
 using Gee;
 
+[GIR (visible = false)] // internal, not for plugins
 public class BeatBox.ParseRssOperation : Operation {
 	public string rss { get; set; }
 	

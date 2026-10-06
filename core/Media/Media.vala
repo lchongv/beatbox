@@ -25,7 +25,7 @@
  * BeatBox is covered by.
  */
  
-public enum MediaType {
+public enum BeatBox.MediaType {
 	SONG,
 	PODCAST,
 	AUDIOBOOK,
@@ -146,9 +146,11 @@ public abstract class BeatBox.Media : GLib.Object {
 	public abstract string get_secondary_display_text();
 	public abstract Media copy();
 #if HAVE_GPOD
+	[GIR (visible = false)]
 	public abstract void update_track(ref unowned GPod.Track t);
 #endif
 #if HAVE_GPOD
+	[GIR (visible = false)]
 	public abstract GPod.Track track_from_media();
 #endif
 	

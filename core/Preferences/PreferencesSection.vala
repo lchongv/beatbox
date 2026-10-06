@@ -27,7 +27,7 @@
 
 using Gtk;
 
-public enum PreferencesSectionCategory {
+public enum BeatBox.PreferencesSectionCategory {
 	GENERAL,
 	LIBRARIES,
 	PLUGINS

@@ -27,6 +27,7 @@
 
 using Gtk;
 
+[GIR (visible = false)] // internal, not for plugins
 public class BeatBox.FastGrid : IconView {
 	protected const int PIXBUF_COLUMN = 0;
 	protected const int MARKUP_COLUMN = 1;

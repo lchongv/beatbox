@@ -27,6 +27,7 @@
 
 using Gee;
 
+[GIR (visible = false)] // internal, not for plugins
 public class BeatBox.PlaylistOperation : FilesOperation {
 	public StaticPlaylist playlist { get; set; }
 	

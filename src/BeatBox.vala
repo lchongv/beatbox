@@ -75,6 +75,7 @@ public static int main (string[] args) {
     Intl.bind_textdomain_codeset (package_name, "UTF-8");
     Intl.textdomain (package_name);
   
+	BeatBox.PluginManager.set_typelib_path (); // before Python plugins load
 	var app = new BeatBox.App ();
 	return app.run (args);
 }

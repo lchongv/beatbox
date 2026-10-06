@@ -25,6 +25,7 @@
  * BeatBox is covered by.
  */
 
+[GIR (visible = false)] // internal, not for plugins
 public class BeatBox.DatabaseTransactionFiller {
 	public delegate void TransactionFiller(ref SQLHeavy.Transaction transaction, DatabaseTransactionFiller db_filler);
 	public unowned TransactionFiller filler;
@@ -34,6 +35,7 @@ public class BeatBox.DatabaseTransactionFiller {
 	public DatabaseTransactionFiller() { }
 }
 
+[GIR (visible = false)] // internal, not for plugins
 public interface BeatBox.DatabaseInterface : GLib.Object {
 	public abstract SQLHeavy.QueryResult execute(string statement);
 	public abstract void queue_transaction(DatabaseTransactionFiller db_filler);

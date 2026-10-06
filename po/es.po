@@ -3648,3 +3648,6 @@ msgstr "«%s» no es un identificador de complemento válido"
 #, c-format
 msgid "%s is missing next to %s"
 msgstr "Falta %s junto a %s"
+
+msgid "This copy of BeatBox can't run plugins written in Python."
+msgstr "Esta copia de BeatBox no puede ejecutar complementos escritos en Python."

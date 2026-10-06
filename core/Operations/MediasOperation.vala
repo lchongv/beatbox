@@ -27,6 +27,7 @@
 
 using Gee;
 
+[GIR (visible = false)] // internal, not for plugins
 public class BeatBox.MediasOperation : Operation {
 	public Collection<Media> medias { get; set; }
 	

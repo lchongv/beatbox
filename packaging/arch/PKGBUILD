@@ -7,9 +7,11 @@ arch=('x86_64')
 url="https://github.com/lchongv/beatbox"
 license=('GPL-3.0-or-later')
 depends=('gtk3' 'libgee' 'taglib' 'libxml2' 'libnotify' 'libsoup3' 'json-glib' 'sqlite' 'libgpod'
-         'gstreamer' 'gst-plugins-base-libs' 'gst-plugins-base' 'gst-plugins-good' 'glib-networking' 'hicolor-icon-theme')
-optdepends=('chromaprint: identify songs by their sound (fpcalc)')
-makedepends=('meson' 'vala' 'gettext')
+         'gstreamer' 'gst-plugins-base-libs' 'gst-plugins-base' 'gst-plugins-good' 'glib-networking' 'hicolor-icon-theme'
+         'libpeas-2')
+optdepends=('chromaprint: identify songs by their sound (fpcalc)'
+            'python-gobject: plugins written in Python')
+makedepends=('meson' 'vala' 'gettext' 'gobject-introspection')
 source=("beatbox-$pkgver.tar.gz")
 sha256sums=('SKIP')
 

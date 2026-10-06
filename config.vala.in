@@ -1,3 +1,4 @@
+[GIR (visible = false)] // build constants, not for plugins
 namespace Build {
 	public const string DATADIR = "@DATADIR@";
 	public const string PKG_DATADIR = "@PKG_DATADIR@";
@@ -10,6 +11,8 @@ namespace Build {
 	public const string CMAKE_INSTALL_PREFIX = "@CMAKE_INSTALL_PREFIX@";
 	public const string PLUGIN_DIR = "@PLUGIN_DIR@";
 	public const string PLUGIN_SUBDIR = "@PLUGIN_SUBDIR@"; // relative to the prefix
+	public const string TYPELIB_DIR = "@TYPELIB_DIR@";
+	public const string TYPELIB_SUBDIR = "@TYPELIB_SUBDIR@";
 
 	/**
 	 * Translatable launcher (.desktop) strings to be added to

@@ -37,6 +37,7 @@ public abstract class BeatBox.BasePlaylist : Object {
 	public abstract Collection<Media> analyze(Collection<Media> to_use);
 	
 #if HAVE_GPOD
+	[GIR (visible = false)]
 	public abstract GPod.Playlist get_gpod_playlist();
 #endif
 }
