@@ -18,6 +18,7 @@ public class BeatBox.AlbumWall : Layout {
 	const int ARROW_W = 28;
 	const int ARROW_H = 14;
 	const int DETAIL_TEXT_W = 220;  // width of the band's left column without a cover
+	const int ANIMATION_MS = 250;   // the band unfolding and the scroll to it
 
 	GenericGrid grid;
 	SourceView wrapper;
@@ -27,14 +28,16 @@ public class BeatBox.AlbumWall : Layout {
 	int step = GAP;          // horizontal gap, grown to spread the cells evenly
 	int open_index = -1;
 	Album? open_album = null;
-	Widget? detail = null;   // holder placed in the layout
-	Widget? content = null;  // its child, measured to size the holder
+	Revealer? detail = null; // placed in the layout, unfolds the band
+	Widget? holder = null;   // its child, given the height content wants
+	Widget? content = null;  // measured to size the holder
 	Gdk.Pixbuf? detail_source = null;  // full size cover of the open album
 	Image? detail_cover = null;
 	Box? detail_left = null;
 	int detail_side = -1;    // current side of detail_cover, from the settings' percentage
 	int detail_h = 0;        // height of the band (arrow included)
 	bool scroll_to_detail = false;
+	uint scroll_tick = 0;
 
 	/** Double click on a cover, or the band's play button */
 	public signal void album_activated (Album album);
@@ -104,13 +107,16 @@ public class BeatBox.AlbumWall : Layout {
 		cols = int.max (1, (width - GAP) / (CELL_W + GAP));
 		step = int.max (GAP, (width - cols * CELL_W) / (cols + 1));
 
+		int full_h = 0;
 		if (detail != null) {
-			// The band takes the whole width; its height is whatever its content needs
+			// The band takes the whole width; its height is whatever its content needs,
+			// times how far the revealer has unfolded it
 			set_detail_side (width);
-			int min_h, nat_h;
-			content.get_preferred_height_for_width (width, out min_h, out nat_h);
-			detail.set_size_request (width, nat_h); // no-op (no relayout) when unchanged
-			detail_h = nat_h + ARROW_H;
+			int min_h, shown_h;
+			content.get_preferred_height_for_width (width, out min_h, out full_h);
+			holder.set_size_request (width, full_h); // no-op (no relayout) when unchanged
+			detail.get_preferred_height_for_width (width, out shown_h, null);
+			detail_h = shown_h + ARROW_H;
 			int y = band_y () + ARROW_H;
 			int old_x, old_y;
 			child_get (detail, "x", out old_x, "y", out old_y);
@@ -132,13 +138,34 @@ public class BeatBox.AlbumWall : Layout {
 			scroll_to_detail = false;
 			// show the whole band if it fits, keeping the clicked row in view
 			double top = row_y (open_row) - GAP;
-			double bottom = band_y () + detail_h + GAP;
+			double bottom = band_y () + full_h + ARROW_H + GAP; // where it ends once unfolded
 			var adj = vadjustment;
 			if (bottom > adj.value + adj.page_size)
-				adj.value = double.min (top, bottom - adj.page_size);
+				scroll_smoothly (double.min (top, bottom - adj.page_size));
 			else if (top < adj.value)
-				adj.value = top;
+				scroll_smoothly (top);
 		}
+	}
+
+	/** Eases the view to value; the band grows meanwhile, so the target may only fit at the end */
+	void scroll_smoothly (double value) {
+		if (scroll_tick != 0)
+			remove_tick_callback (scroll_tick);
+		scroll_tick = 0;
+		if (!get_settings ().gtk_enable_animations) {
+			vadjustment.value = value;
+			return;
+		}
+		double from = vadjustment.value;
+		int64 start = get_frame_clock ().get_frame_time ();
+		scroll_tick = add_tick_callback ((widget, clock) => {
+			double t = double.min (1, (clock.get_frame_time () - start) / (ANIMATION_MS * 1000.0));
+			vadjustment.value = from + (value - from) * (1 - Math.pow (1 - t, 3)); // ease out
+			if (t < 1)
+				return Source.CONTINUE;
+			scroll_tick = 0;
+			return Source.REMOVE;
+		});
 	}
 
 	/* ---------- painting ---------- */
@@ -166,7 +193,7 @@ public class BeatBox.AlbumWall : Layout {
 			if (y + CELL_H < top || y > bottom)
 				continue;
 
-			if (i == open_index) {
+			if (i == open_index && detail.reveal_child) {
 				Gdk.RGBA accent;
 				if (!get_style_context ().lookup_color ("bb_accent", out accent))
 					accent = { 0.24, 0.43, 0.79, 1 };
@@ -269,7 +296,7 @@ public class BeatBox.AlbumWall : Layout {
 		int i = index_at (x, y);
 		// every press opens or closes the band; the second one of a double click also plays the album
 		if (i < 0 || i == open_index)
-			close_detail ();
+			close_detail (true);
 		else
 			open_detail (i);
 		if (n_press == 2 && i >= 0)
@@ -285,10 +312,24 @@ public class BeatBox.AlbumWall : Layout {
 
 	/* ---------- the detail band ---------- */
 
-	void close_detail () {
+	/** animate: fold the band away first (the rows below slide up) */
+	void close_detail (bool animate = false) {
+		if (detail != null && animate) {
+			var folding = detail;
+			if (!folding.reveal_child)
+				return; // already folding
+			folding.notify["child-revealed"].connect (() => {
+				if (folding == detail && !folding.child_revealed)
+					close_detail ();
+			});
+			folding.reveal_child = false;
+			queue_draw (); // the cover is no longer marked
+			return;
+		}
 		if (detail != null)
 			detail.destroy ();
-		detail = content = null;
+		detail = null;
+		holder = content = null;
 		detail_cover = null;
 		detail_left = null;
 		detail_source = null;
@@ -298,16 +339,23 @@ public class BeatBox.AlbumWall : Layout {
 	}
 
 	void open_detail (int index) {
+		// another album of the open row: the band stays unfolded and only its content changes
+		bool unfolded = detail != null && detail.reveal_child && open_row == index / cols;
 		close_detail ();
 		open_index = index;
 		open_album = albums[index];
 		content = build_detail (open_album);
-		var holder = new Box (Orientation.VERTICAL, 0);
+		var box = new Box (Orientation.VERTICAL, 0);
 		content.vexpand = true;
-		holder.add (content);
-		detail = holder;
+		box.add (content);
+		holder = box;
+		detail = new Revealer ();
+		detail.transition_type = RevealerTransitionType.SLIDE_DOWN;
+		detail.transition_duration = unfolded ? 0 : ANIMATION_MS;
+		detail.add (holder);
 		put (detail, 0, 0);
 		detail.show_all ();
+		detail.reveal_child = true;
 		scroll_to_detail = true;
 		queue_resize ();
 	}
