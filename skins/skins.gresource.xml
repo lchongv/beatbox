@@ -23,8 +23,8 @@
     <file>midnight/skin.ini</file>
     <file>midnight/skin.css</file>
     <file>midnight/preview.png</file>
-    <file>native/skin.ini</file>
-    <file>native/skin.css</file>
-    <file>native/preview.png</file>
+    <file>template/skin.ini</file>
+    <file>template/skin.css</file>
+    <file>template/preview.png</file>
   </gresource>
 </gresources>

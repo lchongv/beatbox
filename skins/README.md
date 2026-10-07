@@ -11,7 +11,7 @@ A skin is a folder with two files, and optionally a third:
   Author=You
   ```
 
-  - `Native=true` drops BeatBox's own look (the Classic skin, `data/theme.css`) so only the GTK theme and `skin.css` apply (see `skins/native`).
+  - `Native=true` drops BeatBox's own look (the Classic skin, `data/theme.css`) so only the GTK theme and `skin.css` apply (see `skins/adwaita`).
   - `Theme=Adwaita` uses that GTK theme instead of the desktop's; `Dark=true` asks for its dark variant (see `skins/adwaita` and `skins/adwaita-dark`).
   - `MenuIcon=square` shows the square app icon on the menu button (top right) instead of the round one.
 
@@ -24,12 +24,12 @@ The default skin is Adwaita: plain GTK with its own theme. The bundled ones:
 | --- | --- | --- |
 | Adwaita (default) | native | ![Adwaita (default)](adwaita/preview.png) |
 | Adwaita dark | native | ![Adwaita dark](adwaita-dark/preview.png) |
-| Native | native | ![Native](native/preview.png) |
 | Classic | over `theme.css` | ![Classic](classic/preview.png) |
 | Graphite | over Classic | ![Graphite](graphite/preview.png) |
 | Midnight | over Classic | ![Midnight](midnight/preview.png) |
 | Vinyl | over Classic | ![Vinyl](vinyl/preview.png) |
 | High contrast | over Classic | ![High contrast](high-contrast/preview.png) |
+| Template | over Classic | ![Template](template/preview.png) |
 
 To install a skin, copy its folder to `~/.local/share/beatbox/skins/`, then pick it in Preferences › Appearance. "Open Skins Folder" in that section creates and opens the folder.
 
@@ -46,7 +46,7 @@ The simplest skin (over Classic) only redefines the palette. Every rule of the C
 | `bb_detail_bg`, `bb_detail_border` | album band of the inline grid |
 | `bb_lcd_top`, `bb_lcd_mid`, `bb_lcd_bottom`, `bb_lcd_border`, `bb_lcd_text`, `bb_lcd_dim` | LCD display |
 
-`skins/graphite` is an example of a palette-only skin. `skins/midnight` also restyles widgets.
+`skins/template` has all of them, with Classic's values: copy it to start a skin. `skins/graphite` is an example of a palette-only skin. `skins/midnight` also restyles widgets.
 
 ## Useful selectors
 
@@ -74,4 +74,6 @@ The simplest skin (over Classic) only redefines the palette. Every rule of the C
 
 To reference images, put them inside the skin folder and use a relative `url("image.png")`.
 
-To try changes, pick another skin and then yours again; BeatBox reloads the CSS each time.
+To edit a skin, pick it and press "Edit CSS…" in Preferences › Appearance: the window follows the CSS as it is typed, and the first error is shown with its line. A bundled skin is saved as an edited copy in the skins folder; a skin of your own is saved in place. Changes made in another editor show when the skin is picked again.
+
+To find a widget's selector, start BeatBox with `GTK_DEBUG=interactive` and use the GTK Inspector.

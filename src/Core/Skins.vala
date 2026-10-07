@@ -104,10 +104,70 @@ namespace BeatBox.Skins {
 		return skin;
 	}
 
+	/** Whether the skin lives in the user's skins folder, so it can be saved in place */
+	public bool is_user (Skin skin) {
+		var path = skin.css.get_path ();
+		return path != null && path.has_prefix (user_dir () + Path.DIR_SEPARATOR_S);
+	}
+
+	/** Shows css in place of the skin's own until the skin is applied again (the CSS editor).
+	 * Returns the first error, if any; what parsed before it is shown anyway. */
+	public string? preview_css (Skin skin, string css) {
+		if (provider == null) {
+			provider = new Gtk.CssProvider ();
+			Gtk.StyleContext.add_provider_for_screen (Gdk.Screen.get_default (), provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION + 2);
+		}
+		// relative url("image.png") would be read from the working folder: point them at the skin's
+		string data = css;
+		try {
+			data = /url\(\s*(["']?)(?![a-z]+:)([^"')]+)\1\s*\)/.replace (css, -1, 0, "url(\"%s/\\2\")".printf (skin.css.get_parent ().get_uri ()));
+		} catch (RegexError err) {}
+		string? first = null;
+		ulong handler = provider.parsing_error.connect ((section, err) => {
+			if (first == null)
+				first = _("Line %u: %s").printf (section.get_start_line () + 1, err.message);
+		});
+		try {
+			provider.load_from_data (data);
+		} catch (Error err) {
+			if (first == null)
+				first = err.message;
+		}
+		provider.disconnect (handler);
+		return first;
+	}
+
+	/** Saves css as the skin's: in place for a user skin, else as a new user skin
+	 * "<name> (edited)" next to it. Returns the id of the skin saved. */
+	public string save_css (Skin skin, string css) throws Error {
+		var folder = skin.css.get_parent ();
+		string id = skin.id;
+		if (!is_user (skin)) {
+			id = skin.id + "-edited";
+			for (int n = 2; FileUtils.test (Path.build_filename (user_dir (), id), FileTest.EXISTS); n++)
+				id = "%s-edited-%d".printf (skin.id, n); // never over an earlier copy
+			var ini = new KeyFile ();
+			try {
+				uint8[] data;
+				folder.get_child ("skin.ini").load_contents (null, out data, null);
+				ini.load_from_data ((string)data, data.length, KeyFileFlags.NONE);
+				foreach (var key in ini.get_keys ("Skin"))
+					if (key.has_prefix ("Name["))
+						ini.remove_key ("Skin", key);
+			} catch (Error err) {} // a skin may have no skin.ini
+			ini.set_string ("Skin", "Name", _("%s (edited)").printf (skin.name));
+			folder = File.new_for_path (Path.build_filename (user_dir (), id));
+			DirUtils.create_with_parents (folder.get_path (), 0755);
+			FileUtils.set_contents (Path.build_filename (folder.get_path (), "skin.ini"), ini.to_data ());
+		}
+		FileUtils.set_contents (Path.build_filename (folder.get_path (), "skin.css"), css);
+		return id;
+	}
+
 	/** Apply a skin: a native one replaces the built-in look, any other is laid over it.
 	 * "" (never chosen) is the default skin; an unknown one leaves the built-in look alone. */
 	public void apply (string id) {
-		if (id == "")
+		if (id == "" || id == "native") // Native was Adwaita under another name
 			id = DEFAULT;
 		var screen = Gdk.Screen.get_default ();
 		var gtk = Gtk.Settings.get_default ();
