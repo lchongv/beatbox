@@ -109,6 +109,7 @@ public class BeatBox.CoverManager : Object, BeatBox.CoverInterface {
 			return;
 		
 		string uri = get_cached_album_art_path (key);
+		save_thumb (key, pixbuf);
 
 		debug ("Saving cached album-art for %s", key);
 		
@@ -140,41 +141,46 @@ public class BeatBox.CoverManager : Object, BeatBox.CoverInterface {
         return PixbufUtils.get_pixbuf_shadow (pixbuf, use_default_size ? Icons.ALBUM_VIEW_IMAGE_SIZE : pixbuf.width, stretch);
     }
 
+	/* The views draw covers small, and decoding a full size one takes ~40 ms:
+	 * at startup they are read from a thumbnail kept next to it */
+	string thumb_path (string key) {
+		return get_cached_album_art_path (key).replace (".jpg", ".thumb.png");
+	}
+
+	void save_thumb (string key, Gdk.Pixbuf pixbuf) {
+		int size = Icons.ALBUM_VIEW_IMAGE_SIZE;
+		try {
+			pixbuf.scale_simple (size, size, Gdk.InterpType.BILINEAR).save (thumb_path (key), "png");
+		} catch (Error err) {
+			debug ("Could not save the thumbnail of %s: %s", key, err.message);
+		}
+	}
+
     public void fetch_cover_of_media(Media s) {
         string key = get_media_coverart_key(s);
-        string path = "";
-        Gdk.Pixbuf? pix = null;
-            
-        if(!m_covers.has_key (key)) {
-            Gdk.Pixbuf? coverart_pixbuf = get_cached_album_art (key, out path);
-
-            // try to get image from the cache folder (faster)
-            if (coverart_pixbuf != null) {
-                pix = add_shadow_to_album_art(coverart_pixbuf);
-            }
-            else {
-				pix = get_cached_album_art(get_media_coverart_key(s), out path);
-					
-                if (pix == null && (path = get_best_album_art_file(s)) != null) {
-                    try {
-                        coverart_pixbuf = new Gdk.Pixbuf.from_file (path);
-                        pix = add_shadow_to_album_art(coverart_pixbuf);
-                        
-                        // Add image to cache
-                        save_album_art_in_cache (s, coverart_pixbuf);
-                    }
-                    catch(GLib.Error err) {
-                        debug (err.message);
-                    }
+        if(m_covers.has_key (key))
+            return;
+        string path;
+        Gdk.Pixbuf? cover = null;
+        try {
+            cover = new Gdk.Pixbuf.from_file (thumb_path (key));
+        } catch (Error err) {
+            cover = get_cached_album_art (key, out path);
+            if (cover != null) {
+                save_thumb (key, cover); // a cache from before thumbnails
+            } else if ((path = get_best_album_art_file(s)) != null && path != "") {
+                try {
+                    cover = new Gdk.Pixbuf.from_file (path);
+                    save_album_art_in_cache (s, cover);
+                } catch (Error e) {
+                    debug (e.message);
                 }
-                
-                // TODO: Try gstreamer tagger otherwise.
             }
-
-            m_covers[key] = pix;
+            // TODO: Try gstreamer tagger otherwise.
         }
+        m_covers[key] = (cover != null) ? add_shadow_to_album_art(cover) : null;
     }
-	
+    
     public string? get_best_album_art_file(Media m) {
 		// If it is not a local file, ignore it (asking GVfs about an https
 		// podcast episode is a network round trip per episode)
@@ -296,8 +302,13 @@ public class BeatBox.CoverManager : Object, BeatBox.CoverInterface {
 		medias.add_all(App.library.medias());
 		
 		// first get from file
+		int64 shown = get_monotonic_time();
 		foreach(var s in medias) {
             fetch_cover_of_media(s);
+			if(get_monotonic_time() - shown > 250000) { // they appear as they load, not all at the end
+				shown = get_monotonic_time();
+				Idle.add(() => { App.window.queue_draw(); return false; });
+			}
 		}
 		
 		message("Album art cached in memory.\n");
