@@ -107,7 +107,7 @@ namespace BeatBox.Skins {
 	/** Apply a skin: a native one replaces the built-in look, any other is laid over it.
 	 * "" (never chosen) is the default skin; an unknown one leaves the built-in look alone. */
 	public void apply (string id) {
-		if (id == "")
+		if (id == "" || id == "native") // Native was Adwaita under another name
 			id = DEFAULT;
 		var screen = Gdk.Screen.get_default ();
 		var gtk = Gtk.Settings.get_default ();

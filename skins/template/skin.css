@@ -1,0 +1,42 @@
+/* Template: every color of the Classic look, with Classic's values, ready to change.
+ * To make your own skin: copy this folder (skins/template in BeatBox's source,
+ * https://github.com/lchongv/beatbox/tree/master/skins/template) into the skins folder
+ * (Preferences › Appearance › Open Skins Folder), rename it, give it a new Name= in
+ * skin.ini and edit the values below. Selectors for restyling widgets: skins/README.md. */
+
+/* top bar gradient */
+@define-color bb_chrome_top      #ededed;
+@define-color bb_chrome_mid      #d6d6d6;
+@define-color bb_chrome_bottom   #b6b6b6;
+@define-color bb_chrome_border   #6b6b6b;
+
+/* selection, pressed buttons */
+@define-color bb_accent          #3d6dca;
+@define-color bb_accent_light    #6f8fc8;
+
+/* source list */
+@define-color bb_sidebar_top     #d8e0ec;
+@define-color bb_sidebar_bottom  #b9c4d4;
+@define-color bb_sidebar_border  #7e8a9b;
+@define-color bb_sidebar_text    #1a2230;
+@define-color bb_sidebar_heading #4a586d;
+
+/* zebra stripes of the track lists */
+@define-color bb_row_a           #ffffff;
+@define-color bb_row_b           #dde8f5;
+
+/* album band of the inline grid */
+@define-color bb_detail_bg       #ffffff;
+@define-color bb_detail_border   #bdbdbd;
+
+/* LCD display */
+@define-color bb_lcd_top         #e8eed4;
+@define-color bb_lcd_mid         #eef3dd;
+@define-color bb_lcd_bottom      #d8e0c2;
+@define-color bb_lcd_border      #4a4a4a;
+@define-color bb_lcd_text        #1c1f25;
+@define-color bb_lcd_dim         #5a6371;
+
+/* GTK's selection, for widgets BeatBox doesn't paint itself */
+@define-color theme_selected_bg_color @bb_accent;
+@define-color theme_selected_fg_color #ffffff;
