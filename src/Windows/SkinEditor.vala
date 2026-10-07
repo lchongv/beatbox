@@ -16,6 +16,7 @@ public class BeatBox.SkinEditor : Gtk.Window {
 	public SkinEditor (Window parent, Skins.Skin skin) {
 		this.skin = skin;
 		transient_for = parent;
+		modal = true; // Preferences is modal: input goes to the newest modal window only
 		destroy_with_parent = true;
 		set_default_size (640, 560);
 		title = _("Edit Skin: %s").printf (skin.name);
