@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beat-box\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-07 20:44-0300\n"
+"POT-Creation-Date: 2026-10-07 20:46-0300\n"
 "PO-Revision-Date: 2012-09-16 00:08+0000\n"
 "Last-Translator: Devid Antonio Filoni <Unknown>\n"
 "Language-Team: Italian <it@li.org>\n"
@@ -27,6 +27,55 @@ msgstr ""
 #: core/CellRenderers/CellDataFunctionHelper.vala:132
 msgid " kbps"
 msgstr ""
+
+#: core/Media/Media.vala:40 src/Widgets/StatusBar.vala:77
+msgid "Song"
+msgid_plural "Songs"
+msgstr[0] ""
+msgstr[1] ""
+
+#: core/Media/Media.vala:42 src/Lists/GenericList.vala:128
+#: src/Lists/PodcastList.vala:108 src/Windows/DirectoryDialog.vala:69
+#: src/Windows/Editors/PodcastEditor.vala:72
+msgid "Podcast"
+msgid_plural "Podcasts"
+msgstr[0] ""
+msgstr[1] ""
+
+#: core/Media/Media.vala:44
+#, fuzzy
+msgid "Audiobook"
+msgid_plural "Audiobooks"
+msgstr[0] "audiolibro"
+msgstr[1] "audiolibri"
+
+#. column chooser menu (header right click)
+#: core/Media/Media.vala:46 src/Lists/GenericList.vala:129
+#: src/Lists/RadioList.vala:77 src/Windows/DirectoryDialog.vala:68
+#: src/Windows/Editors/StationEditor.vala:61
+msgid "Station"
+msgid_plural "Stations"
+msgstr[0] ""
+msgstr[1] ""
+
+#: core/Media/Media.vala:48
+msgid "Video"
+msgid_plural "Videos"
+msgstr[0] ""
+msgstr[1] ""
+
+#: core/Media/Media.vala:50
+#, fuzzy
+msgid "TV Show"
+msgid_plural "TV Shows"
+msgstr[0] "Mostra"
+msgstr[1] "Mostra"
+
+#: core/Media/Media.vala:52
+msgid "Item"
+msgid_plural "Items"
+msgstr[0] ""
+msgstr[1] ""
 
 #: core/Media/Preview.vala:57 src/Media/Podcast.vala:77 src/Media/Song.vala:57
 #: src/NowPlayingView/PodcastSummarySection.vala:292
@@ -1214,25 +1263,12 @@ msgstr "Rimuovi episodio"
 msgid "Name"
 msgstr ""
 
-#: src/Lists/GenericList.vala:128 src/Lists/PodcastList.vala:108
-#: src/Windows/DirectoryDialog.vala:69
-#: src/Windows/Editors/PodcastEditor.vala:72
-msgid "Podcast"
-msgstr ""
-
 #: src/Lists/GenericList.vala:128 src/Lists/PodcastList.vala:109
 msgid "Date"
 msgstr ""
 
 #: src/Lists/GenericList.vala:129 src/Lists/PodcastList.vala:110
 msgid "Category"
-msgstr ""
-
-#. column chooser menu (header right click)
-#: src/Lists/GenericList.vala:129 src/Lists/RadioList.vala:77
-#: src/Windows/DirectoryDialog.vala:68
-#: src/Windows/Editors/StationEditor.vala:61
-msgid "Station"
 msgstr ""
 
 #: src/Lists/GenericList.vala:300
@@ -2497,10 +2533,6 @@ msgid "Repeat Off"
 msgstr ""
 
 #: src/Widgets/StatusBar.vala:77
-msgid "Song"
-msgstr ""
-
-#: src/Widgets/StatusBar.vala:77
 msgid "Repeat Song"
 msgstr "Ripeti brano"
 
@@ -3615,9 +3647,6 @@ msgstr "Titolo, artista e album"
 
 #~ msgid "Hide"
 #~ msgstr "Nascondi"
-
-#~ msgid "Show"
-#~ msgstr "Mostra"
 
 #, c-format
 #~ msgid "<b>Importing</b> music from <b>%s</b> to library."

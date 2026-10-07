@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beat-box\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-07 20:44-0300\n"
+"POT-Creation-Date: 2026-10-07 20:46-0300\n"
 "PO-Revision-Date: 2012-12-01 08:56+0000\n"
 "Last-Translator: Cheng-Chia Tseng <pswo10680@gmail.com>\n"
 "Language-Team: Chinese (Traditional) <zh_TW@li.org>\n"
@@ -27,6 +27,49 @@ msgstr ""
 #: core/CellRenderers/CellDataFunctionHelper.vala:132
 msgid " kbps"
 msgstr " kbps"
+
+#: core/Media/Media.vala:40 src/Widgets/StatusBar.vala:77
+#, fuzzy
+msgid "Song"
+msgid_plural "Songs"
+msgstr[0] "歌曲"
+
+#: core/Media/Media.vala:42 src/Lists/GenericList.vala:128
+#: src/Lists/PodcastList.vala:108 src/Windows/DirectoryDialog.vala:69
+#: src/Windows/Editors/PodcastEditor.vala:72
+#, fuzzy
+msgid "Podcast"
+msgid_plural "Podcasts"
+msgstr[0] "Podcast"
+
+#: core/Media/Media.vala:44
+msgid "Audiobook"
+msgid_plural "Audiobooks"
+msgstr[0] "有聲書"
+
+#. column chooser menu (header right click)
+#: core/Media/Media.vala:46 src/Lists/GenericList.vala:129
+#: src/Lists/RadioList.vala:77 src/Windows/DirectoryDialog.vala:68
+#: src/Windows/Editors/StationEditor.vala:61
+#, fuzzy
+msgid "Station"
+msgid_plural "Stations"
+msgstr[0] "電臺"
+
+#: core/Media/Media.vala:48
+msgid "Video"
+msgid_plural "Videos"
+msgstr[0] "視訊"
+
+#: core/Media/Media.vala:50
+msgid "TV Show"
+msgid_plural "TV Shows"
+msgstr[0] "TV 秀"
+
+#: core/Media/Media.vala:52
+msgid "Item"
+msgid_plural "Items"
+msgstr[0] ""
 
 #: core/Media/Preview.vala:57 src/Media/Podcast.vala:77 src/Media/Song.vala:57
 #: src/NowPlayingView/PodcastSummarySection.vala:292
@@ -1188,13 +1231,6 @@ msgstr "節目"
 msgid "Name"
 msgstr ""
 
-#: src/Lists/GenericList.vala:128 src/Lists/PodcastList.vala:108
-#: src/Windows/DirectoryDialog.vala:69
-#: src/Windows/Editors/PodcastEditor.vala:72
-#, fuzzy
-msgid "Podcast"
-msgstr "Podcast"
-
 #: src/Lists/GenericList.vala:128 src/Lists/PodcastList.vala:109
 msgid "Date"
 msgstr ""
@@ -1202,14 +1238,6 @@ msgstr ""
 #: src/Lists/GenericList.vala:129 src/Lists/PodcastList.vala:110
 msgid "Category"
 msgstr ""
-
-#. column chooser menu (header right click)
-#: src/Lists/GenericList.vala:129 src/Lists/RadioList.vala:77
-#: src/Windows/DirectoryDialog.vala:68
-#: src/Windows/Editors/StationEditor.vala:61
-#, fuzzy
-msgid "Station"
-msgstr "電臺"
 
 #: src/Lists/GenericList.vala:300
 msgid "Playing not Supported"
@@ -2447,11 +2475,6 @@ msgid "Repeat Off"
 msgstr "關閉重複播放"
 
 #: src/Widgets/StatusBar.vala:77
-#, fuzzy
-msgid "Song"
-msgstr "歌曲"
-
-#: src/Widgets/StatusBar.vala:77
 msgid "Repeat Song"
 msgstr "重復該歌曲"
 
@@ -3576,18 +3599,6 @@ msgstr "標題、演出者、專輯"
 #, c-format
 #~ msgid "%s not found:"
 #~ msgstr "找不到 %s："
-
-#~ msgid "Audiobook"
-#~ msgid_plural "Audiobooks"
-#~ msgstr[0] "有聲書"
-
-#~ msgid "Video"
-#~ msgid_plural "Videos"
-#~ msgstr[0] "視訊"
-
-#~ msgid "TV Show"
-#~ msgid_plural "TV Shows"
-#~ msgstr[0] "TV 秀"
 
 #~ msgid "Media"
 #~ msgid_plural "Medias"
