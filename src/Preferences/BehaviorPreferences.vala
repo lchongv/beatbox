@@ -123,6 +123,26 @@ public class BeatBox.AppearancePreferences : SimplePreferences {
 			skinChooser.append(skin.id, skin.name);
 		if (!skinChooser.set_active_id(App.settings.main.skin))
 			skinChooser.active_id = Skins.DEFAULT;
+		var editCss = new Button.with_label(_("Edit CSS…"));
+		editCss.clicked.connect(() => {
+			foreach (var skin in skins) {
+				if (skin.id != skinChooser.active_id)
+					continue;
+				var editor = new SkinEditor((Window)editCss.get_toplevel(), skin);
+				skinChooser.sensitive = editCss.sensitive = false; // the preview goes over this skin
+				editor.saved.connect((id) => {
+					if (id == skinChooser.active_id)
+						return;
+					skins = Skins.available(); // a new copy
+					skinChooser.remove_all();
+					foreach (var s in skins)
+						skinChooser.append(s.id, s.name);
+					skinChooser.active_id = id;
+				});
+				editor.destroy.connect(() => { skinChooser.sensitive = editCss.sensitive = true; });
+				editor.show_all();
+			}
+		});
 		var openSkins = new Button.with_label(_("Open Skins Folder"));
 		openSkins.clicked.connect(() => {
 			DirUtils.create_with_parents(Skins.user_dir(), 0755);
@@ -133,6 +153,7 @@ public class BeatBox.AppearancePreferences : SimplePreferences {
 			}
 		});
 		var skinBox = labelled(_("Skin:"), skinChooser);
+		skinBox.add(editCss);
 		skinBox.add(openSkins);
 		add_row(skinBox);
 		add_row(preview);

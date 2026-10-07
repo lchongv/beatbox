@@ -11,6 +11,7 @@ src/Core/FileOperator.vala
 src/Core/LibraryWindow.vala
 src/Core/PlaylistManager.vala
 src/Core/PodcastManager.vala
+src/Core/Skins.vala
 src/DBus/UnityIntegration.vala
 src/Devices/AndroidDevice.vala
 src/Devices/CDRomDevice.vala
@@ -79,4 +80,5 @@ src/Windows/Editors/StationEditor.vala
 src/Windows/EqualizerWindow.vala
 src/Windows/PlaylistNameWindow.vala
 src/Windows/PreferencesWindow.vala
+src/Windows/SkinEditor.vala
 src/Windows/RemoveDuplicatesDialog.vala
