@@ -83,4 +83,5 @@ src/Windows/EqualizerWindow.vala
 src/Windows/PlaylistNameWindow.vala
 src/Windows/PreferencesWindow.vala
 src/Windows/SkinEditor.vala
+src/Windows/StatsWindow.vala
 src/Windows/RemoveDuplicatesDialog.vala
