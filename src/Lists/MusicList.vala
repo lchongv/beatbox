@@ -40,6 +40,7 @@ public class BeatBox.MusicList : GenericList {
 	Gtk.MenuItem queueMoveDown;
 	Gtk.MenuItem queueClear;
 	Gtk.MenuItem saveArtInFiles;
+	Gtk.MenuItem fillTags;
 	Gtk.MenuItem mediaMenuNewPlaylist;
 	Gtk.MenuItem mediaMenuAddToPlaylist; // make menu on fly
 	RatingMenuItem mediaRateMedia;
@@ -86,6 +87,7 @@ public class BeatBox.MusicList : GenericList {
 		bool in_queue = get_hint() == TreeViewSetup.Hint.QUEUE;
 		// files on a device or a CD aren't BeatBox's to change
 		saveArtInFiles.visible = CoverEmbedder.available() && get_hint() != TreeViewSetup.Hint.DEVICE_AUDIO && get_hint() != TreeViewSetup.Hint.CDROM;
+		fillTags.visible = get_hint() != TreeViewSetup.Hint.DEVICE_AUDIO && get_hint() != TreeViewSetup.Hint.CDROM;
 		queueMoveUp.visible = queueMoveDown.visible = queueClear.visible = in_queue;
 
 		if(get_hint() == TreeViewSetup.Hint.MUSIC) {
@@ -178,6 +180,7 @@ public class BeatBox.MusicList : GenericList {
 		queueMoveDown = new Gtk.MenuItem.with_label(_("Move Down"));
 		queueClear = new Gtk.MenuItem.with_label(_("Clear Queue"));
 		saveArtInFiles = new Gtk.MenuItem.with_label(_("Save Album Art into the Files"));
+		fillTags = new Gtk.MenuItem.with_label(_("Fill In Tags from File Names…"));
 		mediaMenuNewPlaylist = new Gtk.MenuItem.with_label(_("New Playlist"));
 		mediaMenuAddToPlaylist = new Gtk.MenuItem.with_label(_("Add to Playlist"));
 		mediaRemove = new Gtk.MenuItem.with_label(_("Remove Song"));
@@ -187,6 +190,7 @@ public class BeatBox.MusicList : GenericList {
 		mediaMenuActionMenu.append(mediaEditMedia);
 		mediaMenuActionMenu.append(mediaFileBrowse);
 		mediaMenuActionMenu.append(saveArtInFiles);
+		mediaMenuActionMenu.append(fillTags);
 		mediaMenuActionMenu.append(mediaRateMedia);
 		mediaMenuActionMenu.append(new SeparatorMenuItem());
 		mediaMenuActionMenu.append(mediaMenuQueue);
@@ -215,6 +219,7 @@ public class BeatBox.MusicList : GenericList {
 		queueMoveDown.activate.connect(() => move_selected_in_queue(1));
 		queueClear.activate.connect(() => App.playback.clear_queue());
 		saveArtInFiles.activate.connect(save_art_in_files);
+		fillTags.activate.connect(() => FillTagsDialog.run_for(selected_list()));
 		mediaMenuNewPlaylist.activate.connect(mediaMenuNewPlaylistClicked);
 		mediaRemove.activate.connect(mediaRemoveClicked);
 		importToLibrary.activate.connect(importToLibraryClicked);

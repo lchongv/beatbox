@@ -416,6 +416,7 @@ compilation=:compilation, skip_shuffle=:skip_shuffle, volume_adjust=:volume_adju
 			if(s.artist == null || s.artist == "") s.artist = "Unknown Artist";
 			if(s.album_artist == null || s.album_artist == "")	s.album_artist = s.artist;
 			if(s.album == null) s.album = "";
+			TagGuess.fill(s, folder); // what the tags leave empty, from the folders and file name
 			
 			/*if(s.genre.down().contains("podcast") || s.length > 9000) {// OVER 9000!!!!! aka 15 minutes
 				s.mediatype = MediaType.PODCAST;
