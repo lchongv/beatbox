@@ -46,6 +46,7 @@ public class BeatBox.Streamer : GLib.Object {
 	
 	bool checked_video;
 	bool set_resume_pos;
+	int64 seek_when_ready = -1; // a resume position, sought once the new file can be (ASYNC_DONE)
 	bool is_video_enabled;
 	bool buffering;
 	bool internal_playing_flag;
@@ -249,8 +250,9 @@ public class BeatBox.Streamer : GLib.Object {
 		else
 			pause();
 		
-		if(use_resume_position)
-			setPosition((int64)App.playback.current_media.resume_pos * 1000000000);
+		seek_when_ready = -1;
+		if(use_resume_position && App.playback.current_media.resume_pos > 0)
+			seek_when_ready = (int64)App.playback.current_media.resume_pos * 1000000000;
 		else
 			setPosition(0);
 		
@@ -372,6 +374,15 @@ public class BeatBox.Streamer : GLib.Object {
 				end_of_stream();
 			}
 			
+			break;
+		case Gst.MessageType.ASYNC_DONE: // the file is ready: a seek works now
+			if(seek_when_ready >= 0) {
+				int64 pos = seek_when_ready;
+				seek_when_ready = -1;
+				pipe.playbin.seek_simple(Gst.Format.TIME, Gst.SeekFlags.FLUSH, pos);
+				set_resume_pos = true; // done: doPositionUpdate mustn't take it back to 0
+				current_position_update(pos);
+			}
 			break;
 		case Gst.MessageType.STATE_CHANGED:
 			Gst.State oldstate;
