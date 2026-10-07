@@ -4,8 +4,11 @@ BeatBox — what changed, newest first
 Packages for each version: https://github.com/lchongv/beatbox/releases
 
 
-1.0.0 (not released yet)
-------------------------
+0.99.0, the 1.0 release candidate (7 October 2026)
+--------------------------------------------------
+
+What 1.0 will be, to be used for a while first. If nothing turns up, it is
+released as 1.0.0 as it is.
 
 - Preferences › Appearance › Edit CSS… edits the skin's CSS with the window
   following as you type and the first error shown with its line. A bundled skin
@@ -14,6 +17,12 @@ Packages for each version: https://github.com/lchongv/beatbox/releases
   "Native" skin is gone (it looked the same as Adwaita, which it now opens as).
 - Podcast episode dates are read in every language (in Spanish, among others,
   they came out wrong).
+- With Repeat artist or Repeat album on, playback stopped at the last song of
+  the list (or at the first, going back) instead of returning to the start of
+  the artist or album.
+- Plugins: libbeatbox-core stays compatible for all of 1.x (docs/plugins.md,
+  Compatibility). GTK 4 will be 2.0.
+- The README shows screenshots, and asks for help with translations.
 
 
 0.16.1 (6 October 2026)
