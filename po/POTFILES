@@ -16,6 +16,7 @@ src/DBus/UnityIntegration.vala
 src/Devices/AndroidDevice.vala
 src/Devices/CDRomDevice.vala
 src/Devices/iPodDevice.vala
+src/Dialogs/FillTagsDialog.vala
 src/Dialogs/FileNotFoundDialog.vala
 src/Dialogs/InstallGstreamerPluginsDialog.vala
 src/Dialogs/NotImportedDialog.vala

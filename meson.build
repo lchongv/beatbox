@@ -1,4 +1,4 @@
-project('beatbox', 'vala', 'c', version: '0.99.4')
+project('beatbox', 'vala', 'c', version: '0.99.5')
 
 gnome = import('gnome')
 i18n = import('i18n')
@@ -100,6 +100,7 @@ core_sources = files(
   'core/Utils/Numeric.vala',
   'core/Utils/ListUtils.vala',
   'core/Utils/Shortcuts.vala',
+  'core/Utils/TagGuess.vala',
   'core/Operations/Operation.vala',
   'core/Operations/FilesOperation.vala',
   'core/Operations/PlaylistOperation.vala',
@@ -200,6 +201,7 @@ app_sources = files(
   'src/Devices/AndroidDevice.vala',
   'src/Devices/CDRomDevice.vala',
   'src/Dialogs/InstallGstreamerPluginsDialog.vala',
+  'src/Dialogs/FillTagsDialog.vala',
   'src/Dialogs/FileNotFoundDialog.vala',
   'src/Dialogs/RemoveFilesDialog.vala',
   'src/Dialogs/NotImportedDialog.vala',
@@ -351,6 +353,7 @@ test('list-utils', executable('test-list-utils', 'tests/list-utils.vala', depend
 test('shortcuts', executable('test-shortcuts', 'tests/shortcuts.vala', dependencies: core_dep))
 test('http-json', executable('test-http-json', 'tests/http-json.vala', dependencies: core_dep))
 test('rfc822', executable('test-rfc822', 'tests/rfc822.vala', dependencies: core_dep))
+test('tag-guess', executable('test-tag-guess', 'tests/tag-guess.vala', dependencies: core_dep))
 # BeatBox itself under Xvfb, driven through MPRIS (skipped without Xvfb, dbus-run-session, GStreamer's tools)
 test('smoke', find_program('python3'), args: [files('tests/smoke.py'), beatbox_exe],
   is_parallel: false, timeout: 240)
