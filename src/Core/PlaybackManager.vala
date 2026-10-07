@@ -89,22 +89,13 @@ public class BeatBox.PlaybackManager : GLib.Object, BeatBox.PlaybackInterface {
 		player.spectrum_update.connect( (magnitudes) => { spectrum_update(magnitudes); } );
 	}
 	
+	/** The song BeatBox was closed on: nothing is loaded at startup, and Play alone goes on with it */
+	Media? to_resume = null;
+	
 	public void load_and_play_last_playing() {
-		int i = App.settings.main.last_media_playing;
-		Media restore_song = App.library.media_from_id(i);
-		if(restore_song != null && !media_active) { // else a file opened at startup is already on
-			play_media(restore_song, true);
-			
-			// make sure we don't re-count stats
-			if((int)App.settings.main.last_media_position > 5) {
-				queriedlastfm = true;
-				play_counted = true; // resuming, not a new play
-			}
-			if((int)App.settings.main.last_media_position > 30)
-				media_considered_played = true;
-			if((double)((int)App.settings.main.last_media_position/(double)restore_song.length) > 0.90)
-				added_to_play_count = true;
-		}
+		Media? restore_song = App.library.media_from_id(App.settings.main.last_media_playing);
+		if(restore_song != null && !media_active) // else a file opened at startup is already on
+			to_resume = restore_song;
 		
 		// The queue as it was when BeatBox was closed
 		var queued = new LinkedList<Media>();
@@ -125,6 +116,10 @@ public class BeatBox.PlaybackManager : GLib.Object, BeatBox.PlaybackInterface {
 	
 	/**************** Basic playback **********************/
 	public void play() {
+		if(!media_active && to_resume != null) {
+			resume_last();
+			return;
+		}
 		if(!App.playback.media_active) {
 			debug("No media is currently playing. Starting from the top\n");
 			start_playback_requested();
@@ -554,7 +549,28 @@ public class BeatBox.PlaybackManager : GLib.Object, BeatBox.PlaybackInterface {
 	 * The order of code in playMediaInternal matters greatly for performance
 	 * and logical reasons
 	*/
+	/** Plays the song BeatBox was closed on from where it was left */
+	void resume_last() {
+		var m = to_resume;
+		to_resume = null;
+		play_media(m, true);
+		if(current_media != m) // its file is gone
+			return;
+		// resuming, not a new play: the stats were counted before
+		int position = (int)m.resume_pos;
+		if(position > 5) {
+			queriedlastfm = true;
+			play_counted = true;
+		}
+		if(position > 30)
+			media_considered_played = true;
+		if(m.length > 0 && position / (double)m.length > 0.90)
+			added_to_play_count = true;
+		play();
+	}
+	
 	public void play_media(Media m, bool use_resume_pos) {
+		to_resume = null; // another song was chosen
 		if(m.isTemporary) {
 			// takes the last preview's place (one id for all) and, being temporary, stays out of the database
 			m.rowid = PREVIEW_MEDIA_ID;

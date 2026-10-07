@@ -1138,8 +1138,8 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 	void on_quit() {
 		// Stop listening to window state changes
 		this.window_state_event.disconnect(window_state_changed);
-		App.settings.main.last_media_position = (int)((double)App.playback.get_position()/1000000000);
 		if(App.playback.media_active) {
+			App.settings.main.last_media_position = (int)((double)App.playback.get_position()/1000000000);
 			App.playback.current_media.resume_pos = (int)((double)App.playback.get_position()/1000000000);
 			App.library.update_media(App.playback.current_media, false, false, false);
 		}
