@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beat-box\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-07 20:44-0300\n"
+"POT-Creation-Date: 2026-10-07 20:46-0300\n"
 "PO-Revision-Date: 2012-11-12 09:23+0000\n"
 "Last-Translator: Eugene Marshal <Unknown>\n"
 "Language-Team: Russian <ru@li.org>\n"
@@ -28,6 +28,63 @@ msgstr ""
 #: core/CellRenderers/CellDataFunctionHelper.vala:132
 msgid " kbps"
 msgstr " Кбит/с"
+
+#: core/Media/Media.vala:40 src/Widgets/StatusBar.vala:77
+#, fuzzy
+msgid "Song"
+msgid_plural "Songs"
+msgstr[0] "Композиция"
+msgstr[1] "Композиция"
+msgstr[2] "Композиция"
+
+#: core/Media/Media.vala:42 src/Lists/GenericList.vala:128
+#: src/Lists/PodcastList.vala:108 src/Windows/DirectoryDialog.vala:69
+#: src/Windows/Editors/PodcastEditor.vala:72
+#, fuzzy
+msgid "Podcast"
+msgid_plural "Podcasts"
+msgstr[0] "Подкаст"
+msgstr[1] "Подкаст"
+msgstr[2] "Подкаст"
+
+#: core/Media/Media.vala:44
+msgid "Audiobook"
+msgid_plural "Audiobooks"
+msgstr[0] "Аудиокнига"
+msgstr[1] "Аудиокниги"
+msgstr[2] "Аудиокниг"
+
+#. column chooser menu (header right click)
+#: core/Media/Media.vala:46 src/Lists/GenericList.vala:129
+#: src/Lists/RadioList.vala:77 src/Windows/DirectoryDialog.vala:68
+#: src/Windows/Editors/StationEditor.vala:61
+#, fuzzy
+msgid "Station"
+msgid_plural "Stations"
+msgstr[0] "Станция"
+msgstr[1] "Станция"
+msgstr[2] "Станция"
+
+#: core/Media/Media.vala:48
+msgid "Video"
+msgid_plural "Videos"
+msgstr[0] "Видеофайл"
+msgstr[1] "Видеофайла"
+msgstr[2] "Видеофайлов"
+
+#: core/Media/Media.vala:50
+msgid "TV Show"
+msgid_plural "TV Shows"
+msgstr[0] "Телевизионное шоу"
+msgstr[1] "Телевизионных шоу"
+msgstr[2] "Телевизионных шоу"
+
+#: core/Media/Media.vala:52
+msgid "Item"
+msgid_plural "Items"
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
 
 #: core/Media/Preview.vala:57 src/Media/Podcast.vala:77 src/Media/Song.vala:57
 #: src/NowPlayingView/PodcastSummarySection.vala:292
@@ -1242,13 +1299,6 @@ msgstr "эпизод"
 msgid "Name"
 msgstr ""
 
-#: src/Lists/GenericList.vala:128 src/Lists/PodcastList.vala:108
-#: src/Windows/DirectoryDialog.vala:69
-#: src/Windows/Editors/PodcastEditor.vala:72
-#, fuzzy
-msgid "Podcast"
-msgstr "Подкаст"
-
 #: src/Lists/GenericList.vala:128 src/Lists/PodcastList.vala:109
 msgid "Date"
 msgstr ""
@@ -1256,14 +1306,6 @@ msgstr ""
 #: src/Lists/GenericList.vala:129 src/Lists/PodcastList.vala:110
 msgid "Category"
 msgstr ""
-
-#. column chooser menu (header right click)
-#: src/Lists/GenericList.vala:129 src/Lists/RadioList.vala:77
-#: src/Windows/DirectoryDialog.vala:68
-#: src/Windows/Editors/StationEditor.vala:61
-#, fuzzy
-msgid "Station"
-msgstr "Станция"
 
 #: src/Lists/GenericList.vala:300
 msgid "Playing not Supported"
@@ -2535,11 +2577,6 @@ msgid "Repeat Off"
 msgstr "Не повторять"
 
 #: src/Widgets/StatusBar.vala:77
-#, fuzzy
-msgid "Song"
-msgstr "Композиция"
-
-#: src/Widgets/StatusBar.vala:77
 msgid "Repeat Song"
 msgstr "Повторять песню"
 
@@ -3680,24 +3717,6 @@ msgstr "Название, исполнитель и альбом"
 #~ msgstr[0] "файл"
 #~ msgstr[1] "файла"
 #~ msgstr[2] "файлов"
-
-#~ msgid "Audiobook"
-#~ msgid_plural "Audiobooks"
-#~ msgstr[0] "Аудиокнига"
-#~ msgstr[1] "Аудиокниги"
-#~ msgstr[2] "Аудиокниг"
-
-#~ msgid "Video"
-#~ msgid_plural "Videos"
-#~ msgstr[0] "Видеофайл"
-#~ msgstr[1] "Видеофайла"
-#~ msgstr[2] "Видеофайлов"
-
-#~ msgid "TV Show"
-#~ msgid_plural "TV Shows"
-#~ msgstr[0] "Телевизионное шоу"
-#~ msgstr[1] "Телевизионных шоу"
-#~ msgstr[2] "Телевизионных шоу"
 
 #~ msgid "Media"
 #~ msgid_plural "Medias"
