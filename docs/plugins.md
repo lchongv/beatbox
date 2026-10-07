@@ -215,3 +215,15 @@ class MyPlugin(GObject.Object, BeatBox.Plugin):
 Nothing is built: install it with Install Plugin… (choosing the `.plugin`
 file; the `.py` file or the package folder next to it is copied too) or copy
 the folder to `~/.local/share/beatbox/plugins/`.
+
+## Compatibility
+
+From BeatBox 1.0, `libbeatbox-core` is stable for the whole 1.x series: a
+plugin built for 1.0 keeps working with every 1.x. What a plugin sees (the
+classes and interfaces in `core/`, and `BeatBox-1.0` from Python) only grows:
+nothing is removed or renamed, and no method changes its arguments. What is
+hidden from plugins (marked internal in the code, or invisible from Python)
+can change at any time.
+
+BeatBox 2.0 will move to GTK 4. Plugins that build their own widgets will need
+changes then; the others most likely won't.
