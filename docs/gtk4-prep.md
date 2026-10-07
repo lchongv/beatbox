@@ -10,7 +10,7 @@ Para medir el avance:
     find src core -name '*.vala' -exec touch {} + && ninja -C build 2>&1 | grep -c deprecated
 
 Regla para cada fase: compilar sin avisos nuevos, abrir el programa,
-probar la pantalla tocada y probar los skins Default y Nativo.
+probar la pantalla tocada y probar los skins Clásico y Adwaita.
 
 ## Fase 1 — Gtk.Stock → nombres de ícono (~2 h) 
 ~75 avisos. `Gtk.Stock.*`, `Image.from_stock`, `Button.from_stock`,
