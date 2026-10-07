@@ -126,7 +126,9 @@ public class BeatBox.DeviceManager : GLib.Object, BeatBox.DeviceInterface {
 		}
 		else if(App.settings.main.music_folder.contains(mount.get_default_location().get_path())) {
 			// user mounted music folder, rescan for images
-			App.settings.main.music_mount_name = mount.get_volume().get_name();
+			var volume = mount.get_volume(); // none for a Windows drive or a network mount
+			if(volume != null)
+				App.settings.main.music_mount_name = volume.get_name();
 			App.library.recheck_files_not_found_async ();
 			App.covers.fetch_image_cache_async.begin ();
 			

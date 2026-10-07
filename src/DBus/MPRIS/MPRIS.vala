@@ -71,7 +71,7 @@ public class BeatBox.MPRIS : GLib.Object {
 		debug("name acquired\n");
 	}	
 
-	private void on_name_lost(DBusConnection connection, string name) {
+	private void on_name_lost(DBusConnection? connection, string name) { // null: no session bus (Windows)
 		debug("name_lost\n");
 	}
 }

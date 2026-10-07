@@ -28,7 +28,7 @@
 window.beatbox {
   background-color: @bb_chrome_bottom;
   color: #1a1a1a;
-  font-family: "Inter", "Lucida Grande", "Helvetica Neue", "Cantarell", sans-serif;
+  font-family: "Inter", "Lucida Grande", "Lucida Sans Unicode", "Helvetica Neue", "Cantarell", sans-serif; /* Lucida Sans Unicode: every Windows */
 }
 
 /* ===== Top strip: brushed aluminium ===== */
