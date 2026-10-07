@@ -74,4 +74,6 @@ The simplest skin (over Classic) only redefines the palette. Every rule of the C
 
 To reference images, put them inside the skin folder and use a relative `url("image.png")`.
 
-To try changes, pick another skin and then yours again; BeatBox reloads the CSS each time.
+To edit a skin, pick it and press "Edit CSS…" in Preferences › Appearance: the window follows the CSS as it is typed, and the first error is shown with its line. A bundled skin is saved as an edited copy in the skins folder; a skin of your own is saved in place. Changes made in another editor show when the skin is picked again.
+
+To find a widget's selector, start BeatBox with `GTK_DEBUG=interactive` and use the GTK Inspector.

@@ -1,4 +1,4 @@
-project('beatbox', 'vala', 'c', version: '0.16.4')
+project('beatbox', 'vala', 'c', version: '0.16.5')
 
 gnome = import('gnome')
 i18n = import('i18n')
@@ -298,6 +298,7 @@ app_sources = files(
   'src/Windows/AddPodcastWindow.vala',
   'src/Windows/DirectoryDialog.vala',
   'src/Windows/RemoveDuplicatesDialog.vala',
+  'src/Windows/SkinEditor.vala',
 )
 
 resources = gnome.compile_resources('beatbox-resources', 'data/beatbox.gresource.xml', source_dir: 'data')

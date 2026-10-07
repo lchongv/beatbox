@@ -1,8 +1,7 @@
 /* Template: every color of the Classic look, with Classic's values, ready to change.
- * To make your own skin: copy this folder (skins/template in BeatBox's source,
- * https://github.com/lchongv/beatbox/tree/master/skins/template) into the skins folder
- * (Preferences › Appearance › Open Skins Folder), rename it, give it a new Name= in
- * skin.ini and edit the values below. Selectors for restyling widgets: skins/README.md. */
+ * To make your own skin: Preferences › Appearance › Edit CSS…, change the values below
+ * (the window follows as you type) and Save as Copy; the copy lands in the skins folder.
+ * Selectors for restyling widgets: skins/README.md. */
 
 /* top bar gradient */
 @define-color bb_chrome_top      #ededed;

@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beat-box\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-06 14:24-0300\n"
+"POT-Creation-Date: 2026-10-06 21:59-0300\n"
 "PO-Revision-Date: 2013-01-11 14:15+0000\n"
 "Last-Translator: Adolfo Jayme Barrientos <fitoschido@gmail.com>\n"
 "Language-Team: Spanish <es@li.org>\n"
@@ -228,7 +228,7 @@ msgstr "%s y %s"
 msgid "%s, %s and %s"
 msgstr "%s, %s y %s"
 
-#: core/Utils/UI.vala:154
+#: core/Utils/UI.vala:155
 msgid "Experimental:"
 msgstr "Experimental:"
 
@@ -269,12 +269,12 @@ msgstr "Añadir canal RSS"
 msgid "Download new Episodes"
 msgstr "Descargar episodios nuevos"
 
-#: src/Core/Actions.vala:56 src/Core/LibraryWindow.vala:834
+#: src/Core/Actions.vala:56 src/Core/LibraryWindow.vala:836
 #: src/DBus/UnityIntegration.vala:60 src/Windows/PreferencesWindow.vala:52
 msgid "Preferences"
 msgstr "Preferencias"
 
-#: src/Core/Actions.vala:57 src/Core/LibraryWindow.vala:833
+#: src/Core/Actions.vala:57 src/Core/LibraryWindow.vala:835
 #: src/DBus/UnityIntegration.vala:61 src/Windows/EqualizerWindow.vala:80
 msgid "Equalizer"
 msgstr "Ecualizador"
@@ -411,58 +411,58 @@ msgstr "Minimizar"
 msgid "Maximize (Alt: mini player)"
 msgstr "Maximizar (Alt: mini reproductor)"
 
-#: src/Core/LibraryWindow.vala:821
+#: src/Core/LibraryWindow.vala:823
 msgid "Play / Pause"
 msgstr "Reproducir / pausar"
 
-#: src/Core/LibraryWindow.vala:822
+#: src/Core/LibraryWindow.vala:824
 msgid "Next song"
 msgstr "Canción siguiente"
 
-#: src/Core/LibraryWindow.vala:823
+#: src/Core/LibraryWindow.vala:825
 msgid "Previous song"
 msgstr "Canción anterior"
 
-#: src/Core/LibraryWindow.vala:824
+#: src/Core/LibraryWindow.vala:826
 msgid "Volume up"
 msgstr "Subir el volumen"
 
-#: src/Core/LibraryWindow.vala:825
+#: src/Core/LibraryWindow.vala:827
 msgid "Volume down"
 msgstr "Bajar el volumen"
 
-#: src/Core/LibraryWindow.vala:826
+#: src/Core/LibraryWindow.vala:828
 msgid "Mini player"
 msgstr "Mini reproductor"
 
-#: src/Core/LibraryWindow.vala:827
+#: src/Core/LibraryWindow.vala:829
 msgid "Search"
 msgstr "Buscar"
 
-#: src/Core/LibraryWindow.vala:831
+#: src/Core/LibraryWindow.vala:833
 msgid "Now playing"
 msgstr "Reproduciendo ahora"
 
-#: src/Core/LibraryWindow.vala:832
+#: src/Core/LibraryWindow.vala:834
 msgid "Information panel"
 msgstr "Panel de información"
 
-#: src/Core/LibraryWindow.vala:835
+#: src/Core/LibraryWindow.vala:837
 msgid "Quit"
 msgstr "Salir"
 
 #. FIXME: We already do this and more in the library_manager import_operation_finished. Use that
 #. and use the same text as here for CD imports
-#: src/Core/LibraryWindow.vala:946 src/Devices/CDRomDevice.vala:339
+#: src/Core/LibraryWindow.vala:948 src/Devices/CDRomDevice.vala:339
 msgid "Import Complete"
 msgstr "Importación completa"
 
-#: src/Core/LibraryWindow.vala:946
+#: src/Core/LibraryWindow.vala:948
 #, c-format
 msgid "BeatBox has imported your %s library."
 msgstr "BeatBox ha importado su colección de %s."
 
-#: src/Core/LibraryWindow.vala:1039 src/Core/LibraryWindow.vala:1046
+#: src/Core/LibraryWindow.vala:1041 src/Core/LibraryWindow.vala:1048
 #, c-format
 msgid "%s media files could not be found."
 msgstr "No se encontraron %s archivos multimedia."
@@ -507,13 +507,24 @@ msgstr "Descargando podcasts nuevos"
 msgid "Parsing new Podcast RSS"
 msgstr "Analizando el canal RSS de podcast nuevo"
 
-#: src/Core/PodcastManager.vala:334
+#: src/Core/PodcastManager.vala:331
 msgid "Downloading Podcast Episodes"
 msgstr "Descargando episodios del podcast"
 
-#: src/Core/PodcastManager.vala:344
+#: src/Core/PodcastManager.vala:341
 msgid "Downloading Podcast Episodes..."
 msgstr "Descargando episodios de podcast…"
+
+#: src/Core/Skins.vala:128
+#, c-format
+msgid "Line %u: %s"
+msgstr "Línea %u: %s"
+
+#. a skin may have no skin.ini
+#: src/Core/Skins.vala:158
+#, c-format
+msgid "%s (edited)"
+msgstr "%s (editado)"
 
 #: src/DBus/UnityIntegration.vala:58 src/DBus/UnityIntegration.vala:129
 #: src/Widgets/AlbumWall.vala:373 src/Windows/Editors/InfoViewport.vala:191
@@ -679,7 +690,7 @@ msgid "Locate Music File"
 msgstr "Buscar el archivo de música"
 
 #: src/Dialogs/InstallGstreamerPluginsDialog.vala:64
-#: src/Preferences/BehaviorPreferences.vala:286
+#: src/Preferences/BehaviorPreferences.vala:307
 msgid "Install Plugin"
 msgstr "Instalar complemento"
 
@@ -1307,108 +1318,112 @@ msgid "Skin"
 msgstr "Skin"
 
 #: src/Preferences/BehaviorPreferences.vala:126
+msgid "Edit CSS…"
+msgstr "Editar CSS…"
+
+#: src/Preferences/BehaviorPreferences.vala:146
 msgid "Open Skins Folder"
 msgstr "Abrir carpeta de skins"
 
-#: src/Preferences/BehaviorPreferences.vala:135
+#: src/Preferences/BehaviorPreferences.vala:155
 msgid "Skin:"
 msgstr "Skin:"
 
-#: src/Preferences/BehaviorPreferences.vala:160
+#: src/Preferences/BehaviorPreferences.vala:181
 msgid "LCD"
 msgstr "LCD"
 
-#: src/Preferences/BehaviorPreferences.vala:163
+#: src/Preferences/BehaviorPreferences.vala:184
 msgid "Display"
 msgstr "Pantalla"
 
-#: src/Preferences/BehaviorPreferences.vala:165
+#: src/Preferences/BehaviorPreferences.vala:186
 msgid "Two lines, artist and album taking turns"
 msgstr "Dos líneas, alternando artista y álbum"
 
-#: src/Preferences/BehaviorPreferences.vala:166
+#: src/Preferences/BehaviorPreferences.vala:187
 msgid "One line"
 msgstr "Una línea"
 
-#: src/Preferences/BehaviorPreferences.vala:169
+#: src/Preferences/BehaviorPreferences.vala:190
 msgid "Song information in the LCD:"
 msgstr "Información de la canción en el LCD:"
 
-#: src/Preferences/BehaviorPreferences.vala:171
+#: src/Preferences/BehaviorPreferences.vala:192
 msgid "Show synced lyrics on the second line when available (lrclib.net)"
 msgstr ""
 "Mostrar la letra sincronizada en la segunda línea cuando exista (lrclib.net)"
 
-#: src/Preferences/BehaviorPreferences.vala:174
+#: src/Preferences/BehaviorPreferences.vala:195
 msgid "Show the album cover at the left edge of the LCD"
 msgstr "Mostrar la carátula del álbum en el borde izquierdo del LCD"
 
-#: src/Preferences/BehaviorPreferences.vala:179
+#: src/Preferences/BehaviorPreferences.vala:200
 msgid "Switch between artist and album every:"
 msgstr "Alternar artista y álbum cada:"
 
 #. helper for units
-#: src/Preferences/BehaviorPreferences.vala:179
+#: src/Preferences/BehaviorPreferences.vala:200
 #: src/Windows/Editors/SmartPlaylistEditor.vala:491
 msgid "seconds"
 msgstr "segundos"
 
-#: src/Preferences/BehaviorPreferences.vala:184
+#: src/Preferences/BehaviorPreferences.vala:205
 msgid "Duration of the slide:"
 msgstr "Duración del deslizamiento:"
 
-#: src/Preferences/BehaviorPreferences.vala:184
+#: src/Preferences/BehaviorPreferences.vala:205
 msgid "milliseconds"
 msgstr "milisegundos"
 
-#: src/Preferences/BehaviorPreferences.vala:187
+#: src/Preferences/BehaviorPreferences.vala:208
 msgid "Position bar"
 msgstr "Barra de posición"
 
-#: src/Preferences/BehaviorPreferences.vala:190
+#: src/Preferences/BehaviorPreferences.vala:211
 msgid "Width of the track:"
 msgstr "Ancho del camino:"
 
-#: src/Preferences/BehaviorPreferences.vala:190
-#: src/Preferences/BehaviorPreferences.vala:205
+#: src/Preferences/BehaviorPreferences.vala:211
+#: src/Preferences/BehaviorPreferences.vala:226
 msgid "pixels"
 msgstr "píxeles"
 
-#: src/Preferences/BehaviorPreferences.vala:192
+#: src/Preferences/BehaviorPreferences.vala:213
 msgid "Diamond"
 msgstr "Rombo"
 
-#: src/Preferences/BehaviorPreferences.vala:193
+#: src/Preferences/BehaviorPreferences.vala:214
 msgid "Circle"
 msgstr "Círculo"
 
-#: src/Preferences/BehaviorPreferences.vala:194
+#: src/Preferences/BehaviorPreferences.vala:215
 msgid "Cup"
 msgstr "Copa"
 
-#: src/Preferences/BehaviorPreferences.vala:195
+#: src/Preferences/BehaviorPreferences.vala:216
 msgid "Nyan cat"
 msgstr "Gato Nyan"
 
-#: src/Preferences/BehaviorPreferences.vala:198
+#: src/Preferences/BehaviorPreferences.vala:219
 msgid "Shape of the position marker:"
 msgstr "Forma del marcador de posición:"
 
-#: src/Preferences/BehaviorPreferences.vala:205
+#: src/Preferences/BehaviorPreferences.vala:226
 msgid "Size of the position marker:"
 msgstr "Tamaño del marcador de posición:"
 
-#: src/Preferences/BehaviorPreferences.vala:219
-#: src/Preferences/BehaviorPreferences.vala:222
+#: src/Preferences/BehaviorPreferences.vala:240
+#: src/Preferences/BehaviorPreferences.vala:243
 msgid "Mini Player"
 msgstr "Mini reproductor"
 
-#: src/Preferences/BehaviorPreferences.vala:223
+#: src/Preferences/BehaviorPreferences.vala:244
 msgid "Keep the mini player above other windows"
 msgstr "Mantener el mini reproductor encima de las demás ventanas"
 
 #. GTK 3 can't ask a Wayland compositor for that
-#: src/Preferences/BehaviorPreferences.vala:228
+#: src/Preferences/BehaviorPreferences.vala:249
 msgid ""
 "On Wayland the desktop keeps windows on top: right-click the toolbar and "
 "choose “Always on Top”."
@@ -1416,43 +1431,43 @@ msgstr ""
 "En Wayland es el escritorio el que mantiene ventanas encima: haz clic "
 "derecho en la barra y elige «Siempre encima»."
 
-#: src/Preferences/BehaviorPreferences.vala:240
-#: src/Preferences/BehaviorPreferences.vala:246 src/Views/SideTreeView.vala:97
+#: src/Preferences/BehaviorPreferences.vala:261
+#: src/Preferences/BehaviorPreferences.vala:267 src/Views/SideTreeView.vala:97
 msgid "Plugins"
 msgstr "Complementos"
 
-#: src/Preferences/BehaviorPreferences.vala:243
+#: src/Preferences/BehaviorPreferences.vala:264
 msgid "No plugins are installed."
 msgstr "No hay complementos instalados."
 
-#: src/Preferences/BehaviorPreferences.vala:256
+#: src/Preferences/BehaviorPreferences.vala:277
 msgid "Install Plugin…"
 msgstr "Instalar complemento…"
 
-#: src/Preferences/BehaviorPreferences.vala:286
+#: src/Preferences/BehaviorPreferences.vala:307
 msgid "Install"
 msgstr "Instalar"
 
-#: src/Preferences/BehaviorPreferences.vala:286
+#: src/Preferences/BehaviorPreferences.vala:307
 #: src/Windows/AddPodcastWindow.vala:81 src/Windows/DirectoryDialog.vala:280
 #: src/Windows/Editors/MediaEditor.vala:94
 #: src/Windows/Editors/SmartPlaylistEditor.vala:157
 #: src/Windows/Editors/SongEditor.vala:502
 #: src/Windows/Editors/SongEditor.vala:574
-#: src/Windows/PlaylistNameWindow.vala:64
+#: src/Windows/PlaylistNameWindow.vala:64 src/Windows/SkinEditor.vala:118
 #: src/Windows/RemoveDuplicatesDialog.vala:69
 msgid "Cancel"
 msgstr "Cancelar"
 
-#: src/Preferences/BehaviorPreferences.vala:288
+#: src/Preferences/BehaviorPreferences.vala:309
 msgid "BeatBox plugins (*.plugin)"
 msgstr "Complementos de BeatBox (*.plugin)"
 
-#: src/Preferences/BehaviorPreferences.vala:298
+#: src/Preferences/BehaviorPreferences.vala:319
 msgid "Plugin updated"
 msgstr "Complemento actualizado"
 
-#: src/Preferences/BehaviorPreferences.vala:298
+#: src/Preferences/BehaviorPreferences.vala:319
 msgid ""
 "A plugin with the same name is in use: restart BeatBox to use the one just "
 "installed."
@@ -1460,89 +1475,89 @@ msgstr ""
 "Hay un complemento con el mismo nombre en uso: reinicia BeatBox para usar el "
 "que acabas de instalar."
 
-#: src/Preferences/BehaviorPreferences.vala:300
+#: src/Preferences/BehaviorPreferences.vala:321
 msgid "Could not install the plugin"
 msgstr "No se pudo instalar el complemento"
 
-#: src/Preferences/BehaviorPreferences.vala:307
+#: src/Preferences/BehaviorPreferences.vala:328
 msgid "Album Art"
 msgstr "Carátulas"
 
-#: src/Preferences/BehaviorPreferences.vala:310
+#: src/Preferences/BehaviorPreferences.vala:331
 msgid "Cover Grid"
 msgstr "Grilla de carátulas"
 
-#: src/Preferences/BehaviorPreferences.vala:312
+#: src/Preferences/BehaviorPreferences.vala:333
 msgid "Unfold it inline, under its row"
 msgstr "Desplegarlo bajo su fila"
 
-#: src/Preferences/BehaviorPreferences.vala:313
+#: src/Preferences/BehaviorPreferences.vala:334
 msgid "Open it in a popup window"
 msgstr "Abrirlo en una ventana emergente"
 
-#: src/Preferences/BehaviorPreferences.vala:316
+#: src/Preferences/BehaviorPreferences.vala:337
 msgid "Clicking an album in the cover grid:"
 msgstr "Al pulsar un álbum en la grilla de carátulas:"
 
-#: src/Preferences/BehaviorPreferences.vala:322
+#: src/Preferences/BehaviorPreferences.vala:343
 msgid "hidden"
 msgstr "oculta"
 
-#: src/Preferences/BehaviorPreferences.vala:324
+#: src/Preferences/BehaviorPreferences.vala:345
 msgid "Size of the cover in the unfolded album:"
 msgstr "Tamaño de la carátula en el álbum desplegado:"
 
-#: src/Preferences/BehaviorPreferences.vala:325
+#: src/Preferences/BehaviorPreferences.vala:346
 msgid "Share of the band's width; 0 shows no cover"
 msgstr "Porcentaje del ancho de la banda; con 0 no se muestra"
 
-#: src/Preferences/BehaviorPreferences.vala:331
+#: src/Preferences/BehaviorPreferences.vala:352
 msgid "Missing Album Art"
 msgstr "Carátulas que faltan"
 
-#: src/Preferences/BehaviorPreferences.vala:332
+#: src/Preferences/BehaviorPreferences.vala:353
 msgid "Download missing album art from the internet (MusicBrainz, Apple Music)"
 msgstr ""
 "Descargar de internet las carátulas que falten (MusicBrainz, Apple Music)"
 
-#: src/Preferences/BehaviorPreferences.vala:343
+#: src/Preferences/BehaviorPreferences.vala:364
 msgid "About"
 msgstr "Acerca de"
 
-#: src/Preferences/BehaviorPreferences.vala:350
+#: src/Preferences/BehaviorPreferences.vala:371
 #, c-format
 msgid "Version %s"
 msgstr "Versión %s"
 
-#: src/Preferences/BehaviorPreferences.vala:351
+#: src/Preferences/BehaviorPreferences.vala:372
 msgid "A music player for your collection, podcasts and internet radio."
 msgstr ""
 "Un reproductor de música para tu colección, podcasts y radio en internet."
 
-#: src/Preferences/BehaviorPreferences.vala:355
+#: src/Preferences/BehaviorPreferences.vala:376
 msgid "Authors"
 msgstr "Autores"
 
-#: src/Preferences/BehaviorPreferences.vala:357
+#: src/Preferences/BehaviorPreferences.vala:378
 msgid "Contributions"
 msgstr "Contribuciones"
 
-#: src/Preferences/BehaviorPreferences.vala:358
+#: src/Preferences/BehaviorPreferences.vala:379
 #, c-format
 msgid "Di Weng (%s): shortening texts by characters instead of bytes"
 msgstr "Di Weng (%s): textos acortados por caracteres en vez de bytes"
 
-#: src/Preferences/BehaviorPreferences.vala:359
+#: src/Preferences/BehaviorPreferences.vala:380
 #: src/Windows/Editors/MediaEditor.vala:148
 #: src/Windows/Editors/SongEditor.vala:234
 msgid "Artwork"
 msgstr "Arte"
 
-#: src/Preferences/BehaviorPreferences.vala:361
+#: src/Preferences/BehaviorPreferences.vala:382
 msgid "2026 update"
 msgstr "Actualización de 2026"
 
-#: src/Preferences/BehaviorPreferences.vala:362
+#: src/Preferences/BehaviorPreferences.vala:383
 msgid ""
 "Ported to GTK 3, GStreamer 1.0 and libsoup 3, with a new look, Cover Flow, "
 "the inline cover grid, internet radio and podcast directories, online album "
@@ -1552,45 +1567,45 @@ msgstr ""
 "Flow, la grilla de carátulas desplegable, directorios de radios y podcasts, "
 "carátulas desde internet y skins."
 
-#: src/Preferences/BehaviorPreferences.vala:364
+#: src/Preferences/BehaviorPreferences.vala:385
 msgid "Services"
 msgstr "Servicios"
 
-#: src/Preferences/BehaviorPreferences.vala:365
+#: src/Preferences/BehaviorPreferences.vala:386
 #, c-format
 msgid "Internet radio stations: %s"
 msgstr "Emisoras de radio en internet: %s"
 
-#: src/Preferences/BehaviorPreferences.vala:366
+#: src/Preferences/BehaviorPreferences.vala:387
 #, c-format
 msgid "Podcasts: %s"
 msgstr "Podcasts: %s"
 
-#: src/Preferences/BehaviorPreferences.vala:367
+#: src/Preferences/BehaviorPreferences.vala:388
 #, c-format
 msgid "Album art: %s, with %s as fallback"
 msgstr "Carátulas: %s, y %s como respaldo"
 
-#: src/Preferences/BehaviorPreferences.vala:368
+#: src/Preferences/BehaviorPreferences.vala:389
 #, c-format
 msgid "Lyrics: %s"
 msgstr "Letras: %s"
 
-#: src/Preferences/BehaviorPreferences.vala:369
+#: src/Preferences/BehaviorPreferences.vala:390
 #, c-format
 msgid "Scrobbling: %s"
 msgstr "Registro de escuchas: %s"
 
-#: src/Preferences/BehaviorPreferences.vala:371
+#: src/Preferences/BehaviorPreferences.vala:392
 msgid "License"
 msgstr "Licencia"
 
-#: src/Preferences/BehaviorPreferences.vala:372
+#: src/Preferences/BehaviorPreferences.vala:393
 #, c-format
 msgid "Free software under the %s."
 msgstr "Software libre bajo la %s."
 
-#: src/Preferences/BehaviorPreferences.vala:372
+#: src/Preferences/BehaviorPreferences.vala:393
 msgid "GNU General Public License, version 3"
 msgstr "Licencia Pública General de GNU, versión 3"
 
@@ -3232,6 +3247,50 @@ msgstr "General"
 msgid "Libraries"
 msgstr "Colecciones"
 
+#: src/Windows/SkinEditor.vala:21 src/Windows/SkinEditor.vala:97
+#, c-format
+msgid "Edit Skin: %s"
+msgstr "Editar skin: %s"
+
+#: src/Windows/SkinEditor.vala:45
+msgid "Revert"
+msgstr "Revertir"
+
+#: src/Windows/SkinEditor.vala:46
+msgid "Back to the last saved version"
+msgstr "Volver a la última versión guardada"
+
+#: src/Windows/SkinEditor.vala:48 src/Windows/SkinEditor.vala:98
+#: src/Windows/SkinEditor.vala:119
+msgid "Save"
+msgstr "Guardar"
+
+#: src/Windows/SkinEditor.vala:48
+msgid "Save as Copy"
+msgstr "Guardar como copia"
+
+#: src/Windows/SkinEditor.vala:49
+msgid "A bundled skin can't be changed: the copy goes to the skins folder"
+msgstr ""
+"Un skin incluido no se puede cambiar: la copia va a la carpeta de skins"
+
+#: src/Windows/SkinEditor.vala:85
+msgid "Not saved"
+msgstr "Sin guardar"
+
+#: src/Windows/SkinEditor.vala:106
+#, c-format
+msgid "Could not save: %s"
+msgstr "No se pudo guardar: %s"
+
+#: src/Windows/SkinEditor.vala:116
+msgid "Save the changes to the skin?"
+msgstr "¿Guardar los cambios del skin?"
+
+#: src/Windows/SkinEditor.vala:117
+msgid "Close Without Saving"
+msgstr "Cerrar sin guardar"
+
 #: src/Windows/RemoveDuplicatesDialog.vala:44
 #, c-format
 msgid "Analyzing %d of %d..."
@@ -3342,10 +3401,6 @@ msgstr "Título, artista y álbum"
 #~ msgstr "Metadatos"
 
 #, c-format
-#~ msgid "Editing %s"
-#~ msgstr "Editando %s"
-
-#, c-format
 #~ msgid "Editing %d medias"
 #~ msgstr "Editando %d medios"
 
@@ -3394,10 +3449,6 @@ msgstr "Título, artista y álbum"
 #, c-format
 #~ msgid "Locate %s"
 #~ msgstr "Buscar %s"
-
-#, c-format
-#~ msgid "Could not find %s %s"
-#~ msgstr "No se encontró %s %s"
 
 #~ msgid "file"
 #~ msgid_plural "files"
