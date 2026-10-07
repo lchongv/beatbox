@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beat-box\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-06 14:24-0300\n"
+"POT-Creation-Date: 2026-10-07 20:44-0300\n"
 "PO-Revision-Date: 2012-03-27 10:46+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Swahili <sw@li.org>\n"
@@ -53,35 +53,38 @@ msgstr "Albamu haijulikani"
 msgid " on "
 msgstr " juu ya "
 
-#: core/Playlists/SmartQuery.vala:51 src/Lists/DuplicateList.vala:123
-#: src/Lists/GenericList.vala:126 src/Lists/MusicList.vala:160
+#: core/Playlists/SmartQuery.vala:51 src/Dialogs/FillTagsDialog.vala:47
+#: src/Dialogs/FindReplaceDialog.vala:38 src/Lists/DuplicateList.vala:123
+#: src/Lists/GenericList.vala:126 src/Lists/MusicList.vala:164
 #: src/Widgets/StatusBar.vala:78 src/Windows/Editors/SongEditor.vala:582
 msgid "Album"
 msgstr "Albamu"
 
-#: core/Playlists/SmartQuery.vala:53 src/Lists/DuplicateList.vala:122
-#: src/Lists/GenericList.vala:126 src/Lists/MusicList.vala:159
+#: core/Playlists/SmartQuery.vala:53 src/Dialogs/FillTagsDialog.vala:47
+#: src/Dialogs/FindReplaceDialog.vala:38 src/Lists/DuplicateList.vala:122
+#: src/Lists/GenericList.vala:126 src/Lists/MusicList.vala:163
 #: src/Lists/PodcastList.vala:107 src/Widgets/StatusBar.vala:79
 #: src/Windows/Editors/SongEditor.vala:582
 msgid "Artist"
 msgstr "Msanii"
 
 #: core/Playlists/SmartQuery.vala:55 src/Lists/DuplicateList.vala:126
-#: src/Lists/GenericList.vala:127 src/Lists/MusicList.vala:163
+#: src/Lists/GenericList.vala:127 src/Lists/MusicList.vala:167
 msgid "Bitrate"
 msgstr "Bitrate"
 
-#: core/Playlists/SmartQuery.vala:57 src/Lists/GenericList.vala:128
-#: src/Lists/PodcastList.vala:111 src/Windows/Editors/PodcastEditor.vala:74
+#: core/Playlists/SmartQuery.vala:57 src/Dialogs/FindReplaceDialog.vala:38
+#: src/Lists/GenericList.vala:128 src/Lists/PodcastList.vala:111
+#: src/Windows/Editors/PodcastEditor.vala:74
 msgid "Comment"
 msgstr ""
 
-#: core/Playlists/SmartQuery.vala:59
+#: core/Playlists/SmartQuery.vala:59 src/Dialogs/FindReplaceDialog.vala:38
 msgid "Composer"
 msgstr ""
 
 #: core/Playlists/SmartQuery.vala:61 src/Lists/DuplicateList.vala:130
-#: src/Lists/GenericList.vala:127 src/Lists/MusicList.vala:167
+#: src/Lists/GenericList.vala:127 src/Lists/MusicList.vala:171
 msgid "Date Added"
 msgstr "Tarehe iliyowekwa"
 
@@ -89,26 +92,26 @@ msgstr "Tarehe iliyowekwa"
 msgid "Date Released"
 msgstr ""
 
-#: core/Playlists/SmartQuery.vala:65 src/Lists/DuplicateList.vala:124
-#: src/Lists/GenericList.vala:126 src/Lists/MusicList.vala:161
-#: src/Lists/RadioList.vala:78 src/Windows/DirectoryDialog.vala:68
-#: src/Windows/DirectoryDialog.vala:69
+#: core/Playlists/SmartQuery.vala:65 src/Dialogs/FindReplaceDialog.vala:38
+#: src/Lists/DuplicateList.vala:124 src/Lists/GenericList.vala:126
+#: src/Lists/MusicList.vala:165 src/Lists/RadioList.vala:78
+#: src/Windows/DirectoryDialog.vala:68 src/Windows/DirectoryDialog.vala:69
 #: src/Windows/Editors/PodcastEditor.vala:73
 #: src/Windows/Editors/StationEditor.vala:62
 msgid "Genre"
 msgstr ""
 
-#: core/Playlists/SmartQuery.vala:67
+#: core/Playlists/SmartQuery.vala:67 src/Dialogs/FindReplaceDialog.vala:38
 msgid "Grouping"
 msgstr ""
 
 #: core/Playlists/SmartQuery.vala:69 src/Lists/DuplicateList.vala:131
-#: src/Lists/GenericList.vala:128 src/Lists/MusicList.vala:168
+#: src/Lists/GenericList.vala:128 src/Lists/MusicList.vala:172
 msgid "Last Played"
 msgstr "Mala ya mwisho kuchezwa"
 
 #: core/Playlists/SmartQuery.vala:71 src/Lists/DuplicateList.vala:121
-#: src/Lists/GenericList.vala:126 src/Lists/MusicList.vala:158
+#: src/Lists/GenericList.vala:126 src/Lists/MusicList.vala:162
 #: src/Lists/PodcastList.vala:106
 msgid "Length"
 msgstr "Urefu"
@@ -122,7 +125,7 @@ msgid "Play Count"
 msgstr ""
 
 #: core/Playlists/SmartQuery.vala:77 src/Lists/DuplicateList.vala:127
-#: src/Lists/GenericList.vala:127 src/Lists/MusicList.vala:164
+#: src/Lists/GenericList.vala:127 src/Lists/MusicList.vala:168
 #: src/Lists/PodcastList.vala:112 src/Lists/RadioList.vala:79
 #: src/Widgets/TrackReport.vala:173 src/Windows/Editors/PodcastEditor.vala:76
 #: src/Windows/Editors/StationEditor.vala:63
@@ -136,15 +139,17 @@ msgstr ""
 #. Column titles are translated at runtime (see add_columns); listed here for xgettext
 #. if(s.media_type != sum.media_type)
 #. sum.media_type = MediaType.SONG;
-#: core/Playlists/SmartQuery.vala:81 src/Lists/DuplicateList.vala:120
-#: src/Lists/GenericList.vala:126 src/Lists/MusicList.vala:157
+#: core/Playlists/SmartQuery.vala:81 src/Dialogs/FillTagsDialog.vala:47
+#: src/Dialogs/FindReplaceDialog.vala:38 src/Lists/DuplicateList.vala:120
+#: src/Lists/GenericList.vala:126 src/Lists/MusicList.vala:161
 #: src/Windows/Editors/PodcastEditor.vala:70
 #: src/Windows/Editors/SongEditor.vala:582
 msgid "Title"
 msgstr "Jina"
 
-#: core/Playlists/SmartQuery.vala:83 src/Lists/DuplicateList.vala:125
-#: src/Lists/GenericList.vala:127 src/Lists/MusicList.vala:162
+#: core/Playlists/SmartQuery.vala:83 src/Dialogs/FillTagsDialog.vala:47
+#: src/Lists/DuplicateList.vala:125 src/Lists/GenericList.vala:127
+#: src/Lists/MusicList.vala:166
 msgid "Year"
 msgstr "Mwaka"
 
@@ -184,7 +189,7 @@ msgstr ""
 msgid "does not contain"
 msgstr ""
 
-#: core/Playlists/StaticPlaylist.vala:39 src/Lists/MusicList.vala:181
+#: core/Playlists/StaticPlaylist.vala:39 src/Lists/MusicList.vala:187
 #: src/Lists/PodcastList.vala:120
 msgid "New Playlist"
 msgstr "Playlist mpya"
@@ -228,7 +233,7 @@ msgstr ""
 msgid "%s, %s and %s"
 msgstr ""
 
-#: core/Utils/UI.vala:154
+#: core/Utils/UI.vala:155
 msgid "Experimental:"
 msgstr ""
 
@@ -270,12 +275,12 @@ msgstr ""
 msgid "Download new Episodes"
 msgstr ""
 
-#: src/Core/Actions.vala:56 src/Core/LibraryWindow.vala:834
+#: src/Core/Actions.vala:56 src/Core/LibraryWindow.vala:840
 #: src/DBus/UnityIntegration.vala:60 src/Windows/PreferencesWindow.vala:52
 msgid "Preferences"
 msgstr ""
 
-#: src/Core/Actions.vala:57 src/Core/LibraryWindow.vala:833
+#: src/Core/Actions.vala:57 src/Core/LibraryWindow.vala:839
 #: src/DBus/UnityIntegration.vala:61 src/Windows/EqualizerWindow.vala:80
 msgid "Equalizer"
 msgstr ""
@@ -368,12 +373,12 @@ msgstr ""
 
 #. If the user wants their imports to be copied to their music folder, transition
 #. into that copy right now. If they don't, finish.
-#: src/Core/FileOperator.vala:494
+#: src/Core/FileOperator.vala:510
 #, c-format
 msgid "Copying files to %s Folder..."
 msgstr ""
 
-#: src/Core/FileOperator.vala:514
+#: src/Core/FileOperator.vala:530
 #, c-format
 msgid "Copying %s to %s Folder"
 msgstr ""
@@ -387,80 +392,85 @@ msgstr ""
 msgid "_Mini Player"
 msgstr ""
 
-#: src/Core/LibraryWindow.vala:425
+#: src/Core/LibraryWindow.vala:381
+msgid "Listening _Statistics"
+msgstr ""
+
+#: src/Core/LibraryWindow.vala:429
 msgid "Resolve"
 msgstr ""
 
-#: src/Core/LibraryWindow.vala:476
+#: src/Core/LibraryWindow.vala:480
 msgid "Information about the song playing (Ctrl+Shift+I)"
 msgstr ""
 
-#: src/Core/LibraryWindow.vala:532 src/Windows/DirectoryDialog.vala:108
+#: src/Core/LibraryWindow.vala:536 src/Dialogs/FindReplaceDialog.vala:96
+#: src/Windows/DirectoryDialog.vala:108
 msgid "Close"
 msgstr ""
 
-#: src/Core/LibraryWindow.vala:532
+#: src/Core/LibraryWindow.vala:536
 msgid "Minimize"
 msgstr ""
 
-#: src/Core/LibraryWindow.vala:532
+#: src/Core/LibraryWindow.vala:536
 msgid "Maximize (Alt: mini player)"
 msgstr ""
 
-#: src/Core/LibraryWindow.vala:821
+#: src/Core/LibraryWindow.vala:827
 msgid "Play / Pause"
 msgstr ""
 
-#: src/Core/LibraryWindow.vala:822
+#: src/Core/LibraryWindow.vala:828
 #, fuzzy
 msgid "Next song"
 msgstr "Inayofuata"
 
-#: src/Core/LibraryWindow.vala:823
+#: src/Core/LibraryWindow.vala:829
 #, fuzzy
 msgid "Previous song"
 msgstr "Iliyopita"
 
-#: src/Core/LibraryWindow.vala:824
+#: src/Core/LibraryWindow.vala:830
 msgid "Volume up"
 msgstr ""
 
-#: src/Core/LibraryWindow.vala:825
+#: src/Core/LibraryWindow.vala:831
 msgid "Volume down"
 msgstr ""
 
-#: src/Core/LibraryWindow.vala:826
+#: src/Core/LibraryWindow.vala:832
 msgid "Mini player"
 msgstr ""
 
-#: src/Core/LibraryWindow.vala:827
+#: src/Core/LibraryWindow.vala:833
 msgid "Search"
 msgstr ""
 
-#: src/Core/LibraryWindow.vala:831
+#: src/Core/LibraryWindow.vala:837
 msgid "Now playing"
 msgstr ""
 
-#: src/Core/LibraryWindow.vala:832
+#: src/Core/LibraryWindow.vala:838
 msgid "Information panel"
 msgstr ""
 
-#: src/Core/LibraryWindow.vala:835
+#: src/Core/LibraryWindow.vala:841
 msgid "Quit"
 msgstr ""
 
 #. FIXME: We already do this and more in the library_manager import_operation_finished. Use that
 #. and use the same text as here for CD imports
-#: src/Core/LibraryWindow.vala:946 src/Devices/CDRomDevice.vala:339
+#: src/Core/LibraryWindow.vala:952 src/Devices/CDRomDevice.vala:339
 msgid "Import Complete"
 msgstr "Imemaliza kuingiza"
 
-#: src/Core/LibraryWindow.vala:946
+#: src/Core/LibraryWindow.vala:952
 #, c-format
 msgid "BeatBox has imported your %s library."
 msgstr ""
 
-#: src/Core/LibraryWindow.vala:1039 src/Core/LibraryWindow.vala:1046
+#: src/Core/LibraryWindow.vala:1045 src/Core/LibraryWindow.vala:1052
 #, c-format
 msgid "%s media files could not be found."
 msgstr ""
@@ -505,16 +515,27 @@ msgstr ""
 msgid "Parsing new Podcast RSS"
 msgstr ""
 
-#: src/Core/PodcastManager.vala:334
+#: src/Core/PodcastManager.vala:331
 msgid "Downloading Podcast Episodes"
 msgstr ""
 
-#: src/Core/PodcastManager.vala:344
+#: src/Core/PodcastManager.vala:341
 msgid "Downloading Podcast Episodes..."
 msgstr ""
 
+#: src/Core/Skins.vala:128
+#, c-format
+msgid "Line %u: %s"
+msgstr ""
+
+#. a skin may have no skin.ini
+#: src/Core/Skins.vala:158
+#, c-format
+msgid "%s (edited)"
+msgstr ""
+
 #: src/DBus/UnityIntegration.vala:58 src/DBus/UnityIntegration.vala:129
-#: src/Widgets/AlbumWall.vala:373 src/Windows/Editors/InfoViewport.vala:191
+#: src/Widgets/AlbumWall.vala:421 src/Windows/Editors/InfoViewport.vala:191
 msgid "Play"
 msgid_plural "Plays"
 msgstr[0] ""
@@ -637,7 +658,133 @@ msgstr ""
 msgid "to library"
 msgstr ""
 
-#: src/Dialogs/FileNotFoundDialog.vala:80 src/Lists/MusicList.vala:93
+#: src/Dialogs/FillTagsDialog.vala:11
+msgid "Nothing to fill in"
+msgstr ""
+
+#: src/Dialogs/FillTagsDialog.vala:11
+msgid "The file names don't add anything to these songs' tags."
+msgstr ""
+
+#: src/Dialogs/FillTagsDialog.vala:20
+msgid "Fill In Tags from File Names"
+msgstr ""
+
+#: src/Dialogs/FillTagsDialog.vala:47 src/Widgets/TrackReport.vala:106
+#: src/Widgets/TrackReport.vala:218
+msgid "File"
+msgstr ""
+
+#: src/Dialogs/FillTagsDialog.vala:47 src/Lists/DuplicateList.vala:119
+#: src/Lists/GenericList.vala:127 src/Lists/MusicList.vala:160
+#: src/Windows/Editors/PodcastEditor.vala:75
+msgid "Track"
+msgstr "Wimbo"
+
+#: src/Dialogs/FillTagsDialog.vala:62
+#, c-format
+msgid "%d song gets the tags in bold. Tags already set are kept."
+msgid_plural "%d songs get the tags in bold. Tags already set are kept."
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/Dialogs/FillTagsDialog.vala:73
+#: src/Preferences/BehaviorPreferences.vala:307
+#: src/Windows/AddPodcastWindow.vala:81 src/Windows/DirectoryDialog.vala:280
+#: src/Windows/Editors/MediaEditor.vala:94
+#: src/Windows/Editors/SmartPlaylistEditor.vala:157
+#: src/Windows/Editors/SongEditor.vala:502
+#: src/Windows/Editors/SongEditor.vala:574
+#: src/Windows/PlaylistNameWindow.vala:64 src/Windows/SkinEditor.vala:119
+#: src/Windows/RemoveDuplicatesDialog.vala:69
+msgid "Cancel"
+msgstr "Ghairi"
+
+#: src/Dialogs/FillTagsDialog.vala:74
+msgid "Fill In"
+msgstr ""
+
+#: src/Dialogs/FindReplaceDialog.vala:28
+msgid "Find and Replace in Tags"
+msgstr ""
+
+#: src/Dialogs/FindReplaceDialog.vala:38
+#, fuzzy
+msgid "Album Artist"
+msgstr "Msanii"
+
+#: src/Dialogs/FindReplaceDialog.vala:47
+#, fuzzy
+msgid "Match case"
+msgstr "Linganisha"
+
+#: src/Dialogs/FindReplaceDialog.vala:48
+msgid "Regular expression"
+msgstr ""
+
+#: src/Dialogs/FindReplaceDialog.vala:49
+msgid "The replacement may use \\1, \\2… for the parts in parentheses"
+msgstr ""
+
+#: src/Dialogs/FindReplaceDialog.vala:50
+msgid "Whole words"
+msgstr ""
+
+#: src/Dialogs/FindReplaceDialog.vala:55
+msgid "Tag:"
+msgstr ""
+
+#: src/Dialogs/FindReplaceDialog.vala:55
+msgid "Find:"
+msgstr ""
+
+#: src/Dialogs/FindReplaceDialog.vala:55
+msgid "Replace with:"
+msgstr ""
+
+#: src/Dialogs/FindReplaceDialog.vala:71
+msgid "Now"
+msgstr ""
+
+#: src/Dialogs/FindReplaceDialog.vala:71
+msgid "After"
+msgstr ""
+
+#: src/Dialogs/FindReplaceDialog.vala:97
+msgid "Replace All"
+msgstr ""
+
+#: src/Dialogs/FindReplaceDialog.vala:125
+#, c-format
+msgid "%d song chosen. Type what to find."
+msgid_plural "%d songs chosen. Type what to find."
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/Dialogs/FindReplaceDialog.vala:141
+#, c-format
+msgid "%d of %d songs changes."
+msgid_plural "%d of %d songs change."
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/Dialogs/FindReplaceDialog.vala:143
+#, c-format
+msgid "The regular expression is not valid: %s"
+msgstr ""
+
+#: src/Dialogs/FindReplaceDialog.vala:155
+msgid "Tags replaced"
+msgstr ""
+
+#: src/Dialogs/FindReplaceDialog.vala:155
+#, fuzzy, c-format
+msgid "%d song changed"
+msgid_plural "%d songs changed"
+msgstr[0] "nyimbo"
+msgstr[1] "nyimbo"
+
+#: src/Dialogs/FileNotFoundDialog.vala:80 src/Lists/MusicList.vala:97
 #: src/Lists/PodcastList.vala:77
 msgid "Remove from Library"
 msgstr ""
@@ -679,7 +826,7 @@ msgid "Locate Music File"
 msgstr ""
 
 #: src/Dialogs/InstallGstreamerPluginsDialog.vala:64
-#: src/Preferences/BehaviorPreferences.vala:286
+#: src/Preferences/BehaviorPreferences.vala:307
 msgid "Install Plugin"
 msgstr ""
 
@@ -968,31 +1115,31 @@ msgstr ""
 msgid "Music"
 msgstr "Muziki"
 
-#: src/Libraries/SongLibrary.vala:524
+#: src/Libraries/SongLibrary.vala:525
 msgid "Favorite Songs"
 msgstr ""
 
-#: src/Libraries/SongLibrary.vala:533
+#: src/Libraries/SongLibrary.vala:534
 msgid "Recently Added"
 msgstr ""
 
-#: src/Libraries/SongLibrary.vala:541
+#: src/Libraries/SongLibrary.vala:542
 msgid "Recently Played"
 msgstr ""
 
-#: src/Libraries/SongLibrary.vala:549
+#: src/Libraries/SongLibrary.vala:550
 msgid "Recent Favorites"
 msgstr ""
 
-#: src/Libraries/SongLibrary.vala:559 src/Windows/Editors/InfoViewport.vala:174
+#: src/Libraries/SongLibrary.vala:560 src/Windows/Editors/InfoViewport.vala:174
 msgid "Never Played"
 msgstr ""
 
-#: src/Libraries/SongLibrary.vala:568
+#: src/Libraries/SongLibrary.vala:569
 msgid "Over Played"
 msgstr ""
 
-#: src/Libraries/SongLibrary.vala:577
+#: src/Libraries/SongLibrary.vala:578
 msgid "Not Recently Played"
 msgstr ""
 
@@ -1003,26 +1150,21 @@ msgstr ""
 #. column chooser menu (header right click)
 #. column chooser menu (header right click)
 #. the library has no order of its own: no "#"
-#: src/Lists/DuplicateList.vala:118 src/Lists/MusicList.vala:155
+#: src/Lists/DuplicateList.vala:118 src/Lists/MusicList.vala:159
 msgid "#"
 msgstr "#"
 
-#: src/Lists/DuplicateList.vala:119 src/Lists/GenericList.vala:127
-#: src/Lists/MusicList.vala:156 src/Windows/Editors/PodcastEditor.vala:75
-msgid "Track"
-msgstr "Wimbo"
-
 #: src/Lists/DuplicateList.vala:128 src/Lists/GenericList.vala:127
-#: src/Lists/MusicList.vala:165 src/Widgets/TrackReport.vala:171
+#: src/Lists/MusicList.vala:169 src/Widgets/TrackReport.vala:171
 msgid "Plays"
 msgstr "Cheza"
 
 #: src/Lists/DuplicateList.vala:129 src/Lists/GenericList.vala:127
-#: src/Lists/MusicList.vala:166 src/Widgets/TrackReport.vala:172
+#: src/Lists/MusicList.vala:170 src/Widgets/TrackReport.vala:172
 msgid "Skips"
 msgstr "Ruka"
 
-#: src/Lists/DuplicateList.vala:132 src/Lists/MusicList.vala:169
+#: src/Lists/DuplicateList.vala:132 src/Lists/MusicList.vala:173
 msgid "BPM"
 msgstr "BPM"
 
@@ -1035,7 +1177,7 @@ msgstr ""
 msgid "Uncheck"
 msgstr ""
 
-#: src/Lists/DuplicateList.vala:138 src/Lists/MusicList.vala:174
+#: src/Lists/DuplicateList.vala:138 src/Lists/MusicList.vala:178
 #: src/Lists/PodcastList.vala:118
 msgid "Show in File Browser"
 msgstr ""
@@ -1092,73 +1234,81 @@ msgstr ""
 msgid "Editing of multiple media types is not allowed"
 msgstr ""
 
-#: src/Lists/MusicList.vala:102
+#: src/Lists/MusicList.vala:106
 msgid "Remove from Queue"
 msgstr ""
 
-#: src/Lists/MusicList.vala:122 src/Lists/PodcastList.vala:82
+#: src/Lists/MusicList.vala:126 src/Lists/PodcastList.vala:82
 msgid "Remove from Device"
 msgstr ""
 
 #. media list right click menu
-#: src/Lists/MusicList.vala:173
+#: src/Lists/MusicList.vala:177
 msgid "Edit Song Info"
 msgstr ""
 
-#: src/Lists/MusicList.vala:175 src/Lists/PodcastList.vala:119
+#: src/Lists/MusicList.vala:179 src/Lists/PodcastList.vala:119
 msgid "Add to Queue"
 msgstr ""
 
-#: src/Lists/MusicList.vala:176
+#: src/Lists/MusicList.vala:180
 #, fuzzy
 msgid "Play Next"
 msgstr "Inayofuata"
 
-#: src/Lists/MusicList.vala:177
+#: src/Lists/MusicList.vala:181
 msgid "Move Up"
 msgstr ""
 
-#: src/Lists/MusicList.vala:178
+#: src/Lists/MusicList.vala:182
 msgid "Move Down"
 msgstr ""
 
-#: src/Lists/MusicList.vala:179
+#: src/Lists/MusicList.vala:183
 msgid "Clear Queue"
 msgstr ""
 
-#: src/Lists/MusicList.vala:180
+#: src/Lists/MusicList.vala:184
 msgid "Save Album Art into the Files"
 msgstr ""
 
-#: src/Lists/MusicList.vala:182 src/Lists/PodcastList.vala:121
+#: src/Lists/MusicList.vala:185
+msgid "Fill In Tags from File Names…"
+msgstr ""
+
+#: src/Lists/MusicList.vala:186
+msgid "Find and Replace in Tags…"
+msgstr ""
+
+#: src/Lists/MusicList.vala:188 src/Lists/PodcastList.vala:121
 msgid "Add to Playlist"
 msgstr ""
 
-#: src/Lists/MusicList.vala:183
+#: src/Lists/MusicList.vala:189
 msgid "Remove Song"
 msgstr ""
 
 #. Setup context menu for this view
-#: src/Lists/MusicList.vala:184 src/Lists/PodcastList.vala:124
+#: src/Lists/MusicList.vala:190 src/Lists/PodcastList.vala:124
 #: src/SourceViews/DeviceSourceView.vala:59
 msgid "Import to Library"
 msgstr "Ingiza kwenye maktaba"
 
-#: src/Lists/MusicList.vala:185
+#: src/Lists/MusicList.vala:191
 msgid "Scroll to Current Song"
 msgstr ""
 
-#: src/Lists/MusicList.vala:357 src/Lists/PodcastList.vala:268
+#: src/Lists/MusicList.vala:367 src/Lists/PodcastList.vala:268
 #: src/Lists/RadioList.vala:149
 #, c-format
 msgid "Edit %s"
 msgstr ""
 
-#: src/Lists/MusicList.vala:500
+#: src/Lists/MusicList.vala:510
 msgid "Album art not saved"
 msgstr ""
 
-#: src/Lists/MusicList.vala:500
+#: src/Lists/MusicList.vala:510
 #, c-format
 msgid ""
 "%d file could not be changed (it may be read-only, or of a kind that has no "
@@ -1169,11 +1319,11 @@ msgid_plural ""
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/Lists/MusicList.vala:503
+#: src/Lists/MusicList.vala:513
 msgid "Album art saved"
 msgstr ""
 
-#: src/Lists/MusicList.vala:503
+#: src/Lists/MusicList.vala:513
 #, c-format
 msgid "Written into %d file"
 msgid_plural "Written into %d files"
@@ -1290,286 +1440,279 @@ msgid "Skin"
 msgstr ""
 
 #: src/Preferences/BehaviorPreferences.vala:126
+msgid "Edit CSS…"
+msgstr ""
+
+#: src/Preferences/BehaviorPreferences.vala:146
 #, fuzzy
 msgid "Open Skins Folder"
 msgstr "kuweka Folda la Muziki"
 
-#: src/Preferences/BehaviorPreferences.vala:135
+#: src/Preferences/BehaviorPreferences.vala:155
 msgid "Skin:"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:160
+#: src/Preferences/BehaviorPreferences.vala:181
 msgid "LCD"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:163
+#: src/Preferences/BehaviorPreferences.vala:184
 msgid "Display"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:165
+#: src/Preferences/BehaviorPreferences.vala:186
 msgid "Two lines, artist and album taking turns"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:166
+#: src/Preferences/BehaviorPreferences.vala:187
 msgid "One line"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:169
+#: src/Preferences/BehaviorPreferences.vala:190
 msgid "Song information in the LCD:"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:171
+#: src/Preferences/BehaviorPreferences.vala:192
 msgid "Show synced lyrics on the second line when available (lrclib.net)"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:174
+#: src/Preferences/BehaviorPreferences.vala:195
 msgid "Show the album cover at the left edge of the LCD"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:179
+#: src/Preferences/BehaviorPreferences.vala:200
 msgid "Switch between artist and album every:"
 msgstr ""
 
 #. helper for units
-#: src/Preferences/BehaviorPreferences.vala:179
+#: src/Preferences/BehaviorPreferences.vala:200
 #: src/Windows/Editors/SmartPlaylistEditor.vala:491
 msgid "seconds"
 msgstr "sekundi"
 
-#: src/Preferences/BehaviorPreferences.vala:184
+#: src/Preferences/BehaviorPreferences.vala:205
 msgid "Duration of the slide:"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:184
+#: src/Preferences/BehaviorPreferences.vala:205
 #, fuzzy
 msgid "milliseconds"
 msgstr "sekundi"
 
-#: src/Preferences/BehaviorPreferences.vala:187
+#: src/Preferences/BehaviorPreferences.vala:208
 msgid "Position bar"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:190
+#: src/Preferences/BehaviorPreferences.vala:211
 msgid "Width of the track:"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:190
-#: src/Preferences/BehaviorPreferences.vala:205
+#: src/Preferences/BehaviorPreferences.vala:211
+#: src/Preferences/BehaviorPreferences.vala:226
 msgid "pixels"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:192
+#: src/Preferences/BehaviorPreferences.vala:213
 msgid "Diamond"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:193
+#: src/Preferences/BehaviorPreferences.vala:214
 msgid "Circle"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:194
+#: src/Preferences/BehaviorPreferences.vala:215
 msgid "Cup"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:195
+#: src/Preferences/BehaviorPreferences.vala:216
 msgid "Nyan cat"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:198
+#: src/Preferences/BehaviorPreferences.vala:219
 msgid "Shape of the position marker:"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:205
+#: src/Preferences/BehaviorPreferences.vala:226
 msgid "Size of the position marker:"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:219
-#: src/Preferences/BehaviorPreferences.vala:222
+#: src/Preferences/BehaviorPreferences.vala:240
+#: src/Preferences/BehaviorPreferences.vala:243
 msgid "Mini Player"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:223
+#: src/Preferences/BehaviorPreferences.vala:244
 msgid "Keep the mini player above other windows"
 msgstr ""
 
 #. GTK 3 can't ask a Wayland compositor for that
-#: src/Preferences/BehaviorPreferences.vala:228
+#: src/Preferences/BehaviorPreferences.vala:249
 msgid ""
 "On Wayland the desktop keeps windows on top: right-click the toolbar and "
 "choose “Always on Top”."
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:240
-#: src/Preferences/BehaviorPreferences.vala:246 src/Views/SideTreeView.vala:97
+#: src/Preferences/BehaviorPreferences.vala:261
+#: src/Preferences/BehaviorPreferences.vala:267 src/Views/SideTreeView.vala:97
 msgid "Plugins"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:243
+#: src/Preferences/BehaviorPreferences.vala:264
 msgid "No plugins are installed."
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:256
+#: src/Preferences/BehaviorPreferences.vala:277
 msgid "Install Plugin…"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:286
+#: src/Preferences/BehaviorPreferences.vala:307
 msgid "Install"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:286
-#: src/Windows/AddPodcastWindow.vala:81 src/Windows/DirectoryDialog.vala:280
-#: src/Windows/Editors/MediaEditor.vala:94
-#: src/Windows/Editors/SmartPlaylistEditor.vala:157
-#: src/Windows/Editors/SongEditor.vala:502
-#: src/Windows/Editors/SongEditor.vala:574
-#: src/Windows/PlaylistNameWindow.vala:64
-#: src/Windows/RemoveDuplicatesDialog.vala:69
-msgid "Cancel"
-msgstr "Ghairi"
-
-#: src/Preferences/BehaviorPreferences.vala:288
+#: src/Preferences/BehaviorPreferences.vala:309
 msgid "BeatBox plugins (*.plugin)"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:298
+#: src/Preferences/BehaviorPreferences.vala:319
 msgid "Plugin updated"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:298
+#: src/Preferences/BehaviorPreferences.vala:319
 msgid ""
 "A plugin with the same name is in use: restart BeatBox to use the one just "
 "installed."
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:300
+#: src/Preferences/BehaviorPreferences.vala:321
 #, fuzzy
 msgid "Could not install the plugin"
 msgstr "Folda la Muzik halipatikani"
 
-#: src/Preferences/BehaviorPreferences.vala:307
+#: src/Preferences/BehaviorPreferences.vala:328
 #, fuzzy
 msgid "Album Art"
 msgstr "Albamu"
 
-#: src/Preferences/BehaviorPreferences.vala:310
+#: src/Preferences/BehaviorPreferences.vala:331
 msgid "Cover Grid"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:312
+#: src/Preferences/BehaviorPreferences.vala:333
 msgid "Unfold it inline, under its row"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:313
+#: src/Preferences/BehaviorPreferences.vala:334
 msgid "Open it in a popup window"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:316
+#: src/Preferences/BehaviorPreferences.vala:337
 msgid "Clicking an album in the cover grid:"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:322
+#: src/Preferences/BehaviorPreferences.vala:343
 msgid "hidden"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:324
+#: src/Preferences/BehaviorPreferences.vala:345
 msgid "Size of the cover in the unfolded album:"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:325
+#: src/Preferences/BehaviorPreferences.vala:346
 msgid "Share of the band's width; 0 shows no cover"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:331
+#: src/Preferences/BehaviorPreferences.vala:352
 msgid "Missing Album Art"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:332
+#: src/Preferences/BehaviorPreferences.vala:353
 msgid "Download missing album art from the internet (MusicBrainz, Apple Music)"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:343
+#: src/Preferences/BehaviorPreferences.vala:364
 msgid "About"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:350
+#: src/Preferences/BehaviorPreferences.vala:371
 #, c-format
 msgid "Version %s"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:351
+#: src/Preferences/BehaviorPreferences.vala:372
 msgid "A music player for your collection, podcasts and internet radio."
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:355
+#: src/Preferences/BehaviorPreferences.vala:376
 msgid "Authors"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:357
+#: src/Preferences/BehaviorPreferences.vala:378
 msgid "Contributions"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:358
+#: src/Preferences/BehaviorPreferences.vala:379
 #, c-format
 msgid "Di Weng (%s): shortening texts by characters instead of bytes"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:359
+#: src/Preferences/BehaviorPreferences.vala:380
 #: src/Windows/Editors/MediaEditor.vala:148
 #: src/Windows/Editors/SongEditor.vala:234
 #, fuzzy
 msgid "Artwork"
 msgstr "Mtandao"
 
-#: src/Preferences/BehaviorPreferences.vala:361
+#: src/Preferences/BehaviorPreferences.vala:382
 msgid "2026 update"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:362
+#: src/Preferences/BehaviorPreferences.vala:383
 msgid ""
 "Ported to GTK 3, GStreamer 1.0 and libsoup 3, with a new look, Cover Flow, "
 "the inline cover grid, internet radio and podcast directories, online album "
 "art and skins."
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:364
+#: src/Preferences/BehaviorPreferences.vala:385
 #, fuzzy
 msgid "Services"
 msgstr "Vifaa"
 
-#: src/Preferences/BehaviorPreferences.vala:365
+#: src/Preferences/BehaviorPreferences.vala:386
 #, fuzzy, c-format
 msgid "Internet radio stations: %s"
 msgstr "Hakuna Redio Stesheni ya lwenye mtandao uliyopatika"
 
-#: src/Preferences/BehaviorPreferences.vala:366
+#: src/Preferences/BehaviorPreferences.vala:387
 #, fuzzy, c-format
 msgid "Podcasts: %s"
 msgstr "Podcasts"
 
-#: src/Preferences/BehaviorPreferences.vala:367
+#: src/Preferences/BehaviorPreferences.vala:388
 #, c-format
 msgid "Album art: %s, with %s as fallback"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:368
+#: src/Preferences/BehaviorPreferences.vala:389
 #, c-format
 msgid "Lyrics: %s"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:369
+#: src/Preferences/BehaviorPreferences.vala:390
 #, c-format
 msgid "Scrobbling: %s"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:371
+#: src/Preferences/BehaviorPreferences.vala:392
 msgid "License"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:372
+#: src/Preferences/BehaviorPreferences.vala:393
 #, c-format
 msgid "Free software under the %s."
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:372
+#: src/Preferences/BehaviorPreferences.vala:393
 msgid "GNU General Public License, version 3"
 msgstr ""
 
@@ -1659,17 +1802,22 @@ msgstr ""
 msgid "Rescan"
 msgstr ""
 
-#: src/Preferences/MusicPreferences.vala:95
+#: src/Preferences/MusicPreferences.vala:62
+msgid ""
+"A folder holding a file named .nomedia is left out, with its subfolders."
+msgstr ""
+
+#: src/Preferences/MusicPreferences.vala:100
 #: src/Preferences/PodcastPreferences.vala:109
 msgid "Could not find Music Folder"
 msgstr "Folda la Muzik halipatikani"
 
-#: src/Preferences/MusicPreferences.vala:95
+#: src/Preferences/MusicPreferences.vala:100
 #: src/Preferences/PodcastPreferences.vala:109
 msgid "Please make sure that your Music folder is accessible and mounted."
 msgstr ""
 
-#: src/Preferences/MusicPreferences.vala:111
+#: src/Preferences/MusicPreferences.vala:116
 msgid ""
 "Please wait until all operations finish before setting your music folder."
 msgstr ""
@@ -2173,14 +2321,14 @@ msgstr ""
 msgid "Search..."
 msgstr "Tafuta..."
 
-#: src/Widgets/AlbumWall.vala:360
+#: src/Widgets/AlbumWall.vala:408
 #, fuzzy, c-format
 msgid "%d song"
 msgid_plural "%d songs"
 msgstr[0] "nyimbo"
 msgstr[1] "nyimbo"
 
-#: src/Widgets/AlbumWall.vala:361
+#: src/Widgets/AlbumWall.vala:409
 #, fuzzy, c-format
 msgid "%d minute"
 msgid_plural "%d minutes"
@@ -2376,10 +2524,6 @@ msgstr ""
 msgid "An internet stream: there is no file to read."
 msgstr ""
 
-#: src/Widgets/TrackReport.vala:106 src/Widgets/TrackReport.vala:218
-msgid "File"
-msgstr ""
-
 #: src/Widgets/TrackReport.vala:106
 msgid "Error"
 msgstr ""
@@ -2406,7 +2550,7 @@ msgstr ""
 msgid "Added"
 msgstr "Tarehe iliyowekwa"
 
-#: src/Widgets/TrackReport.vala:174
+#: src/Widgets/TrackReport.vala:174 src/Windows/StatsWindow.vala:59
 #, fuzzy
 msgid "Unknown"
 msgstr "Albamu haijulikani"
@@ -3180,6 +3324,110 @@ msgstr ""
 msgid "Libraries"
 msgstr ""
 
+#: src/Windows/SkinEditor.vala:22 src/Windows/SkinEditor.vala:98
+#, c-format
+msgid "Edit Skin: %s"
+msgstr ""
+
+#: src/Windows/SkinEditor.vala:46
+msgid "Revert"
+msgstr ""
+
+#: src/Windows/SkinEditor.vala:47
+msgid "Back to the last saved version"
+msgstr ""
+
+#: src/Windows/SkinEditor.vala:49 src/Windows/SkinEditor.vala:99
+#: src/Windows/SkinEditor.vala:120
+msgid "Save"
+msgstr ""
+
+#: src/Windows/SkinEditor.vala:49
+#, fuzzy
+msgid "Save as Copy"
+msgstr "Sevu kama playlist"
+
+#: src/Windows/SkinEditor.vala:50
+msgid "A bundled skin can't be changed: the copy goes to the skins folder"
+msgstr ""
+
+#: src/Windows/SkinEditor.vala:86
+msgid "Not saved"
+msgstr ""
+
+#: src/Windows/SkinEditor.vala:107
+#, fuzzy, c-format
+msgid "Could not save: %s"
+msgstr "Folda la Muzik halipatikani"
+
+#: src/Windows/SkinEditor.vala:117
+msgid "Save the changes to the skin?"
+msgstr ""
+
+#: src/Windows/SkinEditor.vala:118
+msgid "Close Without Saving"
+msgstr ""
+
+#: src/Windows/StatsWindow.vala:17
+msgid "Listening Statistics"
+msgstr ""
+
+#: src/Windows/StatsWindow.vala:42
+msgid "Nothing has been played yet."
+msgstr ""
+
+#: src/Windows/StatsWindow.vala:43
+#, c-format
+msgid "%u play of %u song"
+msgid_plural "%u plays of %u songs"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/Windows/StatsWindow.vala:44
+#, c-format
+msgid "%s of listening"
+msgstr ""
+
+#: src/Windows/StatsWindow.vala:48
+#, fuzzy
+msgid "Most Played Artists"
+msgstr "Mala ya mwisho kuchezwa"
+
+#: src/Windows/StatsWindow.vala:49
+#, fuzzy
+msgid "Most Played Albums"
+msgstr "Mala ya mwisho kuchezwa"
+
+#: src/Windows/StatsWindow.vala:50
+#, fuzzy
+msgid "Most Played Genres"
+msgstr "Mala ya mwisho kuchezwa"
+
+#: src/Windows/StatsWindow.vala:74
+#, fuzzy, c-format
+msgid "%u day"
+msgid_plural "%u days"
+msgstr[0] "%s siku"
+msgstr[1] "%s siku"
+
+#: src/Windows/StatsWindow.vala:76
+#, fuzzy, c-format
+msgid "%u hour"
+msgid_plural "%u hours"
+msgstr[0] "%s masaa"
+msgstr[1] "%s masaa"
+
+#: src/Windows/StatsWindow.vala:77
+#, fuzzy, c-format
+msgid "%u minute"
+msgid_plural "%u minutes"
+msgstr[0] "%s dakika"
+msgstr[1] "%s dakika"
+
+#: src/Windows/StatsWindow.vala:96
+msgid "No plays yet"
+msgstr ""
+
 #: src/Windows/RemoveDuplicatesDialog.vala:44
 #, c-format
 msgid "Analyzing %d of %d..."
@@ -3270,14 +3518,6 @@ msgstr ""
 #~ "The provided source is invalid. Make sure you are entering an RSS feed in "
 #~ "XML format."
 #~ msgstr "Chanzo hiki ni batili. Hakikisha unaingiza RSS yenye mtindo wa XML."
-
-#, c-format
-#~ msgid "%s days"
-#~ msgstr "%s siku"
-
-#, c-format
-#~ msgid "%s hours"
-#~ msgstr "%s masaa"
 
 #~ msgid "audiobooks"
 #~ msgstr "kitabu cha sauti"
