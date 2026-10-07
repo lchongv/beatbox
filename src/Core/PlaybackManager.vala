@@ -376,6 +376,18 @@ public class BeatBox.PlaybackManager : GLib.Object, BeatBox.PlaybackInterface {
 		return repeat_mode;
 	}
 	
+	bool repeats_group() {
+		return repeat_mode == RepeatMode.ARTIST || repeat_mode == RepeatMode.ALBUM;
+	}
+	
+	// The first (step -1) or last (1) song in a row of the artist or album playing
+	int group_edge(int step) {
+		return ListUtils.run_edge(current_index, playback_used_list.size, step, (a, b) => {
+			Media x = playback_used_list.get(a), y = playback_used_list.get(b);
+			return repeat_mode == RepeatMode.ARTIST ? x.artist == y.artist : x.album == y.album;
+		});
+	}
+	
 	// Moves the current index to the next song and returns that media
 	// Only plays if play is true
 	public Media? getNext(bool play) {
@@ -414,8 +426,9 @@ public class BeatBox.PlaybackManager : GLib.Object, BeatBox.PlaybackInterface {
 				rv = playback_used_list.get(current_index);
 			}
 			else if(current_index == (playback_used_list.size - 1)) {
-				//FIXME: Repeat artist/album will not work if getNext is called when on the last song
-				if(repeat_mode == RepeatMode.ALL)
+				if(repeats_group())
+					current_index = group_edge(-1); // the list ends with this artist or album: back to its start
+				else if(repeat_mode == RepeatMode.ALL)
 					current_index = 0;
 				else {
 					if(play)
@@ -426,15 +439,8 @@ public class BeatBox.PlaybackManager : GLib.Object, BeatBox.PlaybackInterface {
 				rv = playback_used_list.get(0);
 			}
 			else if(current_index >= 0 && current_index < (playback_used_list.size - 1)){
-				// make sure we are repeating what we need to be
-				if(repeat_mode == RepeatMode.ARTIST && playback_used_list.get(current_index + 1).artist != playback_used_list.get(current_index).artist) {
-					while(current_index > 0 && playback_used_list.get(current_index - 1).artist == current_media.artist)
-						--current_index;
-				}
-				else if(repeat_mode == RepeatMode.ALBUM && playback_used_list.get(current_index + 1).album != playback_used_list.get(current_index).album) {
-					while(current_index > 0 && playback_used_list.get(current_index - 1).album == current_media.album)
-						--current_index;
-				}
+				if(repeats_group() && group_edge(1) == current_index)
+					current_index = group_edge(-1); // the artist or album ends here: back to its start
 				else
 					++current_index;
 				
@@ -471,7 +477,9 @@ public class BeatBox.PlaybackManager : GLib.Object, BeatBox.PlaybackInterface {
 			rv = playback_used_list.get(current_index);
 		}
 		else if(current_index == (0)) {// consider repeat options
-			if(repeat_mode == RepeatMode.ALL)
+			if(repeats_group())
+				current_index = group_edge(1); // the list starts with this artist or album: on to its end
+			else if(repeat_mode == RepeatMode.ALL)
 				current_index = (int)playback_used_list.size - 1;
 			else {
 				stop_playback();
@@ -481,15 +489,8 @@ public class BeatBox.PlaybackManager : GLib.Object, BeatBox.PlaybackInterface {
 			rv = playback_used_list.get(current_index);
 		}
 		else if(current_index > 0 && current_index < playback_used_list.size){
-			// make sure we are repeating what we need to be
-			if(repeat_mode == RepeatMode.ARTIST && playback_used_list.get(current_index - 1).artist != playback_used_list.get(current_index).artist) {
-				while(current_index < playback_used_list.size - 1 && playback_used_list.get(current_index + 1).artist == current_media.artist)
-					++current_index;
-			}
-			else if(repeat_mode == RepeatMode.ALBUM && playback_used_list.get(current_index - 1).album != playback_used_list.get(current_index).album) {
-				while(current_index < playback_used_list.size - 1 && playback_used_list.get(current_index + 1).album == current_media.album)
-					++current_index;
-			}
+			if(repeats_group() && group_edge(-1) == current_index)
+				current_index = group_edge(1); // the artist or album starts here: on to its end
 			else
 				--current_index;
 			
@@ -555,9 +556,7 @@ public class BeatBox.PlaybackManager : GLib.Object, BeatBox.PlaybackInterface {
 	*/
 	public void play_media(Media m, bool use_resume_pos) {
 		if(m.isTemporary) {
-			// FIXME: Does this overwrite the last preview
-			// and play this media as expected??? Or does it add a new
-			// media, keeping the old preview
+			// takes the last preview's place (one id for all) and, being temporary, stays out of the database
 			m.rowid = PREVIEW_MEDIA_ID;
 			App.library.add_media(m);
 			playMediaInternal(m, use_resume_pos);
