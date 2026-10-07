@@ -123,3 +123,21 @@ namespace BeatBox.TagGuess {
 		return changed;
 	}
 }
+
+namespace BeatBox.TagReplace {
+	/**
+	 * The search of Find and Replace in Tags: text as typed, or a regular expression
+	 * (replace may then use \1...). Throws RegexError for a pattern that doesn't compile.
+	 */
+	public Regex pattern (string find, bool case_sensitive, bool regex, bool whole_word) throws RegexError {
+		string p = regex ? find : Regex.escape_string (find);
+		if (whole_word)
+			p = "\\b(?:" + p + ")\\b";
+		return new Regex (p, case_sensitive ? 0 : RegexCompileFlags.CASELESS);
+	}
+
+	/** text with every match replaced; replace is taken literally unless regex */
+	public string apply (Regex re, string text, string replace, bool regex) throws RegexError {
+		return regex ? re.replace (text, -1, 0, replace) : re.replace_literal (text, -1, 0, replace);
+	}
+}

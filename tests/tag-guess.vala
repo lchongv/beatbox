@@ -7,7 +7,7 @@ void check (string path, string artist, string album, uint track, string title, 
 		error ("%s → artist '%s' album '%s' track %u title '%s' year %u", path, g.artist, g.album, g.track, g.title, g.year);
 }
 
-void main () {
+void main1 () {
 	check ("Artist/Album/03 - Title.mp3", "Artist", "Album", 3, "Title");
 	check ("Artist/Album/03. Title.mp3", "Artist", "Album", 3, "Title");
 	check ("Artist/Album/1-07 Title.flac", "Artist", "Album", 7, "Title");
@@ -23,4 +23,30 @@ void main () {
 	check ("Other - Album/1-07 My_Song.mp3", "Other", "Album", 7, "My Song");
 	check ("Artista/Disco Prueba (2001)/01 - Cancion 1.mp3", "Artista", "Disco Prueba", 1, "Cancion 1", 2001);                                    // a number alone is a title
 
+}
+
+// Find and Replace in Tags
+string rep (string text, string find, string replace, bool case_sensitive = false, bool regex = false, bool whole_word = false) {
+	try {
+		return TagReplace.apply (TagReplace.pattern (find, case_sensitive, regex, whole_word), text, replace, regex);
+	} catch (RegexError err) {
+		return "error";
+	}
+}
+
+void main2 () {
+	assert (rep ("Los Tres feat. X", "feat.", "ft.") == "Los Tres ft. X");       // the dot is a dot, not any character
+	assert (rep ("Los Tres featX", "feat.", "ft.") == "Los Tres featX");
+	assert (rep ("ROCK rock", "rock", "Pop") == "Pop Pop");
+	assert (rep ("ROCK rock", "rock", "Pop", true) == "ROCK Pop");
+	assert (rep ("Rock Rockabilly", "rock", "Pop", false, false, true) == "Pop Rockabilly");
+	assert (rep ("Artist - Title", "(.+) - (.+)", "\\2 (\\1)", false, true) == "Title (Artist)");
+	assert (rep ("a\\b", "x", "\\1") == "a\\b");                                // literal replace: no \1 expansion needed
+	assert (rep ("ax", "x", "\\1") == "a\\1");
+	assert (rep ("abc", "(", "x", false, true) == "error");
+}
+
+void main () {
+	main1 ();
+	main2 ();
 }
