@@ -1,0 +1,112 @@
+BeatBox — what changed, newest first
+=====================================
+
+Packages for each version: https://github.com/lchongv/beatbox/releases
+
+
+1.0.0 (not released yet)
+------------------------
+
+- Preferences › Appearance › Edit CSS… edits the skin's CSS with the window
+  following as you type and the first error shown with its line. A bundled skin
+  is saved as an edited copy in the skins folder.
+- New "Template" skin: every color of the Classic look, ready to change. The
+  "Native" skin is gone (it looked the same as Adwaita, which it now opens as).
+- Podcast episode dates are read in every language (in Spanish, among others,
+  they came out wrong).
+
+
+0.16.1 (6 October 2026)
+-----------------------
+
+- Plugins written in Python, besides Vala/C (libpeas-2). The example "Listening
+  log" writes a line per song played. The AppImage and the Ubuntu 24.04 package
+  can't run them.
+- Preferences › Plugins › Install Plugin…; docs/plugins.md explains how to
+  write one.
+- Plain GTK (Adwaita) is the default look; the previous one is the "Classic"
+  skin. New skins: Adwaita dark, Vinyl and High contrast, each with a screenshot
+  in Preferences.
+- Songs opened from the file manager are the playback list, so Next goes
+  through them; a song opened at startup plays once and its play is counted.
+- 0.16.0 had no packages: the new smoke test caught the bug above first.
+
+
+0.15.0 (6 October 2026)
+-----------------------
+
+- Plugins, turned on and off in Preferences › Plugins. The first, "Now playing
+  file", keeps the playing song in ~/.cache/beatbox/now-playing.txt for
+  streaming overlays and status bars.
+- Next and Previous follow the list with shuffle on; a song that can't be
+  played gapless no longer makes the next one be skipped.
+- The library is backed up to ~/.local/share/beatbox/beatbox.db.bak the first
+  time a new version opens it.
+- Long files on slow disks no longer fail to import.
+- iPod sync and audio CD import are marked as experimental.
+
+
+0.14.0 (6 October 2026)
+-----------------------
+
+- An information panel (Ctrl+Shift+I) and a fuller song editor: lyrics,
+  pictures, sorting, song identification (AcoustID) and writing every tag to
+  the file.
+- Long texts in the LCD scroll like a ticker; the time in the LCD is clickable.
+- Preferences split into smaller pages.
+- Song lists keep their place when they refresh.
+
+
+0.13.0 (5 October 2026)
+-----------------------
+
+- Internet radio in the LCD: a barber pole for the position and the station's
+  logo where the cover goes.
+- Crisp position markers at large sizes; the app name and version next to the
+  window buttons.
+- An Arch Linux package.
+
+
+0.12.0 (5 October 2026)
+-----------------------
+
+- A live spectrum in the LCD (the arrow at its left).
+- A Nyan cat for the position marker.
+- Next and Previous work after opening files.
+
+
+0.11.0 (5 October 2026)
+-----------------------
+
+- .deb (Debian 13, Ubuntu 24.04 and 26.04) and .rpm (Fedora) packages.
+- No more Granite.
+
+
+0.10.0 (5 October 2026)
+-----------------------
+
+- AppImage and Flatpak packages.
+- An editable queue ("Play Next", "Add to Queue", drag to reorder), kept
+  between sessions.
+- Crossfade between songs, 0–12 s.
+- The music folder is watched: new songs are imported, and renamed or moved
+  ones keep their play counts and ratings.
+- Album art saved into the song files; ListenBrainz scrobbling; configurable
+  keyboard shortcuts; a position marker on the time bar.
+
+
+0.9.0 (4 October 2026)
+----------------------
+
+- Volume normalization (ReplayGain) and gapless playback.
+- Synced lyrics from LRCLIB on the LCD's second line.
+- A mini player (Ctrl+M) and a full-size cover viewer.
+- The year is imported from tags again; M4A files keep all their tags.
+
+
+0.8 (3 October 2026)
+--------------------
+
+The original BeatBox, unmaintained since 2013, ported to meson, GTK 3,
+GStreamer 1.0, libgee-0.8 and libsoup-3, with a new look, Cover Flow, an
+inline cover grid, podcast and radio directories, online album art and skins.
