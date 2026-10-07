@@ -273,11 +273,12 @@ public abstract class BeatBox.BaseLibrary : GLib.Object, BeatBox.Library {
 		App.operations.operation_progress = 0;
 		
 		string local_folder_uri = folder.get_uri();
+		var excluded = new HashMap<string, bool>();
 		foreach(Media s in _medias.values) {
 			if(!s.isTemporary && s.uri.contains(local_folder_uri))
 				paths.set(s.uri, s);
 				
-			if(s.uri.contains(local_folder_uri) && !File.new_for_uri(s.uri).query_exists())
+			if(s.uri.contains(local_folder_uri) && (!File.new_for_uri(s.uri).query_exists() || FileOperator.in_excluded_folder(File.new_for_uri(s.uri), folder, excluded)))
 				to_remove.add(s);
 		}
 		App.operations.operation_progress = 5;

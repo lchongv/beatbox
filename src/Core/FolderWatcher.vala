@@ -54,6 +54,8 @@ public class BeatBox.FolderWatcher : GLib.Object {
 			var monitor = dir.monitor_directory (FileMonitorFlags.WATCH_MOVES, null);
 			monitor.changed.connect (changed);
 			monitors[dir.get_path ()] = monitor;
+			if (FileOperator.is_excluded (dir))
+				return; // watched only to see its .nomedia go
 			var children = dir.enumerate_children (FileAttribute.STANDARD_NAME + "," + FileAttribute.STANDARD_TYPE, 0);
 			FileInfo info;
 			while ((info = children.next_file ()) != null) {
@@ -69,6 +71,16 @@ public class BeatBox.FolderWatcher : GLib.Object {
 	}
 
 	void changed (File file, File? other, FileMonitorEvent event) {
+		var folder = file.get_parent ();
+		if (file.get_basename () == ".nomedia") { // its folder is left out, or back in
+			if (event == FileMonitorEvent.CREATED || event == FileMonitorEvent.DELETED) {
+				gone (folder); // its songs leave the library; back in, they are found again
+				watch_tree (folder, event == FileMonitorEvent.DELETED);
+			}
+			return;
+		}
+		if (folder != null && FileOperator.is_excluded (folder))
+			return;
 		switch (event) {
 			case FileMonitorEvent.CHANGES_DONE_HINT:
 			case FileMonitorEvent.CREATED:
@@ -190,9 +202,11 @@ public class BeatBox.FolderWatcher : GLib.Object {
 		// songs really gone (and never when the whole folder is missing: an unmounted drive)
 		var lost = new Gee.ArrayList<Media> ();
 		if (root.query_exists ()) {
+			var excluded = new Gee.HashMap<string, bool> ();
 			foreach (var uri in disappeared) {
 				var m = App.library.media_from_file (uri);
-				if (m != null && !File.new_for_uri (uri).query_exists ())
+				var f = File.new_for_uri (uri);
+				if (m != null && (!f.query_exists () || FileOperator.in_excluded_folder (f, root, excluded)))
 					lost.add (m);
 			}
 		}
@@ -236,7 +250,7 @@ public class BeatBox.FolderWatcher : GLib.Object {
 		if (moved.size > 0)
 			App.library.update_medias (moved, false, false, true);
 		if (lost.size > 0) {
-			message ("Removing %d song(s) whose files are gone from the music folder", lost.size);
+			message ("Removing %d song(s) no longer in the music folder", lost.size);
 			App.library.remove_medias (lost, false);
 		}
 		if (found.size > 0) {
