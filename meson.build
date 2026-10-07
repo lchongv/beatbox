@@ -302,6 +302,7 @@ app_sources = files(
   'src/Windows/DirectoryDialog.vala',
   'src/Windows/RemoveDuplicatesDialog.vala',
   'src/Windows/SkinEditor.vala',
+  'src/Windows/StatsWindow.vala',
 )
 
 resources = gnome.compile_resources('beatbox-resources', 'data/beatbox.gresource.xml', source_dir: 'data')

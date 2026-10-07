@@ -375,6 +375,10 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		mini_player.activate.connect(toggle_mini);
 		App.actions.group.add_action(mini_player);
 		settingsMenu.append(_("_Mini Player"), "bb.mini_player");
+		var statistics = new SimpleAction("statistics", null);
+		statistics.activate.connect(() => new StatsWindow().show_all());
+		App.actions.group.add_action(statistics);
+		settingsMenu.append(_("Listening _Statistics"), "bb.statistics");
 		settingsMenu.append_item(App.actions.model_item(App.actions.show_equalizer));
 		settingsMenu.append_item(App.actions.model_item(App.actions.show_preferences));
 		settingsMenu.append_item(App.actions.model_item(App.actions.exit));
