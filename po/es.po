@@ -927,8 +927,8 @@ msgstr[1] "estaciones"
 #: src/Widgets/StatusBar.vala:162
 msgid "item"
 msgid_plural "items"
-msgstr[0] "elemento"
-msgstr[1] "elementos"
+msgstr[0] "Elemento"
+msgstr[1] "Elementos"
 
 #: src/Dialogs/RemoveFilesDialog.vala:87
 #, c-format
