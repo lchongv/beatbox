@@ -59,6 +59,11 @@ public class BeatBox.MusicPreferences : GLib.Object, PreferencesSection {
 		
 		content.add(musicLabel);
 		content.add(UI.wrap_alignment(fileChooser, 0, 0, 0, 10));
+		var hint = new Label(_("A folder holding a file named .nomedia is left out, with its subfolders."));
+		hint.xalign = 0.0f;
+		hint.wrap = true;
+		hint.get_style_context().add_class("dim-label");
+		content.add(UI.wrap_alignment(hint, 0, 0, 0, 10));
 		content.add(UI.wrap_alignment(button_box, 0, 0, 0, 10));
 		
 		App.operations.operation_started.connect(operation_started);

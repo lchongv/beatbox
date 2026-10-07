@@ -80,6 +80,22 @@ public class BeatBox.FileOperator : Object, FileInterface {
 				typeDown.has_suffix(".aac") || typeDown.has_suffix(".alac"));
 	}
 	
+	/** A folder holding a ".nomedia" file is left out of the library, with its subfolders */
+	public static bool is_excluded(GLib.File folder) {
+		return folder.get_child(".nomedia").query_exists();
+	}
+	
+	/** Whether file is in a folder left out with .nomedia, below root; known keeps the answer per folder */
+	public static bool in_excluded_folder(GLib.File file, GLib.File root, HashMap<string, bool> known) {
+		var dir = file.get_parent();
+		if(dir == null || !dir.has_prefix(root))
+			return false;
+		var uri = dir.get_uri();
+		if(!known.has_key(uri))
+			known[uri] = is_excluded(dir) || in_excluded_folder(dir, root, known);
+		return known[uri];
+	}
+	
 	public void count_music_files(GLib.File music_folder, ref LinkedList<GLib.File> files) {
 		GLib.FileInfo file_info = null;
 		
@@ -91,7 +107,7 @@ public class BeatBox.FileOperator : Object, FileInterface {
 				if(file_info.get_file_type() == GLib.FileType.REGULAR && is_valid_file_type(file_info.get_name())) {
 					files.add(GLib.File.new_for_path(file_path));
 				}
-				else if(file_info.get_file_type() == GLib.FileType.DIRECTORY) {
+				else if(file_info.get_file_type() == GLib.FileType.DIRECTORY && !is_excluded(GLib.File.new_for_path(file_path))) {
 					count_music_files(GLib.File.new_for_path(file_path), ref files);
 				}
 			}
@@ -134,7 +150,7 @@ public class BeatBox.FileOperator : Object, FileInterface {
 					++App.operations.operation_total;
 					queue_file_to_import(GLib.File.new_for_path(file_path).get_uri());
 				}
-				else if(file_info.get_file_type() == GLib.FileType.DIRECTORY) {
+				else if(file_info.get_file_type() == GLib.FileType.DIRECTORY && !is_excluded(GLib.File.new_for_path(file_path))) {
 					queue_music_files(GLib.File.new_for_path(file_path));
 				}
 			}
