@@ -59,7 +59,7 @@ patchelf --remove-rpath %{buildroot}%{_bindir}/beatbox
 
 %files -f beatbox.lang
 %license COPYING
-%doc README AUTHORS
+%doc README.md NEWS AUTHORS
 %{_bindir}/beatbox
 %{_libdir}/libbeatbox-core.so
 %{_libdir}/beatbox/

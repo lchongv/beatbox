@@ -12,6 +12,13 @@ given a new look, Cover Flow, an inline cover grid, podcast and radio
 directories, online album art, skins, a live spectrum in the display (the
 arrow at its left) and a Nyan cat for the position marker.
 
+![BeatBox with the default look (Adwaita), showing the cover grid](docs/screenshot-adwaita.png)
+
+![The Classic skin, showing the song list](docs/screenshot-classic.png)
+
+What changed in each version: [NEWS](NEWS). More looks, and how to make your
+own: [skins/README.md](skins/README.md).
+
 License: GPL version 3 (see COPYING); the sources are "GPL version 2 or
 later". Original authors and the fork's changes are listed in AUTHORS.
 
@@ -99,6 +106,14 @@ libbeatbox-core, or a Python module (when BeatBox is built with libpeas-2,
 plugins/nowplayingfile (Vala, keeps the playing song in
 ~/.cache/beatbox/now-playing.txt) and plugins/listeninglog (Python, a line per
 song played) are complete examples.
+
+Translating
+-----------
+
+Spanish is complete; the other 42 languages are partial, and what they lack
+shows in English. Each one is a file in po/ (`po/<language>.po`): to help,
+run `ninja -C build beatbox-update-po` so it has the latest texts, translate
+the empty ones with Poedit or any text editor, and send a pull request.
 
 Files
 -----
