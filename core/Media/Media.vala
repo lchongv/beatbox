@@ -49,7 +49,7 @@ public enum BeatBox.MediaType {
 			case TV_SHOW:
 				return ngettext("TV Show", "TV Shows", n);
 			case ITEM:
-				return ngettext("Media", "Medias", n);
+				return ngettext("Item", "Items", n);
 			default:
 				error("Unknown media type");
 		}
