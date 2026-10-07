@@ -1,4 +1,4 @@
-project('beatbox', 'vala', 'c', version: '0.99.6')
+project('beatbox', 'vala', 'c', version: '0.99.8')
 
 gnome = import('gnome')
 i18n = import('i18n')
@@ -202,6 +202,7 @@ app_sources = files(
   'src/Devices/CDRomDevice.vala',
   'src/Dialogs/InstallGstreamerPluginsDialog.vala',
   'src/Dialogs/FillTagsDialog.vala',
+  'src/Dialogs/FindReplaceDialog.vala',
   'src/Dialogs/FileNotFoundDialog.vala',
   'src/Dialogs/RemoveFilesDialog.vala',
   'src/Dialogs/NotImportedDialog.vala',
