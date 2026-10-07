@@ -4,8 +4,8 @@
  */
 
 namespace BeatBox.Logger {
-	const string[] NAMES = { "DEBUG", "INFO", "WARNING", "ERROR", "FATAL" };
-	const string[] COLORS = { "92", "94", "93", "91", "101m\x1b[97" }; // FATAL: white on red
+	const string[] NAMES = { "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL" };
+	const string[] COLORS = { "92", "94", "93", "91", "101m\x1b[97" }; // CRITICAL: white on red
 
 	bool show_debug;
 	Mutex mutex;

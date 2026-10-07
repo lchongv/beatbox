@@ -354,7 +354,7 @@ public abstract class BeatBox.GenericList : FastList {
 		return null;
 	}
 	
-	void media_played(Media m, Media? old) {
+	void media_played(Media? m, Media? old) { // m: none from set_as_current_list with nothing playing
 		// We could find the exact rows to redraw by looping through the entire
 		// table which is O(n), or we could just redraw the screen for O(m) where
 		// m is the # of visible rows.
