@@ -31,7 +31,8 @@ Depends: ${shlibs:Depends},
          ${misc:Depends},
          gstreamer1.0-plugins-base,
          gstreamer1.0-plugins-good,
-         glib-networking
+         glib-networking,
+         librsvg2-common
 Recommends: gstreamer1.0-libav, libchromaprint-tools,
             python3-gi, gir1.2-gtk-3.0, gir1.2-gee-0.8, gir1.2-json-1.0, gir1.2-gst-plugins-base-1.0
 Description: music player with Cover Flow, podcasts and internet radio
