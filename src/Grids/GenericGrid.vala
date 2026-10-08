@@ -34,6 +34,9 @@ public abstract class BeatBox.GenericGrid : FastGrid {
 
 	// Share popover across multiple grid views. For speed and memory saving
 	private static PopupListView? _popup_list_view = null;
+	/** Whether the popup was ever made: hiding one that wasn't needn't make it */
+	protected static bool has_popup_list { get { return _popup_list_view != null; } }
+	
 	protected PopupListView popup_list {
 		get {
 			if (_popup_list_view == null) {

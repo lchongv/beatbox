@@ -53,6 +53,8 @@ public class BeatBox.AlbumGrid : GenericGrid {
 	}
 	
 	public override void item_activated_handler (Object? selected) {
+        if (selected == null && !has_popup_list)
+            return;
         this.popup_list.set_parent_wrapper (this.parent_wrapper);
 
         if (selected != null) {

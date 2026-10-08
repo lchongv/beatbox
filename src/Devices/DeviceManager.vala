@@ -28,24 +28,21 @@
 using Gee;
 
 public class BeatBox.DeviceManager : GLib.Object, BeatBox.DeviceInterface {
-	VolumeMonitor vm;
+	VolumeMonitor? vm = null;
+	bool load_when_watching = false;
 	LinkedList<Device> devices;
 	
 	HashMap<string, DevicePreferences> _device_preferences;
 	
 	public DeviceManager() {
-		vm = VolumeMonitor.get();
 		devices = new LinkedList<Device>();
 		_device_preferences = new HashMap<string, DevicePreferences>();
 		
 		// load devices and their preferences
 		load_devices();
 		
-		vm.mount_added.connect(mount_added);
-		vm.mount_changed.connect(mount_changed);
-		vm.mount_pre_unmount.connect(mount_pre_unmount);
-		vm.mount_removed.connect(mount_removed);
-		vm.volume_added.connect(volume_added);
+		// GVfs takes a while to answer the first time: ask once the window is up
+		Idle.add(() => { watch_volumes(); return false; });
 		
 		// setup periodic saves of device prefereneces
 		DatabaseTransactionFiller devices_filler = new DatabaseTransactionFiller();
@@ -54,7 +51,22 @@ public class BeatBox.DeviceManager : GLib.Object, BeatBox.DeviceInterface {
 		App.database.add_periodic_transaction(devices_filler);
 	}
 	
+	void watch_volumes() {
+		vm = VolumeMonitor.get();
+		vm.mount_added.connect(mount_added);
+		vm.mount_changed.connect(mount_changed);
+		vm.mount_pre_unmount.connect(mount_pre_unmount);
+		vm.mount_removed.connect(mount_removed);
+		vm.volume_added.connect(volume_added);
+		if(load_when_watching)
+			load_pre_existing_devices();
+	}
+	
 	public void load_pre_existing_devices() {
+		if(vm == null) {
+			load_when_watching = true;
+			return;
+		}
 		
 		// this can take time if we have to rev up the cd drive
 		try {

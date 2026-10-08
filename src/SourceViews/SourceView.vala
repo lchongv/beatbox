@@ -44,7 +44,6 @@ public abstract class BeatBox.SourceView : Box, View {
 	public GenericGrid	 album_view		{ get; protected set; }
 	public EmbeddedAlert error_box      { get; protected set; }
 	public Welcome       welcome_screen { get; protected set; }
-	public PopupListView popup			{ get; protected set; }
 	public Widget		 custom_widget	{ get; protected set; }
 
 	private Notebook view_container; // Wraps all the internal views for super fast switching
@@ -212,8 +211,6 @@ public abstract class BeatBox.SourceView : Box, View {
 			
 			// Must do this after, so genericgrid can setup vadjustment listeners
 			album_view.set_parent_wrapper (this);
-			
-			popup = new PopupListView(this);
 			
 			// Cover Flow lives above the track list
 			cover_flow = new CoverFlow(album_view);
