@@ -73,11 +73,23 @@ startup, if it was on when BeatBox closed). `host` has:
 | --- | --- | --- |
 | `playback` | `PlaybackInterface` | the playing song (`current_media`), play/pause/next, and signals such as `media_played`, `playback_stopped`, `current_position_update` |
 | `library` | `LibraryInterface` | the songs, podcasts and stations; `medias_added`, `medias_updated`, `medias_removed` |
-| `window` | `LibraryWindowInterface` | the main window (a `Gtk.Window`): dialogs, `doAlert (title, text)` |
+| `window` | `LibraryWindowInterface` | the main window (a `Gtk.Window`): dialogs, `doAlert (title, text)`, `add_menu_action (label, action)` |
 | `settings` | `Settings` | BeatBox's options (`settings.main`, `settings.lastfm`, …) |
 
 The interfaces are in `core/` (`PlaybackInterface.vala`, `LibraryInterface.vala`,
 `LibraryWindowInterface.vala`, `Media/Media.vala`, `Settings.vala`).
+
+An entry in the app menu (above Preferences) is a `GLib.Action` and its label;
+remove it in `deactivate ()`. Action names share one group with BeatBox's own,
+so start them with the plugin's id:
+
+```vala
+SimpleAction action = new SimpleAction ("myplugin-show", null);
+// activate ():   action.activate.connect (show); host.window.add_menu_action (_("_My Window"), action);
+// deactivate (): action.activate.disconnect (show); host.window.remove_menu_action (action);
+```
+
+plugins/statistics (Listening Statistics) is a complete example.
 
 Rules:
 

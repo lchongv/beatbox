@@ -1,8 +1,44 @@
+/*-
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ */
+
 using Gtk;
+
+/** Listening Statistics in the app menu */
+public class BeatBox.Statistics : Object, Plugin {
+	PluginHost? host;
+	SimpleAction action = new SimpleAction ("statistics-show", null);
+	StatsWindow? window = null;
+
+	public void activate (PluginHost host) {
+		this.host = host;
+		action.activate.connect (show);
+		host.window.add_menu_action (_("Listening _Statistics"), action);
+	}
+
+	public void deactivate () {
+		action.activate.disconnect (show);
+		host.window.remove_menu_action (action);
+		if (window != null)
+			window.destroy ();
+		host = null;
+	}
+
+	void show () {
+		if (window != null)
+			window.destroy (); // counted again: plays may have changed
+		window = new StatsWindow (host.window, host.library.song_library.medias ());
+		window.destroy.connect (() => window = null);
+		window.show_all ();
+	}
+}
 
 /** Listening Statistics: the most played artists, albums and genres, from the songs' play counts.
  * ponytail: play counts only; a chart by day would need a history of plays, which BeatBox doesn't keep */
-public class BeatBox.StatsWindow : Gtk.Window {
+class BeatBox.StatsWindow : Gtk.Window {
 	const int TOP = 12;
 	const int ROW_H = 24;
 	const int LABEL_W = 220;
@@ -13,9 +49,9 @@ public class BeatBox.StatsWindow : Gtk.Window {
 		public uint plays;
 	}
 
-	public StatsWindow () {
+	public StatsWindow (Gtk.Window parent, Gee.Collection<Media> songs) {
 		title = _("Listening Statistics");
-		transient_for = App.window;
+		transient_for = parent;
 		destroy_with_parent = true;
 		set_default_size (620, 640);
 
@@ -24,7 +60,7 @@ public class BeatBox.StatsWindow : Gtk.Window {
 		var genres = new Gee.HashMap<string, uint> ();
 		uint plays = 0, played_songs = 0;
 		uint64 seconds = 0;
-		foreach (var m in App.library.song_library.medias ()) {
+		foreach (var m in songs) {
 			if (m.play_count == 0)
 				continue;
 			plays += m.play_count;
@@ -125,4 +161,8 @@ public class BeatBox.StatsWindow : Gtk.Window {
 		cr.move_to (x, y + (ROW_H - h) / 2);
 		Pango.cairo_show_layout (cr, layout);
 	}
+}
+
+public BeatBox.Plugin beatbox_plugin_create () {
+	return new BeatBox.Statistics ();
 }

@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beat-box\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-07 20:46-0300\n"
+"POT-Creation-Date: 2026-10-07 22:12-0300\n"
 "PO-Revision-Date: 2012-12-04 00:24+0000\n"
 "Last-Translator: Blagovest Petrov <blagovest@petrovs.info>\n"
 "Language-Team: Bulgarian <bg@li.org>\n"
@@ -321,12 +321,12 @@ msgstr "Добавяне на RSS поток"
 msgid "Download new Episodes"
 msgstr "Сваляне на нови епизоди"
 
-#: src/Core/Actions.vala:56 src/Core/LibraryWindow.vala:840
+#: src/Core/Actions.vala:56 src/Core/LibraryWindow.vala:852
 #: src/DBus/UnityIntegration.vala:60 src/Windows/PreferencesWindow.vala:52
 msgid "Preferences"
 msgstr "Предпочитания"
 
-#: src/Core/Actions.vala:57 src/Core/LibraryWindow.vala:839
+#: src/Core/Actions.vala:57 src/Core/LibraryWindow.vala:851
 #: src/DBus/UnityIntegration.vala:61 src/Windows/EqualizerWindow.vala:80
 msgid "Equalizer"
 msgstr "Тонкоректор"
@@ -437,86 +437,82 @@ msgstr ""
 msgid "_Mini Player"
 msgstr ""
 
-#: src/Core/LibraryWindow.vala:381
-msgid "Listening _Statistics"
-msgstr ""
-
-#: src/Core/LibraryWindow.vala:429
+#: src/Core/LibraryWindow.vala:425
 msgid "Resolve"
 msgstr "Разрешаване"
 
-#: src/Core/LibraryWindow.vala:480
+#: src/Core/LibraryWindow.vala:476
 msgid "Information about the song playing (Ctrl+Shift+I)"
 msgstr ""
 
-#: src/Core/LibraryWindow.vala:536 src/Dialogs/FindReplaceDialog.vala:96
+#: src/Core/LibraryWindow.vala:532 src/Dialogs/FindReplaceDialog.vala:96
 #: src/Windows/DirectoryDialog.vala:108
 msgid "Close"
 msgstr ""
 
-#: src/Core/LibraryWindow.vala:536
+#: src/Core/LibraryWindow.vala:532
 msgid "Minimize"
 msgstr ""
 
-#: src/Core/LibraryWindow.vala:536
+#: src/Core/LibraryWindow.vala:532
 msgid "Maximize (Alt: mini player)"
 msgstr ""
 
-#: src/Core/LibraryWindow.vala:827
+#: src/Core/LibraryWindow.vala:839
 #, fuzzy
 msgid "Play / Pause"
 msgstr "Старт/Пауза"
 
-#: src/Core/LibraryWindow.vala:828
+#: src/Core/LibraryWindow.vala:840
 #, fuzzy
 msgid "Next song"
 msgstr "Следваща"
 
-#: src/Core/LibraryWindow.vala:829
+#: src/Core/LibraryWindow.vala:841
 #, fuzzy
 msgid "Previous song"
 msgstr "Предишна"
 
-#: src/Core/LibraryWindow.vala:830
+#: src/Core/LibraryWindow.vala:842
 msgid "Volume up"
 msgstr ""
 
-#: src/Core/LibraryWindow.vala:831
+#: src/Core/LibraryWindow.vala:843
 msgid "Volume down"
 msgstr ""
 
-#: src/Core/LibraryWindow.vala:832
+#: src/Core/LibraryWindow.vala:844
 msgid "Mini player"
 msgstr ""
 
-#: src/Core/LibraryWindow.vala:833
+#: src/Core/LibraryWindow.vala:845
 msgid "Search"
 msgstr ""
 
-#: src/Core/LibraryWindow.vala:837
+#: src/Core/LibraryWindow.vala:849
 msgid "Now playing"
 msgstr ""
 
-#: src/Core/LibraryWindow.vala:838
+#: src/Core/LibraryWindow.vala:850
 msgid "Information panel"
 msgstr ""
 
-#: src/Core/LibraryWindow.vala:841
+#: src/Core/LibraryWindow.vala:853
 msgid "Quit"
 msgstr ""
 
 #. FIXME: We already do this and more in the library_manager import_operation_finished. Use that
 #. and use the same text as here for CD imports
-#: src/Core/LibraryWindow.vala:952 src/Devices/CDRomDevice.vala:339
+#: src/Core/LibraryWindow.vala:964 src/Devices/CDRomDevice.vala:339
 msgid "Import Complete"
 msgstr "Внасянето завърши"
 
-#: src/Core/LibraryWindow.vala:952
+#: src/Core/LibraryWindow.vala:964
 #, c-format
 msgid "BeatBox has imported your %s library."
 msgstr "BeatBox внесе вашата библиотека %s."
 
-#: src/Core/LibraryWindow.vala:1045 src/Core/LibraryWindow.vala:1052
+#: src/Core/LibraryWindow.vala:1057 src/Core/LibraryWindow.vala:1064
 #, c-format
 msgid "%s media files could not be found."
 msgstr "Медийните файлове %s не могат да бъдат открити."
@@ -1246,21 +1242,21 @@ msgstr ""
 msgid "Category"
 msgstr ""
 
-#: src/Lists/GenericList.vala:300
+#: src/Lists/GenericList.vala:306
 msgid "Playing not Supported"
 msgstr ""
 
-#: src/Lists/GenericList.vala:300
+#: src/Lists/GenericList.vala:306
 msgid ""
 "Due to issues with playing songs on certain iOS devices, playing songs on "
 "devices is currently not supported."
 msgstr ""
 
-#: src/Lists/GenericList.vala:446
+#: src/Lists/GenericList.vala:452
 msgid "Media Editor"
 msgstr ""
 
-#: src/Lists/GenericList.vala:446
+#: src/Lists/GenericList.vala:452
 msgid "Editing of multiple media types is not allowed"
 msgstr ""
 
@@ -1328,17 +1324,17 @@ msgstr ""
 msgid "Scroll to Current Song"
 msgstr ""
 
-#: src/Lists/MusicList.vala:367 src/Lists/PodcastList.vala:268
+#: src/Lists/MusicList.vala:374 src/Lists/PodcastList.vala:268
 #: src/Lists/RadioList.vala:149
 #, c-format
 msgid "Edit %s"
 msgstr ""
 
-#: src/Lists/MusicList.vala:510
+#: src/Lists/MusicList.vala:517
 msgid "Album art not saved"
 msgstr ""
 
-#: src/Lists/MusicList.vala:510
+#: src/Lists/MusicList.vala:517
 #, c-format
 msgid ""
 "%d file could not be changed (it may be read-only, or of a kind that has no "
@@ -1349,11 +1345,11 @@ msgid_plural ""
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/Lists/MusicList.vala:513
+#: src/Lists/MusicList.vala:520
 msgid "Album art saved"
 msgstr ""
 
-#: src/Lists/MusicList.vala:513
+#: src/Lists/MusicList.vala:520
 #, c-format
 msgid "Written into %d file"
 msgid_plural "Written into %d files"
@@ -2173,11 +2169,11 @@ msgid ""
 "it in the sidebar and choose \"Edit\"."
 msgstr ""
 
-#: src/SourceViews/SourceView.vala:352
+#: src/SourceViews/SourceView.vala:349
 msgid "No Results"
 msgstr "Няма резултати"
 
-#: src/SourceViews/SourceView.vala:352
+#: src/SourceViews/SourceView.vala:349
 msgid "Your search query returned no results."
 msgstr "Вашата заявка за търсене не върна резултати"
 
@@ -2564,7 +2560,7 @@ msgstr ""
 msgid "Added"
 msgstr ""
 
-#: src/Widgets/TrackReport.vala:174 src/Windows/StatsWindow.vala:59
+#: src/Widgets/TrackReport.vala:174 plugins/statistics/Statistics.vala:95
 #, fuzzy
 msgid "Unknown"
 msgstr "Неизвестна песен"
@@ -3370,60 +3366,64 @@ msgstr ""
 msgid "Close Without Saving"
 msgstr ""
 
-#: src/Windows/StatsWindow.vala:17
+#: plugins/statistics/Statistics.vala:19
+msgid "Listening _Statistics"
+msgstr ""
+
+#: plugins/statistics/Statistics.vala:53
 msgid "Listening Statistics"
 msgstr ""
 
-#: src/Windows/StatsWindow.vala:42
+#: plugins/statistics/Statistics.vala:78
 msgid "Nothing has been played yet."
 msgstr ""
 
-#: src/Windows/StatsWindow.vala:43
+#: plugins/statistics/Statistics.vala:79
 #, c-format
 msgid "%u play of %u song"
 msgid_plural "%u plays of %u songs"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/Windows/StatsWindow.vala:44
+#: plugins/statistics/Statistics.vala:80
 #, c-format
 msgid "%s of listening"
 msgstr ""
 
-#: src/Windows/StatsWindow.vala:48
+#: plugins/statistics/Statistics.vala:84
 msgid "Most Played Artists"
 msgstr ""
 
-#: src/Windows/StatsWindow.vala:49
+#: plugins/statistics/Statistics.vala:85
 msgid "Most Played Albums"
 msgstr ""
 
-#: src/Windows/StatsWindow.vala:50
+#: plugins/statistics/Statistics.vala:86
 msgid "Most Played Genres"
 msgstr ""
 
-#: src/Windows/StatsWindow.vala:74
+#: plugins/statistics/Statistics.vala:110
 #, c-format
 msgid "%u day"
 msgid_plural "%u days"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/Windows/StatsWindow.vala:76
+#: plugins/statistics/Statistics.vala:112
 #, c-format
 msgid "%u hour"
 msgid_plural "%u hours"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/Windows/StatsWindow.vala:77
+#: plugins/statistics/Statistics.vala:113
 #, c-format
 msgid "%u minute"
 msgid_plural "%u minutes"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/Windows/StatsWindow.vala:96
+#: plugins/statistics/Statistics.vala:132
 msgid "No plays yet"
 msgstr ""
 

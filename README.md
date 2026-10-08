@@ -104,8 +104,9 @@ Plugins are turned on and off, and installed (Install Plugin…, choosing the
 libbeatbox-core, or a Python module (when BeatBox is built with libpeas-2,
 `-Dpython`). docs/plugins.md explains how to write, build and install one;
 plugins/nowplayingfile (Vala, keeps the playing song in
-~/.cache/beatbox/now-playing.txt) and plugins/listeninglog (Python, a line per
-song played) are complete examples.
+~/.cache/beatbox/now-playing.txt), plugins/statistics (Vala, Listening
+Statistics in the app menu) and plugins/listeninglog (Python, a line per song
+played) are complete examples.
 
 Translating
 -----------
