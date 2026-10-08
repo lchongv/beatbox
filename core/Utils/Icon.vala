@@ -146,6 +146,30 @@ public class BeatBox.Icon : GLib.Object {
 		return icon_theme.lookup_by_gicon (get_gicon(), size, 0);
 	}
 
+	// Bundled icons decoded once per size: each SVG takes milliseconds, and every list's
+	// rating stars asked for the same ones. Covers load in a thread too, hence the lock.
+	static Gee.HashMap<string, Gdk.Pixbuf>? decoded = null;
+	static Mutex decoded_lock;
+
+	static Gdk.Pixbuf? bundled (string path, int width, int height) {
+		string key = "%s@%dx%d".printf (path, width, height);
+		decoded_lock.lock ();
+		if (decoded == null)
+			decoded = new Gee.HashMap<string, Gdk.Pixbuf> ();
+		Gdk.Pixbuf? rv = decoded[key];
+		if (rv == null) {
+			try {
+				rv = new Gdk.Pixbuf.from_resource_at_scale (path, width, height, true);
+				decoded[key] = rv;
+			}
+			catch (Error err) {
+				warning ("Couldn't load bundled icon: %s", err.message);
+			}
+		}
+		decoded_lock.unlock ();
+		return rv;
+	}
+
 	public Gdk.Pixbuf? render (Gtk.IconSize? size, StyleContext? context = null, int px_size = 0) {
 		Gdk.Pixbuf? rv = null;
 		int width = 16, height = 16;
@@ -179,12 +203,7 @@ public class BeatBox.Icon : GLib.Object {
 		// Prefer our own icon: theme lookups with generic fallback can return
 		// an unrelated (grey, symbolic) icon for BeatBox's custom names
 		if (has_backup) {
-			try {
-				rv = new Gdk.Pixbuf.from_resource_at_scale (this.backup, width, height, true);
-			}
-			catch (Error err) {
-				warning ("Couldn't load bundled icon: %s", err.message);
-			}
+			rv = bundled (this.backup, width, height);
 		}
 		
 		// Otherwise load it from the theme

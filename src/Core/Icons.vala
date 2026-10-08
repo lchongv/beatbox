@@ -159,8 +159,6 @@ public class BeatBox.Icons : GLib.Object, BeatBox.IconsInterface {
 		DEFAULT_ALBUM_ART_PIXBUF = DEFAULT_ALBUM_ART.render (null);
 		DROP_ALBUM_PIXBUF = DROP_ALBUM.render(null);
 
-        DEFAULT_ALBUM_ART_PIXBUF = DEFAULT_ALBUM_ART.render (null);
-
         // 168x168
         var shadow_icon = new BeatBox.Icon ("albumart-shadow", 168, Type.OTHER, FileType.PNG, true);
         DEFAULT_ALBUM_SHADOW_PIXBUF = shadow_icon.render (null);

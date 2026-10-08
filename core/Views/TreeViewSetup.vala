@@ -108,116 +108,136 @@ public class BeatBox.TreeViewSetup : GLib.Object {
 	// comparisions to find what column it is throughout. 
 	// TODO: Make nice add_new_column(string title, bool visible, int fixed_width) func
 	// TODO: Use const int values
-	void create_default_columns () {
-		_columns = new GLib.List<TreeViewColumn>();
+	/** A column as a new list shows it: plain values, so the defaults can be read without making widgets */
+	class DefaultColumn {
+		public string title;
+		public int width;
+		public bool visible;
+		public DefaultColumn(string title, int width, bool visible) {
+			this.title = title;
+			this.width = width;
+			this.visible = visible;
+		}
+	}
+	
+	static Gee.List<DefaultColumn> default_columns (Hint hint) {
+		var d = new Gee.ArrayList<DefaultColumn>();
 		
 		/* initial column state */
 		if(hint == TreeViewSetup.Hint.PODCAST || hint == TreeViewSetup.Hint.DEVICE_PODCAST) {
-			add_new_column("id", ID_WIDTH, false);
-			add_new_column(" ", ICON_WIDTH, true);
-			add_new_column("Episode", TRACK_WIDTH, false);
-			add_new_column("Name", TITLE_WIDTH, true);
-			add_new_column("Length", LENGTH_WIDTH, true);
-			add_new_column("Artist", ARTIST_WIDTH, true);
-			add_new_column("Podcast", ALBUM_WIDTH, true);
-			add_new_column("Date", LAST_PLAYED_WIDTH, true);
-			add_new_column("Category", GENRE_WIDTH, false);
-			add_new_column("Comment", COMMENT_WIDTH, true);
-			add_new_column("Rating", RATING_WIDTH, false);
-			add_new_column("Pulser", PULSER_WIDTH, false);
+			d.add(new DefaultColumn("id", ID_WIDTH, false));
+			d.add(new DefaultColumn(" ", ICON_WIDTH, true));
+			d.add(new DefaultColumn("Episode", TRACK_WIDTH, false));
+			d.add(new DefaultColumn("Name", TITLE_WIDTH, true));
+			d.add(new DefaultColumn("Length", LENGTH_WIDTH, true));
+			d.add(new DefaultColumn("Artist", ARTIST_WIDTH, true));
+			d.add(new DefaultColumn("Podcast", ALBUM_WIDTH, true));
+			d.add(new DefaultColumn("Date", LAST_PLAYED_WIDTH, true));
+			d.add(new DefaultColumn("Category", GENRE_WIDTH, false));
+			d.add(new DefaultColumn("Comment", COMMENT_WIDTH, true));
+			d.add(new DefaultColumn("Rating", RATING_WIDTH, false));
+			d.add(new DefaultColumn("Pulser", PULSER_WIDTH, false));
 		}
 		else if(hint == TreeViewSetup.Hint.AUDIOBOOK || hint == TreeViewSetup.Hint.DEVICE_AUDIOBOOK) {
 			
 		}
 		else if(hint == TreeViewSetup.Hint.STATION) {
-			add_new_column("id", ID_WIDTH, false);
-			add_new_column(" ", ICON_WIDTH, true);
-			add_new_column("Station", STATION_WIDTH, true);
-			add_new_column("Genre", GENRE_WIDTH, true);
-			add_new_column("Rating", RATING_WIDTH, true);
-			add_new_column("Pulser", PULSER_WIDTH, false);
+			d.add(new DefaultColumn("id", ID_WIDTH, false));
+			d.add(new DefaultColumn(" ", ICON_WIDTH, true));
+			d.add(new DefaultColumn("Station", STATION_WIDTH, true));
+			d.add(new DefaultColumn("Genre", GENRE_WIDTH, true));
+			d.add(new DefaultColumn("Rating", RATING_WIDTH, true));
+			d.add(new DefaultColumn("Pulser", PULSER_WIDTH, false));
 		}
 		else if(hint == TreeViewSetup.Hint.ALBUM_LIST) { // same as normal music list, but most are hidden
-			add_new_column("id", ID_WIDTH, false);
-			add_new_column(" ", ICON_WIDTH, true);
-			add_new_column("#", NUMBER_WIDTH, (hint == TreeViewSetup.Hint.QUEUE || hint == TreeViewSetup.Hint.HISTORY || hint == TreeViewSetup.Hint.PLAYLIST));
-			add_new_column("Track", TRACK_WIDTH, false);
-			add_new_column("Title", ALBUM_VIEW_TITLE_WIDTH, true);
-			add_new_column("Length", LENGTH_WIDTH, true);
-			add_new_column("Artist", ARTIST_WIDTH, false);
-			add_new_column("Album", ALBUM_WIDTH, false);
-			add_new_column("Genre", GENRE_WIDTH, false);
-			add_new_column("Year", YEAR_WIDTH, false);
-			add_new_column("Bitrate", BITRATE_WIDTH, false);
-			add_new_column("Rating", RATING_WIDTH, false);
-			add_new_column("Plays", PLAYS_WIDTH, false);
-			add_new_column("Skips", SKIPS_WIDTH, false);
-			add_new_column("Date Added", DATE_ADDED_WIDTH, false);
-			add_new_column("Last Played", LAST_PLAYED_WIDTH, false);
-			add_new_column("BPM", BPM_WIDTH, false);
-			add_new_column("Pulser", PULSER_WIDTH, false);
+			d.add(new DefaultColumn("id", ID_WIDTH, false));
+			d.add(new DefaultColumn(" ", ICON_WIDTH, true));
+			d.add(new DefaultColumn("#", NUMBER_WIDTH, (hint == TreeViewSetup.Hint.QUEUE || hint == TreeViewSetup.Hint.HISTORY || hint == TreeViewSetup.Hint.PLAYLIST)));
+			d.add(new DefaultColumn("Track", TRACK_WIDTH, false));
+			d.add(new DefaultColumn("Title", ALBUM_VIEW_TITLE_WIDTH, true));
+			d.add(new DefaultColumn("Length", LENGTH_WIDTH, true));
+			d.add(new DefaultColumn("Artist", ARTIST_WIDTH, false));
+			d.add(new DefaultColumn("Album", ALBUM_WIDTH, false));
+			d.add(new DefaultColumn("Genre", GENRE_WIDTH, false));
+			d.add(new DefaultColumn("Year", YEAR_WIDTH, false));
+			d.add(new DefaultColumn("Bitrate", BITRATE_WIDTH, false));
+			d.add(new DefaultColumn("Rating", RATING_WIDTH, false));
+			d.add(new DefaultColumn("Plays", PLAYS_WIDTH, false));
+			d.add(new DefaultColumn("Skips", SKIPS_WIDTH, false));
+			d.add(new DefaultColumn("Date Added", DATE_ADDED_WIDTH, false));
+			d.add(new DefaultColumn("Last Played", LAST_PLAYED_WIDTH, false));
+			d.add(new DefaultColumn("BPM", BPM_WIDTH, false));
+			d.add(new DefaultColumn("Pulser", PULSER_WIDTH, false));
 		}
 		else if(hint == TreeViewSetup.Hint.NOW_PLAYING) { // same as normal music list, but most are hidden and is not very wide
-			add_new_column("id", ID_WIDTH, false);
-			add_new_column(" ", ICON_WIDTH, true);
-			add_new_column("#", NUMBER_WIDTH, (hint == TreeViewSetup.Hint.QUEUE || hint == TreeViewSetup.Hint.HISTORY || hint == TreeViewSetup.Hint.PLAYLIST));
-			add_new_column("Track", TRACK_WIDTH, true);
-			add_new_column("Title", TITLE_WIDTH, true);
-			add_new_column("Length", LENGTH_WIDTH, true);
-			add_new_column("Artist", ARTIST_WIDTH, false);
-			add_new_column("Album", ALBUM_WIDTH, false);
-			add_new_column("Genre", GENRE_WIDTH, false);
-			add_new_column("Year", YEAR_WIDTH, false);
-			add_new_column("Bitrate", BITRATE_WIDTH, false);
-			add_new_column("Rating", RATING_WIDTH, false);
-			add_new_column("Plays", PLAYS_WIDTH, false);
-			add_new_column("Skips", SKIPS_WIDTH, false);
-			add_new_column("Date Added", DATE_ADDED_WIDTH, false);
-			add_new_column("Last Played", LAST_PLAYED_WIDTH, false);
-			add_new_column("BPM", BPM_WIDTH, false);
-			add_new_column("Pulser", PULSER_WIDTH, false);
+			d.add(new DefaultColumn("id", ID_WIDTH, false));
+			d.add(new DefaultColumn(" ", ICON_WIDTH, true));
+			d.add(new DefaultColumn("#", NUMBER_WIDTH, (hint == TreeViewSetup.Hint.QUEUE || hint == TreeViewSetup.Hint.HISTORY || hint == TreeViewSetup.Hint.PLAYLIST)));
+			d.add(new DefaultColumn("Track", TRACK_WIDTH, true));
+			d.add(new DefaultColumn("Title", TITLE_WIDTH, true));
+			d.add(new DefaultColumn("Length", LENGTH_WIDTH, true));
+			d.add(new DefaultColumn("Artist", ARTIST_WIDTH, false));
+			d.add(new DefaultColumn("Album", ALBUM_WIDTH, false));
+			d.add(new DefaultColumn("Genre", GENRE_WIDTH, false));
+			d.add(new DefaultColumn("Year", YEAR_WIDTH, false));
+			d.add(new DefaultColumn("Bitrate", BITRATE_WIDTH, false));
+			d.add(new DefaultColumn("Rating", RATING_WIDTH, false));
+			d.add(new DefaultColumn("Plays", PLAYS_WIDTH, false));
+			d.add(new DefaultColumn("Skips", SKIPS_WIDTH, false));
+			d.add(new DefaultColumn("Date Added", DATE_ADDED_WIDTH, false));
+			d.add(new DefaultColumn("Last Played", LAST_PLAYED_WIDTH, false));
+			d.add(new DefaultColumn("BPM", BPM_WIDTH, false));
+			d.add(new DefaultColumn("Pulser", PULSER_WIDTH, false));
 		}
 		else if(hint == TreeViewSetup.Hint.DUPLICATES) {
-			add_new_column("id", ID_WIDTH, false);
-			add_new_column(CHECKBOX_COLUMN_TITLE, 30, true);
-			add_new_column(" ", ICON_WIDTH, true);
-			add_new_column("#", NUMBER_WIDTH, false);
-			add_new_column("Track", TRACK_WIDTH, false);
-			add_new_column("Title", TITLE_WIDTH, true);
-			add_new_column("Length", LENGTH_WIDTH, true);
-			add_new_column("Artist", ARTIST_WIDTH, true);
-			add_new_column("Album", ALBUM_WIDTH, true);
-			add_new_column("Genre", GENRE_WIDTH, false);
-			add_new_column("Year", YEAR_WIDTH, false);
-			add_new_column("Bitrate", BITRATE_WIDTH, true);
-			add_new_column("Rating", RATING_WIDTH, false);
-			add_new_column("Plays", PLAYS_WIDTH, false);
-			add_new_column("Skips", SKIPS_WIDTH, false);
-			add_new_column("Date Added", DATE_ADDED_WIDTH, false);
-			add_new_column("Last Played", LAST_PLAYED_WIDTH, false);
-			add_new_column("BPM", BPM_WIDTH, false);
-			add_new_column("Pulser", PULSER_WIDTH, false);
+			d.add(new DefaultColumn("id", ID_WIDTH, false));
+			d.add(new DefaultColumn(CHECKBOX_COLUMN_TITLE, 30, true));
+			d.add(new DefaultColumn(" ", ICON_WIDTH, true));
+			d.add(new DefaultColumn("#", NUMBER_WIDTH, false));
+			d.add(new DefaultColumn("Track", TRACK_WIDTH, false));
+			d.add(new DefaultColumn("Title", TITLE_WIDTH, true));
+			d.add(new DefaultColumn("Length", LENGTH_WIDTH, true));
+			d.add(new DefaultColumn("Artist", ARTIST_WIDTH, true));
+			d.add(new DefaultColumn("Album", ALBUM_WIDTH, true));
+			d.add(new DefaultColumn("Genre", GENRE_WIDTH, false));
+			d.add(new DefaultColumn("Year", YEAR_WIDTH, false));
+			d.add(new DefaultColumn("Bitrate", BITRATE_WIDTH, true));
+			d.add(new DefaultColumn("Rating", RATING_WIDTH, false));
+			d.add(new DefaultColumn("Plays", PLAYS_WIDTH, false));
+			d.add(new DefaultColumn("Skips", SKIPS_WIDTH, false));
+			d.add(new DefaultColumn("Date Added", DATE_ADDED_WIDTH, false));
+			d.add(new DefaultColumn("Last Played", LAST_PLAYED_WIDTH, false));
+			d.add(new DefaultColumn("BPM", BPM_WIDTH, false));
+			d.add(new DefaultColumn("Pulser", PULSER_WIDTH, false));
 		}
 		else {
-			add_new_column("id", ID_WIDTH, false);
-			add_new_column(" ", ICON_WIDTH, true);
-			add_new_column("#", NUMBER_WIDTH, (hint == TreeViewSetup.Hint.QUEUE || hint == TreeViewSetup.Hint.HISTORY || hint == TreeViewSetup.Hint.PLAYLIST));
-			add_new_column("Track", TRACK_WIDTH, false);
-			add_new_column("Title", TITLE_WIDTH, true);
-			add_new_column("Length", LENGTH_WIDTH, true);
-			add_new_column("Artist", ARTIST_WIDTH, true);
-			add_new_column("Album", ALBUM_WIDTH, true);
-			add_new_column("Genre", GENRE_WIDTH, true);
-			add_new_column("Year", YEAR_WIDTH, false);
-			add_new_column("Bitrate", BITRATE_WIDTH, false);
-			add_new_column("Rating", RATING_WIDTH, false);
-			add_new_column("Plays", PLAYS_WIDTH, false);
-			add_new_column("Skips", SKIPS_WIDTH, false);
-			add_new_column("Date Added", DATE_ADDED_WIDTH, false);
-			add_new_column("Last Played", LAST_PLAYED_WIDTH, false);
-			add_new_column("BPM", BPM_WIDTH, false);
-			add_new_column("Pulser", PULSER_WIDTH, false);
+			d.add(new DefaultColumn("id", ID_WIDTH, false));
+			d.add(new DefaultColumn(" ", ICON_WIDTH, true));
+			d.add(new DefaultColumn("#", NUMBER_WIDTH, (hint == TreeViewSetup.Hint.QUEUE || hint == TreeViewSetup.Hint.HISTORY || hint == TreeViewSetup.Hint.PLAYLIST)));
+			d.add(new DefaultColumn("Track", TRACK_WIDTH, false));
+			d.add(new DefaultColumn("Title", TITLE_WIDTH, true));
+			d.add(new DefaultColumn("Length", LENGTH_WIDTH, true));
+			d.add(new DefaultColumn("Artist", ARTIST_WIDTH, true));
+			d.add(new DefaultColumn("Album", ALBUM_WIDTH, true));
+			d.add(new DefaultColumn("Genre", GENRE_WIDTH, true));
+			d.add(new DefaultColumn("Year", YEAR_WIDTH, false));
+			d.add(new DefaultColumn("Bitrate", BITRATE_WIDTH, false));
+			d.add(new DefaultColumn("Rating", RATING_WIDTH, false));
+			d.add(new DefaultColumn("Plays", PLAYS_WIDTH, false));
+			d.add(new DefaultColumn("Skips", SKIPS_WIDTH, false));
+			d.add(new DefaultColumn("Date Added", DATE_ADDED_WIDTH, false));
+			d.add(new DefaultColumn("Last Played", LAST_PLAYED_WIDTH, false));
+			d.add(new DefaultColumn("BPM", BPM_WIDTH, false));
+			d.add(new DefaultColumn("Pulser", PULSER_WIDTH, false));
 		}
+		
+		return d;
+	}
+	
+	void create_default_columns () {
+		_columns = new GLib.List<TreeViewColumn>();
+		foreach(var c in default_columns(hint))
+			add_new_column(c.title, c.width, c.visible);
 		
 		for(uint index = 0; index < _columns.length(); ++index) {
 			TreeViewColumn tvc = _columns.nth_data(index);
@@ -382,15 +402,13 @@ public class BeatBox.TreeViewSetup : GLib.Object {
 		// Find the last column that is visible. This column will use a sane
 		// default width, since gtk treeview likes to make it super wide
 		// which results in horizontal scrolling
-		var default_columns = new TreeViewSetup(sort_column_id, sort_direction, hint).get_columns();
+		var defaults = default_columns(hint); // not a whole new setup: that made GTK columns, every 15 seconds
 		string last_visible_column = "NO_MATCH";
 		int default_width_for_last_visible = 70; // 70 is a sane default width
 		for(int i = (int)_columns.length() - 1; i >= 0; --i) {
-			var default_tvc = default_columns.nth_data(i);
-			
-			if(_columns.nth_data(i).visible) {
-				last_visible_column = default_tvc.title;
-				default_width_for_last_visible = default_tvc.fixed_width;
+			if(_columns.nth_data(i).visible && i < defaults.size) {
+				last_visible_column = defaults[i].title;
+				default_width_for_last_visible = defaults[i].width;
 				break;
 			}
 		}

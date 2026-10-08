@@ -27,6 +27,34 @@
  */
 
 namespace BeatBox.PixbufUtils {
+    // cover: rounded corners, thin dark frame, soft drop shadow
+    const int SHADOW_SIZE = 6;
+    const double RADIUS = 4;
+
+    // The blurred shadow is the same under every cover of a size: made once per size.
+    // Covers are loaded in a thread while the views make theirs, hence the lock.
+    Gee.HashMap<string, Cairo.ImageSurface>? shadows = null;
+    Mutex shadows_lock;
+
+    Cairo.ImageSurface shadow_for (int width, int height) {
+        shadows_lock.lock ();
+        if (shadows == null)
+            shadows = new Gee.HashMap<string, Cairo.ImageSurface> ();
+        string key = "%dx%d".printf (width, height);
+        var shadow = shadows[key];
+        if (shadow == null) {
+            shadow = new Cairo.ImageSurface (Cairo.Format.ARGB32, width, height);
+            var cr = new Cairo.Context (shadow);
+            rounded_rectangle (cr, SHADOW_SIZE, SHADOW_SIZE + 2, width - 2 * SHADOW_SIZE, height - 2 * SHADOW_SIZE, RADIUS);
+            cr.set_source_rgba (0, 0, 0, 0.45);
+            cr.fill ();
+            fast_blur (shadow, 2, 3);
+            shadows[key] = shadow;
+        }
+        shadows_lock.unlock ();
+        return shadow;
+    }
+
 
     /**
      * @param pixbuf original image
@@ -39,10 +67,6 @@ namespace BeatBox.PixbufUtils {
         if (pixbuf == null)
             return null;
 
-        // cover: rounded corners, thin dark frame, soft drop shadow
-        const int SHADOW_SIZE = 6;
-        const double RADIUS = 4;
-
         int S_WIDTH = (stretch)? surface_size: pixbuf.width;
         int S_HEIGHT = (stretch)? surface_size : pixbuf.height;
 
@@ -52,10 +76,8 @@ namespace BeatBox.PixbufUtils {
         int width = S_WIDTH - 2 * SHADOW_SIZE;
         int height = S_HEIGHT - 2 * SHADOW_SIZE;
 
-        rounded_rectangle (cr, SHADOW_SIZE, SHADOW_SIZE + 2, width, height, RADIUS);
-        cr.set_source_rgba (0, 0, 0, 0.45);
-        cr.fill ();
-        fast_blur (surface, 2, 3);
+        cr.set_source_surface (shadow_for (S_WIDTH, S_HEIGHT), 0, 0);
+        cr.paint ();
 
         var source_pixbuf = pixbuf;
         if (pixbuf.width != width || pixbuf.height != height)
