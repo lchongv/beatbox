@@ -448,7 +448,7 @@ public class BeatBox.AlbumWall : Layout {
 		list_scroll.set_policy (PolicyType.AUTOMATIC, PolicyType.AUTOMATIC); // shrinks when the cover is big
 		list_scroll.propagate_natural_height = true;
 		list_scroll.max_content_height = 440;
-		list_scroll.valign = Align.START;
+		list_scroll.valign = Align.FILL; // as tall as the band: the cover column may be taller than 440
 		list_scroll.add (list);
 
 		var band = new Box (Orientation.HORIZONTAL, 18);

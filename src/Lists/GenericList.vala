@@ -212,6 +212,12 @@ public abstract class BeatBox.GenericList : FastList {
 				else {
 					get_column(index).sizing = Gtk.TreeViewColumnSizing.FIXED;
 					get_column(index).fixed_width = tvc.fixed_width;
+					// an album's songs: the title takes the room left (at least 150 px, the band may be
+					// narrow next to a big cover), the length goes to the right edge
+					if(tvc.title == "Title" && get_hint() == TreeViewSetup.Hint.ALBUM_LIST) {
+						get_column(index).expand = true;
+						get_column(index).fixed_width = 150;
+					}
 				}
 			}
 			else if(tvc.title == " ") {
