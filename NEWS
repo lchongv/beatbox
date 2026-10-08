@@ -4,6 +4,28 @@ BeatBox — what changed, newest first
 Packages for each version: https://github.com/lchongv/beatbox/releases
 
 
+0.99.14, the second 1.0 release candidate (7 October 2026)
+---------------------------------------------------------
+
+- Faster start: the window shows in about 2 seconds instead of 3 with a
+  library of a thousand songs, and the covers in under 3 instead of 7.
+- BeatBox starts with nothing loaded. Play on its own (the button, the media
+  keys) goes on with the song it was closed on, from where it was left; that
+  position was never used for songs before.
+- Clicking a cover unfolds the album smoothly, and the view eases to it.
+- Song menu: Fill In Tags from File Names… (Artist/Album/03 - Title and other
+  layouts; only empty tags are filled in, and what each song gets is shown
+  first) and Find and Replace in Tags… (with regular expressions). Songs
+  imported without tags get them from their folders and file names.
+- Listening Statistics in the app menu: the most played artists, albums and
+  genres.
+- A folder holding a file named .nomedia is left out of the library.
+- Right-clicking a song that isn't selected acts on that song.
+- 0.99.0 had no packages: a test failed in the build machines, where the
+  default album art (an SVG) couldn't be read. The .deb now depends on the
+  SVG loader.
+
+
 0.99.0, the 1.0 release candidate (7 October 2026)
 --------------------------------------------------
 
