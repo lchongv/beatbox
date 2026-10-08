@@ -29,6 +29,7 @@
     <category>Player</category>
   </categories>
   <releases>
+    <release version="0.99.14" date="2026-10-07" type="development"/>
     <release version="0.99.0" date="2026-10-07" type="development"/>
     <release version="0.16.1" date="2026-10-06"/>
     <release version="0.16.0" date="2026-10-06"/>
