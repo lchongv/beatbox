@@ -375,10 +375,6 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		mini_player.activate.connect(toggle_mini);
 		App.actions.group.add_action(mini_player);
 		settingsMenu.append(_("_Mini Player"), "bb.mini_player");
-		var statistics = new SimpleAction("statistics", null);
-		statistics.activate.connect(() => new StatsWindow().show_all());
-		App.actions.group.add_action(statistics);
-		settingsMenu.append(_("Listening _Statistics"), "bb.statistics");
 		settingsMenu.append_item(App.actions.model_item(App.actions.show_equalizer));
 		settingsMenu.append_item(App.actions.model_item(App.actions.show_preferences));
 		settingsMenu.append_item(App.actions.model_item(App.actions.exit));
@@ -798,6 +794,22 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		
 		// Update if now_playing is showing or not
 		show_song_info(songInfoShown);
+	}
+	
+	public void add_menu_action(string label, GLib.Action action) {
+		App.actions.group.add_action(action);
+		settingsMenu.insert(settingsMenu.get_n_items() - 2, label, "bb." + action.name); // above Preferences and Exit
+	}
+	
+	public void remove_menu_action(GLib.Action action) {
+		for(int i = 0; i < settingsMenu.get_n_items(); i++) {
+			var target = settingsMenu.get_item_attribute_value(i, "action", VariantType.STRING);
+			if(target != null && target.get_string() == "bb." + action.name) {
+				settingsMenu.remove(i);
+				break;
+			}
+		}
+		App.actions.group.remove_action(action.name);
 	}
 	
 	public void show_notification(string title, string sub_title, Gdk.Pixbuf? pixbuf) {

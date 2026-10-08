@@ -1,0 +1,6 @@
+[Plugin]
+Module=statistics
+Name=Listening statistics
+Name[es]=Estadísticas de escucha
+Description=Adds Listening Statistics to the app menu: the most played artists, albums and genres, from the songs' play counts.
+Description[es]=Añade Estadísticas de escucha al menú de la aplicación: los artistas, discos y géneros más escuchados, según cuántas veces se reprodujo cada canción.

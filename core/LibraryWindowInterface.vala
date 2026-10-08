@@ -58,4 +58,9 @@ public interface BeatBox.LibraryWindowInterface : Gtk.Window {
     // TODO: s/TreeViewSetup.Hint/MediaType
     public abstract void set_statusbar_info(TreeViewSetup.Hint media_type, uint medias, uint64 size, uint seconds);
     public abstract void add_statusbar_widget(Gtk.Widget w, bool left_side);
+
+	/** Adds action to the app menu as label, above Preferences; a plugin removes it in
+	 * deactivate(). Action names share one group: prefix them with the plugin's id. */
+	public abstract void add_menu_action(string label, GLib.Action action);
+	public abstract void remove_menu_action(GLib.Action action);
 }
