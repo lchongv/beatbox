@@ -293,6 +293,13 @@ public class BeatBox.MusicList : GenericList {
 	/* button_press_event */
 	bool viewClick(Gdk.EventButton event) {
 		if(event.type == Gdk.EventType.BUTTON_PRESS && event.button == 3) { //right click
+			// the menu acts on the clicked row: select it first, unless it is part of the selection
+			TreePath? clicked;
+			if(get_path_at_pos((int)event.x, (int)event.y, out clicked, null, null, null) && !get_selection().path_is_selected(clicked)) {
+				get_selection().unselect_all();
+				get_selection().select_path(clicked);
+			}
+			
 			/* create add to playlist menu */
 			Gtk.Menu addToPlaylistMenu = new Gtk.Menu();
 			foreach(BasePlaylist p in App.playlists.playlists()) {
