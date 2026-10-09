@@ -254,6 +254,7 @@ CREATE TABLE IF NOT EXISTS list_setups (
 				backup_on_new_version(path);
 			_db.execute (SCHEMA);
 			add_song_columns ();
+			_db.execute (PeerSync.DDL); // the live sync with itunes7 (ItunesSync)
 			_db.execute ("PRAGMA user_version = %d".printf(version_number()));
 		}
 		catch (SQLHeavy.Error err) {
@@ -277,6 +278,18 @@ CREATE TABLE IF NOT EXISTS list_setups (
 		}
 		catch (SQLHeavy.Error err) {
 			warning("Could not back up the library: %s", err.message);
+		}
+	}
+	
+	/** A copy of the library as it is now, before the first sync with itunes7 */
+	public bool backup_to(string path) {
+		try {
+			_db.execute("VACUUM INTO '%s'".printf(path.replace("'", "''")));
+			return true;
+		}
+		catch (SQLHeavy.Error err) {
+			warning("Could not back up the library to %s: %s", path, err.message);
+			return false;
 		}
 	}
 	
