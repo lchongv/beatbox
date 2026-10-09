@@ -102,6 +102,7 @@ public class BeatBox.App : Gtk.Application {
 	public static BeatBox.DeviceInterface devices { get; private set; }
 	public static BeatBox.PluginManager plugins { get; private set; }
 	static FolderWatcher folder_watcher;
+	static ItunesSync itunes_sync;
 
 	/*private const OptionEntry[] app_options = {
 		{ "debug", 'd', 0, OptionArg.NONE, ref Options.debug, N_("Enable debug logging"), null },
@@ -231,6 +232,7 @@ public class BeatBox.App : Gtk.Application {
 		
 		window.set_application(this); // before the window shows, so it carries the application id
 		((LibraryWindow)window).build_ui ();
+		itunes_sync = new ItunesSync (); // live sync with itunes7, when on in Preferences
 		Launcher.ensure ();
 		
 		((CoverManager)covers).setup_signals();

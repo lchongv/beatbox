@@ -76,6 +76,14 @@ def songs(db):
         return []  # not there yet, or being written
 
 
+def song_row(db, uri):
+    try:
+        with sqlite3.connect('file:%s?mode=ro' % db, uri=True, timeout=1) as c:
+            return c.execute('SELECT playcount, rating FROM songs WHERE uri = ?', (uri,)).fetchone()
+    except sqlite3.Error:
+        return None  # not there yet, or being written
+
+
 def start(app, home, log, files=()):
     proc = subprocess.Popen([app, *files], stdout=log, stderr=subprocess.STDOUT)
     wait_for('BeatBox on D-Bus', lambda: proc.poll() is None and
@@ -162,6 +170,43 @@ def run(app, home):
         player('Next')
         wait_for('Next to the other opened song', lambda: track() == track_of(db, two), 10)
         print('restarted with two songs opened; Next went from one to the other')
+        quit(proc)
+
+        # third run: the live sync with itunes7 (docs/SYNC-BEATBOX.md in itunes7). A
+        # stand-in itunes7 library where Song 1 has 5 plays and 4 stars: BeatBox adds
+        # them when it starts, then follows one more play made there while it runs.
+        one_uri = 'file://' + os.path.join(music, 'Song 1.ogg').replace(' ', '%20')
+        own = song_row(db, one_uri)[0]
+        it7_dir = os.path.join(home, '.local', 'share', 'itunes7')
+        os.makedirs(it7_dir)
+        it7_db = os.path.join(it7_dir, 'library.db')
+        with sqlite3.connect(it7_db) as c:
+            c.executescript('''PRAGMA journal_mode=WAL;
+                CREATE TABLE tracks (id INTEGER PRIMARY KEY AUTOINCREMENT, uri TEXT UNIQUE NOT NULL,
+                  play_count INTEGER NOT NULL DEFAULT 0, last_played INTEGER NOT NULL DEFAULT 0,
+                  rating INTEGER NOT NULL DEFAULT 0, skip_shuffle INTEGER NOT NULL DEFAULT 0,
+                  remember_pos INTEGER NOT NULL DEFAULT 0, volume_adjust INTEGER NOT NULL DEFAULT 0);
+                CREATE TABLE bookmarks (uri TEXT PRIMARY KEY NOT NULL, pos INTEGER NOT NULL DEFAULT 0);''')
+            c.execute('INSERT INTO tracks (uri, play_count, last_played, rating) VALUES (?, 5, 1700000000, 80)',
+                      (one_uri,))
+        conf = os.path.join(home, '.config', 'beatbox', 'beatbox.conf')
+        with open(conf) as f:
+            text = f.read()
+        if 'itunes7-sync=false' not in text:
+            fail('beatbox.conf has no itunes7-sync option')
+        with open(conf, 'w') as f:
+            f.write(text.replace('itunes7-sync=false', 'itunes7-sync=true'))
+        proc = start(app, home, log)
+        wait_for('the plays and rating from itunes7', lambda: song_row(db, one_uri) == (own + 5, 4), 20)
+        if not os.path.exists(db + '.pre-sync'):
+            fail('no backup before the first sync with itunes7')
+        with sqlite3.connect(it7_db, timeout=5) as c:  # one more play in itunes7, BeatBox running
+            c.execute('UPDATE tracks SET play_count = 6, last_played = 1700000100 WHERE uri = ?', (one_uri,))
+        wait_for('the live play from itunes7', lambda: song_row(db, one_uri) == (own + 6, 4), 15)
+        time.sleep(3)  # no echo between the two apps: still the same a moment later
+        if song_row(db, one_uri) != (own + 6, 4):
+            fail('the count kept moving: %s' % (song_row(db, one_uri),))
+        print('itunes7 sync: 5 plays and the rating at start, then one more live')
         quit(proc)
     finally:
         log.close()

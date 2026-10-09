@@ -1,4 +1,4 @@
-project('beatbox', 'vala', 'c', version: '0.99.18')
+project('beatbox', 'vala', 'c', version: '0.99.19')
 
 gnome = import('gnome')
 i18n = import('i18n')
@@ -188,6 +188,8 @@ app_sources = files(
   'src/Core/LyricsManager.vala',
   'src/Core/Skins.vala',
   'src/Core/FolderWatcher.vala',
+  'src/Core/ItunesReader.vala',
+  'src/Core/ItunesSync.vala',
   'src/Core/CoverEmbedder.vala',
   'src/Core/AcoustId.vala',
   'src/Core/Launcher.vala',
@@ -358,6 +360,9 @@ test('rfc822', executable('test-rfc822', 'tests/rfc822.vala', dependencies: core
 test('tag-guess', executable('test-tag-guess', 'tests/tag-guess.vala', dependencies: core_dep))
 test('sqlheavy-busy', executable('test-sqlheavy-busy', 'tests/sqlheavy-busy.vala', dependencies: core_dep))
 test('peer-sync', executable('test-peer-sync', 'tests/peer-sync.vala', dependencies: core_dep))
+# the reader compiled on its own: it needs nothing else from the application
+test('itunes-reader', executable('test-itunes-reader', 'tests/itunes-reader.vala', 'src/Core/ItunesReader.vala',
+  dependencies: core_dep))
 # BeatBox itself under Xvfb, driven through MPRIS (skipped without Xvfb, dbus-run-session, GStreamer's tools)
 test('smoke', find_program('python3'), args: [files('tests/smoke.py'), beatbox_exe],
   is_parallel: false, timeout: 240)

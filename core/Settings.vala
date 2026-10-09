@@ -262,6 +262,7 @@ public class BeatBox.Settings {
         public bool update_folder_hierarchy { get; set; }
         public bool write_metadata_to_file { get; set; }
         public bool copy_imported_music { get; set; }
+        public bool itunes7_sync { get; set; }       // share plays, ratings and options with itunes7 (ItunesSync)
         public bool download_new_podcasts { get; set; }
         public int last_media_playing { get; set; }
         public int last_media_position { get; set; }

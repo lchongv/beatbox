@@ -84,6 +84,8 @@ public class BeatBox.LibraryPreferences : SimplePreferences {
 		organize.toggled.connect(() => { App.settings.main.update_folder_hierarchy = organize.active; });
 		write.toggled.connect(() => { App.settings.main.write_metadata_to_file = write.active; });
 		copy.toggled.connect(() => { App.settings.main.copy_imported_music = copy.active; });
+		var itunes7 = add_check(_("Sync play counts, ratings and options with itunes7"), App.settings.main.itunes7_sync);
+		itunes7.toggled.connect(() => { App.settings.main.itunes7_sync = itunes7.active; });
 	}
 }
 
