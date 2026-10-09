@@ -15,6 +15,9 @@ namespace SQLHeavy {
 		public Database (string path) throws SQLHeavy.Error {
 			if (Sqlite.Database.open_v2 (path, out db) != Sqlite.OK)
 				throw new Error.ERROR ("Could not open %s: %s", path, db.errmsg ());
+			// itunes7 reads this database live (docs/SYNC-BEATBOX.md in itunes7):
+			// without a wait, a COMMIT that meets one of its reads fails and is lost
+			db.busy_timeout (2000);
 		}
 
 		public void execute (string sql) throws SQLHeavy.Error {
