@@ -1,4 +1,4 @@
-project('beatbox', 'vala', 'c', version: '0.99.23')
+project('beatbox', 'vala', 'c', version: '0.99.24')
 
 gnome = import('gnome')
 i18n = import('i18n')
@@ -189,6 +189,7 @@ app_sources = files(
   'src/Core/Skins.vala',
   'src/Core/FolderWatcher.vala',
   'src/Core/ItunesReader.vala',
+  'src/Core/ItunesSyncPass.vala',
   'src/Core/ItunesSync.vala',
   'src/Core/CoverEmbedder.vala',
   'src/Core/AcoustId.vala',
@@ -362,6 +363,10 @@ test('sqlheavy-busy', executable('test-sqlheavy-busy', 'tests/sqlheavy-busy.vala
 test('peer-sync', executable('test-peer-sync', 'tests/peer-sync.vala', dependencies: core_dep))
 # the reader compiled on its own: it needs nothing else from the application
 test('itunes-reader', executable('test-itunes-reader', 'tests/itunes-reader.vala', 'src/Core/ItunesReader.vala',
+  dependencies: core_dep))
+# ItunesSync's pass without the rest of BeatBox, on a library in a temporary data folder
+test('itunes-sync-pass', executable('test-itunes-sync-pass', 'tests/itunes-sync-pass.vala',
+  'src/Core/ItunesSyncPass.vala', 'src/Core/ItunesReader.vala', 'src/DataBase/DataBaseManager.vala',
   dependencies: core_dep))
 # DataBaseManager alone, on a library in a temporary data folder
 test('database-manager', executable('test-database-manager', 'tests/database-manager.vala',

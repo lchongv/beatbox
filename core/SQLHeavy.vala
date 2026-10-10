@@ -44,7 +44,18 @@ namespace SQLHeavy {
 			return new Query (database, sql);
 		}
 
+		/** Gives the transaction up: none of its writes stay, and commit () fails */
+		public void rollback () {
+			if (done)
+				return;
+			done = true;
+			// it fails when SQLite already rolled it back (SQLITE_FULL, IOERR...): nothing left to undo
+			try { database.execute ("ROLLBACK;"); } catch (SQLHeavy.Error e) {}
+		}
+
 		public void commit () throws SQLHeavy.Error {
+			if (done)
+				throw new Error.ERROR ("The transaction was already rolled back or committed");
 			done = true;
 			try {
 				database.execute ("COMMIT;");

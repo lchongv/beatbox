@@ -15,18 +15,6 @@ public class BeatBox.ItunesSync : GLib.Object {
 	FileMonitor? monitor;
 	uint debounce_id;
 
-	class Row : Object {
-		public Media media;
-		public string uri;
-		public PeerSync.Side side;
-		public bool saved; // its INSERT ran (the transaction may still fail: see save_rows)
-		public Row (Media media, PeerSync.Side side) {
-			this.media = media;
-			this.uri = media.uri;
-			this.side = side;
-		}
-	}
-
 	public ItunesSync () {
 		itunes7_db = Path.build_filename (Environment.get_user_data_dir (), "itunes7", "library.db");
 		App.settings.main.notify["itunes7-sync"].connect ((s, p) => setting_changed ());
@@ -97,54 +85,18 @@ public class BeatBox.ItunesSync : GLib.Object {
 		var mine = read_own_rows ();
 		if (theirs == null || mine == null)
 			return; // busy, half written or not there: the next change retries
-		var rows = new Gee.ArrayList<Row> ();
-		foreach (var m in App.library.medias ()) {
-			if (m.key != "song" || m.uri == "")
-				continue;
-			var peer = theirs[m.uri];
-			if (peer == null)
-				continue;
-			var me = mine[m.uri] ?? new PeerSync.Side ();
-			me.count = m.play_count;
-			me.last = m.last_played;
-			me.f[PeerSync.RATING].cur = m.rating;
-			me.f[PeerSync.SKIP_SHUFFLE].cur = m.skip_shuffle ? 1 : 0;
-			me.f[PeerSync.REMEMBER_POS].cur = m.remember_position ? 1 : 0;
-			me.f[PeerSync.VOLUME_ADJUST].cur = m.volume_adjust;
-			me.f[PeerSync.RESUME_POS].cur = m.resume_pos;
-			int64 added;
-			if (PeerSync.sync_side (me, peer, false, out added))
-				rows.add (new Row (m, me));
-		}
-		// The sync rows BEFORE the songs (two transactions): if BeatBox dies in
-		// between, the next pass puts it right; the other way round those plays
-		// would count twice (case 18 of docs/SYNC-BEATBOX.md). For the same
-		// reason a song, even in memory, only changes once its row is saved.
-		// Nothing to change writes nothing, so itunes7 isn't woken up for nothing.
-		if (rows.size == 0 || !save_rows (rows))
-			return; // not committed: nothing changed, the next change retries
-		var changed = new Gee.LinkedList<Media> ();
-		foreach (var row in rows) {
-			if (!row.saved)
-				continue; // the next change retries it
-			var m = row.media;
-			var me = row.side;
-			if (m.play_count != me.count || m.last_played != me.last || m.rating != me.f[PeerSync.RATING].cur
-					|| m.skip_shuffle != (me.f[PeerSync.SKIP_SHUFFLE].cur != 0)
-					|| m.remember_position != (me.f[PeerSync.REMEMBER_POS].cur != 0)
-					|| m.volume_adjust != me.f[PeerSync.VOLUME_ADJUST].cur
-					|| m.resume_pos != me.f[PeerSync.RESUME_POS].cur) {
-				m.play_count = (uint) me.count;
-				m.last_played = (uint) me.last;
-				m.rating = (uint) me.f[PeerSync.RATING].cur;
-				m.skip_shuffle = me.f[PeerSync.SKIP_SHUFFLE].cur != 0;
-				m.remember_position = me.f[PeerSync.REMEMBER_POS].cur != 0;
-				m.volume_adjust = (int) me.f[PeerSync.VOLUME_ADJUST].cur;
-				m.resume_pos = (int) me.f[PeerSync.RESUME_POS].cur;
-				changed.add (m);
-			}
-		}
-		if (changed.size > 0)
+		var songs = new Gee.ArrayList<Media> ();
+		foreach (var m in App.library.medias ())
+			if (m.key == "song")
+				songs.add (m);
+		var changes = ItunesSyncPass.changes (songs, theirs, mine);
+		if (changes.size == 0)
+			return; // nothing to change writes nothing, so itunes7 isn't woken up for nothing
+		// the sync rows and the songs in one transaction, then memory; null when
+		// not committed: nothing changed, the next change retries
+		var changed = ItunesSyncPass.save (App.database, changes);
+		// the lists and the other listeners (it writes the same values again: harmless)
+		if (changed != null && changed.size > 0)
 			App.library.update_medias (changed, false, false, true);
 	}
 
@@ -169,36 +121,5 @@ public class BeatBox.ItunesSync : GLib.Object {
 			return null; // without our own rows the plays already added would count again
 		}
 		return rows;
-	}
-
-	/** true once the transaction is committed: an INSERT that failed with
-	 * SQLITE_FULL, IOERR or NOMEM can roll back the rows already written */
-	bool save_rows (Gee.ArrayList<Row> rows) {
-		var filler = new DatabaseTransactionFiller ();
-		filler.data = rows;
-		filler.filler = save_rows_filler;
-		App.database.queue_transaction (filler); // runs now: no transaction is open outside a filler
-		return filler.committed;
-	}
-
-	void save_rows_filler (ref SQLHeavy.Transaction transaction, DatabaseTransactionFiller db_filler) {
-		var rows = (Gee.ArrayList<Row>) db_filler.data;
-		string[] fields = { "rating", "skip_shuffle", "remember_pos", "volume_adjust", "resume_pos" };
-		try {
-			var query = transaction.prepare ("INSERT OR REPLACE INTO itunes7_sync (uri, %s) VALUES (:uri, :plays_in, :rating, :rating_ep, :skip_shuffle, :skip_shuffle_ep, :remember_pos, :remember_pos_ep, :volume_adjust, :volume_adjust_ep, :resume_pos, :resume_pos_ep)".printf (ItunesReader.SYNC_COLUMNS));
-			foreach (var row in rows) {
-				query.set_string (":uri", row.uri);
-				query.set_int64 (":plays_in", row.side.plays_in);
-				for (int i = 0; i < PeerSync.N_FIELDS; i++) {
-					query.set_int64 (":" + fields[i], row.side.f[i].agreed);
-					query.set_int64 (":" + fields[i] + "_ep", row.side.f[i].epoch);
-				}
-				query.execute ();
-				row.saved = true;
-			}
-		}
-		catch (SQLHeavy.Error err) {
-			warning ("itunes7 sync: could not save: %s", err.message);
-		}
 	}
 }
