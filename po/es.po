@@ -1445,6 +1445,10 @@ msgstr "Importar las canciones que aparezcan en la carpeta de música"
 msgid "Copy files to library folder when imported"
 msgstr "Copiar archivos a la carpeta de la colección al importar"
 
+#: src/Preferences/BehaviorPreferences.vala:87
+msgid "Sync play counts, ratings and options with itunes7"
+msgstr "Sincronizar reproducciones, valoraciones y opciones con itunes7"
+
 #: src/Preferences/BehaviorPreferences.vala:92
 #: src/Preferences/BehaviorPreferences.vala:95
 msgid "Playback"
