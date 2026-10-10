@@ -111,9 +111,27 @@ void test_lock_released () {
 	remove_library (path);
 }
 
+// out-of-range values read as itunes7 reads them in its own pass: stars 0-5,
+// seconds >= 0 (docs/SYNC-BEATBOX.md section 1.2)
+void test_clamps () {
+	var path = make_library (true);
+	Sqlite.Database db;
+	assert (Sqlite.Database.open (path, out db) == Sqlite.OK);
+	exec (db, "UPDATE tracks SET rating = 250; UPDATE bookmarks SET pos = -125900000000;");
+	db = null;
+	var rows = ItunesReader.read (path);
+	remove_library (path);
+	assert (rows != null);
+	var s = rows[URI];
+	assert (s.f[PeerSync.RATING].cur == 5);
+	if (s.f[PeerSync.RESUME_POS].cur != 0)
+		error ("a position of %s s: itunes7 reads 0", s.f[PeerSync.RESUME_POS].cur.to_string ());
+}
+
 void main () {
 	test_read ();
 	test_no_sync_table ();
 	test_missing ();
 	test_lock_released ();
+	test_clamps ();
 }
