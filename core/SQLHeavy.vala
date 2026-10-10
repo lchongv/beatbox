@@ -46,7 +46,16 @@ namespace SQLHeavy {
 
 		public void commit () throws SQLHeavy.Error {
 			done = true;
-			database.execute ("COMMIT;");
+			try {
+				database.execute ("COMMIT;");
+			} catch (SQLHeavy.Error e) {
+				// A failed COMMIT (busy: itunes7 still reading after the wait) leaves
+				// the transaction open with its lock: every later BEGIN would fail
+				// and later writes would join it, to be lost at exit. Give it up
+				// (the second error, when it is already gone, doesn't matter)
+				try { database.execute ("ROLLBACK;"); } catch (SQLHeavy.Error e2) {}
+				throw e;
+			}
 		}
 
 		~Transaction () {
