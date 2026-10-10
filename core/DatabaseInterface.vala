@@ -31,6 +31,7 @@ public class BeatBox.DatabaseTransactionFiller {
 	public unowned TransactionFiller filler;
 	public Object data;
 	public string pre_transaction_execute;
+	public bool committed; // set once its transaction is committed, not just filled
 	
 	public DatabaseTransactionFiller() { }
 }

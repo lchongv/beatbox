@@ -355,6 +355,7 @@ CREATE TABLE IF NOT EXISTS list_setups (
 			transaction = _db.begin_transaction();
 			db_filler.filler(ref transaction, db_filler);
 			transaction.commit();
+			db_filler.committed = true;
 		} catch(SQLHeavy.Error err) {
 			warning("Could not commit transaction: %s \n", err.message);
 		}
