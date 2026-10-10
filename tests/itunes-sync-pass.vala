@@ -138,6 +138,40 @@ void test_commit_fails (DataBaseManager db, string path) {
 	assert_untouched (db, a, b);
 }
 
+// BeatBox's own rating and position read as itunes7 reads them (stars 0-5,
+// seconds >= 0; docs/SYNC-BEATBOX.md section 1.2): an iPod import can leave a
+// rating above 5. Otherwise the two apps decide on different numbers and never
+// agree. Like a half star in itunes7, the value is only rewritten when the
+// other app's is adopted
+void test_clamps (DataBaseManager db) {
+	reset (db);
+	var a = add_song (db, 1, A, 14, 10);
+	exec (db, "UPDATE songs SET rating = 60, remember_position = 1, resume_pos = -30 WHERE rowid = 1");
+	a.rating = 60;
+	a.remember_position = true;
+	a.resume_pos = -30;
+	var theirs = new Gee.HashMap<string, PeerSync.Side> ();
+	var it7 = side (14, 4, 100); // A 14/4, B 14/10: no new plays, only the data
+	it7.f[PeerSync.RATING].cur = 5;
+	it7.f[PeerSync.REMEMBER_POS].cur = 1;
+	theirs[A] = it7;
+	var songs = new Gee.ArrayList<Media> ();
+	songs.add (a);
+	var changes = ItunesSyncPass.changes (songs, theirs, own_rows (db));
+	assert (changes.size == 1); // the agreement on 5 stars is noted
+	var c = changes[0];
+	if (c.side.f[PeerSync.RATING].cur != 5 || c.side.f[PeerSync.RESUME_POS].cur != 0)
+		error ("BeatBox takes rating %s and position %s; itunes7 reads them as 5 and 0",
+			c.side.f[PeerSync.RATING].cur.to_string (), c.side.f[PeerSync.RESUME_POS].cur.to_string ());
+	assert (c.side.f[PeerSync.RATING].agreed == 5 && c.side.f[PeerSync.RATING].epoch == 1);
+	assert (!c.song_changed);
+	assert (ItunesSyncPass.save (db, changes) != null);
+	assert (value (db, "SELECT rating FROM itunes7_sync WHERE uri = '%s'".printf (A)) == 5);
+	assert (value (db, "SELECT rating FROM songs WHERE rowid = 1") == 60);
+	assert (value (db, "SELECT resume_pos FROM songs WHERE rowid = 1") == -30);
+	assert (a.rating == 60 && a.resume_pos == -30);
+}
+
 void main () {
 	string dir;
 	try {
@@ -157,6 +191,7 @@ void main () {
 	test_together (db);
 	test_statement_fails (db);
 	test_commit_fails (db, path);
+	test_clamps (db);
 
 	db = null;
 	foreach (var name in new string[] { "beatbox.db", "beatbox.db-journal" })

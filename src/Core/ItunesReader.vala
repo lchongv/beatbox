@@ -58,7 +58,8 @@ namespace BeatBox.ItunesReader {
 			s.f[PeerSync.SKIP_SHUFFLE].cur = st.column_int64 (4) != 0 ? 1 : 0;
 			s.f[PeerSync.REMEMBER_POS].cur = st.column_int64 (5) != 0 ? 1 : 0;
 			s.f[PeerSync.VOLUME_ADJUST].cur = st.column_int64 (6);
-			s.f[PeerSync.RESUME_POS].cur = st.column_int64 (7) / 1000000000; // nanoseconds there
+			int64 seconds = st.column_int64 (7) / 1000000000; // nanoseconds there
+			s.f[PeerSync.RESUME_POS].cur = seconds < 0 ? 0 : seconds; // as itunes7 reads it
 			int col = 8;
 			s.plays_in = st.column_int64 (col++);
 			for (int i = 0; i < PeerSync.N_FIELDS; i++) {

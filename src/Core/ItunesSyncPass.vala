@@ -5,6 +5,17 @@
  * itunes7; the rules themselves are PeerSync (core/Utils/PeerSync.vala).
  */
 namespace BeatBox.ItunesSyncPass {
+	// This app's rating and position as both apps compare them, which is what
+	// itunes7 reads of them (docs/SYNC-BEATBOX.md section 1.2): stars 0-5 (an
+	// iPod import can leave more than 5) and seconds >= 0
+	int64 stars (Media m) {
+		return m.rating > 5 ? 5 : m.rating;
+	}
+
+	int64 seconds (Media m) {
+		return m.resume_pos < 0 ? 0 : m.resume_pos;
+	}
+
 	/** A song whose values or sync row the pass changes */
 	public class Change : Object {
 		public Media media;
@@ -26,11 +37,13 @@ namespace BeatBox.ItunesSyncPass {
 			this.side = side;
 			play_count = (uint) side.count;
 			last_played = (uint) side.last;
-			rating = (uint) side.f[PeerSync.RATING].cur;
+			// out of range, they are only rewritten when the other app's value is
+			// adopted, like a half star in itunes7
+			rating = side.f[PeerSync.RATING].cur != stars (media) ? (uint) side.f[PeerSync.RATING].cur : media.rating;
 			skip_shuffle = side.f[PeerSync.SKIP_SHUFFLE].cur != 0;
 			remember_position = side.f[PeerSync.REMEMBER_POS].cur != 0;
 			volume_adjust = (int) side.f[PeerSync.VOLUME_ADJUST].cur;
-			resume_pos = (int) side.f[PeerSync.RESUME_POS].cur;
+			resume_pos = side.f[PeerSync.RESUME_POS].cur != seconds (media) ? (int) side.f[PeerSync.RESUME_POS].cur : media.resume_pos;
 			song_changed = media.play_count != play_count || media.last_played != last_played
 				|| media.rating != rating || media.skip_shuffle != skip_shuffle
 				|| media.remember_position != remember_position
@@ -62,11 +75,11 @@ namespace BeatBox.ItunesSyncPass {
 			var me = mine[m.uri] ?? new PeerSync.Side ();
 			me.count = m.play_count;
 			me.last = m.last_played;
-			me.f[PeerSync.RATING].cur = m.rating;
+			me.f[PeerSync.RATING].cur = stars (m);
 			me.f[PeerSync.SKIP_SHUFFLE].cur = m.skip_shuffle ? 1 : 0;
 			me.f[PeerSync.REMEMBER_POS].cur = m.remember_position ? 1 : 0;
 			me.f[PeerSync.VOLUME_ADJUST].cur = m.volume_adjust;
-			me.f[PeerSync.RESUME_POS].cur = m.resume_pos;
+			me.f[PeerSync.RESUME_POS].cur = seconds (m);
 			int64 added;
 			if (PeerSync.sync_side (me, peer, false, out added))
 				list.add (new Change (m, me));
