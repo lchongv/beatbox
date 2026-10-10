@@ -65,10 +65,19 @@ namespace BeatBox.ItunesSyncPass {
 	 * from ItunesReader) and this app's sync rows (mine), both by URI */
 	public Gee.ArrayList<Change> changes (Gee.Collection<Media> songs, Gee.Map<string, PeerSync.Side> theirs,
 			Gee.Map<string, PeerSync.Side> mine) {
-		var list = new Gee.ArrayList<Change> ();
+		// songs.uri is not UNIQUE: of two songs on one file only the one itunes7
+		// reads syncs, the last in rowid order (itunes7 keeps the last row of its
+		// SELECT). Both against one sync row would take the same plays
+		var by_uri = new Gee.HashMap<string, Media> ();
 		foreach (var m in songs) {
 			if (m.uri == "")
 				continue;
+			var other = by_uri[m.uri];
+			if (other == null || m.rowid > other.rowid)
+				by_uri[m.uri] = m;
+		}
+		var list = new Gee.ArrayList<Change> ();
+		foreach (var m in by_uri.values) {
 			var peer = theirs[m.uri];
 			if (peer == null)
 				continue;

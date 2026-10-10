@@ -172,6 +172,32 @@ void test_clamps (DataBaseManager db) {
 	assert (a.rating == 60 && a.resume_pos == -30);
 }
 
+// songs.uri is not UNIQUE. Of two songs on one file only one syncs, the one
+// itunes7 reads (the last of its SELECT, in rowid order): sharing one sync row
+// they would both take the same plays, and each its own Side
+void test_duplicates (DataBaseManager db) {
+	reset (db);
+	var first = add_song (db, 1, A, 14, 10);
+	exec (db, "INSERT INTO songs (rowid, uri, playcount, lastplayed) VALUES (3, '%s', 14, 100)".printf (A));
+	var last = new Preview (A);
+	last.rowid = 3;
+	last.play_count = 14;
+	last.last_played = 100;
+	var songs = new Gee.ArrayList<Media> ();
+	songs.add (last);
+	songs.add (first);
+	var theirs = new Gee.HashMap<string, PeerSync.Side> ();
+	theirs[A] = side (15, 4, 200);
+	var changes = ItunesSyncPass.changes (songs, theirs, own_rows (db));
+	if (changes.size != 1)
+		error ("%d changes for one file", changes.size);
+	assert (changes[0].media == last);
+	assert (ItunesSyncPass.save (db, changes) != null);
+	assert (last.play_count == 15 && value (db, "SELECT playcount FROM songs WHERE rowid = 3") == 15);
+	assert (first.play_count == 14 && value (db, "SELECT playcount FROM songs WHERE rowid = 1") == 14);
+	assert (value (db, "SELECT plays_in FROM itunes7_sync WHERE uri = '%s'".printf (A)) == 11);
+}
+
 void main () {
 	string dir;
 	try {
@@ -192,6 +218,7 @@ void main () {
 	test_statement_fails (db);
 	test_commit_fails (db, path);
 	test_clamps (db);
+	test_duplicates (db);
 
 	db = null;
 	foreach (var name in new string[] { "beatbox.db", "beatbox.db-journal" })
