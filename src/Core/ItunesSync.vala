@@ -19,7 +19,7 @@ public class BeatBox.ItunesSync : GLib.Object {
 		public Media media;
 		public string uri;
 		public PeerSync.Side side;
-		public bool saved; // its row is in itunes7_sync: only then may the song change
+		public bool saved; // its INSERT ran (the transaction may still fail: see save_rows)
 		public Row (Media media, PeerSync.Side side) {
 			this.media = media;
 			this.uri = media.uri;
@@ -121,9 +121,8 @@ public class BeatBox.ItunesSync : GLib.Object {
 		// would count twice (case 18 of docs/SYNC-BEATBOX.md). For the same
 		// reason a song, even in memory, only changes once its row is saved.
 		// Nothing to change writes nothing, so itunes7 isn't woken up for nothing.
-		if (rows.size == 0)
-			return;
-		save_rows (rows);
+		if (rows.size == 0 || !save_rows (rows))
+			return; // not committed: nothing changed, the next change retries
 		var changed = new Gee.LinkedList<Media> ();
 		foreach (var row in rows) {
 			if (!row.saved)
@@ -172,11 +171,14 @@ public class BeatBox.ItunesSync : GLib.Object {
 		return rows;
 	}
 
-	void save_rows (Gee.ArrayList<Row> rows) {
+	/** true once the transaction is committed: an INSERT that failed with
+	 * SQLITE_FULL, IOERR or NOMEM can roll back the rows already written */
+	bool save_rows (Gee.ArrayList<Row> rows) {
 		var filler = new DatabaseTransactionFiller ();
 		filler.data = rows;
 		filler.filler = save_rows_filler;
 		App.database.queue_transaction (filler); // runs now: no transaction is open outside a filler
+		return filler.committed;
 	}
 
 	void save_rows_filler (ref SQLHeavy.Transaction transaction, DatabaseTransactionFiller db_filler) {

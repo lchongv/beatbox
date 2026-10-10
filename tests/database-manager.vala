@@ -33,6 +33,45 @@ void test_backup_failure (DataBaseManager db, string dir) {
 	FileUtils.remove (backup);
 }
 
+void insert_then_lose_it (ref SQLHeavy.Transaction transaction, DatabaseTransactionFiller filler) {
+	try {
+		transaction.prepare ("INSERT INTO itunes7_sync (uri, plays_in) VALUES ('file:///a.ogg', 5)").execute ();
+		// what SQLite itself does when a statement fails with SQLITE_FULL, IOERR
+		// or NOMEM: the whole transaction is rolled back, and the COMMIT fails
+		transaction.prepare ("ROLLBACK").execute ();
+	} catch (SQLHeavy.Error e) {
+		error ("%s", e.message);
+	}
+}
+
+void insert (ref SQLHeavy.Transaction transaction, DatabaseTransactionFiller filler) {
+	try {
+		transaction.prepare ("INSERT INTO itunes7_sync (uri, plays_in) VALUES ('file:///b.ogg', 7)").execute ();
+	} catch (SQLHeavy.Error e) {
+		error ("%s", e.message);
+	}
+}
+
+// ItunesSync changes a song only once its sync row is committed: a filler must
+// say whether its transaction was, beyond its statements having run
+void test_committed (DataBaseManager db) {
+	var lost = new DatabaseTransactionFiller ();
+	lost.filler = insert_then_lose_it;
+	db.queue_transaction (lost);
+	if (lost.committed)
+		error ("a transaction rolled back reads as committed");
+
+	var saved = new DatabaseTransactionFiller ();
+	saved.filler = insert;
+	db.queue_transaction (saved);
+	assert (saved.committed);
+	try {
+		assert (db.execute ("SELECT group_concat(uri) FROM itunes7_sync").fetch_string (0) == "file:///b.ogg");
+	} catch (SQLHeavy.Error e) {
+		error ("%s", e.message);
+	}
+}
+
 void main () {
 	string dir;
 	try {
@@ -49,6 +88,7 @@ void main () {
 	var db = new DataBaseManager ();
 	var library_dir = Path.build_filename (dir, "beatbox");
 	test_backup_failure (db, library_dir);
+	test_committed (db);
 
 	db = null;
 	foreach (var name in new string[] { "beatbox.db", "beatbox.db-journal" })
