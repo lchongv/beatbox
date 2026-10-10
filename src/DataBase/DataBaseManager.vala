@@ -283,12 +283,16 @@ CREATE TABLE IF NOT EXISTS list_setups (
 	
 	/** A copy of the library as it is now, before the first sync with itunes7 */
 	public bool backup_to(string path) {
+		bool existed = FileUtils.test(path, FileTest.EXISTS); // VACUUM INTO refuses it: keep it
 		try {
 			_db.execute("VACUUM INTO '%s'".printf(path.replace("'", "''")));
 			return true;
 		}
 		catch (SQLHeavy.Error err) {
 			warning("Could not back up the library to %s: %s", path, err.message);
+			// a half copy (disk full) would pass for the copy next time
+			if(!existed)
+				FileUtils.remove(path);
 			return false;
 		}
 	}
