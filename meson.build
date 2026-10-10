@@ -1,4 +1,4 @@
-project('beatbox', 'vala', 'c', version: '0.99.20')
+project('beatbox', 'vala', 'c', version: '0.99.21')
 
 gnome = import('gnome')
 i18n = import('i18n')
@@ -363,6 +363,9 @@ test('peer-sync', executable('test-peer-sync', 'tests/peer-sync.vala', dependenc
 # the reader compiled on its own: it needs nothing else from the application
 test('itunes-reader', executable('test-itunes-reader', 'tests/itunes-reader.vala', 'src/Core/ItunesReader.vala',
   dependencies: core_dep))
+# DataBaseManager alone, on a library in a temporary data folder
+test('database-manager', executable('test-database-manager', 'tests/database-manager.vala',
+  'src/DataBase/DataBaseManager.vala', dependencies: core_dep))
 # BeatBox itself under Xvfb, driven through MPRIS (skipped without Xvfb, dbus-run-session, GStreamer's tools)
 test('smoke', find_program('python3'), args: [files('tests/smoke.py'), beatbox_exe],
   is_parallel: false, timeout: 240)
