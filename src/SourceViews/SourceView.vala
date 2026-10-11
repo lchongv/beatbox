@@ -38,6 +38,7 @@ public abstract class BeatBox.SourceView : Box, View {
 	CoverFlow?           cover_flow;
 	ScrolledWindow		 album_scroll	{ get; private set; }
 	Stack                album_page;    // album_scroll (popup mode) or the inline wall
+	protected Widget?    grid_page = null; // the grid of a view without albums (Internet Radio)
 	ScrolledWindow       wall_scroll;
 	AlbumWall?           wall;
 	public GenericList	 list_view      { get; protected set; }
@@ -236,7 +237,12 @@ public abstract class BeatBox.SourceView : Box, View {
 		
 		if (have_list_view)
 			view_container.append_page (list_page);
+		
+		if (grid_page != null)
+			view_container.append_page (grid_page);
 	}
+	
+	bool have_grid { get { return have_album_view || grid_page != null; } }
 
 	void apply_album_click_mode () {
 		bool inline = App.settings.main.album_grid_inline;
@@ -295,9 +301,10 @@ public abstract class BeatBox.SourceView : Box, View {
 					view_index = view_container.page_num (list_page);
 				break;
 			case SourceViewType.GRID:
-				if (have_album_view) {
+				if (have_album_view)
 					view_index = view_container.page_num (album_page);
-				}
+				else if (grid_page != null)
+					view_index = view_container.page_num (grid_page);
 				break;
 			case SourceViewType.ERROR:
 				if (have_error_box)
@@ -352,7 +359,7 @@ public abstract class BeatBox.SourceView : Box, View {
 	protected void check_have_media () {
 		if(have_media) {
 			if(list_view.get_visible_table().size() > 0) {
-				if(App.window.get_current_view_selection() == 1 && have_album_view) {
+				if(App.window.get_current_view_selection() == 1 && have_grid) {
 					set_active_view(SourceViewType.GRID);
 				}
 				else {
@@ -801,7 +808,7 @@ public abstract class BeatBox.SourceView : Box, View {
 	}
 	
 	public bool supports_view_selector() {
-		return have_media && have_album_view;
+		return have_media && have_grid;
 	}
 	
 	public void view_selection_changed(int option) {
@@ -837,7 +844,11 @@ public abstract class BeatBox.SourceView : Box, View {
 	}
 	
 	void play_album(Album album) {
-		int row = first_row_of(album);
+		play_row(first_row_of(album));
+	}
+	
+	/** Plays the list's visible row number row, as a double click on it would */
+	protected void play_row(int row) {
 		if (row < 0)
 			return;
 		// the list plays its selected row, whatever path is activated

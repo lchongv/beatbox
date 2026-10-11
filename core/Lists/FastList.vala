@@ -48,6 +48,8 @@ public class BeatBox.FastList : TreeView {
 	private unowned ViewSearchFunc search_func;
 	
 	public signal void rows_reordered();
+	/** The visible (sorted, searched) medias changed */
+	public signal void visible_changed();
 	
 	public FastList (List<Type> types, Media default_value) {
 		columns = types.copy();
@@ -246,6 +248,7 @@ public class BeatBox.FastList : TreeView {
 				}
 			}
 		}
+		visible_changed();
 	}
 	
 	public void redraw_row (int row_index) {

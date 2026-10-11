@@ -15,7 +15,6 @@ public class BeatBox.LcdCover : Image {
 
 	Gdk.Pixbuf? source = null;  // the cover, unscaled
 	int side = 0;               // current size of the rendered square
-	static Gee.HashSet<string> logos_asked = new Gee.HashSet<string> (); // one lookup per station and run
 
 	public LcdCover () {
 		no_show_all = true;
@@ -26,6 +25,11 @@ public class BeatBox.LcdCover : Image {
 		App.playback.playback_stopped.connect ((m) => refresh ());
 		App.covers.cover_changed.connect ((artist, album) => refresh ());
 		App.settings.main.notify["lcd-show-cover"].connect (refresh);
+		StationLogos.get_default ().found.connect ((uri) => {
+			var m = App.playback.media_active ? App.playback.current_media : null;
+			if (m != null && m.uri == uri)
+				refresh ();
+		});
 		refresh ();
 	}
 
@@ -141,72 +145,9 @@ public class BeatBox.LcdCover : Image {
 		win.show_all ();
 	}
 
-	static string logo_path (Media station) {
-		return Path.build_filename (App.settings.get_cache_dir (), "station-logos", Checksum.compute_for_string (ChecksumType.MD5, station.uri));
-	}
-
 	/** The station's logo if it is in the cache, otherwise a generic radio while the logo is looked up */
 	Gdk.Pixbuf? station_logo (Media station) {
-		var path = logo_path (station);
-		try {
-			return new Gdk.Pixbuf.from_file (path);
-		} catch (Error err) {}
-
-		if (!(station.uri in logos_asked)) {
-			logos_asked.add (station.uri);
-			string uri = station.uri, name = station.title;
-			try {
-				new Thread<void*>.try (null, () => {
-					if (fetch_logo (uri, name, path))
-						Idle.add (() => {
-							var m = App.playback.media_active ? App.playback.current_media : null;
-							if (m != null && m.uri == uri)
-								refresh ();
-							return Source.REMOVE;
-						});
-					return null;
-				});
-			} catch (Error err) {
-				warning ("Could not start the station logo lookup: %s", err.message);
-			}
-		}
-		try {
-			return new Gdk.Pixbuf.from_resource_at_scale ("/net/launchpad/beatbox/radio.svg", 256, 256, true);
-		} catch (Error err) {
-			return null;
-		}
-	}
-
-	/** Looks the station up on radio-browser.info by its stream, then by its exact name, and saves
-	 *  the first logo that loads into path. Blocking. */
-	static bool fetch_logo (string uri, string name, string path) {
-		string server = DirectoryDialog.radio_server ();
-		string[] queries = { "/json/stations/byurl?url=" + Uri.escape_string (uri, null, false),
-		                     "/json/stations/bynameexact/" + Uri.escape_string (name, null, false) + "?order=votes&reverse=true" };
-		foreach (var query in queries) {
-			var stations = Http.json_objects (Http.fetch (server + query));
-			if (stations == null)
-				continue;
-			foreach (var o in stations) {
-				string favicon = o.get_string_member_with_default ("favicon", "");
-				if (favicon == "")
-					continue;
-				var bytes = Http.fetch_bytes (favicon);
-				if (bytes == null)
-					continue;
-				try {
-					var loader = new Gdk.PixbufLoader ();
-					loader.write (bytes.get_data ());
-					loader.close ();
-					if (loader.get_pixbuf () == null)
-						continue;
-					DirUtils.create_with_parents (Path.get_dirname (path), 0755);
-					FileUtils.set_data (path, bytes.get_data ());
-					return true;
-				} catch (Error err) {} // not an image this build can read
-			}
-		}
-		return false;
+		return StationLogos.get_default ().lookup (station) ?? StationLogos.generic (256);
 	}
 
 	int side_for_now () {
@@ -243,5 +184,107 @@ public class BeatBox.LcdCover : Image {
 			int h = a.height;
 			Idle.add (() => { render (h); return Source.REMOVE; }); // resizing inside an allocation would loop
 		}
+	}
+}
+
+/* Station logos from radio-browser.info, cached in ~/.cache/beatbox/station-logos under the
+ * md5 of the stream's address. An empty file there means the directory had no logo for it:
+ * asked again after a week. */
+public class BeatBox.StationLogos : Object {
+	const int64 RETRY_SECONDS = 7 * 24 * 3600;
+
+	static StationLogos? instance = null;
+	Gee.HashSet<string> asked = new Gee.HashSet<string> (); // one lookup per station and run
+
+	/** A station's logo arrived in the cache (emitted in the main loop) */
+	public signal void found (string uri);
+
+	public static StationLogos get_default () {
+		if (instance == null)
+			instance = new StationLogos ();
+		return instance;
+	}
+
+	static string path_for (string uri) {
+		return Path.build_filename (App.settings.get_cache_dir (), "station-logos", Checksum.compute_for_string (ChecksumType.MD5, uri));
+	}
+
+	/** The generic radio drawing, for stations without a logo */
+	public static Gdk.Pixbuf? generic (int size) {
+		try {
+			return new Gdk.Pixbuf.from_resource_at_scale ("/net/launchpad/beatbox/radio.svg", size, size, true);
+		} catch (Error err) {
+			return null;
+		}
+	}
+
+	/** The station's logo from the cache. null when it has none, or while it is looked up: found tells when it arrives */
+	public Gdk.Pixbuf? lookup (Media station) {
+		var path = path_for (station.uri);
+		try {
+			return new Gdk.Pixbuf.from_file (path);
+		} catch (Error err) {}
+
+		try {
+			var info = File.new_for_path (path).query_info (FileAttribute.TIME_MODIFIED, 0);
+			if (info.get_modification_date_time ().to_unix () > get_real_time () / 1000000 - RETRY_SECONDS)
+				return null; // the directory had none not long ago
+		} catch (Error err) {} // never asked
+
+		if (station.uri in asked)
+			return null;
+		asked.add (station.uri);
+		string uri = station.uri, name = station.title;
+		try {
+			// ponytail: one thread per missing logo; a pool if libraries with hundreds of stations show up
+			new Thread<void*>.try (null, () => {
+				if (fetch (uri, name, path))
+					Idle.add (() => { found (uri); return Source.REMOVE; });
+				return null;
+			});
+		} catch (Error err) {
+			warning ("Could not start the station logo lookup: %s", err.message);
+		}
+		return null;
+	}
+
+	/** Looks the station up on radio-browser.info by its stream, then by its exact name, and saves
+	 *  the first logo that loads into path (or an empty file when the directory has none). Blocking. */
+	static bool fetch (string uri, string name, string path) {
+		string server = DirectoryDialog.radio_server ();
+		string[] queries = { "/json/stations/byurl?url=" + Uri.escape_string (uri, null, false),
+		                     "/json/stations/bynameexact/" + Uri.escape_string (name, null, false) + "?order=votes&reverse=true" };
+		bool answered = false;
+		foreach (var query in queries) {
+			var stations = Http.json_objects (Http.fetch (server + query));
+			if (stations == null)
+				continue;
+			answered = true;
+			foreach (var o in stations) {
+				string favicon = o.get_string_member_with_default ("favicon", "");
+				if (favicon == "")
+					continue;
+				var bytes = Http.fetch_bytes (favicon);
+				if (bytes == null)
+					continue;
+				try {
+					var loader = new Gdk.PixbufLoader ();
+					loader.write (bytes.get_data ());
+					loader.close ();
+					if (loader.get_pixbuf () == null)
+						continue;
+					DirUtils.create_with_parents (Path.get_dirname (path), 0755);
+					FileUtils.set_data (path, bytes.get_data ());
+					return true;
+				} catch (Error err) {} // not an image this build can read
+			}
+		}
+		if (answered) { // not when offline: that is no answer about the logo
+			try {
+				DirUtils.create_with_parents (Path.get_dirname (path), 0755);
+				FileUtils.set_contents (path, "");
+			} catch (Error err) {}
+		}
+		return false;
 	}
 }

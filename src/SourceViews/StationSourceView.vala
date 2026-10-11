@@ -33,6 +33,10 @@ public class BeatBox.StationSourceView : SourceView {
 	
 	GLib.Menu radioMenu;
 	
+	const int LOGO = 128;
+	FlowBox grid;
+	HashMap<string, Gdk.Pixbuf> logos = new HashMap<string, Gdk.Pixbuf>(); // scaled, by stream address
+	
 	public StationSourceView() {
 		base(App.library.station_library.medias(), App.window.setups.get_setup(ListSetupInterface.STATION_KEY));
 		
@@ -50,6 +54,24 @@ public class BeatBox.StationSourceView : SourceView {
 		// Setup content widgets
 		list_view = new RadioList(tvs);
 		error_box = new EmbeddedAlert();
+		
+		// The grid: each station's logo and name, in the list's order and search
+		grid = new FlowBox();
+		grid.get_style_context().add_class("albumwall"); // the album grid's look
+		grid.homogeneous = true;
+		grid.valign = Align.START;
+		grid.max_children_per_line = 64;
+		grid.row_spacing = grid.column_spacing = 12;
+		grid.margin = 18;
+		grid.activate_on_single_click = false;
+		grid.child_activated.connect((child) => play_row(child.get_index()));
+		var grid_scroll = new ScrolledWindow(null, null);
+		grid_scroll.hscrollbar_policy = PolicyType.NEVER;
+		grid_scroll.get_style_context().add_class("albumwall");
+		grid_scroll.add(grid);
+		grid_page = grid_scroll;
+		list_view.visible_changed.connect(fill_grid);
+		StationLogos.get_default().found.connect((uri) => { logos.unset(uri); fill_grid(); });
 		pack_widgets();
 		
 		var find = action_button ("system-search-symbolic", _("Find Stations…"));
@@ -75,6 +97,45 @@ public class BeatBox.StationSourceView : SourceView {
 		App.library.station_library.medias_updated.connect (update_medias);
 		App.library.station_library.medias_added.connect (add_medias);
 		App.library.station_library.medias_removed.connect (remove_medias);
+	}
+	
+	void fill_grid() {
+		grid.foreach((child) => child.destroy());
+		var table = list_view.get_visible_table();
+		for (int i = 0; i < table.size(); i++) {
+			var m = table.get(i);
+			var box = new Box(Orientation.VERTICAL, 2);
+			box.margin = 6;
+			box.tooltip_text = m.title;
+			box.add(new Image.from_pixbuf(logo_for(m)));
+			var name = new Label(m.title);
+			name.ellipsize = Pango.EllipsizeMode.END;
+			name.max_width_chars = 16;
+			name.margin_top = 4;
+			name.get_style_context().add_class("station-name");
+			box.add(name);
+			var genre = new Label(m.genre);
+			genre.ellipsize = Pango.EllipsizeMode.END;
+			genre.max_width_chars = 16;
+			genre.get_style_context().add_class("dim-label");
+			box.add(genre);
+			grid.add(box);
+		}
+		grid.show_all();
+	}
+	
+	/** The station's logo scaled into a LOGO square, or a generic radio */
+	Gdk.Pixbuf? logo_for(Media m) {
+		var logo = logos.get(m.uri);
+		if (logo != null)
+			return logo;
+		logo = StationLogos.get_default().lookup(m);
+		if (logo == null)
+			return StationLogos.generic(LOGO); // not kept: the real one may still come
+		double k = double.min((double)LOGO / logo.width, (double)LOGO / logo.height);
+		logo = logo.scale_simple(int.max(1, (int)(logo.width * k)), int.max(1, (int)(logo.height * k)), Gdk.InterpType.BILINEAR);
+		logos.set(m.uri, logo);
+		return logo;
 	}
 	
 	protected override void pre_set_as_current_view() {

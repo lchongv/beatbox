@@ -64,7 +64,7 @@ The simplest skin (over Classic) only redefines the palette. Every rule of the C
 | `treeview.sidebar` | source list |
 | `treeview.tracklist` | track lists |
 | `iconview.albumgrid` | cover grid in popup mode |
-| `.albumwall` | cover grid in inline mode |
+| `.albumwall` | cover grid in inline mode, and the Internet Radio grid (`.station-name` is its name label) |
 | `.album-detail` | album band in inline mode |
 | `.track-report` | information panel at the right of the lists |
 | `.coverflow` | Cover Flow |
