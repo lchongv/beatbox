@@ -186,12 +186,16 @@ public class BeatBox.LcdPreferences : SimplePreferences {
 		add_heading(_("Display"));
 		var lcdLines = new ComboBoxText();
 		lcdLines.append("two", _("Two lines, artist and album taking turns"));
+		lcdLines.append("three", _("Three lines, synced lyrics on the third"));
 		lcdLines.append("one", _("One line"));
-		lcdLines.active_id = App.settings.main.lcd_two_lines ? "two" : "one";
-		lcdLines.changed.connect(() => { App.settings.main.lcd_two_lines = (lcdLines.active_id == "two"); });
+		lcdLines.active_id = !App.settings.main.lcd_two_lines ? "one" : App.settings.main.lcd_three_lines ? "three" : "two";
+		lcdLines.changed.connect(() => {
+			App.settings.main.lcd_three_lines = (lcdLines.active_id == "three");
+			App.settings.main.lcd_two_lines = (lcdLines.active_id != "one");
+		});
 		add_row(labelled(_("Song information in the LCD:"), lcdLines));
 		
-		var lyrics = add_check(_("Show synced lyrics on the second line when available (lrclib.net)"), App.settings.main.lcd_lyrics);
+		var lyrics = add_check(_("Show synced lyrics when available (lrclib.net)"), App.settings.main.lcd_lyrics);
 		lyrics.toggled.connect(() => { App.settings.main.lcd_lyrics = lyrics.active; });
 		
 		var lcdCover = add_check(_("Show the album cover at the left edge of the LCD"), App.settings.main.lcd_show_cover);
