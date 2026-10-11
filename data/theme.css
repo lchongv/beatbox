@@ -47,8 +47,8 @@ toolbar.app-header toolbutton.transport-button > button {
   border-radius: 50%;
   padding: 0;
   margin: 0 1px;
-  min-width: 42px;
-  min-height: 42px;
+  min-width: 16px; /* the real size is set in LibraryWindow */
+  min-height: 16px;
   -gtk-icon-shadow: none;
   color: #1a1a1a;
   box-shadow: inset 0 1px 0 alpha(white, .95),
@@ -64,12 +64,7 @@ toolbar.app-header toolbutton.transport-button > button:active {
   box-shadow: inset 0 2px 3px alpha(black, .4);
 }
 toolbar.app-header toolbutton.transport-button > button:disabled { color: #8a8a8a; }
-toolbar.app-header toolbutton.transport-button.play > button {
-  min-width: 56px;
-  min-height: 56px;
-}
 toolbar.app-header toolbutton.transport-button { padding: 0; margin: 0; }
-toolbar.app-header toolbutton.transport-button image { -gtk-icon-transform: scale(1.25); }
 
 /* Round app menu button, same glossy look as the transport buttons */
 toolbar.app-header toolitem button.round-menu {
