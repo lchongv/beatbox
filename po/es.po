@@ -1517,6 +1517,10 @@ msgid "Two lines, artist and album taking turns"
 msgstr "Dos líneas, alternando artista y álbum"
 
 #: src/Preferences/BehaviorPreferences.vala:187
+msgid "Three lines, synced lyrics on the third"
+msgstr "Tres líneas, letras sincronizadas en la tercera"
+
+#: src/Preferences/BehaviorPreferences.vala:187
 msgid "One line"
 msgstr "Una línea"
 
@@ -1525,9 +1529,8 @@ msgid "Song information in the LCD:"
 msgstr "Información de la canción en el LCD:"
 
 #: src/Preferences/BehaviorPreferences.vala:192
-msgid "Show synced lyrics on the second line when available (lrclib.net)"
-msgstr ""
-"Mostrar la letra sincronizada en la segunda línea cuando exista (lrclib.net)"
+msgid "Show synced lyrics when available (lrclib.net)"
+msgstr "Mostrar la letra sincronizada cuando exista (lrclib.net)"
 
 #: src/Preferences/BehaviorPreferences.vala:195
 msgid "Show the album cover at the left edge of the LCD"

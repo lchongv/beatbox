@@ -273,9 +273,10 @@ public class BeatBox.Settings {
         // Appearance
         public string skin { get; set; }
         public bool lcd_two_lines { get; set; }
+        public bool lcd_three_lines { get; set; }    // with lcd_two_lines: the synced lyrics get a third line
         public bool lcd_show_cover { get; set; }
         public bool mini_keep_above { get; set; }    // the mini player stays above other windows
-        public bool lcd_lyrics { get; set; }         // synced lyrics from lrclib.net on the second line
+        public bool lcd_lyrics { get; set; }         // synced lyrics from lrclib.net on the second (or third) line
         public int lcd_alternate_seconds { get; set; } // artist, then album, then artist...
         public int lcd_transition_ms { get; set; }   // second LCD line sliding up
         public int lcd_track_width { get; set; }     // px, the groove of the position bar

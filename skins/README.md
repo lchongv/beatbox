@@ -59,6 +59,7 @@ The simplest skin (over Classic) only redefines the palette. Every rule of the C
 | `.app-name` | app name next to the window buttons |
 | `.lcd` | LCD display |
 | `.lcd scale slider` | position diamond |
+| `.lcd .lcd-lyrics` | lyrics line of the three-line LCD, e.g. `font-size: smaller;` |
 | `entry.search-bar` | search box |
 | `treeview.sidebar` | source list |
 | `treeview.tracklist` | track lists |
