@@ -87,6 +87,7 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 	Toolbar topControls;
 	ToolButton previousButton;
 	ToolButton playButton;
+	Image playIcon;
 	ToolButton nextButton;
 	ModeButton viewSelector;
 	bool songInfoShown; // the now playing view in place of the lists (Ctrl+I)
@@ -295,12 +296,11 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		sideTreeScroll = new ScrolledWindow(null, null);
 		settingsMenu = new GLib.Menu();
 		topControls = new Toolbar();
-		previousButton = new ToolButton(null, null);
-		previousButton.icon_name = "media-skip-backward-symbolic";
-		playButton = new ToolButton(null, null);
-		playButton.icon_name = "media-playback-start-symbolic";
-		nextButton = new ToolButton(null, null);
-		nextButton.icon_name = "media-skip-forward-symbolic";
+		// own images: an icon_name would get the toolbar's icon size, too small for these buttons
+		previousButton = new ToolButton(new Image.from_icon_name("media-skip-backward-symbolic", IconSize.BUTTON), null);
+		playIcon = new Image.from_icon_name("media-playback-start-symbolic", IconSize.BUTTON);
+		playButton = new ToolButton(playIcon, null);
+		nextButton = new ToolButton(new Image.from_icon_name("media-skip-forward-symbolic", IconSize.BUTTON), null);
 		top_display = new TopDisplay();
 		viewSelector = new ModeButton();
 		searchField = new AdvancedSearchBox();
@@ -500,8 +500,10 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		// Keep the toolbar from stretching them: square size => perfect circle
 		foreach (var item in new ToolButton[] { previousButton, playButton, nextButton }) {
 			var button = item.get_child ();
-			int size = (item == playButton) ? 56 : 42;
+			int size = (item == playButton) ? 72 : 44;
 			button.set_size_request (size, size);
+			((Image)item.icon_widget).pixel_size = size * 2 / 5;
+			item.set_homogeneous (false); // else previous and next are as wide as play: big gaps
 			button.valign = button.halign = Align.CENTER;
 			button.margin_top = 12; // room for the traffic lights above
 		}
@@ -891,17 +893,17 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 	
 	void playback_changed() {
 		if(!App.playback.media_active || (App.library.media_count() > 0 && !App.playback.playing)) {
-			playButton.icon_name = "media-playback-start-symbolic";
+			playIcon.icon_name = "media-playback-start-symbolic";
 		}
 		else {
-			playButton.icon_name = "media-playback-pause-symbolic";
+			playIcon.icon_name = "media-playback-pause-symbolic";
 		}
 		
 		update_sensitivities();
 	}
 	
 	void playback_stopped(Media? was_playing) {
-		playButton.icon_name = "media-playback-start-symbolic";
+		playIcon.icon_name = "media-playback-start-symbolic";
 		
 		update_sensitivities();
 	}
