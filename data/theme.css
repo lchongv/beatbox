@@ -212,6 +212,8 @@ iconview.albumgrid:selected, iconview.albumgrid.view:selected {
 
 /* Inline album grid */
 .albumwall { background-color: #f0f1f4; color: #1a1a1a; }
+.albumwall flowboxchild:selected { background-color: alpha(@bb_accent, .18); color: inherit; border-radius: 6px; }
+.station-name { font-weight: bold; }
 .album-detail-title { font-weight: bold; font-size: 13pt; }
 .album-detail-artist { font-size: 11pt; }
 
