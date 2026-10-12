@@ -64,6 +64,18 @@ A new library's database is therefore created with the podcast and station
 keys already in `known_libraries`; only the music library does its first
 import (of the new library's folder).
 
+**Media ids**: songs, podcasts and stations share one numbering (`rowid`,
+given by `LibraryManager` from the highest id it has loaded). With several
+databases that would collide: a podcast added in the main library could take
+the number of a song in another one, and that library would mix the two up.
+The highest id given in any library is therefore kept as a shared option,
+`last-rowid` in `[settings]`, and every library goes on from it.
+
+**First import of a new library**: `SongLibrary`'s default folder (the one a
+database's first import reads) is the active library's `music-folder` when set,
+and the user's Music folder (`XDG_MUSIC_DIR`) only when it is empty, as on a
+first run.
+
 **itunes7 sync**: only while the main library is active (it compares with
 `beatbox.db`, the file itunes7 reads). With another library active the option
 in Preferences › Library is insensitive, with a line saying why.
@@ -88,12 +100,11 @@ in Preferences › Library is insensitive, with a line saying why.
 
 ## Drives
 
-Today `music-mount-name` is only recorded when a drive gets mounted while
-BeatBox runs. It will also be recorded whenever the music folder is set (a new
-library, or the folder changed in Preferences): the volume name of the mount
-enclosing the folder (`File.find_enclosing_mount`), or empty for a folder that
-is not on a removable volume. At startup the existing `DeviceManager` code
-mounts the volume with that name when it is present and unmounted. If the drive
+No new code: at startup `DeviceManager` goes through the mounts already there
+and records, as `music-mount-name`, the volume of the one holding the music
+folder (`mount_added`); at later startups it mounts that volume when it is
+present and unmounted (`volume_added`). As `music-mount-name` belongs to the
+library, each library remembers its own drive from its first open. If the drive
 is not connected, the library opens anyway and its songs show as not found, as
 today.
 
@@ -129,5 +140,7 @@ Headless (Xvfb, private D-Bus, scratch home), with generated audio files only:
    and the itunes7 sync works with it.
 6. `meson test smoke` passes.
 
-Mounting a real drive cannot be done headless: the test checks that the volume
-name is recorded when a folder is set; the user checks the mount with a real drive.
+7. The ids of library B's songs and of the shared stations and podcasts never
+   coincide, and `last-rowid` is at least the highest of them.
+
+Mounting a real drive cannot be done headless; the user checks it with a real drive.
