@@ -189,7 +189,8 @@ public class BeatBox.LcdCover : Image {
 
 /* Station logos from radio-browser.info, cached in ~/.cache/beatbox/station-logos under the
  * md5 of the stream's address. An empty file there means the directory had no logo for it:
- * asked again after a week. */
+ * asked again after a week. The image a user picks for a station is kept apart, in
+ * ~/.local/share/beatbox/station-logos (StationLogoFiles), and comes first. */
 public class BeatBox.StationLogos : Object {
 	const int64 RETRY_SECONDS = 7 * 24 * 3600;
 
@@ -203,6 +204,28 @@ public class BeatBox.StationLogos : Object {
 		if (instance == null)
 			instance = new StationLogos ();
 		return instance;
+	}
+
+	static string custom_folder () {
+		return Path.build_filename (Environment.get_user_data_dir (), "beatbox", "station-logos");
+	}
+
+	public bool has_custom (string uri) {
+		return StationLogoFiles.exists (custom_folder (), uri);
+	}
+
+	/** Uses the image in file as the station's logo; false when it isn't an image */
+	public bool set_custom (string uri, File file) {
+		if (!StationLogoFiles.save (custom_folder (), uri, file))
+			return false;
+		found (uri);
+		return true;
+	}
+
+	/** Back to the directory's logo (or the generic one) */
+	public void clear_custom (string uri) {
+		if (StationLogoFiles.remove (custom_folder (), uri))
+			found (uri);
 	}
 
 	static string path_for (string uri) {
@@ -220,6 +243,10 @@ public class BeatBox.StationLogos : Object {
 
 	/** The station's logo from the cache. null when it has none, or while it is looked up: found tells when it arrives */
 	public Gdk.Pixbuf? lookup (Media station) {
+		var custom = StationLogoFiles.load (custom_folder (), station.uri);
+		if (custom != null)
+			return custom;
+
 		var path = path_for (station.uri);
 		try {
 			return new Gdk.Pixbuf.from_file (path);

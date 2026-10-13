@@ -139,6 +139,8 @@ Apple Music catalogue (Preferences > Covers); internet radio stations come
 from radio-browser.info (filtered by country, region, language, genre, format,
 quality), SHOUTcast, laut.fm and the Icecast directory (dir.xiph.org, a 9 MB
 listing kept a day in ~/.cache/beatbox).
+In the radio grid, right click a station to give it an image of your own
+(kept in ~/.local/share/beatbox/station-logos); it shows in the LCD too.
 
 Versioning
 ----------
