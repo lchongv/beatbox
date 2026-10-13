@@ -43,4 +43,7 @@ public interface BeatBox.DatabaseInterface : GLib.Object {
 	public abstract void add_periodic_transaction(DatabaseTransactionFiller periodic_filler);
 	/** Writes the periodic transactions now (e.g. on quit) */
 	public abstract void flush();
+	/** Prefix of the radio and podcast tables: "shared." while a library besides the main one is
+	 *  open (they are the main library's), else "" */
+	public abstract string shared { get; }
 }

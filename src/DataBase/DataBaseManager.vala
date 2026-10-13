@@ -228,26 +228,26 @@ CREATE TABLE IF NOT EXISTS list_setups (
 	LinkedList<DatabaseTransactionFiller> transaction_queue;
 	Transaction transaction;// the current sql transaction
 	
+	string shared_prefix = "";
+	public string shared { get { return shared_prefix; } }
+
 	// App.database represents the default database, but plugins may want to use this
-	// file on their own database, so allow for that.
-	public DataBaseManager() {
+	// file on their own database, so allow for that. library: "" for the main one (beatbox.db),
+	// else the id of another library (Libraries)
+	public DataBaseManager(string library = "") {
 		periodic_transactions = new LinkedList<DatabaseTransactionFiller>();
 		transaction_queue = new LinkedList<DatabaseTransactionFiller>();
 		
-		// First make sure that the folder that the database will be in exists
-		var user_database_folder = GLib.File.new_for_path(GLib.Path.build_filename(Environment.get_user_data_dir(), "beatbox"));
-		if(!user_database_folder.query_exists()) {
-			try {
-				user_database_folder.make_directory_with_parents(null);
-			}
-			catch(GLib.Error err) {
-				critical("Could not create beatbox folder in data directory: %s\n", err.message);
-			}
+		// First make sure that the folders the databases are in exist
+		var path = Libraries.db_path(library);
+		var main_path = Libraries.db_path("");
+		foreach (var dir in new string[] { Path.get_dirname(path), Path.get_dirname(main_path) }) {
+			if (DirUtils.create_with_parents(dir, 0755) != 0)
+				critical("Could not create the folder %s", dir);
 		}
 		
 		// Open the database and create any missing table
 		try {
-			var path = GLib.Path.build_filename(user_database_folder.get_path(), "beatbox.db");
 			bool existed = FileUtils.test(path, FileTest.EXISTS);
 			_db = new SQLHeavy.Database (path);
 			if(existed)
@@ -256,6 +256,8 @@ CREATE TABLE IF NOT EXISTS list_setups (
 			add_song_columns ();
 			_db.execute (PeerSync.DDL); // the live sync with itunes7 (ItunesSync)
 			_db.execute ("PRAGMA user_version = %d".printf(version_number()));
+			if (library != "")
+				attach_main (main_path, existed);
 		}
 		catch (SQLHeavy.Error err) {
 			critical("Could not load database: %s", err.message);
@@ -263,6 +265,18 @@ CREATE TABLE IF NOT EXISTS list_setups (
 		
 		// Every 15 seconds, do the periodic saves
 		Timeout.add(15000, periodic_save);
+	}
+	
+	/** A library besides the main one is open: radio and podcasts are still the main library's */
+	void attach_main(string main_path, bool existed) throws SQLHeavy.Error {
+		if (!FileUtils.test(main_path, FileTest.EXISTS))
+			new SQLHeavy.Database(main_path).execute(SCHEMA);
+		_db.execute("ATTACH DATABASE '%s' AS shared".printf(main_path.replace("'", "''")));
+		shared_prefix = "shared.";
+		// At a database's first opening every library it doesn't know imports from its folder
+		// (LibraryManager.add_library), which first empties it: not the shared podcasts and stations
+		if (!existed)
+			_db.execute("INSERT INTO known_libraries (key) VALUES ('podcast'), ('station')");
 	}
 	
 	/** A copy of the library as the previous version left it (beatbox.db.bak),
