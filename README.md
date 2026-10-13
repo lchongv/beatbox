@@ -136,7 +136,9 @@ Files
 
 Missing album art is looked up in MusicBrainz / the Cover Art Archive and the
 Apple Music catalogue (Preferences > Covers); internet radio stations come
-from radio-browser.info.
+from radio-browser.info (filtered by country, region, language, genre, format,
+quality), SHOUTcast, laut.fm and the Icecast directory (dir.xiph.org, a 9 MB
+listing kept a day in ~/.cache/beatbox).
 
 Versioning
 ----------

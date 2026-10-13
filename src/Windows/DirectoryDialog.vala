@@ -1,6 +1,6 @@
 /*
  * Finds internet radio stations and podcasts in public directories:
- *  - radio-browser.info (community database of ~50k stations, no API key)
+ *  - radio stations: radio-browser.info, SHOUTcast, laut.fm and Icecast (core: RadioDirectories.vala)
  *  - the Apple Podcasts directory (Apple's search service, no API key)
  */
 
@@ -9,48 +9,44 @@ using Gtk;
 public class BeatBox.DirectoryDialog : Dialog {
 	public enum Kind { RADIO, PODCAST }
 
-	const string RADIO_QUERY = "/json/stations/search?hidebroken=true&order=votes&reverse=true&limit=100";
 	const string PODCAST_API = "https://itunes.apple.com/search?media=podcast&limit=50";
 
-	enum Col { NAME, DETAIL, EXTRA, URL, GENRE, ADDED }
+	enum Col { NAME, DETAIL, EXTRA, URL, GENRE, ADDED, COUNTRY }
 
 	Kind kind;
 	SearchEntry entry;
 	Gtk.ListStore store;
 	TreeView view;
+	TreeViewColumn detail_column;
 	Spinner spinner;
 	Label status;
+	Label source;
 	Widget add_btn;
 	uint serial = 0;
+	bool closed = false;
 
-	static string? radio_host = null;
+	// radio only
+	Radio.Directory directory = Radio.Directory.RADIO_BROWSER;
+	ComboBoxText directories;
+	ComboBoxText country;
+	ComboBoxText state;
+	ComboBoxText language;
+	ComboBoxText genre;
+	ComboBoxText codec;
+	ComboBoxText bitrate;
+	ComboBoxText order;
+	CheckButton https;
+	bool filling = false;
 
-	/* radio-browser.info asks clients to pick one of its mirrors: the
-	 * all.api name resolves to every one of them. Going through that name
-	 * directly is ~10 s slower when IPv6 isn't routed. Blocking. */
-	public static string radio_server () {
-		if (radio_host == null) {
-			radio_host = "de1.api.radio-browser.info";
-			try {
-				var resolver = Resolver.get_default ();
-				var hosts = new GenericArray<string> ();
-				foreach (var address in resolver.lookup_by_name ("all.api.radio-browser.info"))
-					if (address.family == SocketFamily.IPV4)
-						hosts.add (resolver.lookup_by_address (address));
-				if (hosts.length > 0)
-					radio_host = hosts[Random.int_range (0, hosts.length)];
-			} catch (Error err) {
-				warning ("Could not list the radio-browser.info servers: %s", err.message);
-			}
-		}
-		return "https://" + radio_host;
-	}
+	// the filters' values for this session, by directory/list/country; filled on the main loop only
+	static Gee.HashMap<string, Gee.List<Radio.Choice>>? lists = null;
 
 	public DirectoryDialog (Kind kind) {
 		Object (title: (kind == Kind.RADIO) ? _("Find Radio Stations") : _("Find Podcasts"),
 		        transient_for: App.window, modal: true, destroy_with_parent: true);
 		this.kind = kind;
-		set_default_size (720, 520);
+		set_default_size ((kind == Kind.RADIO) ? 860 : 720, 560);
+		destroy.connect (() => { closed = true; });
 
 		entry = new SearchEntry ();
 		entry.placeholder_text = (kind == Kind.RADIO) ? _("Station name, city or genre (jazz, news, rock…)")
@@ -62,7 +58,7 @@ public class BeatBox.DirectoryDialog : Dialog {
 		top.add(entry);
 		top.add(spinner);
 
-		store = new Gtk.ListStore (6, typeof (string), typeof (string), typeof (string), typeof (string), typeof (string), typeof (bool));
+		store = new Gtk.ListStore (7, typeof (string), typeof (string), typeof (string), typeof (string), typeof (string), typeof (bool), typeof (string));
 		view = new TreeView.with_model (store);
 		view.get_style_context ().add_class ("tracklist");
 		string[] headers = (kind == Kind.RADIO) ? new string[] { _("Station"), _("Country"), _("Genre") }
@@ -83,6 +79,7 @@ public class BeatBox.DirectoryDialog : Dialog {
 			});
 			view.append_column (col);
 		}
+		detail_column = view.get_column (1);
 		view.row_activated.connect (() => add_selected ());
 		var scroll = new ScrolledWindow (null, null);
 		scroll.shadow_type = ShadowType.IN;
@@ -91,8 +88,7 @@ public class BeatBox.DirectoryDialog : Dialog {
 		status = new Label ("");
 		status.xalign = 0;
 		status.ellipsize = Pango.EllipsizeMode.END;
-		var source = new Label ((kind == Kind.RADIO) ? _("Stations from radio-browser.info, a free community directory.")
-		                                             : _("Podcasts from the Apple Podcasts directory."));
+		source = new Label (_("Podcasts from the Apple Podcasts directory."));
 		source.xalign = 0;
 		source.get_style_context ().add_class ("dim-label");
 
@@ -100,6 +96,8 @@ public class BeatBox.DirectoryDialog : Dialog {
 		box.spacing = 8;
 		box.margin = 12;
 		box.add(top);
+		if (kind == Kind.RADIO)
+			box.add (build_filters (top));
 		scroll.vexpand = true;
 		box.add(scroll);
 		box.add(status);
@@ -123,9 +121,206 @@ public class BeatBox.DirectoryDialog : Dialog {
 
 		// Something to start with: the most voted stations of the user's country
 		if (kind == Kind.RADIO)
-			search ("");
+			directory_changed ();
 		else
 			status.label = _("Type a name or topic and press Enter.");
+	}
+
+	/** The directory menu (before the search box) and the filters below it */
+	Widget build_filters (Box top) {
+		directories = new ComboBoxText ();
+		directories.append_text ("radio-browser.info");
+		directories.append_text ("SHOUTcast");
+		directories.append_text ("laut.fm");
+		directories.append_text ("Icecast");
+		directories.active = 0;
+		directories.changed.connect (() => {
+			directory = (Radio.Directory) directories.active;
+			directory_changed ();
+		});
+		top.pack_start (directories, false, false);
+		top.reorder_child (directories, 0);
+
+		var filters = new FlowBox ();
+		filters.selection_mode = SelectionMode.NONE;
+		filters.column_spacing = 12;
+		filters.row_spacing = 4;
+		filters.max_children_per_line = 8;
+
+		filling = true;
+		country = add_filter (filters, _("Country:"), true);
+		string cc = country_code ();
+		if (cc != "") {
+			country.append (cc, cc);
+			country.active_id = cc;
+		}
+		state = add_filter (filters, _("Region:"), true);
+		language = add_filter (filters, _("Language:"), true);
+		genre = add_filter (filters, _("Genre:"), true);
+		codec = add_filter (filters, _("Format:"), false);
+		foreach (var name in new string[] { "MP3", "AAC", "AAC+", "OGG", "FLAC" })
+			codec.append (name, name);
+		bitrate = add_filter (filters, _("Quality:"), false);
+		foreach (var kbps in new int[] { 64, 96, 128, 192, 256, 320 })
+			bitrate.append (kbps.to_string (), _("%d kbps or more").printf (kbps));
+		order = add_filter (filters, _("Sort by:"), false);
+		order.remove_all ();
+		order.append ("votes", _("Most voted"));
+		order.append ("clickcount", _("Most played"));
+		order.append ("clicktrend", _("Trending"));
+		order.append ("name", _("Name"));
+		order.append ("bitrate", _("Quality"));
+		order.append ("random", _("Random"));
+		order.active_id = "votes";
+		https = new CheckButton.with_label (_("HTTPS only"));
+		https.toggled.connect (() => search (entry.text.strip ()));
+		var box = new Box (Orientation.HORIZONTAL, 0);
+		box.add (https);
+		filters.add (box);
+		filling = false;
+		return filters;
+	}
+
+	ComboBoxText add_filter (FlowBox filters, string title, bool typing) {
+		var combo = typing ? new ComboBoxText.with_entry () : new ComboBoxText ();
+		combo.append ("", _("Any"));
+		if (!typing)
+			combo.active_id = "";
+		else {
+			// a few hundred countries, languages or genres: typed, with completion
+			var typed = (Entry) combo.get_child ();
+			typed.width_chars = 14;
+			typed.placeholder_text = _("Any");
+			var completion = new EntryCompletion ();
+			completion.model = combo.model;
+			completion.text_column = 0;
+			completion.match_selected.connect ((model, iter) => {
+				string id;
+				model.get (iter, 1, out id);
+				combo.active_id = id;
+				return true;
+			});
+			typed.completion = completion;
+			typed.activate.connect (() => filter_changed (combo));
+		}
+		combo.changed.connect (() => {
+			if (combo.active < 0)
+				return;
+			// "Any" leaves the box empty, showing it as placeholder: typing doesn't append to it
+			if (combo.has_entry && combo.active_id == "")
+				((Entry) combo.get_child ()).text = "";
+			filter_changed (combo);
+		});
+		var box = new Box (Orientation.HORIZONTAL, 4);
+		box.add (new Label (title));
+		box.add (combo);
+		filters.add (box);
+		return combo;
+	}
+
+	void filter_changed (ComboBoxText combo) {
+		if (filling)
+			return;
+		if (combo == country)
+			load_states ();
+		search (entry.text.strip ());
+	}
+
+	/** The regions of the country chosen; radio-browser asks for them by the country's name */
+	void load_states () {
+		fill (state, new Gee.ArrayList<Radio.Choice> ());
+		string code = value_of (country);
+		foreach (var c in lists["0/countries/"] ?? new Gee.ArrayList<Radio.Choice> ())
+			if (c.value == code)
+				load_list (state, "states", c.name);
+	}
+
+	void directory_changed () {
+		bool radio_browser = (directory == Radio.Directory.RADIO_BROWSER);
+		// each filter sits in a box with its label, in the FlowBox's child
+		foreach (Widget filter in new Widget[] { country, state, language, order, https })
+			filter.get_parent ().get_parent ().visible = radio_browser;
+		foreach (Widget filter in new Widget[] { codec, bitrate })
+			filter.get_parent ().get_parent ().visible = (directory != Radio.Directory.LAUT_FM);
+
+		load_list (genre, "genres");
+		if (radio_browser) {
+			load_list (country, "countries");
+			load_list (language, "languages");
+		}
+		detail_column.title = (directory == Radio.Directory.SHOUTCAST || directory == Radio.Directory.ICECAST) ? _("Format") : _("Country");
+		string[] sources = { _("Stations from radio-browser.info, a free community directory."),
+		                     _("Stations from the SHOUTcast directory."),
+		                     _("Stations made by laut.fm’s listeners."),
+		                     _("Stations from the Icecast directory (dir.xiph.org).") };
+		source.label = sources[(int) directory];
+		search (entry.text.strip ());
+	}
+
+	/** A filter's values from the directory, once per session */
+	void load_list (ComboBoxText combo, string list, string country_name = "") {
+		if (lists == null)
+			lists = new Gee.HashMap<string, Gee.List<Radio.Choice>> ();
+		string key = "%d/%s/%s".printf ((int) directory, list, country_name);
+		if (lists.has_key (key)) {
+			fill (combo, lists[key]);
+			return;
+		}
+		var from = directory;
+		new Thread<void*> ("radio-filters", () => {
+			var found = Radio.choices (from, list, country_name);
+			Idle.add (() => {
+				if (found.size > 0)
+					lists[key] = found;
+				if (!closed && directory == from)
+					fill (combo, found);
+				return false;
+			});
+			return null;
+		});
+	}
+
+	/** Puts a filter's values in its menu, keeping what was chosen or typed */
+	void fill (ComboBoxText combo, Gee.List<Radio.Choice> choices) {
+		string chosen = value_of (combo, true);
+		filling = true;
+		combo.remove_all ();
+		combo.append ("", _("Any"));
+		foreach (var c in choices) {
+			// radio-browser's languages and tags are lower case
+			string name = c.name.get_char ().totitle ().to_string () + c.name.substring (c.name.index_of_nth_char (1));
+			combo.append (c.value, (c.count > 0) ? "%s (%d)".printf (name, c.count) : name);
+		}
+		if (!combo.set_active_id (chosen)) {
+			if (combo.has_entry)
+				((Entry) combo.get_child ()).text = chosen;
+			else
+				combo.active_id = "";
+		}
+		filling = false;
+		if (combo == country)
+			load_states ();
+	}
+
+	/** What a filter asks for: the item chosen, the first one starting with what was typed or, free, the text itself */
+	string value_of (ComboBoxText combo, bool free = false) {
+		if (combo.active_id != null)
+			return combo.active_id;
+		if (!combo.has_entry)
+			return "";
+		string typed = ((Entry) combo.get_child ()).text.strip ();
+		if (typed == "")
+			return "";
+		string key = typed.casefold ();
+		string? found = null;
+		combo.model.foreach ((model, path, iter) => {
+			string text, id;
+			model.get (iter, 0, out text, 1, out id);
+			if (id != "" && text.casefold ().has_prefix (key))
+				found = id;
+			return found != null;
+		});
+		return found ?? (free ? typed : "");
 	}
 
 	/** Two-letter country of the user's locale (es_CL.UTF-8 → CL), or "" */
@@ -139,88 +334,119 @@ public class BeatBox.DirectoryDialog : Dialog {
 	}
 
 	void search (string term) {
+		if (filling)
+			return;
 		uint my_serial = ++serial;
-		string cc = country_code ();
-		string q = Uri.escape_string (term, null, false);
-		string[] urls;
 		if (kind == Kind.PODCAST) {
 			if (term == "")
 				return;
-			urls = { PODCAST_API + "&term=" + q + (cc != "" ? "&country=" + cc : "") };
-		}
-		else if (term == "") {
-			urls = { "&countrycode=" + cc };
-		}
-		else {
-			// a word like "jazz" is more often a tag than part of a name
-			urls = { "&name=" + q, "&tag=" + q };
+			string cc = country_code ();
+			string url = PODCAST_API + "&term=" + Uri.escape_string (term, null, false) + (cc != "" ? "&country=" + cc : "");
+			spinner.start ();
+			status.label = _("Searching…");
+			new Thread<void*> ("directory-search", () => {
+				string body = Http.fetch (url);
+				Idle.add (() => {
+					if (my_serial == serial)
+						show_podcasts (body, term);
+					return false;
+				});
+				return null;
+			});
+			return;
 		}
 
+		var q = new Radio.Query ();
+		q.text = term;
+		q.genre = value_of (genre, true);
+		if (directory != Radio.Directory.LAUT_FM) {
+			q.codec = value_of (codec);
+			q.min_bitrate = int.parse (value_of (bitrate));
+		}
+		if (directory == Radio.Directory.RADIO_BROWSER) {
+			q.country = value_of (country);
+			q.state = value_of (state);
+			q.language = value_of (language);
+			q.order = value_of (order);
+			q.https_only = https.active;
+		}
+		if (directory == Radio.Directory.LAUT_FM && term == "" && q.genre == "") {
+			spinner.stop ();
+			store.clear ();
+			status.label = _("Choose a genre or type a station’s name.");
+			return;
+		}
 		spinner.start ();
-		status.label = _("Searching…");
+		status.label = (directory == Radio.Directory.ICECAST) ? _("Searching… the Icecast directory is downloaded once a day (9 MB).")
+		                                                     : _("Searching…");
+		var from = directory;
 		new Thread<void*> ("directory-search", () => {
-			string[] bodies = {};
-			foreach (var url in urls)
-				bodies += Http.fetch ((kind == Kind.RADIO) ? radio_server () + RADIO_QUERY + url : url);
+			var found = Radio.search (from, q);
 			Idle.add (() => {
 				if (my_serial == serial)
-					show_results (bodies, term);
+					show_stations (found, term);
 				return false;
 			});
 			return null;
 		});
 	}
 
-	void show_results (string[] bodies, string term) {
+	void show_stations (Gee.List<Radio.Result>? found, string term) {
 		spinner.stop ();
 		store.clear ();
+		if (found == null) {
+			status.label = _("Could not reach the directory. Check your internet connection.");
+			return;
+		}
 		var seen = new GenericSet<string> (str_hash, str_equal);
 		int count = 0;
-		bool failed = true;
-
-		foreach (var body in bodies) {
-			if (body == "")
+		foreach (var r in found) {
+			if (r.url in seen)
 				continue;
-			var items = Http.json_objects (body, (kind == Kind.RADIO) ? null : "results");
-			if (items == null) {
-				warning ("Unexpected answer from the directory: %.100s", body);
-				continue;
-			}
-			failed = false;
-			foreach (var o in items) {
-				string name, detail, extra, url, genre;
-				if (kind == Kind.RADIO) {
-					name = str (o, "name").strip ();
-					url = str (o, "url_resolved") != "" ? str (o, "url_resolved") : str (o, "url");
-					detail = str (o, "country");
-					genre = str (o, "tags").split (",")[0];
-					extra = str (o, "tags").replace (",", ", ");
-					if (o.get_int_member_with_default ("bitrate", 0) > 0)
-						extra = "%d kbps%s%s".printf ((int)o.get_int_member ("bitrate"), extra != "" ? " · " : "", extra);
-				}
-				else {
-					name = str (o, "collectionName");
-					url = str (o, "feedUrl");
-					detail = str (o, "artistName");
-					genre = extra = str (o, "primaryGenreName");
-				}
-				if (url == "" || name == "" || url in seen)
-					continue;
-				seen.add (url);
-				TreeIter iter;
-				store.append (out iter);
-				store.set (iter, Col.NAME, name, Col.DETAIL, detail, Col.EXTRA, extra,
-				           Col.URL, url, Col.GENRE, genre, Col.ADDED, already_added (url));
-				count++;
-			}
+			seen.add (r.url);
+			string format = "%s %s".printf (r.codec, (r.bitrate > 0) ? "%d kbps".printf (r.bitrate) : "").strip ();
+			string extra = r.tags;
+			if (r.bitrate > 0 && r.country != "") // without a country the format, bitrate included, takes its place
+				extra = "%d kbps%s%s".printf (r.bitrate, extra != "" ? " · " : "", extra);
+			TreeIter iter;
+			store.append (out iter);
+			store.set (iter, Col.NAME, r.name, Col.DETAIL, (r.country != "") ? r.country : format, Col.EXTRA, extra,
+			           Col.URL, r.url, Col.GENRE, r.genre, Col.ADDED, already_added (r.url), Col.COUNTRY, r.country);
+			count++;
 		}
+		if (count == 0)
+			status.label = (term != "") ? _("Nothing found for “%s”.").printf (term) : _("No stations match these filters.");
+		else
+			status.label = ngettext ("%d result. Double click to add.", "%d results. Double click to add.", count).printf (count);
+	}
 
-		if (failed)
+	void show_podcasts (string body, string term) {
+		spinner.stop ();
+		store.clear ();
+		var items = Http.json_objects (body, "results");
+		if (items == null) {
+			if (body != "")
+				warning ("Unexpected answer from the directory: %.100s", body);
 			status.label = _("Could not reach the directory. Check your internet connection.");
-		else if (count == 0)
+			return;
+		}
+		var seen = new GenericSet<string> (str_hash, str_equal);
+		int count = 0;
+		foreach (var o in items) {
+			string name = str (o, "collectionName");
+			string url = str (o, "feedUrl");
+			string genre = str (o, "primaryGenreName");
+			if (url == "" || name == "" || url in seen)
+				continue;
+			seen.add (url);
+			TreeIter iter;
+			store.append (out iter);
+			store.set (iter, Col.NAME, name, Col.DETAIL, str (o, "artistName"), Col.EXTRA, genre,
+			           Col.URL, url, Col.GENRE, genre, Col.ADDED, already_added (url), Col.COUNTRY, "");
+			count++;
+		}
+		if (count == 0)
 			status.label = _("Nothing found for “%s”.").printf (term);
-		else if (term == "")
-			status.label = _("Most popular stations in your country. Double click one to add it.");
 		else
 			status.label = ngettext ("%d result. Double click to add.", "%d results. Double click to add.", count).printf (count);
 	}
@@ -242,23 +468,42 @@ public class BeatBox.DirectoryDialog : Dialog {
 		TreeIter iter;
 		if (!view.get_selection ().get_selected (out model, out iter))
 			return;
-		string name, url, genre;
+		string name, url, genre, country;
 		bool added;
-		model.get (iter, Col.NAME, out name, Col.URL, out url, Col.GENRE, out genre, Col.ADDED, out added);
+		model.get (iter, Col.NAME, out name, Col.URL, out url, Col.GENRE, out genre, Col.ADDED, out added, Col.COUNTRY, out country);
 		if (added) {
 			status.label = _("“%s” is already in your library.").printf (name);
 			return;
 		}
 
-		if (kind == Kind.RADIO) {
-			string country;
-			model.get (iter, Col.DETAIL, out country);
-			add_station (name, url, genre, country);
-			status.label = _("Added “%s” to Internet Radio.").printf (name);
-		}
-		else {
+		if (kind == Kind.PODCAST) {
 			App.podcasts.parse_new_rss (url);
 			status.label = _("Subscribing to “%s”… its episodes will appear in Podcasts.").printf (name);
+		}
+		else if (Radio.is_playlist (url)) {
+			// SHOUTcast gives a playlist: its stream is looked up now
+			status.label = _("Looking up the stream of “%s”…").printf (name);
+			uint my_serial = serial;
+			new Thread<void*> ("station-stream", () => {
+				string stream = Radio.stream_of (url);
+				Idle.add (() => {
+					if (stream == "") {
+						status.label = _("“%s” gave no stream to play.").printf (name);
+						return false;
+					}
+					add_station (name, stream, genre, country);
+					status.label = _("Added “%s” to Internet Radio.").printf (name);
+					if (my_serial == serial)
+						store.set (iter, Col.ADDED, true);
+					return false;
+				});
+				return null;
+			});
+			return;
+		}
+		else {
+			add_station (name, url, genre, country);
+			status.label = _("Added “%s” to Internet Radio.").printf (name);
 		}
 		store.set (iter, Col.ADDED, true);
 	}

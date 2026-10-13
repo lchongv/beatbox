@@ -46,7 +46,7 @@ public class BeatBox.StationSourceView : SourceView {
 		welcome_screen = new Welcome(_("Turn up the Radio"), _("No Stations were found."));
 		welcome_screen_keys = new HashMap<int, Device>();
 		var station_icon = App.icons.STATION.render (IconSize.DIALOG, null);
-		welcome_screen.append_with_pixbuf(station_icon, _("Find Stations"), _("Search thousands of stations on radio-browser.info."));
+		welcome_screen.append_with_pixbuf(station_icon, _("Find Stations"), _("Search thousands of stations on radio-browser.info, SHOUTcast, laut.fm and Icecast."));
 		welcome_screen.append("list-add", _("Add by Address"), _("Type the address of a station's stream."));
 		welcome_screen.append("document-open", _("Import File"), _("Add the stations of a .pls or .m3u file."));
 		welcome_screen.activated.connect(welcome_screen_activated);
@@ -143,7 +143,7 @@ public class BeatBox.StationSourceView : SourceView {
 	}
 	
 	protected override void set_default_warning () {
-		error_box.set_alert (_("No Internet Radio Stations Found"), _("Use “Find Stations…” above to search the radio-browser.info directory."), true, Gtk.MessageType.INFO);
+		error_box.set_alert (_("No Internet Radio Stations Found"), _("Use “Find Stations…” above to search the radio-browser.info, SHOUTcast, laut.fm and Icecast directories."), true, Gtk.MessageType.INFO);
 	}
 	
 	void welcome_screen_activated(int index) {

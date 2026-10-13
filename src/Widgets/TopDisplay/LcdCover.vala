@@ -251,7 +251,7 @@ public class BeatBox.StationLogos : Object {
 	/** Looks the station up on radio-browser.info by its stream, then by its exact name, and saves
 	 *  the first logo that loads into path (or an empty file when the directory has none). Blocking. */
 	static bool fetch (string uri, string name, string path) {
-		string server = DirectoryDialog.radio_server ();
+		string server = Radio.radio_browser_server ();
 		string[] queries = { "/json/stations/byurl?url=" + Uri.escape_string (uri, null, false),
 		                     "/json/stations/bynameexact/" + Uri.escape_string (name, null, false) + "?order=votes&reverse=true" };
 		bool answered = false;

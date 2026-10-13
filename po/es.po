@@ -2264,8 +2264,12 @@ msgid "Find Stations"
 msgstr "Buscar emisoras"
 
 #: src/SourceViews/StationSourceView.vala:45
-msgid "Search thousands of stations on radio-browser.info."
-msgstr "Busca entre miles de emisoras en radio-browser.info."
+msgid ""
+"Search thousands of stations on radio-browser.info, SHOUTcast, laut.fm and "
+"Icecast."
+msgstr ""
+"Busca entre miles de emisoras en radio-browser.info, SHOUTcast, laut.fm e "
+"Icecast."
 
 #: src/SourceViews/StationSourceView.vala:46
 msgid "Add by Address"
@@ -2303,10 +2307,12 @@ msgid "No Internet Radio Stations Found"
 msgstr "No se encontraron estaciones de radio en línea"
 
 #: src/SourceViews/StationSourceView.vala:85
-msgid "Use “Find Stations…” above to search the radio-browser.info directory."
+msgid ""
+"Use “Find Stations…” above to search the radio-browser.info, SHOUTcast, "
+"laut.fm and Icecast directories."
 msgstr ""
-"Usa «Buscar emisoras…» arriba para buscar en el directorio de radio-"
-"browser.info."
+"Usa «Buscar emisoras…» arriba para buscar en los directorios de radio-"
+"browser.info, SHOUTcast, laut.fm e Icecast."
 
 #: src/SourceViews/StationSourceView.vala:111
 msgid "Internet Radio"
@@ -2845,6 +2851,97 @@ msgstr "«%s» ya está en tu colección."
 #, c-format
 msgid "Added “%s” to Internet Radio."
 msgstr "«%s» se añadió a Radio en Internet."
+
+#: src/Windows/DirectoryDialog.vala
+msgid "Country:"
+msgstr "País:"
+
+#: src/Windows/DirectoryDialog.vala
+msgid "Region:"
+msgstr "Región:"
+
+#: src/Windows/DirectoryDialog.vala
+msgid "Language:"
+msgstr "Idioma:"
+
+#: src/Windows/DirectoryDialog.vala
+msgid "Quality:"
+msgstr "Calidad:"
+
+#: src/Windows/DirectoryDialog.vala
+#, c-format
+msgid "%d kbps or more"
+msgstr "%d kbps o más"
+
+#: src/Windows/DirectoryDialog.vala
+msgid "Sort by:"
+msgstr "Ordenar por:"
+
+#: src/Windows/DirectoryDialog.vala
+msgid "Most voted"
+msgstr "Más votadas"
+
+#: src/Windows/DirectoryDialog.vala
+msgid "Most played"
+msgstr "Más escuchadas"
+
+#: src/Windows/DirectoryDialog.vala
+msgid "Trending"
+msgstr "En alza"
+
+#: src/Windows/DirectoryDialog.vala
+msgid "Quality"
+msgstr "Calidad"
+
+#: src/Windows/DirectoryDialog.vala
+msgid "Random"
+msgstr "Al azar"
+
+#: src/Windows/DirectoryDialog.vala
+msgid "HTTPS only"
+msgstr "Solo HTTPS"
+
+#: src/Windows/DirectoryDialog.vala
+msgid "Any"
+msgstr "Cualquiera"
+
+#: src/Windows/DirectoryDialog.vala
+msgid "Format"
+msgstr "Formato"
+
+#: src/Windows/DirectoryDialog.vala
+msgid "Stations from the SHOUTcast directory."
+msgstr "Emisoras del directorio de SHOUTcast."
+
+#: src/Windows/DirectoryDialog.vala
+msgid "Stations made by laut.fm’s listeners."
+msgstr "Emisoras creadas por los oyentes de laut.fm."
+
+#: src/Windows/DirectoryDialog.vala
+msgid "Stations from the Icecast directory (dir.xiph.org)."
+msgstr "Emisoras del directorio de Icecast (dir.xiph.org)."
+
+#: src/Windows/DirectoryDialog.vala
+msgid "Choose a genre or type a station’s name."
+msgstr "Elige un género o escribe el nombre de una emisora."
+
+#: src/Windows/DirectoryDialog.vala
+msgid "Searching… the Icecast directory is downloaded once a day (9 MB)."
+msgstr "Buscando… el directorio de Icecast se descarga una vez al día (9 MB)."
+
+#: src/Windows/DirectoryDialog.vala
+msgid "No stations match these filters."
+msgstr "Ninguna emisora cumple estos filtros."
+
+#: src/Windows/DirectoryDialog.vala
+#, c-format
+msgid "Looking up the stream of “%s”…"
+msgstr "Buscando la transmisión de «%s»…"
+
+#: src/Windows/DirectoryDialog.vala
+#, c-format
+msgid "“%s” gave no stream to play."
+msgstr "«%s» no entregó ninguna transmisión para reproducir."
 
 #: src/Windows/DirectoryDialog.vala:261
 #, c-format
@@ -3885,6 +3982,7 @@ msgstr "Título, artista y álbum"
 
 #~ msgid "Choose Image…"
 #~ msgstr "Elegir imagen…"
+
 
 #~ msgid "Compilation"
 #~ msgstr "Compilación"
