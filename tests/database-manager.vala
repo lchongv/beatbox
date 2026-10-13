@@ -72,6 +72,38 @@ void test_committed (DataBaseManager db) {
 	}
 }
 
+// A library besides the main one: its own database, with radio and podcasts from the main one's,
+// also when the main library's database doesn't exist yet
+void test_library (string library_dir) {
+	FileUtils.remove (Path.build_filename (library_dir, "beatbox.db"));
+	var disco = new DataBaseManager ("disco");
+	assert (disco.shared == "shared.");
+	assert (FileUtils.test (Path.build_filename (library_dir, "libraries", "disco.db"), FileTest.EXISTS));
+	try {
+		disco.execute ("INSERT INTO shared.stations (uri, title) VALUES ('http://radio.invalid', 'Radio')");
+		// its first opening must not import (and so empty) the shared podcasts and stations
+		assert (disco.execute ("SELECT group_concat(key) FROM known_libraries").fetch_string (0) == "podcast,station");
+		assert (disco.execute ("SELECT count(*) FROM songs").fetch_int (0) == 0);
+	} catch (SQLHeavy.Error e) {
+		error ("%s", e.message);
+	}
+
+	var main = new DataBaseManager ();
+	assert (main.shared == "");
+	try {
+		assert (main.execute ("SELECT title FROM stations").fetch_string (0) == "Radio");
+	} catch (SQLHeavy.Error e) {
+		error ("%s", e.message);
+	}
+
+	disco = new DataBaseManager ("disco"); // not new any more: known_libraries is not filled twice
+	try {
+		assert (disco.execute ("SELECT count(*) FROM known_libraries").fetch_int (0) == 2);
+	} catch (SQLHeavy.Error e) {
+		error ("%s", e.message);
+	}
+}
+
 void main () {
 	string dir;
 	try {
@@ -91,8 +123,11 @@ void main () {
 	test_committed (db);
 
 	db = null;
-	foreach (var name in new string[] { "beatbox.db", "beatbox.db-journal" })
-		FileUtils.remove (Path.build_filename (library_dir, name));
-	DirUtils.remove (library_dir);
-	DirUtils.remove (dir);
+	test_library (library_dir);
+
+	try {
+		Process.spawn_command_line_sync ("rm -rf " + Shell.quote (dir));
+	} catch (SpawnError e) {
+		error ("%s", e.message);
+	}
 }
