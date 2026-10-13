@@ -389,7 +389,8 @@ public class BeatBox.AboutPreferences : SimplePreferences {
 		add_row(text(_("Ported to GTK 3, GStreamer 1.0 and libsoup 3, with a new look, Cover Flow, the inline cover grid, internet radio and podcast directories, online album art and skins.")));
 		
 		add_heading(_("Services"));
-		add_row(text(_("Internet radio stations: %s").printf(link("https://www.radio-browser.info", "radio-browser.info"))
+		add_row(text(_("Internet radio stations: %s").printf(link("https://www.radio-browser.info", "radio-browser.info") + ", " + link("https://directory.shoutcast.com", "SHOUTcast")
+		             + ", " + link("https://laut.fm", "laut.fm") + ", " + link("https://dir.xiph.org", "Icecast"))
 		             + "\n" + _("Podcasts: %s").printf(link("https://podcasts.apple.com", "Apple Podcasts"))
 		             + "\n" + _("Album art: %s, with %s as fallback").printf(link("https://musicbrainz.org", "MusicBrainz") + " / " + link("https://coverartarchive.org", "Cover Art Archive"), link("https://music.apple.com", "Apple Music"))
 		             + "\n" + _("Lyrics: %s").printf(link("https://lrclib.net", "LRCLIB"))
