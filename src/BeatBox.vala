@@ -213,7 +213,7 @@ public class BeatBox.App : Gtk.Application {
 		
 		Gtk.IconTheme.get_default ().add_resource_path ("/net/launchpad/beatbox/icons");
 		icons = new Icons();
-		database = new DataBaseManager();
+		database = new DataBaseManager(settings.main.library);
 		operations = new OperationsManager();
 		playback = new PlaybackManager();
 		info = new Info();
