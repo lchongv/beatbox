@@ -90,6 +90,7 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 	Image playIcon;
 	ToolButton nextButton;
 	ModeButton viewSelector;
+	Scale volumeScale;
 	bool songInfoShown; // the now playing view in place of the lists (Ctrl+I)
 	AdvancedSearchBox searchField;
 	
@@ -363,8 +364,22 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		viewSelector.valign = Gtk.Align.CENTER;
 		viewSelector.selected = App.settings.saved_state.view_mode;
 		
+		// the volume slider sits under the view switcher
+		volumeScale = new Scale.with_range(Orientation.HORIZONTAL, 0, 1, 0.05);
+		volumeScale.draw_value = false;
+		volumeScale.width_request = 90;
+		volumeScale.set_value(App.playback.get_volume());
+		volumeScale.value_changed.connect(() => {
+			App.playback.set_volume(volumeScale.get_value());
+			App.settings.equalizer.volume = (int)Math.round(volumeScale.get_value() * 100);
+		});
+		var viewBox = new Box(Orientation.VERTICAL, 0);
+		viewBox.valign = Gtk.Align.CENTER;
+		viewBox.add(viewSelector);
+		viewBox.add(volumeScale);
+
 		viewSelectorBin.margin_start = 12;
-		viewSelectorBin.add(viewSelector);
+		viewSelectorBin.add(viewBox);
 		
 		searchFieldBin.add(searchField);
 		searchField.valign = Gtk.Align.CENTER; // half the height of the LCD, not the whole toolbar
@@ -856,9 +871,8 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 	}
 	
 	void change_volume(double delta) {
-		double volume = (App.playback.get_volume() + delta).clamp(0.0, 1.0);
-		App.playback.set_volume(volume);
-		App.settings.equalizer.volume = (int)Math.round(volume * 100);
+		// the slider's value_changed does the rest
+		volumeScale.set_value((volumeScale.get_value() + delta).clamp(0.0, 1.0));
 	}
 	
 	bool keyPressed(uint keyval, uint keycode, Gdk.ModifierType state) {
