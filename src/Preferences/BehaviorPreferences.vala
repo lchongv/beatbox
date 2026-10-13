@@ -107,6 +107,26 @@ public class BeatBox.PlaybackPreferences : SimplePreferences {
 		crossfade.value = App.settings.main.crossfade_seconds;
 		crossfade.value_changed.connect(() => { App.settings.main.crossfade_seconds = (int)crossfade.value; });
 		add_row(labelled(_("Crossfade between songs:"), crossfade, _("seconds (0: none, songs follow without a gap)")));
+		
+		add_heading(_("Recording"));
+		var recordings = new FileChooserButton(_("Recordings Folder"), FileChooserAction.SELECT_FOLDER);
+		var folder = App.settings.main.recordings_path();
+		DirUtils.create_with_parents(folder, 0755); // the chooser can only show a folder that exists
+		recordings.set_current_folder(folder);
+		recordings.selection_changed.connect(() => {
+			var chosen = recordings.get_filename();
+			if (chosen != null)
+				App.settings.main.recordings_folder = chosen;
+		});
+		add_row(labelled(_("Save recordings of radio stations in:"), recordings));
+		var minutes = new SpinButton.with_range(1, 1440, 1);
+		minutes.value = App.settings.main.recording_minutes;
+		minutes.value_changed.connect(() => { App.settings.main.recording_minutes = (int)minutes.value; });
+		add_row(labelled(_("Start a new file every:"), minutes, _("minutes")));
+		var hint = new Label(_("Right click a station in the radio grid to record it. Needs streamripper."));
+		hint.xalign = 0.0f;
+		hint.get_style_context().add_class("dim-label");
+		add_row(hint);
 	}
 }
 

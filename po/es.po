@@ -2959,6 +2959,55 @@ msgstr "Elegir"
 msgid "“%s” is not an image BeatBox can read."
 msgstr "«%s» no es una imagen que BeatBox pueda leer."
 
+#: src/SourceViews/StationSourceView.vala
+msgid "Record"
+msgstr "Grabar"
+
+#: src/SourceViews/StationSourceView.vala
+msgid "Stop Recording"
+msgstr "Dejar de grabar"
+
+#: src/SourceViews/StationSourceView.vala
+msgid "REC"
+msgstr "GRABANDO"
+
+#: src/SourceViews/StationSourceView.vala
+#, c-format
+msgid "Could not record “%s”"
+msgstr "No se pudo grabar «%s»"
+
+#: src/SourceViews/StationSourceView.vala
+msgid "streamripper did not start."
+msgstr "streamripper no se inició."
+
+#: src/SourceViews/StationSourceView.vala
+msgid "Needs streamripper (the streamripper package)"
+msgstr "Necesita streamripper (el paquete streamripper)"
+
+#: src/Preferences/BehaviorPreferences.vala
+msgid "Recording"
+msgstr "Grabación"
+
+#: src/Preferences/BehaviorPreferences.vala
+msgid "Recordings Folder"
+msgstr "Carpeta de grabaciones"
+
+#: src/Preferences/BehaviorPreferences.vala
+msgid "Save recordings of radio stations in:"
+msgstr "Guardar las grabaciones de emisoras en:"
+
+#: src/Preferences/BehaviorPreferences.vala
+msgid "Start a new file every:"
+msgstr "Empezar un archivo nuevo cada:"
+
+#: src/Preferences/BehaviorPreferences.vala
+msgid "minutes"
+msgstr "minutos"
+
+#: src/Preferences/BehaviorPreferences.vala
+msgid "Right click a station in the radio grid to record it. Needs streamripper."
+msgstr "Haz clic derecho en una emisora de la grilla de radio para grabarla. Necesita streamripper."
+
 #: src/Windows/DirectoryDialog.vala
 #, c-format
 msgid "Looking up the stream of “%s”…"
