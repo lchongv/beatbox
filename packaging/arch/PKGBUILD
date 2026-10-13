@@ -10,6 +10,7 @@ depends=('gtk3' 'libgee' 'taglib' 'libxml2' 'libnotify' 'libsoup3' 'json-glib' '
          'gstreamer' 'gst-plugins-base-libs' 'gst-plugins-base' 'gst-plugins-good' 'glib-networking' 'hicolor-icon-theme'
          'libpeas-2')
 optdepends=('chromaprint: identify songs by their sound (fpcalc)'
+            'streamripper: record radio stations (AUR)'
             'python-gobject: plugins written in Python')
 makedepends=('meson' 'vala' 'gettext' 'gobject-introspection')
 source=("beatbox-$pkgver.tar.gz")

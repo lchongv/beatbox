@@ -264,6 +264,8 @@ public class BeatBox.Settings {
         public bool copy_imported_music { get; set; }
         public bool itunes7_sync { get; set; }       // share plays, ratings and options with itunes7 (ItunesSync)
         public bool download_new_podcasts { get; set; }
+        public string recordings_folder { get; set; } // "": Recordings in the user's music folder (StreamRecorder)
+        public int recording_minutes { get; set; }   // how long each recorded file is
         public int last_media_playing { get; set; }
         public int last_media_position { get; set; }
         public int shuffle_mode { get; set; }
@@ -287,6 +289,13 @@ public class BeatBox.Settings {
         public int album_detail_cover_percent { get; set; }
         public bool download_covers { get; set; }
         
+        /** Where recordings go: the folder chosen, or Recordings in the user's music folder */
+        public string recordings_path () {
+            if (recordings_folder != "")
+                return recordings_folder;
+            return Path.build_filename (Environment.get_user_special_dir (UserDirectory.MUSIC) ?? Environment.get_home_dir (), "Recordings");
+        }
+
         public Settings ()  {
             music_mount_name = "";
             music_folder = "";
@@ -294,6 +303,8 @@ public class BeatBox.Settings {
             shortcuts = {};
             enabled_plugins = {};
             podcast_folder = "";
+            recordings_folder = "";
+            recording_minutes = 60;
             search_string = "";
             skin = "";
             lcd_two_lines = true;

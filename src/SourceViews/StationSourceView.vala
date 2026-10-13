@@ -73,6 +73,7 @@ public class BeatBox.StationSourceView : SourceView {
 		grid_page = grid_scroll;
 		list_view.visible_changed.connect(fill_grid);
 		StationLogos.get_default().found.connect((uri) => { logos.unset(uri); fill_grid(); });
+		StreamRecorder.get_default().changed.connect(() => fill_grid());
 		pack_widgets();
 		
 		var find = action_button ("system-search-symbolic", _("Find Stations…"));
@@ -120,6 +121,11 @@ public class BeatBox.StationSourceView : SourceView {
 			genre.max_width_chars = 16;
 			genre.get_style_context().add_class("dim-label");
 			box.add(genre);
+			if (StreamRecorder.get_default().is_recording(m.uri)) {
+				var rec = new Label(null);
+				rec.set_markup("<span foreground=\"#d33\" weight=\"bold\">● " + _("REC") + "</span>");
+				box.add(rec);
+			}
 			grid.add(box);
 		}
 		grid.show_all();
@@ -139,6 +145,21 @@ public class BeatBox.StationSourceView : SourceView {
 		var choose = new Gtk.MenuItem.with_label(_("Choose Image…"));
 		choose.activate.connect(() => choose_logo(m));
 		menu.append(choose);
+		var recorder = StreamRecorder.get_default();
+		var record = new Gtk.MenuItem.with_label(recorder.is_recording(m.uri) ? _("Stop Recording") : _("Record"));
+		if (recorder.is_recording(m.uri))
+			record.activate.connect(() => recorder.stop(m.uri));
+		else if (recorder.available())
+			record.activate.connect(() => {
+				var folder = Path.build_filename(App.settings.main.recordings_path(), StreamRecorder.safe_name(m.title));
+				if (!recorder.start(m.uri, folder, App.settings.main.recording_minutes * 60))
+					App.window.doAlert(_("Could not record “%s”").printf(m.title), _("streamripper did not start."));
+			});
+		else {
+			record.sensitive = false;
+			record.tooltip_text = _("Needs streamripper (the streamripper package)");
+		}
+		menu.append(record);
 		if (logos.has_custom(m.uri)) {
 			var remove = new Gtk.MenuItem.with_label(_("Remove Custom Image"));
 			remove.activate.connect(() => logos.clear_custom(m.uri));

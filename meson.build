@@ -1,4 +1,4 @@
-project('beatbox', 'vala', 'c', version: '0.99.33')
+project('beatbox', 'vala', 'c', version: '0.99.34')
 
 gnome = import('gnome')
 i18n = import('i18n')
@@ -197,6 +197,7 @@ app_sources = files(
   'src/Core/Logger.vala',
   'src/Core/RadioDirectories.vala',
   'src/Core/StationLogoFiles.vala',
+  'src/Core/StreamRecorder.vala',
   'src/CellRenderers/SideBarRenderer.vala',
   'src/DataBase/DataBaseManager.vala',
   'src/DBus/MediaKeyListener.vala',
@@ -376,6 +377,9 @@ test('radio-directories', executable('test-radio-directories', 'tests/radio-dire
 # the images users pick for stations
 test('station-logo-files', executable('test-station-logo-files', 'tests/station-logo-files.vala',
   'src/Core/StationLogoFiles.vala', dependencies: core_dep))
+# the streamripper keeper, on a script that stands in for the program
+test('stream-recorder', executable('test-stream-recorder', 'tests/stream-recorder.vala',
+  'src/Core/StreamRecorder.vala', dependencies: core_dep))
 # DataBaseManager alone, on a library in a temporary data folder
 test('database-manager', executable('test-database-manager', 'tests/database-manager.vala',
   'src/DataBase/DataBaseManager.vala', dependencies: core_dep))

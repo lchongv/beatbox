@@ -1163,6 +1163,7 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		}
 		
 		App.playback.pause();
+		StreamRecorder.get_default().stop_all(); // streamripper closes its files on its own after we are gone
 
 		// Terminate Libnotify
 		Notify.uninit ();
