@@ -2933,6 +2933,32 @@ msgstr "Buscando… el directorio de Icecast se descarga una vez al día (9 MB).
 msgid "No stations match these filters."
 msgstr "Ninguna emisora cumple estos filtros."
 
+#: src/SourceViews/StationSourceView.vala
+msgid "Choose Image…"
+msgstr "Elegir imagen…"
+
+#: src/SourceViews/StationSourceView.vala
+msgid "Remove Custom Image"
+msgstr "Quitar imagen propia"
+
+#: src/SourceViews/StationSourceView.vala
+#, c-format
+msgid "Image for “%s”"
+msgstr "Imagen para «%s»"
+
+#: src/SourceViews/StationSourceView.vala
+msgid "Images"
+msgstr "Imágenes"
+
+#: src/SourceViews/StationSourceView.vala
+msgid "Choose"
+msgstr "Elegir"
+
+#: src/SourceViews/StationSourceView.vala
+#, c-format
+msgid "“%s” is not an image BeatBox can read."
+msgstr "«%s» no es una imagen que BeatBox pueda leer."
+
 #: src/Windows/DirectoryDialog.vala
 #, c-format
 msgid "Looking up the stream of “%s”…"
@@ -3979,9 +4005,6 @@ msgstr "Título, artista y álbum"
 
 #~ msgid "Try Again"
 #~ msgstr "Reintentar"
-
-#~ msgid "Choose Image…"
-#~ msgstr "Elegir imagen…"
 
 
 #~ msgid "Compilation"

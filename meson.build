@@ -1,4 +1,4 @@
-project('beatbox', 'vala', 'c', version: '0.99.32')
+project('beatbox', 'vala', 'c', version: '0.99.33')
 
 gnome = import('gnome')
 i18n = import('i18n')
@@ -196,6 +196,7 @@ app_sources = files(
   'src/Core/Launcher.vala',
   'src/Core/Logger.vala',
   'src/Core/RadioDirectories.vala',
+  'src/Core/StationLogoFiles.vala',
   'src/CellRenderers/SideBarRenderer.vala',
   'src/DataBase/DataBaseManager.vala',
   'src/DBus/MediaKeyListener.vala',
@@ -372,6 +373,9 @@ test('itunes-sync-pass', executable('test-itunes-sync-pass', 'tests/itunes-sync-
 # the station directories' searches and answers, without the network
 test('radio-directories', executable('test-radio-directories', 'tests/radio-directories.vala',
   'src/Core/RadioDirectories.vala', dependencies: core_dep))
+# the images users pick for stations
+test('station-logo-files', executable('test-station-logo-files', 'tests/station-logo-files.vala',
+  'src/Core/StationLogoFiles.vala', dependencies: core_dep))
 # DataBaseManager alone, on a library in a temporary data folder
 test('database-manager', executable('test-database-manager', 'tests/database-manager.vala',
   'src/DataBase/DataBaseManager.vala', dependencies: core_dep))

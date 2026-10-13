@@ -65,6 +65,7 @@ public class BeatBox.StationSourceView : SourceView {
 		grid.margin = 18;
 		grid.activate_on_single_click = false;
 		grid.child_activated.connect((child) => play_row(child.get_index()));
+		grid.button_press_event.connect(grid_clicked);
 		var grid_scroll = new ScrolledWindow(null, null);
 		grid_scroll.hscrollbar_policy = PolicyType.NEVER;
 		grid_scroll.get_style_context().add_class("albumwall");
@@ -122,6 +123,49 @@ public class BeatBox.StationSourceView : SourceView {
 			grid.add(box);
 		}
 		grid.show_all();
+	}
+	
+	/** Right click on a station: choose its own image, or go back to the directory's */
+	bool grid_clicked(Gdk.EventButton event) {
+		if (event.type != Gdk.EventType.BUTTON_PRESS || event.button != 3)
+			return false;
+		var child = grid.get_child_at_pos((int)event.x, (int)event.y);
+		var table = list_view.get_visible_table();
+		if (child == null || child.get_index() >= table.size())
+			return false;
+		var m = table.get(child.get_index());
+		var logos = StationLogos.get_default();
+		var menu = new Gtk.Menu();
+		var choose = new Gtk.MenuItem.with_label(_("Choose Image…"));
+		choose.activate.connect(() => choose_logo(m));
+		menu.append(choose);
+		if (logos.has_custom(m.uri)) {
+			var remove = new Gtk.MenuItem.with_label(_("Remove Custom Image"));
+			remove.activate.connect(() => logos.clear_custom(m.uri));
+			menu.append(remove);
+		}
+		menu.show_all();
+		menu.popup_at_pointer(event);
+		return true;
+	}
+	
+	void choose_logo(Media m) {
+		var chooser = new Gtk.FileChooserDialog(_("Image for “%s”").printf(m.title), App.window, Gtk.FileChooserAction.OPEN,
+		                                       _("Cancel"), Gtk.ResponseType.CANCEL, _("Choose"), Gtk.ResponseType.ACCEPT);
+		var images = new Gtk.FileFilter();
+		images.set_filter_name(_("Images"));
+		images.add_pixbuf_formats();
+		chooser.add_filter(images);
+		if (chooser.run() == Gtk.ResponseType.ACCEPT) {
+			var file = chooser.get_file();
+			if (!StationLogos.get_default().set_custom(m.uri, file)) {
+				var error = new Gtk.MessageDialog(App.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.CLOSE,
+				                                  _("“%s” is not an image BeatBox can read."), file.get_basename());
+				error.run();
+				error.destroy();
+			}
+		}
+		chooser.destroy();
 	}
 	
 	/** The station's logo scaled into a LOGO square, or a generic radio */
