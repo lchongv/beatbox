@@ -23,7 +23,8 @@ public class BeatBox.ItunesSync : GLib.Object {
 	}
 
 	void setting_changed () {
-		if (App.settings.main.itunes7_sync)
+		// itunes7 reads beatbox.db, the main library's (the open library changes only with a restart)
+		if (App.settings.main.itunes7_sync && App.settings.main.library == "")
 			start ();
 		else
 			stop ();

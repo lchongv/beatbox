@@ -29,7 +29,8 @@ using Gee;
 using SQLHeavy;
 
 public class BeatBox.PodcastLibrary : BaseLibrary {
-	const string LOAD_PODCASTS_QUERY = "SELECT rowid,* FROM 'podcasts'";
+	// the main library's, also while another one is open (DataBaseManager.shared)
+	string table { owned get { return App.database.shared + "podcasts"; } }
 	
 	Podcast ref_podcast = new Podcast("");
 	public override string key { get { return ref_podcast.key; } }
@@ -71,7 +72,7 @@ public class BeatBox.PodcastLibrary : BaseLibrary {
 	void load_from_database() {
 		message("Loading podcasts...");
 		try {
-			var results = App.database.execute(LOAD_PODCASTS_QUERY);
+			var results = App.database.execute("SELECT rowid,* FROM " + table);
 			if(results == null) {
 				warning("Could not load podcasts from database");
 				return;
@@ -137,7 +138,7 @@ public class BeatBox.PodcastLibrary : BaseLibrary {
 		Collection<Media> added = (Collection<Media>)db_filler.data;
 		
 		try {
-			Query query = transaction.prepare ("""INSERT INTO 'podcasts' ('rowid', 'uri', 'file_size', 'title', 'artist', 'composer', 'album_artist',
+			Query query = transaction.prepare ("INSERT INTO " + table + """ ('rowid', 'uri', 'file_size', 'title', 'artist', 'composer', 'album_artist',
 'album', 'grouping', 'genre', 'comment', 'lyrics', 'has_embedded', 'year', 'track', 'track_count', 'album_number', 'album_count',
 'bitrate', 'length', 'samplerate', 'rating', 'playcount', 'skipcount', 'dateadded', 'lastplayed', 'lastmodified', 'mediatype', 'podcast_rss',
 'podcast_url', 'podcast_date', 'is_new_podcast', 'resume_pos', 'is_video') 
@@ -204,7 +205,7 @@ VALUES (:rowid, :uri, :file_size, :title, :artist, :composer, :album_artist, :al
 		Collection<Media> updated = (Collection<Media>)db_filler.data; 
 		
 		try {
-			Query query = transaction.prepare("""UPDATE 'podcasts' SET uri=:uri, file_size=:file_size, title=:title, artist=:artist,
+			Query query = transaction.prepare("UPDATE " + table + """ SET uri=:uri, file_size=:file_size, title=:title, artist=:artist,
 composer=:composer, album_artist=:album_artist, album=:album, grouping=:grouping, genre=:genre, comment=:comment, lyrics=:lyrics, 
 has_embedded=:has_embedded, year=:year, track=:track, track_count=:track_count, album_number=:album_number, 
 album_count=:album_count,bitrate=:bitrate, length=:length, samplerate=:samplerate, rating=:rating, playcount=:playcount, skipcount=:skipcount, 
@@ -270,7 +271,7 @@ podcast_date=:podcast_date, is_new_podcast=:is_new_podcast, resume_pos=:resume_p
 		Collection<Media> removed = (Collection<Media>)db_filler.data; 
 		
 		try {
-			Query query = transaction.prepare("DELETE FROM 'podcasts' WHERE uri=:uri");
+			Query query = transaction.prepare("DELETE FROM " + table + " WHERE uri=:uri");
 			
 			foreach(var s in removed) {
 				query.set_string(":uri", s.uri);

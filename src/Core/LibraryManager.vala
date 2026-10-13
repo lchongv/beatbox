@@ -59,6 +59,9 @@ public class BeatBox.LibraryManager : GLib.Object, BeatBox.LibraryInterface {
 		known_libraries = new HashMap<string, int>();
 		libraries = new HashMap<string, Library>();
 		
+		// songs, podcasts and stations share one numbering, and every library shares the podcasts
+		// and stations: ids go on from the highest given in any library
+		top_id = App.settings.main.last_rowid;
 		load_known_libraries();
 		
 		// Connect signals
@@ -105,6 +108,8 @@ public class BeatBox.LibraryManager : GLib.Object, BeatBox.LibraryInterface {
 		else if(m.rowid == 0) {
 			m.rowid = ++top_id;
 		}
+		if(top_id > App.settings.main.last_rowid)
+			App.settings.main.last_rowid = top_id;
 		
 		// Either way, save it here so we have it
 		_medias.set(m.rowid, m);

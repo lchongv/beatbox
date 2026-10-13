@@ -84,6 +84,38 @@ def song_row(db, uri):
         return None  # not there yet, or being written
 
 
+def table_rowids(db, table):
+    try:
+        with sqlite3.connect('file:%s?mode=ro' % db, uri=True, timeout=1) as c:
+            return [r[0] for r in c.execute('SELECT rowid FROM %s ORDER BY rowid' % table)]
+    except sqlite3.Error:
+        return []
+
+
+def insert_row(db, table, rowid, **values):
+    """A whole row as BeatBox writes them: every TEXT column '' and every number 0 unless given"""
+    with sqlite3.connect(db, timeout=5) as c:
+        row = {r[1]: ('' if r[2] == 'TEXT' else 0) for r in c.execute('PRAGMA table_info(%s)' % table)}
+        row.update(values)
+        c.execute('INSERT INTO %s (rowid, %s) VALUES (?, %s)' % (table, ', '.join(row), ', '.join('?' * len(row))),
+                  [rowid, *row.values()])
+
+
+def conf_replace(conf, before, after):
+    with open(conf) as f:
+        text = f.read()
+    if before not in text:
+        fail('%r is not in beatbox.conf' % before)
+    with open(conf, 'w') as f:
+        f.write(text.replace(before, after, 1))
+
+
+def make_song(path, freq):
+    subprocess.run(['gst-launch-1.0', '-q', 'audiotestsrc', 'num-buffers=%d' % (SONG_SECONDS * 44100 // 1024),
+                    'freq=%d' % freq, '!', 'audioconvert', '!', 'vorbisenc', '!', 'oggmux',
+                    '!', 'filesink', 'location=' + path], check=True)
+
+
 def start(app, home, log, files=()):
     proc = subprocess.Popen([app, *files], stdout=log, stderr=subprocess.STDOUT)
     wait_for('BeatBox on D-Bus', lambda: proc.poll() is None and
@@ -122,9 +154,7 @@ def run(app, home):
         f.write('XDG_MUSIC_DIR="%s"\n' % music)
     for i in range(SONGS):
         path = os.path.join(music, 'Song %d.ogg' % (i + 1))
-        subprocess.run(['gst-launch-1.0', '-q', 'audiotestsrc', 'num-buffers=%d' % (SONG_SECONDS * 44100 // 1024),
-                        'freq=%d' % (330 + 110 * i), '!', 'audioconvert', '!', 'vorbisenc', '!', 'oggmux',
-                        '!', 'filesink', 'location=' + path], check=True)
+        make_song(path, 330 + 110 * i)
     db = os.path.join(home, '.local', 'share', 'beatbox', 'beatbox.db')
     log = open(os.path.join(home, 'beatbox.log'), 'w')
 
@@ -208,6 +238,60 @@ def run(app, home):
             fail('the count kept moving: %s' % (song_row(db, one_uri),))
         print('itunes7 sync: 5 plays and the rating at start, then one more live')
         quit(proc)
+
+        # fourth run: a second library (docs/superpowers/specs/2026-10-11-multiple-libraries-design.md),
+        # set up in beatbox.conf as "New Library..." leaves it. It has its own songs and play
+        # counts; radio and podcasts stay the main library's, and media ids never collide.
+        insert_row(db, 'stations', 900, uri='http://radio.invalid/live', title='Radio', mediatype=3)
+        insert_row(db, 'podcasts', 901, uri='http://podcast.invalid/1.mp3', title='Episode', mediatype=1,
+                   podcast_rss='http://podcast.invalid/feed')
+        b_music = os.path.join(home, 'Music B')
+        os.makedirs(b_music)
+        for i in range(2):
+            make_song(os.path.join(b_music, 'B %d.ogg' % (i + 1)), 550 + 110 * i)
+        conf_replace(conf, '\nlibrary=\n', '\nlibrary=b\n')
+        with open(conf, 'a') as f:
+            f.write('\n[library b]\nlibrary-name=B\nmusic-folder=%s\n' % b_music)
+        b_db = os.path.join(home, '.local', 'share', 'beatbox', 'libraries', 'b.db')
+        proc = start(app, home, log)
+        wait_for('the import of library B', lambda: len(songs(b_db)) == 2, 90)
+        wait_for('playback in library B', play_from_top, 20)
+        b_track = track()
+        p = position()
+        wait_for('the position to move in library B', lambda: position() > p, 10)
+        wait_for('the play in library B to be counted', lambda: any(count for rowid, uri, count in songs(b_db)), 30)
+        quit(proc)
+        b_ids = [rowid for rowid, uri, count in songs(b_db)]
+        if len(songs(db)) != SONGS:
+            fail('library B changed the main one: %s' % songs(db))
+        if not any(count for rowid, uri, count in songs(b_db)):
+            fail('the play in library B was not counted: %s' % songs(b_db))
+        if (table_rowids(db, 'stations'), table_rowids(db, 'podcasts')) != ([900], [901]):
+            fail('radio or podcasts changed: %s %s' % (table_rowids(db, 'stations'), table_rowids(db, 'podcasts')))
+        if set(b_ids) & {900, 901}:
+            fail('a song of library B has the id of a station or podcast: %s' % b_ids)
+        if b_track.rsplit('/', 1)[1] not in map(str, b_ids):
+            fail('playing %s, not a song of library B %s' % (b_track, b_ids))
+        with open(conf) as f:
+            last = int(re.search(r'\nlast-rowid=(\d+)\n', f.read()).group(1))
+        if last < max(b_ids + [900, 901] + [rowid for rowid, uri, count in songs(db)]):
+            fail('last-rowid %d is behind the ids given' % last)
+        print('library B: its own songs and play count; radio, podcasts and ids kept apart')
+
+        # fifth run: beatbox.conf names a library that is gone: the main one opens
+        conf_replace(conf, '\nlibrary=b\n', '\nlibrary=gone\n')
+        proc = start(app, home, log)
+        wait_for('playback in the main library', play_from_top, 20)
+        main_tracks = ['/org/gnome/BeatBox/Track/%d' % rowid for rowid, uri, count in songs(db)]
+        if track() not in main_tracks:
+            fail('playing %s, not a song of the main library' % track())
+        quit(proc)
+        with open(conf) as f:
+            if '\nlibrary=\n' not in f.read():
+                fail('library=gone was kept')
+        if os.path.exists(os.path.join(home, '.local', 'share', 'beatbox', 'libraries', 'gone.db')):
+            fail('a database was made for the missing library')
+        print('a library that is gone opens the main one')
     finally:
         log.close()
         if 'proc' in locals() and proc.poll() is None:
