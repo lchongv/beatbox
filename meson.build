@@ -1,4 +1,4 @@
-project('beatbox', 'vala', 'c', version: '0.99.36')
+project('beatbox', 'vala', 'c', version: '0.99.37')
 
 gnome = import('gnome')
 i18n = import('i18n')
@@ -57,6 +57,7 @@ deps = [
 
 core_sources = files(
   'core/SQLHeavy.vala',
+  'core/Libraries.vala',
   'core/Settings.vala',
   'core/Plugin.vala',
   'core/EqualizerPreset.vala',
@@ -364,6 +365,8 @@ test('rfc822', executable('test-rfc822', 'tests/rfc822.vala', dependencies: core
 test('tag-guess', executable('test-tag-guess', 'tests/tag-guess.vala', dependencies: core_dep))
 test('sqlheavy-busy', executable('test-sqlheavy-busy', 'tests/sqlheavy-busy.vala', dependencies: core_dep))
 test('peer-sync', executable('test-peer-sync', 'tests/peer-sync.vala', dependencies: core_dep))
+# the options that belong to a library and the list of libraries, in a temporary config folder
+test('libraries', executable('test-libraries', 'tests/libraries.vala', dependencies: core_dep))
 # the reader compiled on its own: it needs nothing else from the application
 test('itunes-reader', executable('test-itunes-reader', 'tests/itunes-reader.vala', 'src/Core/ItunesReader.vala',
   dependencies: core_dep))
