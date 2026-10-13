@@ -1,4 +1,4 @@
-project('beatbox', 'vala', 'c', version: '0.99.39')
+project('beatbox', 'vala', 'c', version: '0.99.40')
 
 gnome = import('gnome')
 i18n = import('i18n')
@@ -175,6 +175,7 @@ app_sources = files(
   'src/BeatBox.vala',
   'src/Core/Icons.vala',
   'src/Core/Actions.vala',
+  'src/Core/LibrarySwitcher.vala',
   'src/Core/LibraryWindow.vala',
   'src/Core/LibraryManager.vala',
   'src/Core/FileOperator.vala',

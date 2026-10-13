@@ -77,7 +77,18 @@ public static int main (string[] args) {
   
 	BeatBox.PluginManager.set_typelib_path (); // before Python plugins load
 	var app = new BeatBox.App ();
-	return app.run (args);
+	int status = app.run (args);
+	if (BeatBox.App.restart_requested) {
+		// another library was picked (LibrarySwitcher): the same program again, without the files it was given
+		try {
+			var self = FileUtils.read_link ("/proc/self/exe");
+			Posix.execv (self, { args[0] });
+			warning ("Could not restart %s: %s", self, Posix.strerror (Posix.errno));
+		} catch (FileError err) {
+			warning ("Could not restart: %s", err.message);
+		}
+	}
+	return status;
 }
 
 
@@ -101,6 +112,9 @@ public class BeatBox.App : Gtk.Application {
 	public static BeatBox.Settings settings { get; private set; }
 	public static BeatBox.DeviceInterface devices { get; private set; }
 	public static BeatBox.PluginManager plugins { get; private set; }
+	public static LibrarySwitcher libraries { get; private set; }
+	/** Set when another library was picked: main() runs the program again once it has quit */
+	public static bool restart_requested = false;
 	static FolderWatcher folder_watcher;
 	static ItunesSync itunes_sync;
 
@@ -218,6 +232,7 @@ public class BeatBox.App : Gtk.Application {
 		playback = new PlaybackManager();
 		info = new Info();
 		actions = new Actions();
+		libraries = new LibrarySwitcher();
 		devices = new DeviceManager();
 		files = new FileOperator();
 		covers = new CoverManager();
