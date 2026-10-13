@@ -91,7 +91,9 @@ public class BeatBox.SideTreeView : BeatBox.SideBar {
 	 * Adds the different sidebar categories.
 	 */
 	private void addBasicItems() {
-		library_iter = addItem(null, null, null, null, null, _("Library"), null, false, false, false);
+		// headed by the open library's name (LibrarySwitcher)
+		library_iter = addItem(null, null, null, null, null, LibrarySwitcher.name_of(App.settings.main.library), null, false, false, false);
+		App.settings.main.notify["library-name"].connect(() => setName(library_iter, LibrarySwitcher.name_of(App.settings.main.library)));
 		devices_iter = addItem(null, null, null, null, null, _("Devices"), null, false, false, false);
 		network_iter = addItem(null, null, null, null, null, _("Network"), null, false, false, false);
 		plugins_iter = addItem(null, null, null, null, null, _("Plugins"), null, false, false, false);

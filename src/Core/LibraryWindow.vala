@@ -389,6 +389,7 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		var mini_player = new SimpleAction("mini_player", null);
 		mini_player.activate.connect(toggle_mini);
 		App.actions.group.add_action(mini_player);
+		settingsMenu.append_submenu(_("_Library"), App.libraries.menu);
 		settingsMenu.append(_("_Mini Player"), "bb.mini_player");
 		settingsMenu.append_item(App.actions.model_item(App.actions.show_equalizer));
 		settingsMenu.append_item(App.actions.model_item(App.actions.show_preferences));

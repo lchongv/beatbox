@@ -9,6 +9,7 @@ src/BeatBox.vala
 src/Core/AcoustId.vala
 src/Core/Actions.vala
 src/Core/FileOperator.vala
+src/Core/LibrarySwitcher.vala
 src/Core/LibraryWindow.vala
 src/Core/PlaylistManager.vala
 src/Core/PodcastManager.vala
