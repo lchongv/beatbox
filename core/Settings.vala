@@ -38,11 +38,44 @@ public abstract class BeatBox.ConfigSection : Object {
     static string path = "";
     static bool first_run = false;  // no file yet: import what older versions kept in GSettings
     static uint save_id = 0;
+    static string library_group = ""; // "library <id>" while a library besides the main one is open
 
     string group = "";
+    string[] library_keys = {};       // the options that belong to the open library
 
     public static string config_path () {
         return Path.build_filename (Environment.get_user_config_dir (), "beatbox", "beatbox.conf");
+    }
+
+    /** The options file, read the first time it is needed (also by Libraries) */
+    public static unowned KeyFile keyfile () {
+        if (file == null) {
+            path = config_path ();
+            file = new KeyFile ();
+            first_run = !FileUtils.test (path, FileTest.EXISTS);
+            try {
+                file.load_from_file (path, KeyFileFlags.NONE);
+            } catch (Error err) {
+                if (!first_run)
+                    warning ("Could not read %s, using the defaults: %s", path, err.message);
+            }
+            string id = "";
+            try {
+                id = file.get_string ("settings", "library");
+            } catch (Error err) {} // the main library
+            if (id != "" && !file.has_group (Libraries.group (id))) {
+                warning ("The library %s has no options in %s: opening the main library", id, path);
+                id = "";
+            }
+            library_group = (id != "") ? Libraries.group (id) : "";
+        }
+        return file;
+    }
+
+    /** Id of the open library: "" for the main one */
+    public static string open_library () {
+        keyfile ();
+        return (library_group != "") ? library_group.substring (Libraries.group ("").length) : "";
     }
 
     /** Write pending changes now (called before exiting) */
@@ -61,25 +94,18 @@ public abstract class BeatBox.ConfigSection : Object {
         }
     }
 
-    static void schedule_save () {
+    public static void schedule_save () {
         if (save_id == 0)
             save_id = Timeout.add (400, () => { save_id = 0; flush (); return Source.REMOVE; });
     }
 
-    /** Call at the end of the subclass constructor, once the defaults are set */
-    protected void init_config (string group, string old_schema) {
+    /** Call at the end of the subclass constructor, once the defaults are set. The options named in
+     *  library_keys (with dashes) belong to the open library: another library than the main one
+     *  keeps them in its own group */
+    protected void init_config (string group, string old_schema, string[] library_keys = {}) {
         this.group = group;
-        if (file == null) {
-            path = config_path ();
-            file = new KeyFile ();
-            first_run = !FileUtils.test (path, FileTest.EXISTS);
-            try {
-                file.load_from_file (path, KeyFileFlags.NONE);
-            } catch (Error err) {
-                if (!first_run)
-                    warning ("Could not read %s, using the defaults: %s", path, err.message);
-            }
-        }
+        this.library_keys = library_keys;
+        keyfile ();
 
         SettingsSchema? old = null;
         if (first_run && SettingsSchemaSource.get_default () != null)
@@ -89,7 +115,8 @@ public abstract class BeatBox.ConfigSection : Object {
         var klass = (ObjectClass) get_type ().class_ref ();
         foreach (var pspec in klass.list_properties ()) {
             try {
-                if (file.has_group (group) && file.has_key (group, pspec.name)) {
+                var g = group_of (pspec.name);
+                if (file.has_group (g) && file.has_key (g, pspec.name)) {
                     read_from_file (pspec);
                 } else {
                     missing = true;
@@ -110,17 +137,23 @@ public abstract class BeatBox.ConfigSection : Object {
             schedule_save (); // first run, or options added by an update
     }
 
+    /** The group an option is kept in */
+    string group_of (string key) {
+        return (library_group != "" && key in library_keys) ? library_group : group;
+    }
+
     void read_from_file (ParamSpec pspec) throws Error {
+        var g = group_of (pspec.name);
         if (pspec is ParamSpecBoolean)
-            set (pspec.name, file.get_boolean (group, pspec.name), null);
+            set (pspec.name, file.get_boolean (g, pspec.name), null);
         else if (pspec is ParamSpecInt)
-            set (pspec.name, file.get_integer (group, pspec.name), null);
+            set (pspec.name, file.get_integer (g, pspec.name), null);
         else if (pspec is ParamSpecEnum)
-            set (pspec.name, file.get_integer (group, pspec.name), null);
+            set (pspec.name, file.get_integer (g, pspec.name), null);
         else if (pspec is ParamSpecString)
-            set (pspec.name, file.get_string (group, pspec.name), null);
+            set (pspec.name, file.get_string (g, pspec.name), null);
         else if (pspec.value_type == typeof (string[]))
-            set (pspec.name, file.get_string_list (group, pspec.name), null);
+            set (pspec.name, file.get_string_list (g, pspec.name), null);
     }
 
     /** Values the user had set in the GSettings of older versions */
@@ -143,20 +176,21 @@ public abstract class BeatBox.ConfigSection : Object {
     void store (ParamSpec pspec) {
         var v = Value (pspec.value_type);
         get_property (pspec.name, ref v);
+        var g = group_of (pspec.name);
         if (pspec is ParamSpecBoolean)
-            file.set_boolean (group, pspec.name, v.get_boolean ());
+            file.set_boolean (g, pspec.name, v.get_boolean ());
         else if (pspec is ParamSpecInt)
-            file.set_integer (group, pspec.name, v.get_int ());
+            file.set_integer (g, pspec.name, v.get_int ());
         else if (pspec is ParamSpecEnum)
-            file.set_integer (group, pspec.name, v.get_enum ());
+            file.set_integer (g, pspec.name, v.get_enum ());
         else if (pspec is ParamSpecString)
-            file.set_string (group, pspec.name, v.get_string () ?? "");
+            file.set_string (g, pspec.name, v.get_string () ?? "");
         else if (pspec.value_type == typeof (string[])) {
             string[] list = {};
             char** items = (char**) v.get_boxed ();
             for (int i = 0; items != null && items[i] != null; i++)
                 list += ((string) items[i]).dup ();
-            file.set_string_list (group, pspec.name, list);
+            file.set_string_list (g, pspec.name, list);
         }
     }
 }
@@ -245,7 +279,7 @@ public class BeatBox.Settings {
             generic_miller_visible_columns = { "2" };
             miller_columns_position = Position.AUTOMATIC;
             queue = {};
-            init_config ("savedstate", "net.launchpad.beatbox.SavedState");
+            init_config ("savedstate", "net.launchpad.beatbox.SavedState", { "queue" });
         }
         
     }
@@ -254,6 +288,9 @@ public class BeatBox.Settings {
 
         public string music_mount_name { get; set; }
         public string music_folder { get; set; }
+        public string library { get; set; }          // id of the open library, "" the main one (Libraries)
+        public string library_name { get; set; }     // the open library's name ("" shows "Music")
+        public int last_rowid { get; set; }          // highest media id given in any library (LibraryManager)
         public bool watch_music_folder { get; set; } // import songs that appear in it (FolderWatcher)
         public string[] shortcuts { get; set; }      // "id=accelerator" (Shortcuts), only once changed
         public string[] enabled_plugins { get; set; } // ids of the plugins turned on (Preferences › Plugins)
@@ -299,6 +336,8 @@ public class BeatBox.Settings {
         public Settings ()  {
             music_mount_name = "";
             music_folder = "";
+            library = "";
+            library_name = "";
             watch_music_folder = true;
             shortcuts = {};
             enabled_plugins = {};
@@ -317,7 +356,11 @@ public class BeatBox.Settings {
             album_grid_inline = true;
             album_detail_cover_percent = 25;
             download_covers = true;
-            init_config ("settings", "net.launchpad.beatbox.Settings");
+            init_config ("settings", "net.launchpad.beatbox.Settings", {
+                "library-name", "music-folder", "music-mount-name", "watch-music-folder",
+                "last-media-playing", "last-media-position" });
+            if (library != ConfigSection.open_library ())
+                library = ConfigSection.open_library (); // it named a library that is gone
         }
     }
 
