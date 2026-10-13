@@ -73,8 +73,12 @@ public abstract class BeatBox.SimplePreferences : GLib.Object, PreferencesSectio
 /** How the library folder is managed */
 public class BeatBox.LibraryPreferences : SimplePreferences {
 	public override string title { get { return _("Library"); } }
+	Box libraries = new Box(Orientation.VERTICAL, 6);
 	
 	public LibraryPreferences() {
+		add_heading(_("Libraries"));
+		add_row(libraries);
+		fill_libraries();
 		add_heading(_("Library Management"));
 		var organize = add_check(_("Keep media folders organized"), App.settings.main.update_folder_hierarchy);
 		var write = add_check(_("Write metadata to file"), App.settings.main.write_metadata_to_file);
@@ -86,6 +90,68 @@ public class BeatBox.LibraryPreferences : SimplePreferences {
 		copy.toggled.connect(() => { App.settings.main.copy_imported_music = copy.active; });
 		var itunes7 = add_check(_("Sync play counts, ratings and options with itunes7"), App.settings.main.itunes7_sync);
 		itunes7.toggled.connect(() => { App.settings.main.itunes7_sync = itunes7.active; });
+		if (App.settings.main.library != "") { // itunes7 reads beatbox.db: the main library's
+			itunes7.sensitive = false;
+			itunes7.tooltip_text = _("Only with the main library open: itunes7 reads its database.");
+		}
+	}
+	
+	void fill_libraries() {
+		libraries.foreach((w) => w.destroy());
+		foreach (var id in LibrarySwitcher.all_ids()) {
+			var row = new Box(Orientation.HORIZONTAL, 8);
+			var name = new Label("");
+			string text = Markup.escape_text(LibrarySwitcher.name_of(id));
+			name.set_markup(id == App.settings.main.library ? "<b>%s</b> %s".printf(text, Markup.escape_text(_("(open)"))) : text);
+			var folder = new Label(Libraries.option(id, "music-folder"));
+			folder.get_style_context().add_class("dim-label");
+			folder.ellipsize = Pango.EllipsizeMode.START;
+			folder.xalign = 0;
+			folder.hexpand = true;
+			row.add(name);
+			row.add(folder);
+			var rename = new Button.with_label(_("Rename…"));
+			rename.clicked.connect(() => ask_rename(id));
+			row.add(rename);
+			if (id != "" && id != App.settings.main.library) { // never the main or the open one
+				var remove = new Button.with_label(_("Remove…"));
+				remove.clicked.connect(() => ask_remove(id));
+				row.add(remove);
+			}
+			libraries.add(row);
+		}
+		libraries.show_all();
+	}
+	
+	void ask_rename(string id) {
+		var dialog = new Dialog.with_buttons(_("Rename Library"), (Gtk.Window) libraries.get_toplevel(),
+		                                     DialogFlags.MODAL | DialogFlags.DESTROY_WITH_PARENT,
+		                                     _("Cancel"), ResponseType.CANCEL, _("Rename"), ResponseType.OK);
+		var entry = new Entry() { text = LibrarySwitcher.name_of(id), activates_default = true, margin = 12 };
+		dialog.get_content_area().add(entry);
+		dialog.set_default_response(ResponseType.OK);
+		dialog.show_all();
+		bool rename = dialog.run() == ResponseType.OK && entry.text.strip() != "";
+		string name = entry.text.strip();
+		dialog.destroy();
+		if (rename) {
+			App.libraries.rename(id, name);
+			fill_libraries();
+		}
+	}
+	
+	void ask_remove(string id) {
+		var dialog = new MessageDialog((Gtk.Window) libraries.get_toplevel(), DialogFlags.MODAL | DialogFlags.DESTROY_WITH_PARENT,
+		                               MessageType.WARNING, ButtonsType.NONE, _("Remove the library “%s”?"), LibrarySwitcher.name_of(id));
+		dialog.secondary_text = _("Its songs, play counts and playlists are removed from BeatBox; the music files stay where they are.");
+		dialog.add_button(_("Cancel"), ResponseType.CANCEL);
+		dialog.add_button(_("Remove"), ResponseType.OK);
+		bool remove = dialog.run() == ResponseType.OK;
+		dialog.destroy();
+		if (remove) {
+			App.libraries.remove(id);
+			fill_libraries();
+		}
 	}
 }
 
