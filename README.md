@@ -142,7 +142,7 @@ listing kept a day in ~/.cache/beatbox).
 In the radio grid, right click a station to give it an image of your own
 (kept in ~/.local/share/beatbox/station-logos); it shows in the LCD too.
 The same menu records a station with streamripper (install it separately): a
-file (with its .cue) every hour, or the minutes set in Preferences > Playback,
+file (with its .cue) every hour, or the minutes set in Preferences > Recording,
 in ~/Music/Recordings/<station>/. A server that resends its last seconds on
 connecting makes consecutive files overlap by that much.
 
