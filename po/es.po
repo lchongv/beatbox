@@ -4091,3 +4091,76 @@ msgstr "Título, artista y álbum"
 #~ msgid "This copy of BeatBox can't run plugins written in Python."
 #~ msgstr ""
 #~ "Esta copia de BeatBox no puede ejecutar complementos escritos en Python."
+
+#: src/Core/LibraryWindow.vala
+msgid "_Library"
+msgstr "_Biblioteca"
+
+#: src/Core/LibrarySwitcher.vala
+msgid "New Library…"
+msgstr "Nueva biblioteca…"
+
+#: src/Core/LibrarySwitcher.vala
+msgid "Manage Libraries…"
+msgstr "Administrar bibliotecas…"
+
+#: src/Core/LibrarySwitcher.vala
+msgid "Cannot Switch Libraries"
+msgstr "No se puede cambiar de biblioteca"
+
+#: src/Core/LibrarySwitcher.vala
+msgid "Wait until the current import or operation finishes."
+msgstr "Espera a que termine la importación u operación en curso."
+
+#: src/Core/LibrarySwitcher.vala
+msgid "New Library"
+msgstr "Nueva biblioteca"
+
+#: src/Core/LibrarySwitcher.vala
+msgid "Create"
+msgstr "Crear"
+
+#: src/Core/LibrarySwitcher.vala
+msgid "External Disk"
+msgstr "Disco externo"
+
+#: src/Core/LibrarySwitcher.vala
+msgid "Music folder:"
+msgstr "Carpeta de música:"
+
+#: src/Core/LibrarySwitcher.vala
+msgid "BeatBox restarts with the new library and imports the folder."
+msgstr "BeatBox se reinicia con la nueva biblioteca e importa la carpeta."
+
+#: src/Preferences/BehaviorPreferences.vala
+msgid "(open)"
+msgstr "(abierta)"
+
+#: src/Preferences/BehaviorPreferences.vala
+msgid "Rename…"
+msgstr "Renombrar…"
+
+#: src/Preferences/BehaviorPreferences.vala
+msgid "Remove…"
+msgstr "Eliminar…"
+
+#: src/Preferences/BehaviorPreferences.vala
+msgid "Rename Library"
+msgstr "Renombrar biblioteca"
+
+#: src/Preferences/BehaviorPreferences.vala
+msgid "Rename"
+msgstr "Renombrar"
+
+#: src/Preferences/BehaviorPreferences.vala
+#, c-format
+msgid "Remove the library “%s”?"
+msgstr "¿Eliminar la biblioteca “%s”?"
+
+#: src/Preferences/BehaviorPreferences.vala
+msgid "Its songs, play counts and playlists are removed from BeatBox; the music files stay where they are."
+msgstr "Sus canciones, reproducciones y listas se quitan de BeatBox; los archivos de música quedan donde están."
+
+#: src/Preferences/BehaviorPreferences.vala
+msgid "Only with the main library open: itunes7 reads its database."
+msgstr "Solo con la biblioteca principal abierta: itunes7 lee su base de datos."

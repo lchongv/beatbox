@@ -32,6 +32,18 @@ and both ways. Each one only reads the other's database and writes its own,
 and BeatBox backs its library up (beatbox.db.pre-sync) before the first sync.
 The rules both apps follow are in itunes7's docs/SYNC-BEATBOX.md.
 
+Several libraries
+-----------------
+
+The app menu's Library submenu switches between music libraries: each one has
+its own folder, songs, ratings, play counts and playlists, while radio stations
+and podcasts are the same in all of them. "New Library…" asks for a name and a
+folder. Switching restarts BeatBox with the other library (a second or two),
+and the drive the library lives on is mounted when it is connected. The first
+library is the one BeatBox always had (~/.local/share/beatbox/beatbox.db, the
+one itunes7 syncs with); the others keep their database in
+~/.local/share/beatbox/libraries. Preferences › Library renames and removes them.
+
 Building
 --------
 
