@@ -322,7 +322,8 @@ def main():
     os.close(write)
     display = os.read(read, 16).decode().strip()
     os.close(read)
-    env = {k: v for k, v in os.environ.items() if k not in ('WAYLAND_DISPLAY', 'DBUS_SESSION_BUS_ADDRESS')}
+    # XAUTHORITY is the desktop's cookie for its own X server: the test's X server doesn't accept it
+    env = {k: v for k, v in os.environ.items() if k not in ('WAYLAND_DISPLAY', 'DBUS_SESSION_BUS_ADDRESS', 'XAUTHORITY')}
     env.update(SMOKE_INNER='1', DISPLAY=':' + display, GDK_BACKEND='x11', NO_AT_BRIDGE='1', HOME=home,
                XDG_CONFIG_HOME=home + '/.config', XDG_DATA_HOME=home + '/.local/share',
                XDG_CACHE_HOME=home + '/.cache', XDG_RUNTIME_DIR=home + '/run', LANG='C.UTF-8', LANGUAGE='',
