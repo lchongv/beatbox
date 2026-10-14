@@ -33,7 +33,6 @@ public class BeatBox.EqualizerWindow : Gtk.Window {
 	private PresetList preset_combo;
 	private Entry new_preset_entry;
 	private Button close_button;
-	private EffectsWindow? effects = null;
 
 	private bool apply_changes;
 	private bool initialized;
@@ -156,22 +155,13 @@ public class BeatBox.EqualizerWindow : Gtk.Window {
 		new_preset_entry.set_icon_tooltip_text(Gtk.EntryIconPosition.SECONDARY, _("Save preset"));
 		
 		close_button = new Button.with_label(_("Done"));
-		var effects_button = new Button.with_label(_("Effects…"));
-		effects_button.clicked.connect(() => {
-			if (effects == null) {
-				effects = new EffectsWindow();
-				effects.destroy.connect(() => { effects = null; });
-			}
-			effects.present();
-		});
-		
+
 		var bottom_toolbar = new ButtonBox(Orientation.HORIZONTAL);
 		bottom_toolbar.set_layout(ButtonBoxStyle.END);
-		
+
 		bottom_toolbar.add(eq_switch);
 		bottom_toolbar.add(preset_combo);
 		bottom_toolbar.add(new_preset_entry);
-		bottom_toolbar.add(effects_button);
 		bottom_toolbar.add(close_button);
 		
 		((Gtk.ButtonBox)bottom_toolbar).set_child_secondary(eq_switch, true);
@@ -180,6 +170,7 @@ public class BeatBox.EqualizerWindow : Gtk.Window {
 
 		scales.vexpand = true;
 		inner_box.add(UI.wrap_alignment(scales, 10, 12, 10, 12));
+		inner_box.add(UI.wrap_alignment(effects_grid(), 0, 12, 4, 12));
 		inner_box.add(UI.wrap_alignment(bottom_toolbar, 0, 0, 10, 0));
 
 		inner_box.hexpand = true;
@@ -212,6 +203,53 @@ public class BeatBox.EqualizerWindow : Gtk.Window {
 	static string gain_text(double value) {
 		double db = (value < 0) ? value * 0.24 : value * 0.12;
 		return "%+.1f dB".printf(db);
+	}
+
+	/** The effects after the equalizer (Settings equalizer), two columns of sliders: 0 leaves the sound as it is */
+	delegate void EffectSet (int value);
+
+	Grid effects_grid() {
+		var eq = App.settings.equalizer;
+		var grid = new Grid () { row_spacing = 6, column_spacing = 10 };
+		int n = 0;
+		add_effect (grid, ref n, _("Preamp"), -12, 0, eq.preamp_db, _("Lowers the level before the effects and the equalizer, so boosts don't distort"), "%+d dB", (v) => { eq.preamp_db = v; });
+		add_effect (grid, ref n, _("Echo"), 0, 100, eq.echo, _("Repeats of the sound, fading"), "%d%%", (v) => { eq.echo = v; });
+		add_effect (grid, ref n, _("Vocal reduction"), 0, 100, eq.vocal_reduction, _("Takes out what is in the middle of the stereo image, usually the voice; it also thins the sound"), "%d%%", (v) => { eq.vocal_reduction = v; });
+		add_effect (grid, ref n, _("Bass enhancer"), 0, 100, eq.bass, _("Adds harmonics, so the bass is heard on small speakers and headphones"), "%d%%", (v) => { eq.bass = v; });
+		add_effect (grid, ref n, _("Exciter"), 0, 100, eq.exciter, _("Adds brightness to the high frequencies"), "%d%%", (v) => { eq.exciter = v; });
+		add_effect (grid, ref n, _("Stereo width"), 0, 100, eq.stereo_width, _("Spreads the stereo image"), "%d%%", (v) => { eq.stereo_width = v; });
+		add_effect (grid, ref n, _("Saturation"), 0, 100, eq.saturation, _("Warmth, with a little distortion"), "%d%%", (v) => { eq.saturation = v; });
+		add_effect (grid, ref n, _("Limiter"), 0, 100, eq.limiter, _("A ceiling for the peaks, so loud parts don't clip"), "%d%%", (v) => { eq.limiter = v; });
+		add_effect (grid, ref n, _("Compressor"), 0, 100, eq.compressor, _("Holds down the loudest parts, for an even level"), "%d%%", (v) => { eq.compressor = v; });
+		add_effect (grid, ref n, _("Reverb"), 0, 100, eq.reverb, _("Adds the sound of a room"), "%d%%", (v) => { eq.reverb = v; });
+
+		var crossfeed = new CheckButton.with_label (_("Crossfeed"));
+		crossfeed.tooltip_text = _("For headphones: each ear hears a little of the other channel, as with speakers");
+		crossfeed.active = eq.crossfeed;
+		crossfeed.toggled.connect (() => { eq.crossfeed = crossfeed.active; App.playback.apply_effects (); });
+		grid.attach (crossfeed, 0, n / 2, 6, 1);
+		return grid;
+	}
+
+	/** One effect: its label, slider and readout, in the left column (n even) or the right one (n odd) */
+	void add_effect (Grid grid, ref int n, string title, int min, int max, int value, string tip, string format, EffectSet set) {
+		int col = (n % 2) * 3, row = n / 2;
+		var label = new Label (title) { xalign = 1 };
+		var slider = new Scale.with_range (Orientation.HORIZONTAL, min, max, 1) { draw_value = false, hexpand = true };
+		slider.set_size_request (160, -1);
+		slider.set_value (value);
+		var readout = new Label (format.printf (value)) { width_chars = 6, xalign = 1 };
+		label.tooltip_text = slider.tooltip_text = tip;
+		slider.value_changed.connect (() => {
+			int v = (int) slider.get_value ();
+			readout.label = format.printf (v);
+			set (v);
+			App.playback.apply_effects ();
+		});
+		grid.attach (label, col, row, 1, 1);
+		grid.attach (slider, col + 1, row, 1, 1);
+		grid.attach (readout, col + 2, row, 1, 1);
+		n++;
 	}
 
 	void volume_changed() {

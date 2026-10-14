@@ -1,4 +1,4 @@
-project('beatbox', 'vala', 'c', version: '0.99.44')
+project('beatbox', 'vala', 'c', version: '0.99.45')
 
 gnome = import('gnome')
 i18n = import('i18n')
@@ -305,7 +305,6 @@ app_sources = files(
   'src/Windows/Editors/StationEditor.vala',
   'src/Windows/Editors/InfoViewport.vala',
   'src/Windows/EqualizerWindow.vala',
-  'src/Windows/EffectsWindow.vala',
   'src/Windows/PreferencesWindow.vala',
   'src/Windows/PlaylistNameWindow.vala',
   'src/Windows/AddPodcastWindow.vala',
