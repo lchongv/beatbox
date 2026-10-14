@@ -67,6 +67,9 @@ public class BeatBox.Pipeline : GLib.Object {
 	dynamic Element? saturator_el = null;
 	dynamic Element? limiter_el = null;
 	dynamic Element? compressor_el = null;
+	dynamic Element? chorus_el = null;
+	dynamic Element? flanger_el = null;
+	dynamic Element? phaser_el = null;
 	dynamic Element? reverb_el = null;
 	dynamic Element? selector = null;   // crossfeed on or off: which of the two paths is heard
 	Pad? direct_pad = null;
@@ -209,8 +212,11 @@ public class BeatBox.Pipeline : GLib.Object {
 		saturator_el = ElementFactory.make("calf-sourceforge-net-plugins-Saturator", "saturation");
 		limiter_el = ElementFactory.make("calf-sourceforge-net-plugins-Limiter", "limiter");
 		compressor_el = ElementFactory.make("audiodynamic", "compressor");
+		chorus_el = ElementFactory.make("calf-sourceforge-net-plugins-MultiChorus", "chorus");
+		flanger_el = ElementFactory.make("calf-sourceforge-net-plugins-Flanger", "flanger");
+		phaser_el = ElementFactory.make("calf-sourceforge-net-plugins-Phaser", "phaser");
 		reverb_el = ElementFactory.make("freeverb", "reverb");
-		foreach (var e in new Gst.Element[] { echo_el, karaoke_el, bass_el, exciter_el, stereo_el, saturator_el, limiter_el, compressor_el, reverb_el }) {
+		foreach (var e in new Gst.Element[] { echo_el, karaoke_el, bass_el, exciter_el, stereo_el, saturator_el, limiter_el, compressor_el, chorus_el, flanger_el, phaser_el, reverb_el }) {
 			if (e == null)
 				continue;
 			// a convert in front of each: the LV2 plugins take float stereo, the rest whatever comes
@@ -252,13 +258,20 @@ public class BeatBox.Pipeline : GLib.Object {
 		(effects_out ?? eq_audioconvert2).link(audiosink);
 	}
 
+	/** A Calf effect that mixes wet and dry: 0 is the sound as it is, 1 all of the effect */
+	static void set_calf_mix(dynamic Element e, int value) {
+		double wet = value / 100.0;
+		e.amount = wet;
+		e.dry = 1.0 - wet;
+	}
+
 	/** Sets the effects from Settings (also the ones of a song that starts playing now) */
 	public void apply_effects() {
 		var s = App.settings.equalizer;
 		if (echo_el != null) {
-			echo_el.delay = 350 * (uint64) Gst.MSECOND;
+			echo_el.delay = s.echo_delay * (uint64) Gst.MSECOND;
 			echo_el.intensity = 0.6 * s.echo / 100.0;
-			echo_el.feedback = 0.4 * s.echo / 100.0;
+			echo_el.feedback = s.echo_feedback / 100.0;
 		}
 		if (karaoke_el != null)
 			karaoke_el.level = s.vocal_reduction / 100.0;
@@ -277,10 +290,17 @@ public class BeatBox.Pipeline : GLib.Object {
 			compressor_el.threshold = 1.0 - 0.6 * amount; // linear: 1.0 is no compression
 			compressor_el.ratio = 1.0 - 0.5 * amount;     // below 1: the part over the threshold is held down
 		}
+		if (chorus_el != null)
+			set_calf_mix (chorus_el, s.chorus);
+		if (flanger_el != null)
+			set_calf_mix (flanger_el, s.flanger);
+		if (phaser_el != null)
+			set_calf_mix (phaser_el, s.phaser);
 		if (reverb_el != null) {
 			double room = s.reverb / 100.0;
 			reverb_el.level = 0.4 * room;
-			reverb_el.room_size = 0.3 + 0.5 * room;
+			reverb_el.room_size = 0.3 + 0.5 * s.reverb_room / 100.0;
+			reverb_el.damping = s.reverb_damping / 100.0;
 		}
 		if (preamp != null)
 			preamp.volume = Math.pow(10, s.preamp_db / 20.0);

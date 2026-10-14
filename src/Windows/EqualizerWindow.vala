@@ -33,6 +33,9 @@ public class BeatBox.EqualizerWindow : Gtk.Window {
 	private PresetList preset_combo;
 	private Entry new_preset_entry;
 	private Button close_button;
+	private ComboBoxText effects_preset;
+	private Box effects_box;
+	private Grid effects_table;
 
 	private bool apply_changes;
 	private bool initialized;
@@ -170,7 +173,11 @@ public class BeatBox.EqualizerWindow : Gtk.Window {
 
 		scales.vexpand = true;
 		inner_box.add(UI.wrap_alignment(scales, 10, 12, 10, 12));
-		inner_box.add(UI.wrap_alignment(effects_grid(), 0, 12, 4, 12));
+		effects_box = new Box(Orientation.VERTICAL, 6);
+		effects_box.add(effects_preset_row());
+		effects_table = effects_grid();
+		effects_box.add(effects_table);
+		inner_box.add(UI.wrap_alignment(effects_box, 0, 12, 4, 12));
 		inner_box.add(UI.wrap_alignment(bottom_toolbar, 0, 0, 10, 0));
 
 		inner_box.hexpand = true;
@@ -208,6 +215,42 @@ public class BeatBox.EqualizerWindow : Gtk.Window {
 	/** The effects after the equalizer (Settings equalizer), two columns of sliders: 0 leaves the sound as it is */
 	delegate void EffectSet (int value);
 
+	/** A row with the effect presets; "Custom" is shown when the sliders were moved by hand */
+	Box effects_preset_row() {
+		effects_preset = new ComboBoxText () { tooltip_text = _("Sets all the effects below at once") };
+		effects_preset.append_text (_("Custom"));
+		foreach (var name in App.settings.equalizer.effect_preset_names())
+			effects_preset.append_text (preset_label (name));
+		effects_preset.active = 0;
+		effects_preset.changed.connect (() => {
+			if (effects_preset.active == 0)
+				return;
+			App.settings.equalizer.apply_effect_preset (App.settings.equalizer.effect_preset_names()[effects_preset.active - 1]);
+			effects_box.remove (effects_table);
+			effects_table = effects_grid ();
+			effects_box.add (effects_table);
+			effects_table.show_all ();
+			App.playback.apply_effects ();
+		});
+		var row = new Box (Orientation.HORIZONTAL, 6);
+		row.add (new Label (_("Effects preset")));
+		row.add (effects_preset);
+		return row;
+	}
+
+	/** The name of a preset in Settings, as the window shows it */
+	static string preset_label (string name) {
+		switch (name) {
+			case "Concert hall": return _("Concert hall");
+			case "Headphones": return _("Headphones");
+			case "Podcast": return _("Podcast");
+			case "Warm": return _("Warm");
+			case "Space": return _("Space");
+			case "Vocal cut": return _("Vocal cut");
+			default: return name;
+		}
+	}
+
 	Grid effects_grid() {
 		var eq = App.settings.equalizer;
 		var grid = new Grid () { row_spacing = 6, column_spacing = 10 };
@@ -221,13 +264,27 @@ public class BeatBox.EqualizerWindow : Gtk.Window {
 		add_effect (grid, ref n, _("Saturation"), 0, 100, eq.saturation, _("Warmth, with a little distortion"), "%d%%", (v) => { eq.saturation = v; });
 		add_effect (grid, ref n, _("Limiter"), 0, 100, eq.limiter, _("A ceiling for the peaks, so loud parts don't clip"), "%d%%", (v) => { eq.limiter = v; });
 		add_effect (grid, ref n, _("Compressor"), 0, 100, eq.compressor, _("Holds down the loudest parts, for an even level"), "%d%%", (v) => { eq.compressor = v; });
+		add_effect (grid, ref n, _("Chorus"), 0, 100, eq.chorus, _("Copies of the sound, slightly out of tune, so it sounds thicker"), "%d%%", (v) => { eq.chorus = v; });
+		add_effect (grid, ref n, _("Flanger"), 0, 100, eq.flanger, _("A short delay that sweeps up and down, like a jet passing"), "%d%%", (v) => { eq.flanger = v; });
+		add_effect (grid, ref n, _("Phaser"), 0, 100, eq.phaser, _("Sweeping notches in the sound, like a slow wah"), "%d%%", (v) => { eq.phaser = v; });
 		add_effect (grid, ref n, _("Reverb"), 0, 100, eq.reverb, _("Adds the sound of a room"), "%d%%", (v) => { eq.reverb = v; });
 
 		var crossfeed = new CheckButton.with_label (_("Crossfeed"));
 		crossfeed.tooltip_text = _("For headphones: each ear hears a little of the other channel, as with speakers");
 		crossfeed.active = eq.crossfeed;
-		crossfeed.toggled.connect (() => { eq.crossfeed = crossfeed.active; App.playback.apply_effects (); });
+		crossfeed.toggled.connect (() => { eq.crossfeed = crossfeed.active; effects_preset.active = 0; App.playback.apply_effects (); });
 		grid.attach (crossfeed, 0, n / 2, 6, 1);
+
+		// the settings of the effects above, for those who want to shape them
+		var details = new Grid () { row_spacing = 6, column_spacing = 10 };
+		int d = 0;
+		add_effect (details, ref d, _("Echo delay"), 50, 1000, eq.echo_delay, _("Time between the repeats"), "%d ms", (v) => { eq.echo_delay = v; });
+		add_effect (details, ref d, _("Echo feedback"), 0, 100, eq.echo_feedback, _("How many repeats are heard, fading"), "%d%%", (v) => { eq.echo_feedback = v; });
+		add_effect (details, ref d, _("Room size"), 0, 100, eq.reverb_room, _("Size of the simulated room"), "%d%%", (v) => { eq.reverb_room = v; });
+		add_effect (details, ref d, _("Damping"), 0, 100, eq.reverb_damping, _("How much the highs fade in the room: more is warmer"), "%d%%", (v) => { eq.reverb_damping = v; });
+		var expander = new Expander (_("Details")) { margin_top = 6 };
+		expander.add (details);
+		grid.attach (expander, 0, n / 2 + 1, 6, 1);
 		return grid;
 	}
 
@@ -244,6 +301,7 @@ public class BeatBox.EqualizerWindow : Gtk.Window {
 			int v = (int) slider.get_value ();
 			readout.label = format.printf (v);
 			set (v);
+			effects_preset.active = 0;
 			App.playback.apply_effects ();
 		});
 		grid.attach (label, col, row, 1, 1);
