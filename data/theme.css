@@ -233,6 +233,9 @@ actionbar.app-statusbar > revealer > box {
   padding: 3px 6px;
 }
 actionbar.app-statusbar label { color: #1a1a1a; text-shadow: 0 1px 0 alpha(white, .5); }
+/* the bar's toggle (song information) is a bare icon, like the equalizer's */
+actionbar.app-statusbar button { background: none; border: none; box-shadow: none; color: #1a1a1a; }
+actionbar.app-statusbar button:checked, actionbar.app-statusbar button:hover { background-image: linear-gradient(to bottom, #cfcfcf, #b4b4b4); border-radius: 4px; }
 
 /* ===== Equalizer: tall, clearly visible sliders ===== */
 window.equalizer scale.vertical trough {

@@ -486,7 +486,9 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		});
 		
 		reportButton = new ToggleButton();
-		reportButton.image = App.icons.INFO.render_image(IconSize.MENU);
+		var info_image = App.icons.INFO.render_image(IconSize.MENU);
+		StatusBar.follow_text_color(info_image); // dark on the bar, like the other icons there
+		reportButton.image = info_image;
 		reportButton.relief = ReliefStyle.NONE;
 		reportButton.focus_on_click = false;
 		reportButton.tooltip_text = _("Information about the song playing (Ctrl+Shift+I)");

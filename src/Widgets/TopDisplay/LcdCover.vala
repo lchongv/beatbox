@@ -15,6 +15,8 @@ public class BeatBox.LcdCover : Image {
 
 	Gdk.Pixbuf? source = null;  // the cover, unscaled
 	int side = 0;               // current size of the rendered square
+	Gdk.Pixbuf? picture = null; // the playing song's own picture, when its file has one
+	string picture_uri = "";    // the file picture was read from (or is being read from)
 
 	public LcdCover () {
 		no_show_all = true;
@@ -49,11 +51,33 @@ public class BeatBox.LcdCover : Image {
 			return;
 		}
 
+		// the song's own picture when its file has one, else the album's cover
+		if (m.uri != picture_uri) {
+			picture_uri = m.uri;
+			picture = null;
+			string uri = m.uri;
+			try {
+				new Thread<void*>.try (null, () => {
+					var found = TrackReport.front_picture (uri);
+					Idle.add (() => {
+						if (picture_uri == uri) {
+							picture = found;
+							refresh ();
+						}
+						return Source.REMOVE;
+					});
+					return null;
+				});
+			} catch (Error err) {}
+		}
+		source = picture;
+
 		// The original file in the cache looks better than the framed 180 px version
-		source = null;
-		try {
-			source = new Gdk.Pixbuf.from_file (App.covers.get_cached_album_art_path (App.covers.get_media_coverart_key (m)));
-		} catch (Error err) {}
+		if (source == null) {
+			try {
+				source = new Gdk.Pixbuf.from_file (App.covers.get_cached_album_art_path (App.covers.get_media_coverart_key (m)));
+			} catch (Error err) {}
+		}
 
 		if (source == null) {
 			var framed = App.covers.get_album_art_from_media (m) ?? App.covers.DEFAULT_COVER_SHADOW;
@@ -93,11 +117,15 @@ public class BeatBox.LcdCover : Image {
 		return source != null ? source.scale_simple (64, 64, Gdk.InterpType.BILINEAR) : null;
 	}
 
-	/** The cover at full size in a borderless window: drag it anywhere, wheel or +/- zooms,
-	 *  0 goes back to the first size, double-click or Esc closes it */
+	/** The cover at full size (see show_picture) */
 	public void show_full_size (Gtk.Window parent) {
-		if (source == null)
-			return;
+		if (source != null)
+			show_picture (parent, source, App.playback.current_media.album);
+	}
+
+	/** A picture at full size in a borderless window: drag it anywhere, wheel or +/- zooms,
+	 *  0 goes back to the first size, double-click or Esc closes it */
+	public static void show_picture (Gtk.Window parent, Gdk.Pixbuf source, string title) {
 		var area = parent.get_display ().get_monitor_at_window (parent.get_window ()).get_workarea ();
 		int max = (int)(int.min (area.width, area.height) * 0.8);
 		double fit = double.min (1.0, double.min ((double)max / source.width, (double)max / source.height));
@@ -108,7 +136,7 @@ public class BeatBox.LcdCover : Image {
 		win.decorated = false;
 		win.transient_for = parent;
 		win.window_position = WindowPosition.CENTER_ON_PARENT;
-		win.title = App.playback.current_media.album;
+		win.title = title;
 		win.add (image);
 		// ponytail: rescales the whole pixbuf on each step; fine up to the 2.5x cap
 		ZoomFunc set_zoom = (z) => {
