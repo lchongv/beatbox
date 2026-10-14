@@ -116,5 +116,6 @@ public interface BeatBox.PlaybackInterface : GLib.Object {
 	// Equalizer
 	public abstract void apply_equalizer_preset();
 	public abstract void setEqualizerGain(int index, int val);
+	public abstract void apply_effects(); // preamp, compressor, reverb and crossfeed (Settings equalizer)
 	public abstract void want_spectrum(bool wanted); // spectrum_update runs only while some view wants it
 }

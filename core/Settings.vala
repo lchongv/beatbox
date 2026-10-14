@@ -373,9 +373,31 @@ public class BeatBox.Settings {
         public string[] default_presets { get; set;}
         public int volume { get; set;}
         public int replaygain { get; set; } // 0 off, 1 track, 2 album (BeatBox.ReplayGain)
-        
+        public int preamp_db { get; set; }  // -12..0: lowered before the equalizer, so boosts don't clip
+        public int compressor { get; set; } // 0..100: how much the loud parts are held down
+        public int reverb { get; set; }     // 0..100: how much room there is around the sound
+        public bool crossfeed { get; set; } // headphones: each ear hears a little of the other channel
+        public int echo { get; set; }             // 0..100: repeats of the sound
+        public int vocal_reduction { get; set; }  // 0..100: takes out what is in the middle (usually the voice)
+        public int bass { get; set; }             // 0..100: harmonics that make the bass heard on small speakers
+        public int exciter { get; set; }          // 0..100: adds brightness to the high frequencies
+        public int stereo_width { get; set; }     // 0..100: spreads the stereo image
+        public int saturation { get; set; }       // 0..100: warmth, a little distortion
+        public int limiter { get; set; }          // 0..100: a ceiling for the peaks
+
         public Equalizer () {
             replaygain = 1;
+            preamp_db = 0;
+            compressor = 0;
+            reverb = 0;
+            crossfeed = false;
+            echo = 0;
+            vocal_reduction = 0;
+            bass = 0;
+            exciter = 0;
+            stereo_width = 0;
+            saturation = 0;
+            limiter = 0;
             auto_switch_preset = true;
             selected_preset = "";
             custom_presets = {};

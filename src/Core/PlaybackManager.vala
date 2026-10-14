@@ -812,6 +812,10 @@ public class BeatBox.PlaybackManager : GLib.Object, BeatBox.PlaybackInterface {
 			player.setEqualizerGain(i, chosen != null ? chosen.getGain(i) : 0);
 	}
 	
+	public void apply_effects() {
+		player.apply_effects();
+	}
+
 	public void setEqualizerGain(int index, int val) {
 		player.setEqualizerGain(index, val);
 	}

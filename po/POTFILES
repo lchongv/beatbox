@@ -74,6 +74,7 @@ src/Widgets/TopDisplay/TimeScale.vala
 src/Widgets/TrackReport.vala
 src/Windows/AddPodcastWindow.vala
 src/Windows/DirectoryDialog.vala
+src/Windows/EffectsWindow.vala
 src/Windows/Editors/FieldEditorImpl.vala
 src/Windows/Editors/InfoViewport.vala
 src/Windows/Editors/MediaEditor.vala
