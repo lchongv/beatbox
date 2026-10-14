@@ -41,7 +41,8 @@ public class BeatBox.StatusBar : Gtk.ActionBar {
 	SimpleOptionChooser repeat_chooser;
 	Image show_eq_button;
 
-    static void follow_text_color (Image image) {
+    /** The icon is painted in the text color, so the skin's bar recolors it */
+    public static void follow_text_color (Image image) {
         image.draw.connect ((cr) => {
             if (image.storage_type != ImageType.PIXBUF)
                 return false;

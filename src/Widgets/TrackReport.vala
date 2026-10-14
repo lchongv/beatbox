@@ -25,7 +25,8 @@ public class BeatBox.TrackReport : ScrolledWindow {
 		public uint bitrate = 0;      // kbps, the average: size over length
 		public string[] format = {};  // label, value, label, value...
 		public string[] tags = {};
-		public Gdk.Pixbuf[] images = {};
+		public Gdk.Pixbuf[] images = {};      // thumbnails of the pictures
+		public Gdk.Pixbuf[] full_images = {}; // the pictures as they are in the file
 		public string[] image_texts = {};
 		public string? error = null;
 	}
@@ -120,7 +121,16 @@ public class BeatBox.TrackReport : ScrolledWindow {
 			add_section (null, { _("None"), "" });
 		for (int i = 0; i < facts.images.length; i++) {
 			var row = new Box (Orientation.HORIZONTAL, 8);
-			row.add (new Image.from_pixbuf (facts.images[i]));
+			// a click shows the picture at full size
+			var picture = new EventBox ();
+			picture.add (new Image.from_pixbuf (facts.images[i]));
+			picture.tooltip_text = _("Click to enlarge");
+			var full = facts.full_images[i];
+			picture.button_press_event.connect (() => {
+				LcdCover.show_picture ((Gtk.Window) picture.get_toplevel (), full, _("Embedded picture"));
+				return true;
+			});
+			row.add (picture);
 			var text = new Label (facts.image_texts[i]);
 			text.xalign = 0;
 			text.wrap = true;
@@ -203,6 +213,46 @@ public class BeatBox.TrackReport : ScrolledWindow {
 	const string[] LOSSLESS = { "audio/x-flac", "audio/x-alac", "audio/x-wavpack", "audio/x-raw", "audio/x-ape", "audio/x-tta", "audio/x-true-hd" };
 
 	/** Blocking */
+	/** The front cover embedded in the file at uri (else its first picture); null when it has none. Blocking */
+	public static Gdk.Pixbuf? front_picture (string uri) {
+		Gst.PbUtils.DiscovererInfo info;
+		try {
+			info = new Gst.PbUtils.Discoverer (10 * Gst.SECOND).discover_uri (uri);
+		} catch (Error err) {
+			return null;
+		}
+		var tags = GStreamerTagger.all_tags (info);
+		if (tags == null)
+			return null;
+		Gdk.Pixbuf? first = null;
+		for (int i = 0; ; i++) {
+			Gst.Sample sample;
+			if (!tags.get_sample_index (Gst.Tags.IMAGE, i, out sample))
+				break;
+			var buffer = sample.get_buffer ();
+			Gst.MapInfo map = {};
+			if (buffer == null || !buffer.map (out map, Gst.MapFlags.READ))
+				continue;
+			Gdk.Pixbuf? pix = null;
+			try {
+				var loader = new Gdk.PixbufLoader ();
+				loader.write (map.data);
+				loader.close ();
+				pix = loader.get_pixbuf ();
+			} catch (Error err) {}
+			buffer.unmap (map);
+			if (pix == null)
+				continue;
+			unowned Gst.Structure? s = sample.get_info ();
+			int type = 0;
+			if (s != null && s.get_enum ("image-type", typeof (Gst.Tag.ImageType), out type) && type == Gst.Tag.ImageType.FRONT_COVER)
+				return pix;
+			if (first == null)
+				first = pix;
+		}
+		return first;
+	}
+
 	public static FileFacts read_file (string uri, int thumb = 96) {
 		var facts = new FileFacts ();
 		Gst.PbUtils.DiscovererInfo info;
@@ -287,6 +337,7 @@ public class BeatBox.TrackReport : ScrolledWindow {
 			facts.tags = t;
 
 			Gdk.Pixbuf[] thumbs = {};
+			Gdk.Pixbuf[] fulls = {};
 			string[] texts = {};
 			foreach (var sample in images.data) {
 				var buffer = sample.get_buffer ();
@@ -310,11 +361,13 @@ public class BeatBox.TrackReport : ScrolledWindow {
 						texts += "%s\n%d × %d px, %s".printf (kind, pix.width, pix.height, format_size (map.size));
 						double k = double.min (1.0, (double) thumb / int.max (pix.width, pix.height));
 						thumbs += pix.scale_simple (int.max (1, (int)(pix.width * k)), int.max (1, (int)(pix.height * k)), Gdk.InterpType.BILINEAR);
+						fulls += pix;
 					}
 				} catch (Error err) {}
 				buffer.unmap (map);
 			}
 			facts.images = thumbs;
+			facts.full_images = fulls;
 			facts.image_texts = texts;
 		}
 		return facts;
