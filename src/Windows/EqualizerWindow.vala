@@ -273,7 +273,7 @@ public class BeatBox.EqualizerWindow : Gtk.Window {
 		crossfeed.tooltip_text = _("For headphones: each ear hears a little of the other channel, as with speakers");
 		crossfeed.active = eq.crossfeed;
 		crossfeed.toggled.connect (() => { eq.crossfeed = crossfeed.active; effects_preset.active = 0; App.playback.apply_effects (); });
-		grid.attach (crossfeed, 0, n / 2, 6, 1);
+		int next_row = (n + 1) / 2; // after the last effect, whichever column it is in
 
 		// the settings of the effects above, for those who want to shape them
 		var details = new Grid () { row_spacing = 6, column_spacing = 10 };
@@ -284,7 +284,8 @@ public class BeatBox.EqualizerWindow : Gtk.Window {
 		add_effect (details, ref d, _("Damping"), 0, 100, eq.reverb_damping, _("How much the highs fade in the room: more is warmer"), "%d%%", (v) => { eq.reverb_damping = v; });
 		var expander = new Expander (_("Details")) { margin_top = 6 };
 		expander.add (details);
-		grid.attach (expander, 0, n / 2 + 1, 6, 1);
+		grid.attach (crossfeed, 0, next_row, 6, 1);
+		grid.attach (expander, 0, next_row + 1, 6, 1);
 		return grid;
 	}
 
