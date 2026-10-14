@@ -58,6 +58,19 @@ public class BeatBox.Pipeline : GLib.Object {
 	dynamic Element audiosinkqueue;
 	dynamic Element eq_audioconvert;
 	dynamic Element eq_audioconvert2; 
+	// the effects after the equalizer (build_effects); null when the plugin is missing
+	dynamic Element? echo_el = null;
+	dynamic Element? karaoke_el = null;
+	dynamic Element? bass_el = null;
+	dynamic Element? exciter_el = null;
+	dynamic Element? stereo_el = null;
+	dynamic Element? saturator_el = null;
+	dynamic Element? limiter_el = null;
+	dynamic Element? compressor_el = null;
+	dynamic Element? reverb_el = null;
+	dynamic Element? selector = null;   // crossfeed on or off: which of the two paths is heard
+	Pad? direct_pad = null;
+	Pad? crossfeed_pad = null;
 	 
 	public dynamic Gst.Element playbin;
 	dynamic Gst.Element audiotee;
@@ -88,6 +101,7 @@ public class BeatBox.Pipeline : GLib.Object {
 			preamp = ElementFactory.make("volume", "preamp");
 			
 			((Gst.Bin)audiobin).add_many(eq.element, eq_audioconvert, eq_audioconvert2, preamp);
+			build_effects();
 		}
 		
 		((Gst.Bin)audiobin).add_many(audiotee, audiosinkqueue, audiosink);
@@ -101,10 +115,13 @@ public class BeatBox.Pipeline : GLib.Object {
 		else
 			audiobin.add_pad(new GhostPad("sink", audiotee.get_static_pad("sink")));
 		
-		if (eq.element != null)
-			audiosinkqueue.link_many(eq_audioconvert, preamp, eq.element, eq_audioconvert2, audiosink);
+		if (eq.element != null) {
+			audiosinkqueue.link_many(eq_audioconvert, preamp, eq.element, eq_audioconvert2);
+			link_effects_to_sink();
+		}
 		else
 			audiosinkqueue.link_many(audiosink); // link the queue with the real audio sink
+		apply_effects();
 		
 		/* The spectrum on a branch of its own, ending in a sink that keeps the clock: its
 		 * messages come as the sound is heard (in line, before the audio sink's buffer, they
@@ -177,6 +194,100 @@ public class BeatBox.Pipeline : GLib.Object {
 		
 	}*/
 	
+	/* The effects between the equalizer and the sink, in the order they are heard. Each one is
+	 * neutral at 0 (echo intensity 0, karaoke level 0, Calf amounts 0, limit 1, reverb level 0,
+	 * compressor ratio 1), so an idle effect costs nothing. A plugin that is not installed (the
+	 * Calf ones are LV2) is skipped. Crossfeed has no neutral setting: both paths exist and a
+	 * selector picks one. */
+	void build_effects() {
+		var chain = new Gee.ArrayList<Gst.Element> ();
+		echo_el = ElementFactory.make("audioecho", "echo");
+		karaoke_el = ElementFactory.make("audiokaraoke", "vocal-reduction");
+		bass_el = ElementFactory.make("calf-sourceforge-net-plugins-BassEnhancer", "bass-enhancer");
+		exciter_el = ElementFactory.make("calf-sourceforge-net-plugins-Exciter", "exciter");
+		stereo_el = ElementFactory.make("calf-sourceforge-net-plugins-StereoTools", "stereo-width");
+		saturator_el = ElementFactory.make("calf-sourceforge-net-plugins-Saturator", "saturation");
+		limiter_el = ElementFactory.make("calf-sourceforge-net-plugins-Limiter", "limiter");
+		compressor_el = ElementFactory.make("audiodynamic", "compressor");
+		reverb_el = ElementFactory.make("freeverb", "reverb");
+		foreach (var e in new Gst.Element[] { echo_el, karaoke_el, bass_el, exciter_el, stereo_el, saturator_el, limiter_el, compressor_el, reverb_el }) {
+			if (e == null)
+				continue;
+			// a convert in front of each: the LV2 plugins take float stereo, the rest whatever comes
+			chain.add(ElementFactory.make("audioconvert", null));
+			chain.add(e);
+		}
+		chain.add(ElementFactory.make("audioconvert", null));
+
+		foreach (var e in chain) ((Gst.Bin)audiobin).add(e);
+		Gst.Element last = eq_audioconvert2;
+		foreach (var e in chain) { last.link(e); last = e; }
+		effects_out = last;
+
+		dynamic Element? bs2b = ElementFactory.make("bs2b", "crossfeed");
+		dynamic Element? sel = ElementFactory.make("input-selector", "crossfeed-select");
+		if (bs2b == null || sel == null)
+			return; // no crossfeed: the chain goes straight to the sink
+		dynamic Element tee = ElementFactory.make("tee", null);
+		dynamic Element direct_queue = ElementFactory.make("queue", null);
+		dynamic Element crossfeed_queue = ElementFactory.make("queue", null);
+		dynamic Element after = ElementFactory.make("audioconvert", null);
+		((Gst.Bin)audiobin).add_many(tee, direct_queue, crossfeed_queue, bs2b, sel, after);
+		last.link(tee);
+		tee.request_pad_simple("src_%u").link(direct_queue.get_static_pad("sink"));
+		tee.request_pad_simple("src_%u").link(crossfeed_queue.get_static_pad("sink"));
+		direct_pad = sel.request_pad_simple("sink_%u");
+		direct_queue.get_static_pad("src").link(direct_pad);
+		crossfeed_queue.link(bs2b);
+		crossfeed_pad = sel.request_pad_simple("sink_%u");
+		bs2b.get_static_pad("src").link(crossfeed_pad);
+		sel.link(after);
+		selector = sel;
+		effects_out = after;
+	}
+
+	Gst.Element? effects_out = null; // the last element before the sink, once build_effects ran
+
+	void link_effects_to_sink() {
+		(effects_out ?? eq_audioconvert2).link(audiosink);
+	}
+
+	/** Sets the effects from Settings (also the ones of a song that starts playing now) */
+	public void apply_effects() {
+		var s = App.settings.equalizer;
+		if (echo_el != null) {
+			echo_el.delay = 350 * (uint64) Gst.MSECOND;
+			echo_el.intensity = 0.6 * s.echo / 100.0;
+			echo_el.feedback = 0.4 * s.echo / 100.0;
+		}
+		if (karaoke_el != null)
+			karaoke_el.level = s.vocal_reduction / 100.0;
+		if (bass_el != null)
+			bass_el.amount = 12.0 * s.bass / 100.0;     // Calf's range is 0..64; 1 is its default
+		if (exciter_el != null)
+			exciter_el.amount = 12.0 * s.exciter / 100.0;
+		if (stereo_el != null)
+			stereo_el.stereo_base = s.stereo_width / 100.0;
+		if (saturator_el != null)
+			saturator_el.mix = s.saturation / 100.0;
+		if (limiter_el != null)
+			limiter_el.limit = 1.0 - 0.9 * s.limiter / 100.0; // linear: 1 is no limiting
+		if (compressor_el != null) {
+			double amount = s.compressor / 100.0;
+			compressor_el.threshold = 1.0 - 0.6 * amount; // linear: 1.0 is no compression
+			compressor_el.ratio = 1.0 - 0.5 * amount;     // below 1: the part over the threshold is held down
+		}
+		if (reverb_el != null) {
+			double room = s.reverb / 100.0;
+			reverb_el.level = 0.4 * room;
+			reverb_el.room_size = 0.3 + 0.5 * room;
+		}
+		if (preamp != null)
+			preamp.volume = Math.pow(10, s.preamp_db / 20.0);
+		if (selector != null)
+			selector.active_pad = s.crossfeed ? crossfeed_pad : direct_pad;
+	}
+
 	/** The probes capture nothing, so the pipeline isn't kept alive by its own pad */
 	public void want_spectrum(bool wanted) {
 		if(spectrum_in == null || wanted == (spectrum_drop == 0))

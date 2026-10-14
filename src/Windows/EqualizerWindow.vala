@@ -33,6 +33,7 @@ public class BeatBox.EqualizerWindow : Gtk.Window {
 	private PresetList preset_combo;
 	private Entry new_preset_entry;
 	private Button close_button;
+	private EffectsWindow? effects = null;
 
 	private bool apply_changes;
 	private bool initialized;
@@ -116,6 +117,8 @@ public class BeatBox.EqualizerWindow : Gtk.Window {
 			var label = new Label(decibels[index]);
 
 			v.vexpand = true;
+			v.tooltip_text = gain_text(0);
+			v.value_changed.connect(() => { v.tooltip_text = gain_text(v.get_value()); });
 			holder.add(v);
 			holder.add(UI.wrap_alignment(label, 4, 0, 0, 0));
 
@@ -153,6 +156,14 @@ public class BeatBox.EqualizerWindow : Gtk.Window {
 		new_preset_entry.set_icon_tooltip_text(Gtk.EntryIconPosition.SECONDARY, _("Save preset"));
 		
 		close_button = new Button.with_label(_("Done"));
+		var effects_button = new Button.with_label(_("Effects…"));
+		effects_button.clicked.connect(() => {
+			if (effects == null) {
+				effects = new EffectsWindow();
+				effects.destroy.connect(() => { effects = null; });
+			}
+			effects.present();
+		});
 		
 		var bottom_toolbar = new ButtonBox(Orientation.HORIZONTAL);
 		bottom_toolbar.set_layout(ButtonBoxStyle.END);
@@ -160,6 +171,7 @@ public class BeatBox.EqualizerWindow : Gtk.Window {
 		bottom_toolbar.add(eq_switch);
 		bottom_toolbar.add(preset_combo);
 		bottom_toolbar.add(new_preset_entry);
+		bottom_toolbar.add(effects_button);
 		bottom_toolbar.add(close_button);
 		
 		((Gtk.ButtonBox)bottom_toolbar).set_child_secondary(eq_switch, true);
@@ -196,6 +208,12 @@ public class BeatBox.EqualizerWindow : Gtk.Window {
 		new_preset_entry.visible = false;
 	}
 	
+	/** The band's gain in dB, as setGain sets it: the slider's 80 steps are +9.6 dB up, -19.2 dB down */
+	static string gain_text(double value) {
+		double db = (value < 0) ? value * 0.24 : value * 0.12;
+		return "%+.1f dB".printf(db);
+	}
+
 	void volume_changed() {
 		App.playback.set_volume(volume.get_volume());
 	}

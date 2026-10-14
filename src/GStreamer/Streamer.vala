@@ -309,6 +309,10 @@ public class BeatBox.Streamer : GLib.Object {
 	public void setEqualizerGain(int index, int val) {
 		pipe.eq.setGain(index, val);
 	}
+
+	public void apply_effects() {
+		pipe.apply_effects();
+	}
 	
 	public void setVideoEnabled(bool val) {
 		if(pipe.video.element == null)
