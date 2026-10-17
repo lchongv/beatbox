@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beat-box\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-13 22:24-0300\n"
+"POT-Creation-Date: 2026-10-13 23:10-0300\n"
 "PO-Revision-Date: 2013-01-11 14:15+0000\n"
 "Last-Translator: Adolfo Jayme Barrientos <fitoschido@gmail.com>\n"
 "Language-Team: Spanish <es@li.org>\n"
@@ -175,7 +175,7 @@ msgstr "Número de reproducciones"
 #: core/Playlists/SmartQuery.vala:77 src/Lists/DuplicateList.vala:127
 #: src/Lists/GenericList.vala:127 src/Lists/MusicList.vala:168
 #: src/Lists/PodcastList.vala:112 src/Lists/RadioList.vala:79
-#: src/Widgets/TrackReport.vala:183 src/Windows/Editors/PodcastEditor.vala:76
+#: src/Widgets/TrackReport.vala:182 src/Windows/Editors/PodcastEditor.vala:76
 #: src/Windows/Editors/StationEditor.vala:63
 msgid "Rating"
 msgstr "Valoración"
@@ -790,7 +790,7 @@ msgid "Fill In Tags from File Names"
 msgstr "Completar etiquetas desde los nombres de archivo"
 
 #: src/Dialogs/FillTagsDialog.vala:47 src/Widgets/TrackReport.vala:107
-#: src/Widgets/TrackReport.vala:268
+#: src/Widgets/TrackReport.vala:267
 msgid "File"
 msgstr "Archivo"
 
@@ -1267,12 +1267,12 @@ msgid "#"
 msgstr "N.º"
 
 #: src/Lists/DuplicateList.vala:128 src/Lists/GenericList.vala:127
-#: src/Lists/MusicList.vala:169 src/Widgets/TrackReport.vala:181
+#: src/Lists/MusicList.vala:169 src/Widgets/TrackReport.vala:180
 msgid "Plays"
 msgstr "Reproducciones"
 
 #: src/Lists/DuplicateList.vala:129 src/Lists/GenericList.vala:127
-#: src/Lists/MusicList.vala:170 src/Widgets/TrackReport.vala:182
+#: src/Lists/MusicList.vala:170 src/Widgets/TrackReport.vala:181
 msgid "Skips"
 msgstr "Omisiones"
 
@@ -2278,6 +2278,10 @@ msgstr "Buscar podcasts…"
 msgid "Subscribe by Address…"
 msgstr "Suscribirse por dirección…"
 
+#: src/SourceViews/PodcastSourceView.vala:65
+msgid "Sort by Date"
+msgstr "Ordenar por fecha"
+
 #: src/SourceViews/PodcastSourceView.vala:84
 msgid ""
 "Use “Find Podcasts…” above to search the directory, or “Subscribe by "
@@ -2808,7 +2812,7 @@ msgid "Tags in the file"
 msgstr "Etiquetas del archivo"
 
 #: src/Widgets/TrackReport.vala:118 src/Widgets/TrackReport.vala:121
-#: src/Widgets/TrackReport.vala:183 src/Windows/Editors/SongEditor.vala:178
+#: src/Widgets/TrackReport.vala:182 src/Windows/Editors/SongEditor.vala:178
 msgid "None"
 msgstr "Ninguna"
 
@@ -2824,123 +2828,123 @@ msgstr "Clic para ampliar"
 msgid "Embedded picture"
 msgstr "Imagen incrustada"
 
-#: src/Widgets/TrackReport.vala:184
+#: src/Widgets/TrackReport.vala:183
 msgid "Added"
 msgstr "Añadida"
 
-#: src/Widgets/TrackReport.vala:184 plugins/statistics/Statistics.vala:95
+#: src/Widgets/TrackReport.vala:183 plugins/statistics/Statistics.vala:95
 msgid "Unknown"
 msgstr "Desconocida"
 
-#: src/Widgets/TrackReport.vala:185
+#: src/Widgets/TrackReport.vala:184
 msgid "Last played"
 msgstr "Última reproducción"
 
-#: src/Widgets/TrackReport.vala:185 src/Windows/Editors/SongEditor.vala:319
+#: src/Widgets/TrackReport.vala:184 src/Windows/Editors/SongEditor.vala:319
 msgid "Never"
 msgstr "Nunca"
 
-#: src/Widgets/TrackReport.vala:188
+#: src/Widgets/TrackReport.vala:187
 msgid "Edited"
 msgstr "Editada"
 
-#: src/Widgets/TrackReport.vala:192
+#: src/Widgets/TrackReport.vala:191
 msgid "Volume adjustment"
 msgstr "Ajuste de volumen"
 
-#: src/Widgets/TrackReport.vala:196
+#: src/Widgets/TrackReport.vala:195
 msgid "Shuffle"
 msgstr "Aleatorio"
 
-#: src/Widgets/TrackReport.vala:197
+#: src/Widgets/TrackReport.vala:196
 msgid "Skipped when shuffling"
 msgstr "Se omite en reproducción aleatoria"
 
-#: src/Widgets/TrackReport.vala:200
+#: src/Widgets/TrackReport.vala:199
 msgid "Resumes at"
 msgstr "Continúa en"
 
-#: src/Widgets/TrackReport.vala:271
+#: src/Widgets/TrackReport.vala:270
 msgid "Size"
 msgstr "Tamaño"
 
-#: src/Widgets/TrackReport.vala:274
+#: src/Widgets/TrackReport.vala:273
 msgid "File modified"
 msgstr "Archivo modificado"
 
-#: src/Widgets/TrackReport.vala:280
+#: src/Widgets/TrackReport.vala:279
 msgid "Container"
 msgstr "Contenedor"
 
-#: src/Widgets/TrackReport.vala:283
+#: src/Widgets/TrackReport.vala:282
 msgid "Duration"
 msgstr "Duración"
 
-#: src/Widgets/TrackReport.vala:291
+#: src/Widgets/TrackReport.vala:290
 msgid "Codec"
 msgstr "Códec"
 
-#: src/Widgets/TrackReport.vala:291
+#: src/Widgets/TrackReport.vala:290
 msgid "lossless"
 msgstr "sin pérdida"
 
-#: src/Widgets/TrackReport.vala:291
+#: src/Widgets/TrackReport.vala:290
 msgid "lossy"
 msgstr "con pérdida"
 
-#: src/Widgets/TrackReport.vala:293
+#: src/Widgets/TrackReport.vala:292
 msgid "Sample rate"
 msgstr "Frecuencia de muestreo"
 
 #. a lossy one is decoded to whatever depth
-#: src/Widgets/TrackReport.vala:295
+#: src/Widgets/TrackReport.vala:294
 msgid "Bit depth"
 msgstr "Profundidad"
 
-#: src/Widgets/TrackReport.vala:298
+#: src/Widgets/TrackReport.vala:297
 msgid "Mono"
 msgstr "Mono"
 
-#: src/Widgets/TrackReport.vala:298
+#: src/Widgets/TrackReport.vala:297
 msgid "Stereo"
 msgstr "Estéreo"
 
-#: src/Widgets/TrackReport.vala:298
+#: src/Widgets/TrackReport.vala:297
 #, c-format
 msgid "%u channels"
 msgstr "%u canales"
 
-#: src/Widgets/TrackReport.vala:299
+#: src/Widgets/TrackReport.vala:298
 msgid "Channels"
 msgstr "Canales"
 
-#: src/Widgets/TrackReport.vala:314
+#: src/Widgets/TrackReport.vala:313
 #, c-format
 msgid "variable (%u–%u kbps)"
 msgstr "variable (%u–%u kbps)"
 
-#: src/Widgets/TrackReport.vala:316
+#: src/Widgets/TrackReport.vala:315
 #, c-format
 msgid "nominal %u kbps"
 msgstr "nominal %u kbps"
 
-#: src/Widgets/TrackReport.vala:317
+#: src/Widgets/TrackReport.vala:316
 msgid "Bitrate (average)"
 msgstr "Tasa de bits (media)"
 
-#: src/Widgets/TrackReport.vala:353
+#: src/Widgets/TrackReport.vala:352
 msgid "Picture"
 msgstr "Imagen"
 
-#: src/Widgets/TrackReport.vala:358
+#: src/Widgets/TrackReport.vala:357
 msgid "Front cover"
 msgstr "Portada"
 
-#: src/Widgets/TrackReport.vala:358
+#: src/Widgets/TrackReport.vala:357
 msgid "Back cover"
 msgstr "Contraportada"
 
-#: src/Widgets/TrackReport.vala:359
+#: src/Widgets/TrackReport.vala:358
 msgid "Disc"
 msgstr "Disco"
 
@@ -3672,7 +3676,7 @@ msgstr "Guardar preajuste"
 msgid "Sets all the effects below at once"
 msgstr "Aplica a la vez todos los efectos de abajo"
 
-#: src/Windows/EqualizerWindow.vala:221 src/Windows/EqualizerWindow.vala:526
+#: src/Windows/EqualizerWindow.vala:221 src/Windows/EqualizerWindow.vala:527
 msgid "Custom"
 msgstr "Personalizado"
 
@@ -3704,7 +3708,9 @@ msgstr "Preamplificador"
 msgid ""
 "Lowers the level before the effects and the equalizer, so boosts don't "
 "distort"
-msgstr "Baja el nivel antes de los efectos y del ecualizador, para que los realces no distorsionen"
+msgstr ""
+"Baja el nivel antes de los efectos y del ecualizador, para que los realces "
+"no distorsionen"
 
 #: src/Windows/EqualizerWindow.vala:259
 msgid "Echo"
@@ -3722,7 +3728,9 @@ msgstr "Reducción de voz"
 msgid ""
 "Takes out what is in the middle of the stereo image, usually the voice; it "
 "also thins the sound"
-msgstr "Quita lo que está en el centro de la imagen estéreo, normalmente la voz; también adelgaza el sonido"
+msgstr ""
+"Quita lo que está en el centro de la imagen estéreo, normalmente la voz; "
+"también adelgaza el sonido"
 
 #: src/Windows/EqualizerWindow.vala:261
 msgid "Bass enhancer"
@@ -3730,7 +3738,9 @@ msgstr "Realce de graves"
 
 #: src/Windows/EqualizerWindow.vala:261
 msgid "Adds harmonics, so the bass is heard on small speakers and headphones"
-msgstr "Añade armónicos, para que se oigan los graves en altavoces pequeños y auriculares"
+msgstr ""
+"Añade armónicos, para que se oigan los graves en altavoces pequeños y "
+"auriculares"
 
 #: src/Windows/EqualizerWindow.vala:262
 msgid "Exciter"
@@ -3812,7 +3822,8 @@ msgstr "Crossfeed"
 msgid ""
 "For headphones: each ear hears a little of the other channel, as with "
 "speakers"
-msgstr "Para auriculares: cada oído oye un poco del otro canal, como con altavoces"
+msgstr ""
+"Para auriculares: cada oído oye un poco del otro canal, como con altavoces"
 
 #: src/Windows/EqualizerWindow.vala:281
 msgid "Echo delay"
@@ -3846,11 +3857,11 @@ msgstr "Amortiguación"
 msgid "How much the highs fade in the room: more is warmer"
 msgstr "Cuánto se apagan los agudos en la sala: más es más cálido"
 
-#: src/Windows/EqualizerWindow.vala:521
+#: src/Windows/EqualizerWindow.vala:522
 msgid "Custom Preset"
 msgstr "Preajuste personalizado"
 
-#: src/Windows/EqualizerWindow.vala:526
+#: src/Windows/EqualizerWindow.vala:527
 msgid " Preset"
 msgstr " Preajuste"
 
