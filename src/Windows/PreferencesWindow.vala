@@ -82,7 +82,7 @@ public class BeatBox.PreferencesWindow : Gtk.Window {
 		var list_to_content = new Box(Orientation.HORIZONTAL, 0);
 		list_to_content.add(side_bar);
 		notebook_scroll.hexpand = true;
-		list_to_content.add(notebook_scroll);
+		list_to_content.add(AquaScroll.wrap(notebook_scroll));
 		
 		saveChanges = new Button.with_label(_("Done"));
 		

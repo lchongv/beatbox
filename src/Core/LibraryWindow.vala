@@ -455,7 +455,7 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		sideTreeScroll.get_style_context().add_class("sidebar-scroll");
 		sideTreeScroll.add(sideTree);
 		sideTreeScroll.vexpand = true;
-		sideBox.add(sideTreeScroll);
+		sideBox.add(AquaScroll.wrap(sideTreeScroll));
 		
 		// Hide notebook tabs and border
 		mainViews.show_tabs = false;

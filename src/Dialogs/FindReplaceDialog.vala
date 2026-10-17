@@ -90,7 +90,7 @@ public class BeatBox.FindReplaceDialog : Dialog {
 		box.border_width = 8;
 		box.add (grid);
 		box.add (summary);
-		box.add (scroll);
+		box.add (AquaScroll.wrap (scroll));
 		box.show_all ();
 
 		add_button (_("Close"), ResponseType.CLOSE);

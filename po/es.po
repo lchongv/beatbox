@@ -2282,6 +2282,10 @@ msgstr "Suscribirse por dirección…"
 msgid "Sort by Date"
 msgstr "Ordenar por fecha"
 
+#: src/Preferences/BehaviorPreferences.vala
+msgid "Mac OS X Tiger scrollbars (applies on restart)"
+msgstr "Barras de desplazamiento estilo Mac OS X Tiger (se aplican al reiniciar)"
+
 #: src/SourceViews/PodcastSourceView.vala:84
 msgid ""
 "Use “Find Podcasts…” above to search the directory, or “Subscribe by "

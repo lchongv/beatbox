@@ -174,7 +174,7 @@ public class BeatBox.PodcastSummarySection : Box {
 		scroll.add(album_songs);
 		scroll.set_policy(PolicyType.AUTOMATIC, PolicyType.AUTOMATIC);
 		scroll.set_size_request(-1, 160);
-		album_songs_holder.set_widget(scroll);
+		album_songs_holder.set_widget(AquaScroll.wrap(scroll));
 		
 		// Summaries go under album list
 		//summary_holder = new StyledBox("", "gray");
@@ -201,7 +201,7 @@ public class BeatBox.PodcastSummarySection : Box {
 		description_scroll.add(description_eb);
 		description_scroll.set_policy(PolicyType.AUTOMATIC, PolicyType.AUTOMATIC);
 		description_holder.set_size_request(300, -1);
-		description_holder.set_widget(description_scroll);
+		description_holder.set_widget(AquaScroll.wrap(description_scroll));
 		
 		left_side.add(metadata);
 		summary_eb.vexpand = album_songs_holder.vexpand = true;

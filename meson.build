@@ -1,4 +1,4 @@
-project('beatbox', 'vala', 'c', version: '0.99.51')
+project('beatbox', 'vala', 'c', version: '0.99.52')
 
 gnome = import('gnome')
 i18n = import('i18n')
@@ -268,6 +268,7 @@ app_sources = files(
   'src/SourceViews/SmartPlaylistSourceView.vala',
   'src/SourceViews/PlaylistSourceView.vala',
   'src/Utils/PixbufUtils.vala',
+  'src/Utils/AquaScroll.vala',
   'src/Utils/PlaylistUtils.vala',
   'src/Views/DeviceView.vala',
   'src/Views/DeviceSummaryWidget.vala',
@@ -339,7 +340,8 @@ if taglib_dep.version().version_compare('>= 2.0')
   app_vala_args += ['-D', 'HAVE_EMBED_COVER']
 endif
 
-beatbox_exe = executable('beatbox', app_sources, embed_cover_sources, resources, icon_resources, skin_resources,
+aqua_sources = files('src/C/aqua-art.c', 'src/C/aqua-geometry.c', 'src/C/aqua-scrollbar.c')
+beatbox_exe = executable('beatbox', app_sources, embed_cover_sources, aqua_sources, resources, icon_resources, skin_resources,
   dependencies: app_deps,
   vala_args: app_vala_args,
   install_rpath: prefix / get_option('libdir'),

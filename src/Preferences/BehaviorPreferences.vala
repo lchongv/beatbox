@@ -268,6 +268,9 @@ public class BeatBox.AppearancePreferences : SimplePreferences {
 			}
 		});
 		skinChooser.changed();
+
+		var aqua = add_check(_("Mac OS X Tiger scrollbars (applies on restart)"), App.settings.main.aqua_scrollbars);
+		aqua.toggled.connect(() => { App.settings.main.aqua_scrollbars = aqua.active; });
 	}
 }
 

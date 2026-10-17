@@ -417,7 +417,7 @@ public class BeatBox.SongEditor : GLib.Object, MediaEditorInterface {
 		scroll.vexpand = true;
 		var rv = new Viewport(null, null);
 		rv.shadow_type = ShadowType.NONE;
-		rv.add(scroll);
+		rv.add(AquaScroll.wrap(scroll));
 		return rv;
 	}
 	
@@ -593,7 +593,7 @@ public class BeatBox.SongEditor : GLib.Object, MediaEditorInterface {
 		box.spacing = 8;
 		box.margin = 10;
 		box.add(label);
-		box.add(scroll);
+		box.add(AquaScroll.wrap(scroll));
 		dialog.set_default_response(ResponseType.OK);
 		dialog.show_all();
 		bool apply = dialog.run() == ResponseType.OK;
@@ -624,7 +624,7 @@ public class BeatBox.SongEditor : GLib.Object, MediaEditorInterface {
 		scroll.hscrollbar_policy = PolicyType.NEVER;
 		scroll.vexpand = true;
 		scroll.add(lyricsText);
-		box.add(scroll);
+		box.add(AquaScroll.wrap(scroll));
 		
 		var download = new Button.with_label(_("Download Lyrics"));
 		download.tooltip_text = _("Look the lyrics up on lrclib.net (they replace the ones here)");

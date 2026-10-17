@@ -456,7 +456,7 @@ public class BeatBox.AlbumWall : Layout {
 		band.border_width = 16;
 		band.add(left);
 		list_scroll.hexpand = true;
-		band.add (list_scroll);
+		band.add (AquaScroll.wrap (list_scroll));
 		return band;
 	}
 }

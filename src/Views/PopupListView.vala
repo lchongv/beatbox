@@ -118,7 +118,7 @@ public class BeatBox.PopupListView : Gtk.Window {
 		vbox.add(album_label);
 		vbox.add(artist_label);
 		list_scrolled.vexpand = true;
-		vbox.add (list_scrolled);
+		vbox.add (AquaScroll.wrap (list_scrolled));
 		vbox.add(rating);
 
 		add(vbox);
