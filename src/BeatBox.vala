@@ -272,6 +272,7 @@ public class BeatBox.App : Gtk.Application {
 		
 		// After 10 seconds, check for new podcasts
 		Timeout.add(10000, () => {
+			podcasts.date_from_file_names();
 			podcasts.find_new_podcasts();
 
 			return false;

@@ -58,7 +58,21 @@ public class BeatBox.PodcastSourceView : SourceView {
 		find.clicked.connect (() => { new DirectoryDialog (DirectoryDialog.Kind.PODCAST); });
 		subscribe.clicked.connect (() => { App.actions.add_podcast_feed.activate(null); });
 		refresh.clicked.connect (() => { App.actions.refresh_podcasts.activate(null); });
-		pack_action_bar ({ find, subscribe, refresh });
+		var sort_date = action_button ("view-sort-descending-symbolic", _("Sort by Date"));
+		sort_date.clicked.connect (() => {
+			// only the list is sorted: show it, or the click does nothing in the covers grid
+			App.window.set_current_view_selection(0);
+			set_active_view(SourceViewType.LIST);
+			int column;
+			Gtk.SortType direction;
+			list_view.get_sort_column_id (out column, out direction);
+			if (column == PodcastColumn.DATE) // again: the other way round
+				direction = (direction == Gtk.SortType.ASCENDING) ? Gtk.SortType.DESCENDING : Gtk.SortType.ASCENDING;
+			else // newest first
+				direction = Gtk.SortType.DESCENDING;
+			list_view.set_sort_column_id (PodcastColumn.DATE, direction);
+		});
+		pack_action_bar ({ find, subscribe, refresh, sort_date });
 		
 		// Setup context menu
 		podcastMenu = new GLib.Menu();

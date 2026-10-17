@@ -27,6 +27,7 @@
 
 public interface BeatBox.PodcastInterface : GLib.Object {
 	public abstract void find_new_podcasts();
+	public abstract void date_from_file_names();
 	public abstract bool is_valid_rss(string url);
 	public abstract void parse_new_rss(string rss);
 	public abstract void download_podcasts(Gee.Collection<Media> podcasts);
