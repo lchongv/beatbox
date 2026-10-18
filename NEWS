@@ -15,8 +15,6 @@ Packages for each version: https://github.com/lchongv/beatbox/releases
 - Effects after the equalizer, in the equalizer window: echo, vocal reduction,
   bass, exciter, stereo width, saturation, limiter, compressor, reverb,
   crossfeed, chorus, flanger and phaser, with presets.
-- Two-way live sync with itunes7: plays, ratings, per-song options and the
-  resume position. A copy of the library is kept before the first sync.
 - Internet radio: a grid of stations with their logos, search by country,
   region, language, genre and format, and SHOUTcast, laut.fm and Icecast
   directories. Stations can take an image of your own.

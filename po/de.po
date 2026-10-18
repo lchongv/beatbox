@@ -1509,16 +1509,6 @@ msgstr "Titel importieren, die im Musikordner liegen"
 msgid "Copy files to library folder when imported"
 msgstr "Beim Import Dateien in den Mediathekordner kopieren"
 
-#: src/Preferences/BehaviorPreferences.vala:91
-msgid "Sync play counts, ratings and options with itunes7"
-msgstr ""
-"Wiedergabezähler, Bewertungen und Optionen mit itunes7 synchronisieren"
-
-#. itunes7 reads beatbox.db: the main library's
-#: src/Preferences/BehaviorPreferences.vala:95
-msgid "Only with the main library open: itunes7 reads its database."
-msgstr "Nur bei geöffneter Hauptmediathek: itunes7 liest deren Datenbank."
-
 #: src/Preferences/BehaviorPreferences.vala:105
 msgid "(open)"
 msgstr "(geöffnet)"

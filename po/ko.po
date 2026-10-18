@@ -1446,15 +1446,6 @@ msgstr "음악 폴더에 있는 곡 가져오기"
 msgid "Copy files to library folder when imported"
 msgstr "가져올 때 파일을 보관함 폴더로 복사"
 
-#: src/Preferences/BehaviorPreferences.vala:91
-msgid "Sync play counts, ratings and options with itunes7"
-msgstr "재생 횟수, 평점 및 옵션을 itunes7과 동기화"
-
-#. itunes7 reads beatbox.db: the main library's
-#: src/Preferences/BehaviorPreferences.vala:95
-msgid "Only with the main library open: itunes7 reads its database."
-msgstr "기본 보관함이 열려 있을 때만: itunes7이 해당 데이터베이스를 읽습니다."
-
 #: src/Preferences/BehaviorPreferences.vala:105
 msgid "(open)"
 msgstr "(열림)"

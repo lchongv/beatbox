@@ -1509,17 +1509,6 @@ msgstr "Importa i brani presenti nella cartella musicale"
 msgid "Copy files to library folder when imported"
 msgstr "Copia i file nella cartella della libreria quando vengono importati"
 
-#: src/Preferences/BehaviorPreferences.vala:91
-msgid "Sync play counts, ratings and options with itunes7"
-msgstr ""
-"Sincronizza conteggi di riproduzione, valutazioni e opzioni con itunes7"
-
-#. itunes7 reads beatbox.db: the main library's
-#: src/Preferences/BehaviorPreferences.vala:95
-msgid "Only with the main library open: itunes7 reads its database."
-msgstr ""
-"Solo con la libreria principale aperta: itunes7 legge il suo database."
-
 #: src/Preferences/BehaviorPreferences.vala:105
 msgid "(open)"
 msgstr "(aperta)"

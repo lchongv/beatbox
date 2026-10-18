@@ -22,16 +22,6 @@ own: [skins/README.md](skins/README.md).
 License: GPL version 3 (see COPYING); the sources are "GPL version 2 or
 later". Original authors and the fork's changes are listed in AUTHORS.
 
-Sync with itunes7
------------------
-
-With Preferences › Library › "Sync play counts, ratings and options with
-itunes7" on (and the matching switch in itunes7), the two players share play
-counts, last played, ratings, per-song options and the resume position, live
-and both ways. Each one only reads the other's database and writes its own,
-and BeatBox backs its library up (beatbox.db.pre-sync) before the first sync.
-The rules both apps follow are in itunes7's docs/SYNC-BEATBOX.md.
-
 Several libraries
 -----------------
 
@@ -40,8 +30,8 @@ its own folder, songs, ratings, play counts and playlists, while radio stations
 and podcasts are the same in all of them. "New Library…" asks for a name and a
 folder. Switching restarts BeatBox with the other library (a second or two),
 and the drive the library lives on is mounted when it is connected. The first
-library is the one BeatBox always had (~/.local/share/beatbox/beatbox.db, the
-one itunes7 syncs with); the others keep their database in
+library is the one BeatBox always had (~/.local/share/beatbox/beatbox.db); the
+others keep their database in
 ~/.local/share/beatbox/libraries. Preferences › Library renames and removes them.
 
 Building

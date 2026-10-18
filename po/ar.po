@@ -1593,15 +1593,6 @@ msgstr "استيراد المقاطع الموجودة في مجلد الموس�
 msgid "Copy files to library folder when imported"
 msgstr "نسخ الملفات إلى مجلد المكتبة عند الاستيراد"
 
-#: src/Preferences/BehaviorPreferences.vala:91
-msgid "Sync play counts, ratings and options with itunes7"
-msgstr "مزامنة عدادات التشغيل والتقييمات والخيارات مع itunes7"
-
-#. itunes7 reads beatbox.db: the main library's
-#: src/Preferences/BehaviorPreferences.vala:95
-msgid "Only with the main library open: itunes7 reads its database."
-msgstr "فقط مع فتح المكتبة الرئيسية: يقرأ itunes7 قاعدة بياناتها."
-
 #: src/Preferences/BehaviorPreferences.vala:105
 msgid "(open)"
 msgstr "(مفتوحة)"

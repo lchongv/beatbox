@@ -1500,15 +1500,6 @@ msgstr "संगीत फ़ोल्डर में दिखने वा�
 msgid "Copy files to library folder when imported"
 msgstr "आयात करते समय फ़ाइलें लाइब्रेरी फ़ोल्डर में कॉपी करें"
 
-#: src/Preferences/BehaviorPreferences.vala:91
-msgid "Sync play counts, ratings and options with itunes7"
-msgstr "itunes7 के साथ प्लेकाउंट, रेटिंग और विकल्प सिंक करें"
-
-#. itunes7 reads beatbox.db: the main library's
-#: src/Preferences/BehaviorPreferences.vala:95
-msgid "Only with the main library open: itunes7 reads its database."
-msgstr "सिर्फ़ मुख्य लाइब्रेरी खुली होने पर: itunes7 उसका डेटाबेस पढ़ता है।"
-
 #: src/Preferences/BehaviorPreferences.vala:105
 msgid "(open)"
 msgstr "(खुली)"

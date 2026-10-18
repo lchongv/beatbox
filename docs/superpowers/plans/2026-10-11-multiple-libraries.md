@@ -16,8 +16,8 @@
 - Options that belong to a library: `library-name`, `music-folder`, `music-mount-name`, `watch-music-folder`, `last-media-playing`, `last-media-position` (group `settings`) and `queue` (group `savedstate`). Everything else stays shared.
 - New `[settings]` keys: `library` (open library's id, empty = main), `library-name` (main's name, empty shows "Music"), `last-rowid` (highest media id given in any library).
 - Other libraries: group `[library <id>]`, database `~/.local/share/beatbox/libraries/<id>.db`; ids are lowercase ASCII letters, digits and dashes made from the name, `-2`, `-3`… when taken.
-- itunes7 sync only while the main library is open.
-- UI strings in English inside `_()`, Spanish added by hand to `po/es.po`. No "iTunes" wording in anything user-facing (itunes7 is the name of the user's own app and is fine).
+- partner sync only while the main library is open.
+- UI strings in English inside `_()`, Spanish added by hand to `po/es.po`. No "iTunes" wording in anything user-facing.
 - Commits: the repository's local git config already has the author (`lchongv <lchongv+beatbox@gmail.com>`); never pass another one. The local pre-commit hook rewrites the version in `meson.build` on every commit: do not edit it by hand. End every commit message with `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`.
 - Tests never touch the user's real `~/.config/beatbox`, `~/.local/share/beatbox` or music: temporary folders, `XDG_*` variables, and for the app a private Xvfb + `dbus-run-session` with `unset WAYLAND_DISPLAY; export GDK_BACKEND=x11`.
 - Work on a branch `libraries` made from `master`; it is merged (fast-forward) only when the user says so. Do not install (`ninja -C build install`) during the tasks.
@@ -545,7 +545,7 @@ Replace the constructor's signature and body from `public DataBaseManager() {` d
 				backup_on_new_version(path);
 			_db.execute (SCHEMA);
 			add_song_columns ();
-			_db.execute (PeerSync.DDL); // the live sync with itunes7 (ItunesSync)
+			_db.execute (PeerSync.DDL); // the live sync with partner (ItunesSync)
 			_db.execute ("PRAGMA user_version = %d".printf(version_number()));
 			if (library != "")
 				attach_main (main_path, existed);
@@ -603,7 +603,7 @@ EOF
 - Modify: `src/Core/LibraryManager.vala:57-66,101-115`
 - Modify: `src/Libraries/SongLibrary.vala:66-67`
 - Modify: `src/Core/ItunesSync.vala:25-30`
-- Modify: `tests/smoke.py` (helpers; phases 4 and 5 after the itunes7 phase)
+- Modify: `tests/smoke.py` (helpers; phases 4 and 5 after the partner phase)
 
 **Interfaces:**
 - Consumes: `App.settings.main.library`, `App.settings.main.last_rowid` (Task 1); `DataBaseManager (string)`, `App.database.shared` (Task 2).
@@ -646,7 +646,7 @@ def make_song(path, freq):
 
 In `run`, replace the song loop body (the `subprocess.run(['gst-launch-1.0', ...` call) with `make_song(path, 330 + 110 * i)`.
 
-After the itunes7 phase's `quit(proc)` (just before `finally:`), add:
+After the partner phase's `quit(proc)` (just before `finally:`), add:
 
 ```python
         # fourth run: a second library (docs/superpowers/specs/2026-10-11-multiple-libraries-design.md),
@@ -764,11 +764,11 @@ and in `assign_id_to_media`, after the `if/else if` that sets `top_id`, add:
 		_default_folder = File.new_for_path(music != "" ? music : (Environment.get_user_special_dir(UserDirectory.MUSIC) ?? Path.build_filename(Environment.get_home_dir(), "Music")));
 ```
 
-- [ ] **Step 8: itunes7 only with the main library** — in `src/Core/ItunesSync.vala` replace `if (App.settings.main.itunes7_sync)` in `setting_changed` with:
+- [ ] **Step 8: partner only with the main library** — in `src/Core/ItunesSync.vala` replace `if (App.settings.main.partner_sync)` in `setting_changed` with:
 
 ```vala
-		// itunes7 reads beatbox.db, the main library's (the open library changes only with a restart)
-		if (App.settings.main.itunes7_sync && App.settings.main.library == "")
+		// partner reads beatbox.db, the main library's (the open library changes only with a restart)
+		if (App.settings.main.partner_sync && App.settings.main.library == "")
 ```
 
 - [ ] **Step 9: Run the tests**
@@ -783,8 +783,8 @@ H=$S/h-real; mkdir -p $H/.local/share/beatbox $H/.config/beatbox $S/empty
 sqlite3 -readonly ~/.local/share/beatbox/beatbox.db ".backup '$H/.local/share/beatbox/beatbox.db'"
 BEFORE=$(sqlite3 $H/.local/share/beatbox/beatbox.db "SELECT count(*), max(rowid) FROM songs")
 # never play or tag the user's files: no last song to resume, no cover downloads
-grep -v -E "^(music-folder|podcast-folder|itunes7-sync|watch-music-folder|download-new-podcasts|last-media-playing|download-covers)=" ~/.config/beatbox/beatbox.conf > $H/.config/beatbox/beatbox.conf
-sed -i "s|^\[settings\]|[settings]\nmusic-folder=$S/empty\npodcast-folder=$H/Podcasts\nitunes7-sync=false\nwatch-music-folder=false\ndownload-new-podcasts=false\nlast-media-playing=0\ndownload-covers=false|" $H/.config/beatbox/beatbox.conf
+grep -v -E "^(music-folder|podcast-folder|partner-sync|watch-music-folder|download-new-podcasts|last-media-playing|download-covers)=" ~/.config/beatbox/beatbox.conf > $H/.config/beatbox/beatbox.conf
+sed -i "s|^\[settings\]|[settings]\nmusic-folder=$S/empty\npodcast-folder=$H/Podcasts\npartner-sync=false\nwatch-music-folder=false\ndownload-new-podcasts=false\nlast-media-playing=0\ndownload-covers=false|" $H/.config/beatbox/beatbox.conf
 (bash $S/session.sh real &) ; bash $S/ready.sh real && sleep 5 && bash $S/quit.sh real; sleep 5
 sqlite3 $H/.local/share/beatbox/beatbox.db "SELECT count(*), max(rowid) FROM songs"; echo "before: $BEFORE"
 grep -E "^(library|library-name|last-rowid)=" $H/.config/beatbox/beatbox.conf; ls $H/.local/share/beatbox
@@ -803,7 +803,7 @@ BeatBox opens the library named in its options
 With [settings] library=<id> BeatBox opens that library's database and
 folder; radio and podcasts come from the main one. Media ids go on from a
 shared last-rowid, so a podcast never takes the id of another library's song.
-A new library's first import reads its own folder, and the itunes7 sync runs
+A new library's first import reads its own folder, and the partner sync runs
 only with the main library. The smoke test opens a second library and one
 that is gone.
 
@@ -1037,12 +1037,12 @@ At the start of the constructor, before `add_heading(_("Library Management"));`,
 		fill_libraries();
 ```
 
-After `itunes7.toggled.connect(...)` add:
+After `partner.toggled.connect(...)` add:
 
 ```vala
-		if (App.settings.main.library != "") { // itunes7 reads beatbox.db: the main library's
-			itunes7.sensitive = false;
-			itunes7.tooltip_text = _("Only with the main library open: itunes7 reads its database.");
+		if (App.settings.main.library != "") { // partner reads beatbox.db: the main library's
+			partner.sensitive = false;
+			partner.tooltip_text = _("Only with the main library open: partner reads its database.");
 		}
 ```
 
@@ -1114,7 +1114,7 @@ Run: `ninja -C build && meson test -C build --print-errorlogs`
 Expected: all OK.
 
 - [ ] **Step 3: GUI check** — in the `lib` scratch home of Task 4 (libraries Music, Disco B, C; Disco B open): app menu › Library › `Manage Libraries…`.
-  Expected: Preferences opens on `Library` with a `Libraries` section listing `Music`, `Disco B (open)` in bold and `C`, each with its folder; `Remove…` only on `C`; the itunes7 check is insensitive with the tooltip. `Rename…` on `Disco B` → `Disco Bis`: the sidebar heading becomes `DISCO BIS` and the submenu shows it; `Rename…` on `Music` → `Principal`: `[settings] library-name=Principal`. `Remove…` on `C` → confirm: `C` leaves the list and the submenu, `[library c]` and `libraries/c.db` are gone. Switch to `Principal`: the itunes7 check is sensitive again and `Remove…` appears on `Disco Bis` only.
+  Expected: Preferences opens on `Library` with a `Libraries` section listing `Music`, `Disco B (open)` in bold and `C`, each with its folder; `Remove…` only on `C`; the partner check is insensitive with the tooltip. `Rename…` on `Disco B` → `Disco Bis`: the sidebar heading becomes `DISCO BIS` and the submenu shows it; `Rename…` on `Music` → `Principal`: `[settings] library-name=Principal`. `Remove…` on `C` → confirm: `C` leaves the list and the submenu, `[library c]` and `libraries/c.db` are gone. Switch to `Principal`: the partner check is sensitive again and `Remove…` appears on `Disco Bis` only.
 
 - [ ] **Step 4: Commit**
 
@@ -1125,7 +1125,7 @@ Libraries are renamed and removed in Preferences
 
 Preferences > Library lists the libraries with their folders; any of them can
 be renamed, and the ones besides the main and the open one removed (their
-database and options, never the music). The itunes7 option is off while a
+database and options, never the music). The partner option is off while a
 library besides the main one is open.
 
 Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
@@ -1137,7 +1137,7 @@ EOF
 ### Task 6: README and Spanish
 
 **Files:**
-- Modify: `README.md` (new section after "Sync with itunes7", before "Building")
+- Modify: `README.md` (new section after "Sync with partner", before "Building")
 - Modify: `po/es.po`
 
 - [ ] **Step 1: README** — insert before the `Building` heading:
@@ -1152,7 +1152,7 @@ and podcasts are the same in all of them. "New Library…" asks for a name and a
 folder. Switching restarts BeatBox with the other library (a second or two),
 and the drive the library lives on is mounted when it is connected. The first
 library is the one BeatBox always had (~/.local/share/beatbox/beatbox.db, the
-one itunes7 syncs with); the others keep their database in
+one partner syncs with); the others keep their database in
 ~/.local/share/beatbox/libraries. Preferences › Library renames and removes them.
 ```
 
@@ -1180,7 +1180,7 @@ one itunes7 syncs with); the others keep their database in
 | `Remove the library “%s”?` | `¿Eliminar la biblioteca “%s”?` |
 | `Its songs, play counts and playlists are removed from BeatBox; the music files stay where they are.` | `Sus canciones, reproducciones y listas se quitan de BeatBox; los archivos de música quedan donde están.` |
 | `Remove` | `Eliminar` |
-| `Only with the main library open: itunes7 reads its database.` | `Solo con la biblioteca principal abierta: itunes7 lee su base de datos.` |
+| `Only with the main library open: partner reads its database.` | `Solo con la biblioteca principal abierta: partner lee su base de datos.` |
 
 Run: `msgfmt -c --statistics -o /dev/null po/es.po`
 Expected: no errors; the untranslated count does not grow compared with `git stash; msgfmt ...; git stash pop`.

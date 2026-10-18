@@ -1446,15 +1446,6 @@ msgstr "导入出现在音乐文件夹中的歌曲"
 msgid "Copy files to library folder when imported"
 msgstr "导入时将文件复制到媒体库文件夹"
 
-#: src/Preferences/BehaviorPreferences.vala:91
-msgid "Sync play counts, ratings and options with itunes7"
-msgstr "与 itunes7 同步播放次数、评分和选项"
-
-#. itunes7 reads beatbox.db: the main library's
-#: src/Preferences/BehaviorPreferences.vala:95
-msgid "Only with the main library open: itunes7 reads its database."
-msgstr "仅在主媒体库打开时可用：itunes7 会读取其数据库。"
-
 #: src/Preferences/BehaviorPreferences.vala:105
 msgid "(open)"
 msgstr "（已打开）"

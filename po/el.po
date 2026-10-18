@@ -1491,15 +1491,6 @@ msgstr ""
 msgid "Copy files to library folder when imported"
 msgstr ""
 
-#: src/Preferences/BehaviorPreferences.vala:91
-msgid "Sync play counts, ratings and options with itunes7"
-msgstr ""
-
-#. itunes7 reads beatbox.db: the main library's
-#: src/Preferences/BehaviorPreferences.vala:95
-msgid "Only with the main library open: itunes7 reads its database."
-msgstr ""
-
 #: src/Preferences/BehaviorPreferences.vala:105
 msgid "(open)"
 msgstr ""
