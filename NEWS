@@ -4,6 +4,30 @@ BeatBox — what changed, newest first
 Packages for each version: https://github.com/lchongv/beatbox/releases
 
 
+1.0.0 (18 October 2026)
+-----------------------
+
+- Several music libraries: the app menu's Library submenu switches between
+  them, New Library… makes one, and Preferences › Library renames and removes
+  them. Each has its own folder, songs, ratings, play counts and playlists;
+  radio and podcasts are shared. A library on a drive is mounted when the
+  drive is connected.
+- Effects after the equalizer, in the equalizer window: echo, vocal reduction,
+  bass, exciter, stereo width, saturation, limiter, compressor, reverb,
+  crossfeed, chorus, flanger and phaser, with presets.
+- Internet radio: a grid of stations with their logos, search by country,
+  region, language, genre and format, and SHOUTcast, laut.fm and Icecast
+  directories. Stations can take an image of your own.
+- Recording of radio stations with streamripper (right click a station), with
+  its own page in Preferences.
+- The LCD shows three lines, with synced lyrics on the third, and the song's
+  own picture.
+- The transport buttons are bigger, with play the largest.
+- Listening Statistics is a plugin, and plugins can add entries to the app
+  menu.
+- Plugin API stable for the whole 1.x series (see docs/plugins.md).
+
+
 0.99.14, the second 1.0 release candidate (7 October 2026)
 ---------------------------------------------------------
 

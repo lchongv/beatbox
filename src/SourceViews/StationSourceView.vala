@@ -70,7 +70,7 @@ public class BeatBox.StationSourceView : SourceView {
 		grid_scroll.hscrollbar_policy = PolicyType.NEVER;
 		grid_scroll.get_style_context().add_class("albumwall");
 		grid_scroll.add(grid);
-		grid_page = grid_scroll;
+		grid_page = AquaScroll.wrap(grid_scroll);
 		list_view.visible_changed.connect(fill_grid);
 		StationLogos.get_default().found.connect((uri) => { logos.unset(uri); fill_grid(); });
 		StreamRecorder.get_default().changed.connect(() => fill_grid());

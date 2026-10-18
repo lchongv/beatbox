@@ -23,7 +23,6 @@ License: GPL version 3 (see COPYING); the sources are "GPL version 2 or
 later". Original authors and the fork's changes are listed in AUTHORS.
 
 
-
 Several libraries
 -----------------
 
@@ -32,8 +31,8 @@ its own folder, songs, ratings, play counts and playlists, while radio stations
 and podcasts are the same in all of them. "New Library…" asks for a name and a
 folder. Switching restarts BeatBox with the other library (a second or two),
 and the drive the library lives on is mounted when it is connected. The first
-library is the one BeatBox always had (~/.local/share/beatbox/beatbox.db, the
-one itunes7 syncs with); the others keep their database in
+library is the one BeatBox always had (~/.local/share/beatbox/beatbox.db); the
+others keep their database in
 ~/.local/share/beatbox/libraries. Preferences › Library renames and removes them.
 
 Building

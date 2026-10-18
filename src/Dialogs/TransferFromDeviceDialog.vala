@@ -168,7 +168,7 @@ public class BeatBox.TransferFromDeviceDialog : Window {
 		Box listBox = new Box(Orientation.VERTICAL, 0);
 		mediasScroll.vexpand = true;
 		mediasScroll.margin_top = mediasScroll.margin_bottom = 5;
-		listBox.add(mediasScroll);
+		listBox.add(AquaScroll.wrap(mediasScroll));
 		
 		Expander exp = new Expander(_("Select individual medias to import:"));
 		exp.add(listBox);

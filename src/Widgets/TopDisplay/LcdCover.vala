@@ -171,6 +171,7 @@ public class BeatBox.LcdCover : Image {
 			return false;
 		});
 		win.show_all ();
+		win.present (); // a new window is not focused by itself: Esc needs the focus
 	}
 
 	/** The station's logo if it is in the cache, otherwise a generic radio while the logo is looked up */

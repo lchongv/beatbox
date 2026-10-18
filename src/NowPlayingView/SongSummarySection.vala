@@ -185,7 +185,7 @@ public class BeatBox.SongSummarySection : Box {
 		scroll.add(album_songs);
 		scroll.set_policy(PolicyType.AUTOMATIC, PolicyType.AUTOMATIC);
 		scroll.set_size_request(-1, 160);
-		album_songs_holder.set_widget(scroll);
+		album_songs_holder.set_widget(AquaScroll.wrap(scroll));
 		
 		// And lastly the lyrics box
 		lyrics_holder = new StyledBox("", "black");
@@ -200,7 +200,7 @@ public class BeatBox.SongSummarySection : Box {
 		lyrics_scroll.add(lyrics_eb);
 		lyrics_scroll.set_policy(PolicyType.AUTOMATIC, PolicyType.AUTOMATIC);
 		lyrics_holder.set_size_request(300, -1);
-		lyrics_holder.set_widget(lyrics_scroll);
+		lyrics_holder.set_widget(AquaScroll.wrap(lyrics_scroll));
 		
 		left_side.add(metadata);
 		summary_text.vexpand = album_songs_holder.vexpand = true;

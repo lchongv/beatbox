@@ -108,9 +108,9 @@ public class BeatBox.PodcastLibrary : BaseLibrary {
 				p.last_played = (uint)results.fetch_int(26);
 				p.last_modified = (uint)results.fetch_int(27);
 				//p.mediatype = (MediaType)results.fetch_int(28);
-				//p.podcast_rss = results.fetch_string(29);
-				//p.podcast_url = results.fetch_string(30);
-				//p.podcast_date = results.fetch_int(31);
+				p.rss_uri = results.fetch_string(29) ?? "";
+				p.podcast_url = results.fetch_string(30) ?? "";
+				p.date_released = results.fetch_int(31);
 				//p.is_new_podcast = (results.fetch_int(32) == 1) ? true : false;
 				//p.resume_pos = results.fetch_int(33);
 				p.is_video = (results.fetch_int(34) == 1) ? true : false;
@@ -177,9 +177,9 @@ VALUES (:rowid, :uri, :file_size, :title, :artist, :composer, :album_artist, :al
 					query.set_int(":lastplayed", (int)s.last_played);
 					query.set_int(":lastmodified", (int)s.last_modified);
 					query.set_int(":mediatype", 0);//s.mediatype);
-					query.set_string(":podcast_rss", "");//s.podcast_rss);
-					query.set_string(":podcast_url", "");//s.podcast_url);
-					query.set_int(":podcast_date", 0);//s.podcast_date);
+					query.set_string(":podcast_rss", s.rss_uri);
+					query.set_string(":podcast_url", s.podcast_url);
+					query.set_int(":podcast_date", s.date_released);
 					query.set_int(":is_new_podcast", s.is_new_podcast ? 1 : 0);
 					query.set_int(":resume_pos", s.resume_pos);
 					query.set_int(":is_video", s.is_video ? 1 : 0);
@@ -243,9 +243,9 @@ podcast_date=:podcast_date, is_new_podcast=:is_new_podcast, resume_pos=:resume_p
 					query.set_int(":lastplayed", (int)s.last_played);
 					query.set_int(":lastmodified", (int)s.last_modified);
 					query.set_int(":mediatype", 0);//s.mediatype);
-					query.set_string(":podcast_rss", "");//s.podcast_rss);
-					query.set_string(":podcast_url", "");//s.podcast_url);
-					query.set_int(":podcast_date", 0);//s.podcast_date);
+					query.set_string(":podcast_rss", s.rss_uri);
+					query.set_string(":podcast_url", s.podcast_url);
+					query.set_int(":podcast_date", s.date_released);
 					query.set_int(":is_new_podcast", s.is_new_podcast ? 1 : 0);
 					query.set_int(":resume_pos", s.resume_pos);
 					query.set_int(":is_video", s.is_video ? 1 : 0);

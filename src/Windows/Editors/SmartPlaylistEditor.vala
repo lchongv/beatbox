@@ -46,6 +46,7 @@ public class BeatBox.SmartPlaylistEditor : Window {
 	EventBox no_scroll;
 	Viewport scroll;
 	ScrolledWindow scrolled_window;
+	Widget scrolled_child; // scrolled_window with its Aqua bars, if any: it is what is shown or hidden
 	Box vertQueries;
 	Gee.ArrayList<SmartPlaylistEditorQuery> spQueries;
 	
@@ -164,7 +165,8 @@ public class BeatBox.SmartPlaylistEditor : Window {
 		content.add(rulesLabel);
 		content.add(UI.wrap_alignment(matchBox, 0, 10, 0, 10) );
 		content.add(UI.wrap_alignment(no_scroll, 0, 0, 0, 0));
-		content.add(UI.wrap_alignment(scrolled_window, 0, 0, 0, 0));
+		scrolled_child = AquaScroll.wrap(scrolled_window);
+		content.add(UI.wrap_alignment(scrolled_child, 0, 0, 0, 0));
 		content.add(UI.wrap_alignment(addButton, 0, 0, 0, 0));
 		content.add(optionsLabel);
 		content.add(UI.wrap_alignment(limiterBox, 0, 10, 0, 10));
@@ -174,7 +176,7 @@ public class BeatBox.SmartPlaylistEditor : Window {
 		content.hexpand = true;
 		padding.add(content);
 		
-		scrolled_window.set_no_show_all(true);
+		scrolled_child.set_no_show_all(true);
 		
 		add(UI.wrap_alignment(padding, 0, 10, 0, 10));
 		show_all();
@@ -183,7 +185,7 @@ public class BeatBox.SmartPlaylistEditor : Window {
 		cancel.clicked.connect( () => { destroy(); } );
 		nameEntry.changed.connect(nameChanged);
 		
-		scrolled_window.hide();
+		scrolled_child.hide();
 		resize_gui();
 	}
 	
@@ -239,7 +241,7 @@ public class BeatBox.SmartPlaylistEditor : Window {
 		bool should_be_in_scroll = vertQueries.get_allocated_height() >= (get_display().get_monitor_at_window(App.window.get_window()).get_geometry().height - BUFFER_SPACE);
 		if(is_in_scroll && !should_be_in_scroll) {
 			scroll.remove(vertQueries);
-			scrolled_window.hide();
+			scrolled_child.hide();
 			no_scroll.add(vertQueries);
 			no_scroll.show();
 			is_in_scroll = false;
@@ -248,7 +250,7 @@ public class BeatBox.SmartPlaylistEditor : Window {
 			no_scroll.remove(vertQueries);
 			no_scroll.hide();
 			scroll.add(vertQueries);
-			scrolled_window.show();
+			scrolled_child.show();
 			scroll.show();
 			is_in_scroll = true;
 		}

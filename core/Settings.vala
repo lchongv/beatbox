@@ -323,6 +323,7 @@ public class BeatBox.Settings {
         public string lcd_marker_shape { get; set; } // diamond, circle, cup or nyan (data/<shape>.svg)
         public bool lcd_total_time { get; set; }     // the right time shows the length instead of what remains (click it)
         public bool album_grid_inline { get; set; }
+        public bool aqua_scrollbars { get; set; }    // Mac OS X Tiger scrollbars, drawn by aqua-scrollbar.c (applies on restart)
         public int album_detail_cover_percent { get; set; }
         public bool download_covers { get; set; }
         

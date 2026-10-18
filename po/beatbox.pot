@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beatbox\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-13 22:24-0300\n"
+"POT-Creation-Date: 2026-10-13 23:10-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -173,7 +173,7 @@ msgstr ""
 #: core/Playlists/SmartQuery.vala:77 src/Lists/DuplicateList.vala:127
 #: src/Lists/GenericList.vala:127 src/Lists/MusicList.vala:168
 #: src/Lists/PodcastList.vala:112 src/Lists/RadioList.vala:79
-#: src/Widgets/TrackReport.vala:183 src/Windows/Editors/PodcastEditor.vala:76
+#: src/Widgets/TrackReport.vala:182 src/Windows/Editors/PodcastEditor.vala:76
 #: src/Windows/Editors/StationEditor.vala:63
 msgid "Rating"
 msgstr ""
@@ -781,7 +781,7 @@ msgid "Fill In Tags from File Names"
 msgstr ""
 
 #: src/Dialogs/FillTagsDialog.vala:47 src/Widgets/TrackReport.vala:107
-#: src/Widgets/TrackReport.vala:268
+#: src/Widgets/TrackReport.vala:267
 msgid "File"
 msgstr ""
 
@@ -1240,12 +1240,12 @@ msgid "#"
 msgstr ""
 
 #: src/Lists/DuplicateList.vala:128 src/Lists/GenericList.vala:127
-#: src/Lists/MusicList.vala:169 src/Widgets/TrackReport.vala:181
+#: src/Lists/MusicList.vala:169 src/Widgets/TrackReport.vala:180
 msgid "Plays"
 msgstr ""
 
 #: src/Lists/DuplicateList.vala:129 src/Lists/GenericList.vala:127
-#: src/Lists/MusicList.vala:170 src/Widgets/TrackReport.vala:182
+#: src/Lists/MusicList.vala:170 src/Widgets/TrackReport.vala:181
 msgid "Skips"
 msgstr ""
 
@@ -1467,15 +1467,6 @@ msgstr ""
 
 #: src/Preferences/BehaviorPreferences.vala:87
 msgid "Copy files to library folder when imported"
-msgstr ""
-
-#: src/Preferences/BehaviorPreferences.vala:91
-msgid "Sync play counts, ratings and options with itunes7"
-msgstr ""
-
-#. itunes7 reads beatbox.db: the main library's
-#: src/Preferences/BehaviorPreferences.vala:95
-msgid "Only with the main library open: itunes7 reads its database."
 msgstr ""
 
 #: src/Preferences/BehaviorPreferences.vala:105
@@ -2715,7 +2706,7 @@ msgid "Tags in the file"
 msgstr ""
 
 #: src/Widgets/TrackReport.vala:118 src/Widgets/TrackReport.vala:121
-#: src/Widgets/TrackReport.vala:183 src/Windows/Editors/SongEditor.vala:178
+#: src/Widgets/TrackReport.vala:182 src/Windows/Editors/SongEditor.vala:178
 msgid "None"
 msgstr ""
 
@@ -2731,123 +2722,123 @@ msgstr ""
 msgid "Embedded picture"
 msgstr ""
 
-#: src/Widgets/TrackReport.vala:184
+#: src/Widgets/TrackReport.vala:183
 msgid "Added"
 msgstr ""
 
-#: src/Widgets/TrackReport.vala:184 plugins/statistics/Statistics.vala:95
+#: src/Widgets/TrackReport.vala:183 plugins/statistics/Statistics.vala:95
 msgid "Unknown"
 msgstr ""
 
-#: src/Widgets/TrackReport.vala:185
+#: src/Widgets/TrackReport.vala:184
 msgid "Last played"
 msgstr ""
 
-#: src/Widgets/TrackReport.vala:185 src/Windows/Editors/SongEditor.vala:319
+#: src/Widgets/TrackReport.vala:184 src/Windows/Editors/SongEditor.vala:319
 msgid "Never"
 msgstr ""
 
-#: src/Widgets/TrackReport.vala:188
+#: src/Widgets/TrackReport.vala:187
 msgid "Edited"
 msgstr ""
 
-#: src/Widgets/TrackReport.vala:192
+#: src/Widgets/TrackReport.vala:191
 msgid "Volume adjustment"
 msgstr ""
 
-#: src/Widgets/TrackReport.vala:196
+#: src/Widgets/TrackReport.vala:195
 msgid "Shuffle"
 msgstr ""
 
-#: src/Widgets/TrackReport.vala:197
+#: src/Widgets/TrackReport.vala:196
 msgid "Skipped when shuffling"
 msgstr ""
 
-#: src/Widgets/TrackReport.vala:200
+#: src/Widgets/TrackReport.vala:199
 msgid "Resumes at"
 msgstr ""
 
-#: src/Widgets/TrackReport.vala:271
+#: src/Widgets/TrackReport.vala:270
 msgid "Size"
 msgstr ""
 
-#: src/Widgets/TrackReport.vala:274
+#: src/Widgets/TrackReport.vala:273
 msgid "File modified"
 msgstr ""
 
-#: src/Widgets/TrackReport.vala:280
+#: src/Widgets/TrackReport.vala:279
 msgid "Container"
 msgstr ""
 
-#: src/Widgets/TrackReport.vala:283
+#: src/Widgets/TrackReport.vala:282
 msgid "Duration"
 msgstr ""
 
-#: src/Widgets/TrackReport.vala:291
+#: src/Widgets/TrackReport.vala:290
 msgid "Codec"
 msgstr ""
 
-#: src/Widgets/TrackReport.vala:291
+#: src/Widgets/TrackReport.vala:290
 msgid "lossless"
 msgstr ""
 
-#: src/Widgets/TrackReport.vala:291
+#: src/Widgets/TrackReport.vala:290
 msgid "lossy"
 msgstr ""
 
-#: src/Widgets/TrackReport.vala:293
+#: src/Widgets/TrackReport.vala:292
 msgid "Sample rate"
 msgstr ""
 
 #. a lossy one is decoded to whatever depth
-#: src/Widgets/TrackReport.vala:295
+#: src/Widgets/TrackReport.vala:294
 msgid "Bit depth"
 msgstr ""
 
-#: src/Widgets/TrackReport.vala:298
+#: src/Widgets/TrackReport.vala:297
 msgid "Mono"
 msgstr ""
 
-#: src/Widgets/TrackReport.vala:298
+#: src/Widgets/TrackReport.vala:297
 msgid "Stereo"
 msgstr ""
 
-#: src/Widgets/TrackReport.vala:298
+#: src/Widgets/TrackReport.vala:297
 #, c-format
 msgid "%u channels"
 msgstr ""
 
-#: src/Widgets/TrackReport.vala:299
+#: src/Widgets/TrackReport.vala:298
 msgid "Channels"
 msgstr ""
 
-#: src/Widgets/TrackReport.vala:314
+#: src/Widgets/TrackReport.vala:313
 #, c-format
 msgid "variable (%u–%u kbps)"
 msgstr ""
 
-#: src/Widgets/TrackReport.vala:316
+#: src/Widgets/TrackReport.vala:315
 #, c-format
 msgid "nominal %u kbps"
 msgstr ""
 
-#: src/Widgets/TrackReport.vala:317
+#: src/Widgets/TrackReport.vala:316
 msgid "Bitrate (average)"
 msgstr ""
 
-#: src/Widgets/TrackReport.vala:353
+#: src/Widgets/TrackReport.vala:352
 msgid "Picture"
 msgstr ""
 
-#: src/Widgets/TrackReport.vala:358
+#: src/Widgets/TrackReport.vala:357
 msgid "Front cover"
 msgstr ""
 
-#: src/Widgets/TrackReport.vala:358
+#: src/Widgets/TrackReport.vala:357
 msgid "Back cover"
 msgstr ""
 
-#: src/Widgets/TrackReport.vala:359
+#: src/Widgets/TrackReport.vala:358
 msgid "Disc"
 msgstr ""
 
@@ -3563,7 +3554,7 @@ msgstr ""
 msgid "Sets all the effects below at once"
 msgstr ""
 
-#: src/Windows/EqualizerWindow.vala:221 src/Windows/EqualizerWindow.vala:526
+#: src/Windows/EqualizerWindow.vala:221 src/Windows/EqualizerWindow.vala:527
 msgid "Custom"
 msgstr ""
 
@@ -3737,11 +3728,11 @@ msgstr ""
 msgid "How much the highs fade in the room: more is warmer"
 msgstr ""
 
-#: src/Windows/EqualizerWindow.vala:521
+#: src/Windows/EqualizerWindow.vala:522
 msgid "Custom Preset"
 msgstr ""
 
-#: src/Windows/EqualizerWindow.vala:526
+#: src/Windows/EqualizerWindow.vala:527
 msgid " Preset"
 msgstr ""
 

@@ -67,7 +67,7 @@ public class BeatBox.FillTagsDialog : Dialog {
 		box.spacing = 8;
 		box.border_width = 8;
 		box.add (label);
-		box.add (scroll);
+		box.add (AquaScroll.wrap (scroll));
 		box.show_all ();
 
 		add_button (_("Cancel"), ResponseType.CANCEL);

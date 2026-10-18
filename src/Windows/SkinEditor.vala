@@ -57,7 +57,7 @@ public class BeatBox.SkinEditor : Gtk.Window {
 		bottom.pack_end (save_button, false, false);
 		bottom.pack_end (revert, false, false);
 		var box = new Box (Orientation.VERTICAL, 0);
-		box.pack_start (scroll, true, true);
+		box.pack_start (AquaScroll.wrap (scroll), true, true);
 		box.pack_start (new Separator (Orientation.HORIZONTAL), false, false);
 		box.pack_start (bottom, false, false);
 		add (box);

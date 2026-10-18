@@ -40,6 +40,8 @@ public abstract class BeatBox.SourceView : Box, View {
 	Stack                album_page;    // album_scroll (popup mode) or the inline wall
 	protected Widget?    grid_page = null; // the grid of a view without albums (Internet Radio)
 	ScrolledWindow       wall_scroll;
+	Widget               album_child;   // album_scroll as the album page holds it (Aqua bars, or the same)
+	Widget               wall_child;    // wall_scroll as the album page holds it
 	AlbumWall?           wall;
 	public GenericList	 list_view      { get; protected set; }
 	public GenericGrid	 album_view		{ get; protected set; }
@@ -202,9 +204,11 @@ public abstract class BeatBox.SourceView : Box, View {
 			wall_scroll.set_policy(PolicyType.NEVER, PolicyType.AUTOMATIC);
 			wall_scroll.add(wall);
 			
+			album_child = AquaScroll.wrap(album_scroll);
+			wall_child = AquaScroll.wrap(wall_scroll);
 			album_page = new Stack();
-			album_page.add(album_scroll);
-			album_page.add(wall_scroll);
+			album_page.add(album_child);
+			album_page.add(wall_child);
 			album_page.show_all();
 			apply_album_click_mode();
 			App.settings.main.notify["album-grid-inline"].connect(apply_album_click_mode);
@@ -219,7 +223,7 @@ public abstract class BeatBox.SourceView : Box, View {
 			cover_flow.album_activated.connect(play_album);
 			var paned = new Paned(Orientation.VERTICAL);
 			paned.pack1(cover_flow, false, false);
-			paned.pack2(list_scroll, true, false);
+			paned.pack2(AquaScroll.wrap(list_scroll), true, false);
 			// Cover Flow gets half of the height until the user drags the divider
 			bool user_moved = false;
 			paned.size_allocate.connect((alloc) => {
@@ -235,8 +239,11 @@ public abstract class BeatBox.SourceView : Box, View {
 			cover_flow.no_show_all = true;
 		}
 		
-		if (have_list_view)
+		if (have_list_view) {
+			if (!have_album_view) // with albums, the paned above holds the list (wrapped there)
+				list_page = AquaScroll.wrap(list_scroll);
 			view_container.append_page (list_page);
+		}
 		
 		if (grid_page != null)
 			view_container.append_page (grid_page);
@@ -246,7 +253,7 @@ public abstract class BeatBox.SourceView : Box, View {
 
 	void apply_album_click_mode () {
 		bool inline = App.settings.main.album_grid_inline;
-		album_page.visible_child = inline ? (Widget)wall_scroll : (Widget)album_scroll;
+		album_page.visible_child = inline ? wall_child : album_child;
 		if (inline)
 			album_view.item_activated_handler (null); // hide the popup
 	}

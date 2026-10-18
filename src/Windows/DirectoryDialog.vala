@@ -99,7 +99,7 @@ public class BeatBox.DirectoryDialog : Dialog {
 		if (kind == Kind.RADIO)
 			box.add (build_filters (top));
 		scroll.vexpand = true;
-		box.add(scroll);
+		box.add(AquaScroll.wrap(scroll));
 		box.add(status);
 		box.add(source);
 

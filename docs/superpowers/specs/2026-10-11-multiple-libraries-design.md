@@ -21,7 +21,7 @@ BeatBox opens it (if the drive is connected).
 - Switching restarts BeatBox (approach A). Rejected: a live switch without
   restarting (B: everything is built once at startup and holds the songs; much
   more code and risk of leaks and crashes) and one database with a library
-  column (C: itunes7 would see every library's songs mixed). A restart with the
+  column (C: partner would see every library's songs mixed). A restart with the
   user's 1,142 songs takes about 1.5–2 s (measured headless: the window maps
   2.7 s after launch, Xvfb's start included).
 
@@ -29,7 +29,7 @@ BeatBox opens it (if the drive is connected).
 
 **Main library**: what exists today, untouched and with no migration:
 `~/.local/share/beatbox/beatbox.db` and the `[settings]` group of
-`~/.config/beatbox/beatbox.conf`. itunes7 keeps reading `beatbox.db`.
+`~/.config/beatbox/beatbox.conf`. partner keeps reading `beatbox.db`.
 
 **Other libraries**: each one has an id (from its name, made unique: `disco-externo`, `disco-externo-2`) and
 
@@ -76,8 +76,8 @@ database's first import reads) is the active library's `music-folder` when set,
 and the user's Music folder (`XDG_MUSIC_DIR`) only when it is empty, as on a
 first run.
 
-**itunes7 sync**: only while the main library is active (it compares with
-`beatbox.db`, the file itunes7 reads). With another library active the option
+**partner sync**: only while the main library is active (it compares with
+`beatbox.db`, the file partner reads). With another library active the option
 in Preferences › Library is insensitive, with a line saying why.
 
 ## Switching
@@ -137,7 +137,7 @@ Headless (Xvfb, private D-Bus, scratch home), with generated audio files only:
    offer no Remove.
 4. `library=` naming a missing library: the main one opens.
 5. A read-only copy of the user's database opens unchanged as the main library,
-   and the itunes7 sync works with it.
+   and the partner sync works with it.
 6. `meson test smoke` passes.
 
 7. The ids of library B's songs and of the shared stations and podcasts never

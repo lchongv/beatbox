@@ -132,7 +132,7 @@ public class BeatBox.NotImportedDialog : Window{
 		Box listBox = new Box(Orientation.VERTICAL, 0);
 		filesScroll.vexpand = true;
 		filesScroll.margin_top = filesScroll.margin_bottom = 5;
-		listBox.add(filesScroll);
+		listBox.add(AquaScroll.wrap(filesScroll));
 		
 		Expander exp = new Expander(_("Select individual files to move to trash:"));
 		exp.add(listBox);

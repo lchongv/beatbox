@@ -3,16 +3,12 @@
 # This file is distributed under the same license as the beat-box package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2012.
 #
-#. if less than one hour, show minutes + seconds
-#. There is obviously more than one minute. Otherwise we would have returned
-#. waay earlier
-#: core/Utils/TimeUtils.vala:82
-#, c-format
+#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: beat-box\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-13 22:24-0300\n"
+"POT-Creation-Date: 2026-10-13 23:10-0300\n"
 "PO-Revision-Date: 2012-02-15 20:13+0000\n"
 "Last-Translator: kevinchou <Unknown>\n"
 "Language-Team: Chinese (Simplified) <zh_CN@li.org>\n"
@@ -21,17 +17,17 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Launchpad-Export-Date: 2012-11-20 05:11+0000\n"
 "X-Generator: Launchpad (build 16286)\n"
+"X-Launchpad-Export-Date: 2012-11-20 05:11+0000\n"
 
 #: core/CellRenderers/CellDataFunctionHelper.vala:132
 msgid " kbps"
-msgstr ""
+msgstr "kbps"
 
 #: core/Media/Media.vala:40 src/Widgets/StatusBar.vala:78
 msgid "Song"
 msgid_plural "Songs"
-msgstr[0] ""
+msgstr[0] "歌曲"
 
 #: core/Media/Media.vala:42 src/Lists/GenericList.vala:128
 #: src/Lists/PodcastList.vala:108 src/Windows/DirectoryDialog.vala:65
@@ -39,10 +35,9 @@ msgstr[0] ""
 #: src/Windows/EqualizerWindow.vala:246
 msgid "Podcast"
 msgid_plural "Podcasts"
-msgstr[0] ""
+msgstr[0] "播客"
 
 #: core/Media/Media.vala:44
-#, fuzzy
 msgid "Audiobook"
 msgid_plural "Audiobooks"
 msgstr[0] "有声读物"
@@ -53,23 +48,22 @@ msgstr[0] "有声读物"
 #: src/Windows/Editors/StationEditor.vala:61
 msgid "Station"
 msgid_plural "Stations"
-msgstr[0] ""
+msgstr[0] "电台"
 
 #: core/Media/Media.vala:48
 msgid "Video"
 msgid_plural "Videos"
-msgstr[0] ""
+msgstr[0] "视频"
 
 #: core/Media/Media.vala:50
-#, fuzzy
 msgid "TV Show"
 msgid_plural "TV Shows"
-msgstr[0] "显示"
+msgstr[0] "电视节目"
 
 #: core/Media/Media.vala:52
 msgid "Item"
 msgid_plural "Items"
-msgstr[0] ""
+msgstr[0] "项目"
 
 #: core/Media/Preview.vala:57 src/Media/Podcast.vala:77 src/Media/Song.vala:57
 #: src/NowPlayingView/PodcastSummarySection.vala:292
@@ -120,11 +114,11 @@ msgstr "比特率"
 #: src/Lists/GenericList.vala:128 src/Lists/PodcastList.vala:111
 #: src/Windows/Editors/PodcastEditor.vala:74
 msgid "Comment"
-msgstr ""
+msgstr "注释"
 
 #: core/Playlists/SmartQuery.vala:59 src/Dialogs/FindReplaceDialog.vala:38
 msgid "Composer"
-msgstr ""
+msgstr "作曲"
 
 #: core/Playlists/SmartQuery.vala:61 src/Lists/DuplicateList.vala:130
 #: src/Lists/GenericList.vala:127 src/Lists/MusicList.vala:171
@@ -133,7 +127,7 @@ msgstr "加入日期"
 
 #: core/Playlists/SmartQuery.vala:63
 msgid "Date Released"
-msgstr ""
+msgstr "发行日期"
 
 #: core/Playlists/SmartQuery.vala:65 src/Dialogs/FindReplaceDialog.vala:38
 #: src/Lists/DuplicateList.vala:124 src/Lists/GenericList.vala:126
@@ -146,7 +140,7 @@ msgstr "流派"
 
 #: core/Playlists/SmartQuery.vala:67 src/Dialogs/FindReplaceDialog.vala:38
 msgid "Grouping"
-msgstr ""
+msgstr "分组"
 
 #: core/Playlists/SmartQuery.vala:69 src/Lists/DuplicateList.vala:131
 #: src/Lists/GenericList.vala:128 src/Lists/MusicList.vala:172
@@ -161,25 +155,26 @@ msgstr "时间"
 
 #: core/Playlists/SmartQuery.vala:73
 msgid "Media Type"
-msgstr ""
+msgstr "媒体类型"
 
 #: core/Playlists/SmartQuery.vala:75
 msgid "Play Count"
-msgstr ""
+msgstr "播放次数"
 
 #: core/Playlists/SmartQuery.vala:77 src/Lists/DuplicateList.vala:127
 #: src/Lists/GenericList.vala:127 src/Lists/MusicList.vala:168
 #: src/Lists/PodcastList.vala:112 src/Lists/RadioList.vala:79
-#: src/Widgets/TrackReport.vala:183 src/Windows/Editors/PodcastEditor.vala:76
+#: src/Widgets/TrackReport.vala:182 src/Windows/Editors/PodcastEditor.vala:76
 #: src/Windows/Editors/StationEditor.vala:63
 msgid "Rating"
 msgstr "评级"
 
 #: core/Playlists/SmartQuery.vala:79 src/Windows/Editors/InfoViewport.vala:70
 msgid "Skip Count"
-msgstr ""
+msgstr "跳过次数"
 
-#. Column titles are translated at runtime (see add_columns); listed here for xgettext
+#. Column titles are translated at runtime (see add_columns); listed here for
+#. xgettext
 #. if(s.media_type != sum.media_type)
 #. sum.media_type = MediaType.SONG;
 #: core/Playlists/SmartQuery.vala:81 src/Dialogs/FillTagsDialog.vala:47
@@ -202,7 +197,7 @@ msgstr "是"
 
 #: core/Playlists/SmartQuery.vala:156
 msgid "is exactly"
-msgstr ""
+msgstr "恰好为"
 
 #: core/Playlists/SmartQuery.vala:158
 msgid "is not"
@@ -210,19 +205,19 @@ msgstr "不是"
 
 #: core/Playlists/SmartQuery.vala:160
 msgid "is at least"
-msgstr ""
+msgstr "至少为"
 
 #: core/Playlists/SmartQuery.vala:162
 msgid "is at most"
-msgstr ""
+msgstr "至多为"
 
 #: core/Playlists/SmartQuery.vala:164
 msgid "is within"
-msgstr ""
+msgstr "介于"
 
 #: core/Playlists/SmartQuery.vala:166
 msgid "is before"
-msgstr ""
+msgstr "早于"
 
 #: core/Playlists/SmartQuery.vala:168
 msgid "contains"
@@ -241,66 +236,61 @@ msgstr "新建播放列表"
 #, c-format
 msgid "%d second"
 msgid_plural "%d seconds"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%d 秒"
 
 #: core/Utils/TimeUtils.vala:66
 #, c-format
 msgid "%i day"
 msgid_plural "%i days"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%i 天"
 
 #: core/Utils/TimeUtils.vala:70
 #, c-format
 msgid "%i hour"
 msgid_plural "%i hours"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%i 小时"
 
 #: core/Utils/TimeUtils.vala:74
 #, c-format
 msgid "%i minute"
 msgid_plural "%i minutes"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%i 分钟"
 
 #: core/Utils/TimeUtils.vala:84 core/Utils/TimeUtils.vala:94
 #: core/Utils/TimeUtils.vala:98 core/Utils/TimeUtils.vala:106
 #, c-format
 msgid "%s and %s"
-msgstr ""
+msgstr "%s 和 %s"
 
 #: core/Utils/TimeUtils.vala:92
 #, c-format
 msgid "%s, %s and %s"
-msgstr ""
+msgstr "%s、%s 和 %s"
 
 #: core/Utils/UI.vala:155
 msgid "Experimental:"
-msgstr ""
+msgstr "实验性功能："
 
 #: src/Core/AcoustId.vala:39
-#, fuzzy
 msgid "Could not compute the fingerprint of this file."
-msgstr "BeatBox不能如去此音频CD的内容。"
+msgstr "无法计算此文件的指纹。"
 
 #: src/Core/AcoustId.vala:50
 msgid "AcoustID could not be reached."
-msgstr ""
+msgstr "无法连接 AcoustID。"
 
 #: src/Core/AcoustId.vala:55
 #, c-format
 msgid "AcoustID answered: %s"
-msgstr ""
+msgstr "AcoustID 回复：%s"
 
 #: src/Core/Actions.vala:50
 msgid "Create Playlist"
-msgstr ""
+msgstr "创建播放列表"
 
 #: src/Core/Actions.vala:51
 msgid "Create Smart Playlist"
-msgstr ""
+msgstr "创建智能播放列表"
 
 #: src/Core/Actions.vala:52
 msgid "Import Playlist"
@@ -312,7 +302,7 @@ msgstr "导入电台"
 
 #: src/Core/Actions.vala:54 src/Windows/AddPodcastWindow.vala:51
 msgid "Add RSS Feed"
-msgstr ""
+msgstr "添加 RSS 源"
 
 #: src/Core/Actions.vala:55 src/SourceViews/PodcastSourceView.vala:57
 msgid "Download new Episodes"
@@ -335,7 +325,7 @@ msgstr "下一个"
 
 #: src/Core/Actions.vala:59
 msgid "Play/Pause"
-msgstr ""
+msgstr "播放/暂停"
 
 #: src/Core/Actions.vala:60 src/DBus/UnityIntegration.vala:57
 #: src/Windows/Editors/MediaEditor.vala:92
@@ -344,24 +334,24 @@ msgstr "上一个"
 
 #: src/Core/Actions.vala:61
 msgid "Love"
-msgstr ""
+msgstr "喜欢"
 
 #: src/Core/Actions.vala:62
 msgid "Show Duplicates"
-msgstr ""
+msgstr "显示重复项"
 
 #: src/Core/Actions.vala:63
 msgid "Hide Duplicates"
-msgstr ""
+msgstr "隐藏重复项"
 
 #: src/Core/Actions.vala:64
 msgid "Exit"
-msgstr ""
+msgstr "退出"
 
 #: src/Core/Actions.vala:133
 #, c-format
 msgid "Choose %s Folder"
-msgstr ""
+msgstr "选择 %s 文件夹"
 
 #: src/Core/Actions.vala:135 src/Core/Actions.vala:153
 #: src/Core/Actions.vala:292 src/Dialogs/FileNotFoundDialog.vala:154
@@ -369,62 +359,62 @@ msgstr ""
 #: src/Dialogs/SetLibraryFolderConfirmation.vala:72
 #: src/Dialogs/SetLibraryFolderConfirmation.vala:135
 #: src/Utils/PlaylistUtils.vala:231
-#, fuzzy
 msgid "_Cancel"
-msgstr "取消"
+msgstr "取消(_C)"
 
 #: src/Core/Actions.vala:136 src/Core/Actions.vala:154
 #: src/Core/Actions.vala:293 src/Dialogs/FileNotFoundDialog.vala:155
 #: src/Dialogs/SetLibraryFolderConfirmation.vala:136
 msgid "_Open"
-msgstr ""
+msgstr "打开(_O)"
 
 #: src/Core/Actions.vala:151 src/Core/Actions.vala:290
 #, c-format
 msgid "Import %s"
-msgstr ""
+msgstr "导入 %s"
 
 #: src/Core/Actions.vala:179
 msgid "Import Failed"
-msgstr ""
+msgstr "导入失败"
 
 #: src/Core/Actions.vala:179
 #, c-format
 msgid ""
-"Your library's %s folder could not be found. Please make sure your %s folder "
-"is mounted before importing."
-msgstr ""
+"Your library's %s folder could not be found. Please make sure your %s folder"
+" is mounted before importing."
+msgstr "找不到媒体库的 %s 文件夹。导入前请确保已挂载该文件夹。"
 
 #: src/Core/Actions.vala:183
 msgid "Doing Partial Import"
-msgstr ""
+msgstr "正在进行部分导入"
 
 #: src/Core/Actions.vala:183
 #, c-format
 msgid ""
 "Some of the folders you selected to import are already in your %s Folder. "
 "Please rescan instead."
-msgstr ""
+msgstr "您选择的部分文件夹已在 %s 文件夹中。请改为重新扫描。"
 
 #: src/Core/Actions.vala:326
 msgid "Invalid Playlist"
-msgstr ""
+msgstr "无效的播放列表"
 
 #: src/Core/Actions.vala:326
 msgid "Unrecognized playlist file. Import failed."
-msgstr ""
+msgstr "无法识别的播放列表文件。导入失败。"
 
-#. If the user wants their imports to be copied to their music folder, transition
+#. If the user wants their imports to be copied to their music folder,
+#. transition
 #. into that copy right now. If they don't, finish.
 #: src/Core/FileOperator.vala:510
 #, c-format
 msgid "Copying files to %s Folder..."
-msgstr ""
+msgstr "正在将文件复制到 %s 文件夹…"
 
 #: src/Core/FileOperator.vala:530
 #, c-format
 msgid "Copying %s to %s Folder"
-msgstr ""
+msgstr "正在将 %s 复制到 %s 文件夹"
 
 #: src/Core/LibrarySwitcher.vala:32 src/Libraries/SongLibrary.vala:38
 #: src/Preferences/MusicPreferences.vala:32
@@ -435,26 +425,24 @@ msgid "Music"
 msgstr "音乐"
 
 #: src/Core/LibrarySwitcher.vala:45
-#, fuzzy
 msgid "New Library…"
-msgstr "媒体库"
+msgstr "新建媒体库…"
 
 #: src/Core/LibrarySwitcher.vala:46
 msgid "Manage Libraries…"
-msgstr ""
+msgstr "管理媒体库…"
 
 #: src/Core/LibrarySwitcher.vala:55
 msgid "Cannot Switch Libraries"
-msgstr ""
+msgstr "无法切换媒体库"
 
 #: src/Core/LibrarySwitcher.vala:55
 msgid "Wait until the current import or operation finishes."
-msgstr ""
+msgstr "请等待当前导入或操作完成。"
 
 #: src/Core/LibrarySwitcher.vala:78
-#, fuzzy
 msgid "New Library"
-msgstr "媒体库"
+msgstr "新建媒体库"
 
 #: src/Core/LibrarySwitcher.vala:80 src/Dialogs/FillTagsDialog.vala:73
 #: src/Preferences/BehaviorPreferences.vala:129
@@ -473,108 +461,105 @@ msgstr "取消"
 
 #: src/Core/LibrarySwitcher.vala:80
 msgid "Create"
-msgstr ""
+msgstr "创建"
 
 #: src/Core/LibrarySwitcher.vala:81
 msgid "External Disk"
-msgstr ""
+msgstr "外部磁盘"
 
 #: src/Core/LibrarySwitcher.vala:82 src/Preferences/MusicPreferences.vala:46
 msgid "Music Folder"
-msgstr ""
+msgstr "音乐文件夹"
 
 #: src/Core/LibrarySwitcher.vala:84 src/Windows/DirectoryDialog.vala:529
 #: src/Windows/Editors/SongEditor.vala:155
 msgid "Name:"
-msgstr ""
+msgstr "名称："
 
 #: src/Core/LibrarySwitcher.vala:86
-#, fuzzy
 msgid "Music folder:"
-msgstr "设置音乐文件夹"
+msgstr "音乐文件夹："
 
 #: src/Core/LibrarySwitcher.vala:88
 msgid "BeatBox restarts with the new library and imports the folder."
-msgstr ""
+msgstr "BeatBox 将以新媒体库重新启动并导入该文件夹。"
 
 #. an Image gets no clicks of its own
 #: src/Core/LibraryWindow.vala:327
 msgid "Click to enlarge; drag to copy it into another application or folder"
-msgstr ""
+msgstr "点击放大；拖动可复制到其他应用或文件夹"
 
 #: src/Core/LibraryWindow.vala:392
-#, fuzzy
 msgid "_Library"
-msgstr "媒体库"
+msgstr "媒体库(_L)"
 
 #: src/Core/LibraryWindow.vala:393
 msgid "_Mini Player"
-msgstr ""
+msgstr "迷你播放器(_M)"
 
 #: src/Core/LibraryWindow.vala:441
 msgid "Resolve"
-msgstr ""
+msgstr "解析"
 
 #: src/Core/LibraryWindow.vala:494
 msgid "Information about the song playing (Ctrl+Shift+I)"
-msgstr ""
+msgstr "当前播放歌曲的信息 (Ctrl+Shift+I)"
 
 #: src/Core/LibraryWindow.vala:552 src/Dialogs/FindReplaceDialog.vala:96
 #: src/Windows/DirectoryDialog.vala:106
 msgid "Close"
-msgstr ""
+msgstr "关闭"
 
 #: src/Core/LibraryWindow.vala:552
 msgid "Minimize"
-msgstr ""
+msgstr "最小化"
 
 #: src/Core/LibraryWindow.vala:552
 msgid "Maximize (Alt: mini player)"
-msgstr ""
+msgstr "最大化（Alt：迷你播放器）"
 
 #: src/Core/LibraryWindow.vala:859
 msgid "Play / Pause"
-msgstr ""
+msgstr "播放/暂停"
 
 #: src/Core/LibraryWindow.vala:860
-#, fuzzy
 msgid "Next song"
-msgstr "下一个"
+msgstr "下一首"
 
 #: src/Core/LibraryWindow.vala:861
-#, fuzzy
 msgid "Previous song"
-msgstr "上一个"
+msgstr "上一首"
 
 #: src/Core/LibraryWindow.vala:862
 msgid "Volume up"
-msgstr ""
+msgstr "增大音量"
 
 #: src/Core/LibraryWindow.vala:863
 msgid "Volume down"
-msgstr ""
+msgstr "减小音量"
 
 #: src/Core/LibraryWindow.vala:864
 msgid "Mini player"
-msgstr ""
+msgstr "迷你播放器"
 
 #: src/Core/LibraryWindow.vala:865
 msgid "Search"
-msgstr ""
+msgstr "搜索"
 
 #: src/Core/LibraryWindow.vala:869
 msgid "Now playing"
-msgstr ""
+msgstr "正在播放"
 
 #: src/Core/LibraryWindow.vala:870
 msgid "Information panel"
-msgstr ""
+msgstr "信息面板"
 
 #: src/Core/LibraryWindow.vala:873
 msgid "Quit"
-msgstr ""
+msgstr "退出"
 
-#. FIXME: We already do this and more in the library_manager import_operation_finished. Use that
+#. FIXME: We already do this and more in the library_manager
+#. import_operation_finished. Use that
 #. and use the same text as here for CD imports
 #: src/Core/LibraryWindow.vala:983 src/Devices/CDRomDevice.vala:339
 msgid "Import Complete"
@@ -583,212 +568,211 @@ msgstr "导入完成"
 #: src/Core/LibraryWindow.vala:983
 #, c-format
 msgid "BeatBox has imported your %s library."
-msgstr ""
+msgstr "BeatBox 已导入您的 %s 媒体库。"
 
 #: src/Core/LibraryWindow.vala:1076 src/Core/LibraryWindow.vala:1083
 #, c-format
 msgid "%s media files could not be found."
-msgstr ""
+msgstr "找不到 %s 个媒体文件。"
 
 #: src/Core/PlaylistManager.vala:179
 msgid "Adding playlist to Library"
-msgstr ""
+msgstr "正在将播放列表添加到媒体库"
 
 #: src/Core/PlaylistManager.vala:199
 #, c-format
 msgid "Importing %s to Library..."
-msgstr ""
+msgstr "正在将 %s 导入媒体库…"
 
 #: src/Core/PodcastManager.vala:36
 msgid "Cancelling remaining downloads..."
-msgstr ""
+msgstr "正在取消剩余的下载…"
 
 #: src/Core/PodcastManager.vala:37
 msgid "Fetching new podcast episodes"
-msgstr ""
+msgstr "正在获取新的播客单集"
 
 #: src/Core/PodcastManager.vala:38
 #, c-format
 msgid "Searching for new %s podcast episodes..."
-msgstr ""
+msgstr "正在搜索 %s 的新播客单集…"
 
 #: src/Core/PodcastManager.vala:39
 #, c-format
 msgid "Fetching podcast from %s"
-msgstr ""
+msgstr "正在从 %s 获取播客"
 
 #: src/Core/PodcastManager.vala:40
 #, c-format
 msgid "Downloading %s (%d of %d)"
-msgstr ""
+msgstr "正在下载 %s（%d / %d）"
 
 #: src/Core/PodcastManager.vala:48
 msgid "Downloading new Podcasts"
-msgstr ""
+msgstr "正在下载新播客"
 
 #: src/Core/PodcastManager.vala:135
 msgid "Parsing new Podcast RSS"
-msgstr ""
+msgstr "正在解析播客 RSS"
 
 #: src/Core/PodcastManager.vala:331
 msgid "Downloading Podcast Episodes"
-msgstr ""
+msgstr "正在下载播客单集"
 
 #: src/Core/PodcastManager.vala:341
 msgid "Downloading Podcast Episodes..."
-msgstr ""
+msgstr "正在下载播客单集…"
 
 #: src/Core/Skins.vala:128
 #, c-format
 msgid "Line %u: %s"
-msgstr ""
+msgstr "第 %u 行：%s"
 
 #. a skin may have no skin.ini
 #: src/Core/Skins.vala:158
 #, c-format
 msgid "%s (edited)"
-msgstr ""
+msgstr "%s（已编辑）"
 
 #: src/DBus/UnityIntegration.vala:58 src/DBus/UnityIntegration.vala:129
 #: src/Widgets/AlbumWall.vala:421 src/Windows/Editors/InfoViewport.vala:191
 msgid "Play"
 msgid_plural "Plays"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "播放"
 
 #: src/DBus/UnityIntegration.vala:129
 msgid "Pause"
-msgstr ""
+msgstr "暂停"
 
 #: src/Devices/AndroidDevice.vala:63
 msgid "No Description"
-msgstr ""
+msgstr "无描述"
 
 #: src/Devices/AndroidDevice.vala:91 src/Devices/CDRomDevice.vala:129
 msgid "Unknown capacity"
-msgstr ""
+msgstr "未知容量"
 
 #: src/Devices/CDRomDevice.vala:97
 msgid "Multimedia Disc"
-msgstr ""
+msgstr "多媒体光盘"
 
 #: src/Devices/CDRomDevice.vala:212
 #, c-format
 msgid "Ripping from %s"
-msgstr ""
+msgstr "正在从 %s 抓取"
 
 #: src/Devices/CDRomDevice.vala:269
 #, c-format
 msgid "CD Import cancelled. Finishing ripping track %s..."
-msgstr ""
+msgstr "已取消 CD 导入。正在完成曲目 %s 的抓取…"
 
 #: src/Devices/CDRomDevice.vala:339
 #, c-format
 msgid "BeatBox has finished importing %d song(s) from Audio CD"
-msgstr ""
+msgstr "BeatBox 已完成从音频 CD 导入 %d 首歌曲"
 
 #: src/Devices/iPodDevice.vala:208
 msgid "Unknown Capacity"
-msgstr ""
+msgstr "未知容量"
 
 #: src/Devices/iPodDevice.vala:282 src/Devices/iPodDevice.vala:465
 #: src/Devices/iPodDevice.vala:597
 #, c-format
 msgid "Syncing %s"
-msgstr ""
+msgstr "正在同步 %s"
 
 #: src/Devices/iPodDevice.vala:292
 msgid "Syncing "
-msgstr ""
+msgstr "正在同步"
 
 #. for each song that is on device, but not in this.list, remove
 #: src/Devices/iPodDevice.vala:307
 msgid "Removing old medias from iPod and updating current ones"
-msgstr ""
+msgstr "正在从 iPod 删除旧媒体并更新现有媒体"
 
 #. now add all in list that weren't in medias
 #: src/Devices/iPodDevice.vala:357
 msgid "Adding new media to iPod..."
-msgstr ""
+msgstr "正在向 iPod 添加新媒体…"
 
 #: src/Devices/iPodDevice.vala:393 src/Devices/iPodDevice.vala:497
 #: src/Devices/iPodDevice.vala:644
 msgid "Cancelling Sync..."
-msgstr ""
+msgstr "正在取消同步…"
 
 #: src/Devices/iPodDevice.vala:393 src/Devices/iPodDevice.vala:497
 #: src/Devices/iPodDevice.vala:644
 msgid "Finishing sync process..."
-msgstr ""
+msgstr "正在完成同步…"
 
 #: src/Devices/iPodDevice.vala:475
 msgid "Syncing"
-msgstr ""
+msgstr "正在同步"
 
 #: src/Devices/iPodDevice.vala:533
 msgid "Adding"
-msgstr ""
+msgstr "正在添加"
 
 #: src/Devices/iPodDevice.vala:534 src/Devices/iPodDevice.vala:673
 msgid "by"
-msgstr ""
+msgstr "作者"
 
 #: src/Devices/iPodDevice.vala:535
 msgid "to"
-msgstr ""
+msgstr "到"
 
 #: src/Devices/iPodDevice.vala:607
 msgid "Removing from "
-msgstr ""
+msgstr "正在删除"
 
 #: src/Devices/iPodDevice.vala:672
 msgid "Removing"
-msgstr ""
+msgstr "正在删除"
 
 #: src/Devices/iPodDevice.vala:674
 msgid "from"
-msgstr ""
+msgstr "从"
 
 #. should be called from thread
 #. index = 75 at this point. will go to 95
 #: src/Devices/iPodDevice.vala:739
 msgid "Syncing playlists"
-msgstr ""
+msgstr "正在同步播放列表"
 
 #: src/Devices/iPodDevice.vala:792
 #, c-format
 msgid "Transferring from %s"
-msgstr ""
+msgstr "正在从 %s 传输"
 
 #: src/Devices/iPodDevice.vala:803
 #, c-format
 msgid "Importing %s items to library..."
-msgstr ""
+msgstr "正在将 %s 个项目导入媒体库…"
 
 #: src/Devices/iPodDevice.vala:822
 msgid "Importing"
-msgstr ""
+msgstr "正在导入"
 
 #: src/Devices/iPodDevice.vala:822
 msgid "to library"
-msgstr ""
+msgstr "到媒体库"
 
 #: src/Dialogs/FillTagsDialog.vala:11
 msgid "Nothing to fill in"
-msgstr ""
+msgstr "没有可填充的内容"
 
 #: src/Dialogs/FillTagsDialog.vala:11
 msgid "The file names don't add anything to these songs' tags."
-msgstr ""
+msgstr "文件名不能为这些歌曲的标签提供任何新信息。"
 
 #: src/Dialogs/FillTagsDialog.vala:20
 msgid "Fill In Tags from File Names"
-msgstr ""
+msgstr "从文件名填充标签"
 
 #: src/Dialogs/FillTagsDialog.vala:47 src/Widgets/TrackReport.vala:107
-#: src/Widgets/TrackReport.vala:268
+#: src/Widgets/TrackReport.vala:267
 msgid "File"
-msgstr ""
+msgstr "文件"
 
 #: src/Dialogs/FillTagsDialog.vala:47 src/Lists/DuplicateList.vala:119
 #: src/Lists/GenericList.vala:127 src/Lists/MusicList.vala:160
@@ -800,139 +784,134 @@ msgstr "音轨"
 #, c-format
 msgid "%d song gets the tags in bold. Tags already set are kept."
 msgid_plural "%d songs get the tags in bold. Tags already set are kept."
-msgstr[0] ""
+msgstr[0] "%d 首歌曲将以粗体显示其标签。已设置的标签保持不变。"
 
 #: src/Dialogs/FillTagsDialog.vala:74
 msgid "Fill In"
-msgstr ""
+msgstr "填充"
 
 #: src/Dialogs/FindReplaceDialog.vala:28
 msgid "Find and Replace in Tags"
-msgstr ""
+msgstr "在标签中查找和替换"
 
 #: src/Dialogs/FindReplaceDialog.vala:38
-#, fuzzy
 msgid "Album Artist"
-msgstr "艺术家"
+msgstr "专辑艺术家"
 
 #: src/Dialogs/FindReplaceDialog.vala:47
-#, fuzzy
 msgid "Match case"
-msgstr "匹配"
+msgstr "区分大小写"
 
 #: src/Dialogs/FindReplaceDialog.vala:48
 msgid "Regular expression"
-msgstr ""
+msgstr "正则表达式"
 
 #: src/Dialogs/FindReplaceDialog.vala:49
 msgid "The replacement may use \\1, \\2… for the parts in parentheses"
-msgstr ""
+msgstr "替换内容可使用 \\1、\\2… 引用括号中的部分"
 
 #: src/Dialogs/FindReplaceDialog.vala:50
 msgid "Whole words"
-msgstr ""
+msgstr "全字匹配"
 
 #: src/Dialogs/FindReplaceDialog.vala:55
 msgid "Tag:"
-msgstr ""
+msgstr "标签："
 
 #: src/Dialogs/FindReplaceDialog.vala:55
 msgid "Find:"
-msgstr ""
+msgstr "查找："
 
 #: src/Dialogs/FindReplaceDialog.vala:55
 msgid "Replace with:"
-msgstr ""
+msgstr "替换为："
 
 #: src/Dialogs/FindReplaceDialog.vala:71
 msgid "Now"
-msgstr ""
+msgstr "现在"
 
 #: src/Dialogs/FindReplaceDialog.vala:71
 msgid "After"
-msgstr ""
+msgstr "之后"
 
 #: src/Dialogs/FindReplaceDialog.vala:97
 msgid "Replace All"
-msgstr ""
+msgstr "全部替换"
 
 #: src/Dialogs/FindReplaceDialog.vala:125
 #, c-format
 msgid "%d song chosen. Type what to find."
 msgid_plural "%d songs chosen. Type what to find."
-msgstr[0] ""
+msgstr[0] "已选择 %d 首歌曲。请输入要查找的内容。"
 
 #: src/Dialogs/FindReplaceDialog.vala:141
 #, c-format
 msgid "%d of %d songs changes."
 msgid_plural "%d of %d songs change."
-msgstr[0] ""
+msgstr[0] "将更改 %d 首歌曲中的 %d 首。"
 
 #: src/Dialogs/FindReplaceDialog.vala:143
 #, c-format
 msgid "The regular expression is not valid: %s"
-msgstr ""
+msgstr "正则表达式无效：%s"
 
 #: src/Dialogs/FindReplaceDialog.vala:155
 msgid "Tags replaced"
-msgstr ""
+msgstr "标签已替换"
 
 #: src/Dialogs/FindReplaceDialog.vala:155
-#, fuzzy, c-format
+#, c-format
 msgid "%d song changed"
 msgid_plural "%d songs changed"
-msgstr[0] "歌曲"
+msgstr[0] "已更改 %d 首歌曲"
 
 #: src/Dialogs/FileNotFoundDialog.vala:80 src/Lists/MusicList.vala:97
 #: src/Lists/PodcastList.vala:77
 msgid "Remove from Library"
-msgstr ""
+msgstr "从媒体库中移除"
 
 #: src/Dialogs/FileNotFoundDialog.vala:81
-#, fuzzy
 msgid "Rescan Library"
-msgstr "媒体库"
+msgstr "重新扫描媒体库"
 
 #: src/Dialogs/FileNotFoundDialog.vala:82
-#, fuzzy
 msgid "Locate File…"
-msgstr "定位"
+msgstr "查找文件…"
 
 #: src/Dialogs/FileNotFoundDialog.vala:83
 #: src/Dialogs/InstallGstreamerPluginsDialog.vala:65
 msgid "Do Nothing"
-msgstr ""
+msgstr "不执行任何操作"
 
 #. pretty up labels
 #: src/Dialogs/FileNotFoundDialog.vala:87
-#, fuzzy
 msgid "Could not find the file"
 msgid_plural "Could not find the files"
-msgstr[0] "找不到音乐文件夹"
+msgstr[0] "找不到文件"
 
 #: src/Dialogs/FileNotFoundDialog.vala:91
 #, c-format
 msgid "The file for %s by %s could not be found. What would you like to do?"
-msgstr ""
+msgstr "找不到 %s（作者：%s）的文件。您想怎么做？"
 
 #: src/Dialogs/FileNotFoundDialog.vala:93
 #, c-format
 msgid "%s files could not be found. What would you like to do?"
-msgstr ""
+msgstr "找不到 %s 个文件。您想怎么做？"
 
 #: src/Dialogs/FileNotFoundDialog.vala:152
 msgid "Locate Music File"
-msgstr ""
+msgstr "查找音乐文件"
 
 #: src/Dialogs/InstallGstreamerPluginsDialog.vala:64
 #: src/Preferences/BehaviorPreferences.vala:406
 msgid "Install Plugin"
-msgstr ""
+msgstr "安装插件"
 
 #. pretty up labels
 #: src/Dialogs/InstallGstreamerPluginsDialog.vala:69
 msgid "Required GStreamer plugin not installed"
-msgstr ""
+msgstr "未安装所需的 GStreamer 插件"
 
 #: src/Dialogs/InstallGstreamerPluginsDialog.vala:72
 #, c-format
@@ -940,49 +919,49 @@ msgid ""
 "The plugin for media type %s is not installed.\n"
 " What would you like to do?"
 msgstr ""
+"未安装媒体类型 %s 的插件。\n"
+"您想怎么做？"
 
 #: src/Dialogs/NotImportedDialog.vala:52
-#, fuzzy
 msgid "Not Imported Files"
-msgstr "取消导入"
+msgstr "未导入的文件"
 
 #: src/Dialogs/NotImportedDialog.vala:70
-#, fuzzy
 msgid "BeatBox could not read it. It may be damaged or not be audio."
 msgid_plural ""
 "BeatBox could not read them. They may be damaged or not be audio."
-msgstr[0] "BeatBox不能如去此音频CD的内容。"
+msgstr[0] "BeatBox 无法读取该文件。它可能已损坏或不是音频文件。"
 
 #: src/Dialogs/NotImportedDialog.vala:71
 msgid "Move all corrupted files to trash"
-msgstr ""
+msgstr "将所有损坏的文件移到回收站"
 
 #: src/Dialogs/NotImportedDialog.vala:76 src/Dialogs/RemoveFilesDialog.vala:58
 msgid "Move to Trash"
-msgstr ""
+msgstr "移到回收站"
 
 #: src/Dialogs/NotImportedDialog.vala:77
 msgid "Ignore"
-msgstr ""
+msgstr "忽略"
 
 #. pretty up labels
 #: src/Dialogs/NotImportedDialog.vala:81
-#, fuzzy, c-format
+#, c-format
 msgid "Could not import %d file"
 msgid_plural "Could not import %d files"
-msgstr[0] "找不到音乐文件夹"
+msgstr[0] "无法导入 %d 个文件"
 
 #: src/Dialogs/NotImportedDialog.vala:104
 msgid "File Location"
-msgstr ""
+msgstr "文件位置"
 
 #: src/Dialogs/NotImportedDialog.vala:137
 msgid "Select individual files to move to trash:"
-msgstr ""
+msgstr "选择要移到回收站的单个文件："
 
 #: src/Dialogs/RemoveFilesDialog.vala:59
 msgid "Remove from BeatBox"
-msgstr ""
+msgstr "从 BeatBox 中移除"
 
 #: src/Dialogs/RemoveFilesDialog.vala:66
 #: src/SourceViews/DeviceSourceView.vala:44
@@ -990,27 +969,23 @@ msgstr ""
 #: src/SourceViews/SimilarSourceView.vala:43 src/Widgets/StatusBar.vala:151
 msgid "song"
 msgid_plural "songs"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "首歌曲"
 
 #: src/Dialogs/RemoveFilesDialog.vala:69
 msgid "podcast episode"
 msgid_plural "podcast episodes"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "播客单集"
 
 #: src/Dialogs/RemoveFilesDialog.vala:72 src/Widgets/StatusBar.vala:157
 msgid "audiobook"
 msgid_plural "audiobooks"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "有声读物"
 
 #: src/Dialogs/RemoveFilesDialog.vala:75
 #: src/SourceViews/StationSourceView.vala:43 src/Widgets/StatusBar.vala:160
 msgid "station"
 msgid_plural "stations"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "电台"
 
 #: src/Dialogs/RemoveFilesDialog.vala:79
 #: src/SourceViews/DefaultSourceView.vala:38
@@ -1022,18 +997,17 @@ msgstr[1] ""
 #: src/Widgets/StatusBar.vala:163
 msgid "item"
 msgid_plural "items"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "项目"
 
 #: src/Dialogs/RemoveFilesDialog.vala:87
 #, c-format
 msgid "Remove %d %s from BeatBox?"
-msgstr ""
+msgstr "要从 BeatBox 中移除 %d 个%s 吗？"
 
 #: src/Dialogs/RemoveFilesDialog.vala:92
 #, c-format
 msgid "Remove “%s” from BeatBox?"
-msgstr ""
+msgstr "要从 BeatBox 中移除“%s”吗？"
 
 #: src/Dialogs/RemoveFilesDialog.vala:99
 msgid ""
@@ -1042,7 +1016,7 @@ msgid ""
 msgid_plural ""
 "They will be removed from your library and from any device that syncs "
 "automatically with BeatBox."
-msgstr[0] ""
+msgstr[0] "它将从您的媒体库以及任何与 BeatBox 自动同步的设备中移除。"
 
 #: src/Dialogs/SetLibraryFolderConfirmation.vala:70
 msgid "Export Playlists"
@@ -1051,20 +1025,20 @@ msgstr "导出播放列表"
 #: src/Dialogs/SetLibraryFolderConfirmation.vala:71
 #, c-format
 msgid "Set %s Folder"
-msgstr ""
+msgstr "设置 %s 文件夹"
 
 #. pretty up labels
 #: src/Dialogs/SetLibraryFolderConfirmation.vala:78
 #, c-format
 msgid "Set %s Folder?"
-msgstr ""
+msgstr "要设置 %s 文件夹吗？"
 
 #: src/Dialogs/SetLibraryFolderConfirmation.vala:81
 #, c-format
 msgid ""
 "Are you sure you want to set the %s folder to %s? This will reset your %s "
 "library."
-msgstr ""
+msgstr "您确定要将 %s 文件夹设置为 %s 吗？这将重置您的 %s 媒体库。"
 
 #: src/Dialogs/SetLibraryFolderConfirmation.vala:133
 msgid "Choose Music Folder"
@@ -1073,14 +1047,14 @@ msgstr "选择音乐文件夹"
 #: src/Dialogs/SyncWarningDialog.vala:43
 #, c-format
 msgid "Sync will remove %d medias from %s"
-msgstr ""
+msgstr "同步将从 %s 中移除 %d 个媒体"
 
 #: src/Dialogs/SyncWarningDialog.vala:44
 #, c-format
 msgid ""
 "If you continue to sync, medias will be removed from %s since they are not "
 "on the sync list. Would you like to import them to your library first?"
-msgstr ""
+msgstr "如果继续同步，不在同步列表中的媒体将从 %s 中移除。要先将它们导入媒体库吗？"
 
 #: src/Dialogs/SyncWarningDialog.vala:70
 msgid "Import medias to Library"
@@ -1092,7 +1066,7 @@ msgstr "继续同步"
 
 #: src/Dialogs/SyncWarningDialog.vala:72
 msgid "Dont Sync"
-msgstr ""
+msgstr "不同步"
 
 #: src/Dialogs/TransferFromDeviceDialog.vala:54 src/Views/DeviceView.vala:75
 msgid "Import from Device"
@@ -1101,14 +1075,14 @@ msgstr "从设备中打开"
 #. initialize controls
 #: src/Dialogs/TransferFromDeviceDialog.vala:71
 msgid "Import medias from"
-msgstr ""
+msgstr "导入媒体来自"
 
 #: src/Dialogs/TransferFromDeviceDialog.vala:72
 #, c-format
 msgid ""
-"The following files were found on %s, but are not in your library. Check all "
-"files you would like to import."
-msgstr ""
+"The following files were found on %s, but are not in your library. Check all"
+" files you would like to import."
+msgstr "以下文件在 %s 上找到，但不在您的媒体库中。请勾选要导入的文件。"
 
 #: src/Dialogs/TransferFromDeviceDialog.vala:73
 msgid "Import all medias"
@@ -1125,12 +1099,12 @@ msgstr "取消导入"
 #: src/Dialogs/TransferFromDeviceDialog.vala:84
 #, c-format
 msgid "Import %s from %s"
-msgstr ""
+msgstr "从 %s 导入 %s"
 
 #: src/Dialogs/TransferFromDeviceDialog.vala:86
 #, c-format
 msgid "Import %d medias from %s"
-msgstr ""
+msgstr "从 %s 导入 %d 个媒体"
 
 #: src/Dialogs/TransferFromDeviceDialog.vala:173
 msgid "Select individual medias to import:"
@@ -1138,59 +1112,59 @@ msgstr "导入选择的媒体"
 
 #: src/Dialogs/TransferFromDeviceDialog.vala:283
 msgid "Cannot Import"
-msgstr ""
+msgstr "无法导入"
 
 #: src/Dialogs/TransferFromDeviceDialog.vala:283
 msgid ""
 "BeatBox is already doing file operations. Please wait until those finish to "
 "import from "
-msgstr ""
+msgstr "BeatBox 正在执行文件操作。请等待这些操作完成后再从以下位置导入："
 
 #. if(!App.operations.doing_ops) {
 #: src/Libraries/BaseLibrary.vala:149
 #, c-format
 msgid "Setting %s Folder"
-msgstr ""
+msgstr "正在设置 %s 文件夹"
 
 #: src/Libraries/BaseLibrary.vala:163
 #, c-format
 msgid "Importing %s from %s..."
-msgstr ""
+msgstr "正在从 %s 导入 %s…"
 
 #: src/Libraries/BaseLibrary.vala:187
 #, c-format
 msgid "Adding files to %s Library"
-msgstr ""
+msgstr "正在将文件添加到 %s 媒体库"
 
 #: src/Libraries/BaseLibrary.vala:199
 #, c-format
 msgid "Adding files to %s library..."
-msgstr ""
+msgstr "正在将文件添加到 %s 媒体库…"
 
 #: src/Libraries/BaseLibrary.vala:214
 #, c-format
 msgid "Add folders to %s Library"
-msgstr ""
+msgstr "将文件夹添加到 %s 媒体库"
 
 #: src/Libraries/BaseLibrary.vala:228
 #, c-format
 msgid "Adding media from %s to %s library..."
-msgstr ""
+msgstr "正在将 %s 中的媒体添加到 %s 媒体库…"
 
 #: src/Libraries/BaseLibrary.vala:231
 #, c-format
 msgid "Adding media from %s folders to %s library..."
-msgstr ""
+msgstr "正在将 %s 文件夹中的媒体添加到 %s 媒体库…"
 
 #: src/Libraries/BaseLibrary.vala:253
 #, c-format
 msgid "Rescanning %s Folder"
-msgstr ""
+msgstr "正在重新扫描 %s 文件夹"
 
 #: src/Libraries/BaseLibrary.vala:264
 #, c-format
 msgid "Rescanning %s folder for changes..."
-msgstr ""
+msgstr "正在检查 %s 文件夹中的更改…"
 
 #: src/Libraries/PodcastLibrary.vala:37
 #: src/Preferences/PodcastPreferences.vala:32
@@ -1202,39 +1176,40 @@ msgstr "播客"
 
 #: src/Libraries/PodcastLibrary.vala:441
 msgid "Unheard Podcasts"
-msgstr ""
+msgstr "未收听的播客"
 
 #: src/Libraries/SongLibrary.vala:528
 msgid "Favorite Songs"
-msgstr ""
+msgstr "收藏的歌曲"
 
 #: src/Libraries/SongLibrary.vala:537
 msgid "Recently Added"
-msgstr ""
+msgstr "最近添加"
 
 #: src/Libraries/SongLibrary.vala:545
 msgid "Recently Played"
-msgstr ""
+msgstr "最近播放"
 
 #: src/Libraries/SongLibrary.vala:553
 msgid "Recent Favorites"
-msgstr ""
+msgstr "最近收藏"
 
-#: src/Libraries/SongLibrary.vala:563 src/Windows/Editors/InfoViewport.vala:174
+#: src/Libraries/SongLibrary.vala:563
+#: src/Windows/Editors/InfoViewport.vala:174
 msgid "Never Played"
-msgstr ""
+msgstr "从未播放"
 
 #: src/Libraries/SongLibrary.vala:572
 msgid "Over Played"
-msgstr ""
+msgstr "播放最多"
 
 #: src/Libraries/SongLibrary.vala:581
 msgid "Not Recently Played"
-msgstr ""
+msgstr "最近未播放"
 
 #: src/Libraries/StationLibrary.vala:37
 msgid "Stations"
-msgstr ""
+msgstr "电台"
 
 #. column chooser menu (header right click)
 #. column chooser menu (header right click)
@@ -1244,12 +1219,12 @@ msgid "#"
 msgstr "序号"
 
 #: src/Lists/DuplicateList.vala:128 src/Lists/GenericList.vala:127
-#: src/Lists/MusicList.vala:169 src/Widgets/TrackReport.vala:181
+#: src/Lists/MusicList.vala:169 src/Widgets/TrackReport.vala:180
 msgid "Plays"
 msgstr "播放"
 
 #: src/Lists/DuplicateList.vala:129 src/Lists/GenericList.vala:127
-#: src/Lists/MusicList.vala:170 src/Widgets/TrackReport.vala:182
+#: src/Lists/MusicList.vala:170 src/Widgets/TrackReport.vala:181
 msgid "Skips"
 msgstr "跳过"
 
@@ -1260,111 +1235,109 @@ msgstr "每分钟的节拍"
 #. media list right click menu
 #: src/Lists/DuplicateList.vala:136
 msgid "Check"
-msgstr ""
+msgstr "勾选"
 
 #: src/Lists/DuplicateList.vala:137
 msgid "Uncheck"
-msgstr ""
+msgstr "取消勾选"
 
 #: src/Lists/DuplicateList.vala:138 src/Lists/MusicList.vala:178
 #: src/Lists/PodcastList.vala:118
 msgid "Show in File Browser"
-msgstr ""
+msgstr "在文件浏览器中显示"
 
 #: src/Lists/DuplicateList.vala:139
 msgid "Remove Media"
-msgstr ""
+msgstr "移除媒体"
 
 #. column chooser menu (header right click)
 #: src/Lists/GenericList.vala:128 src/Lists/PodcastList.vala:104
 msgid "Episode"
-msgstr ""
+msgstr "单集"
 
 #: src/Lists/GenericList.vala:128 src/Lists/PodcastList.vala:105
 #: src/Windows/DirectoryDialog.vala:171
 msgid "Name"
-msgstr ""
+msgstr "名称"
 
 #: src/Lists/GenericList.vala:128 src/Lists/PodcastList.vala:109
 msgid "Date"
-msgstr ""
+msgstr "日期"
 
 #: src/Lists/GenericList.vala:129 src/Lists/PodcastList.vala:110
 msgid "Category"
-msgstr ""
+msgstr "类别"
 
 #: src/Lists/GenericList.vala:306
 msgid "Playing not Supported"
-msgstr ""
+msgstr "不支持播放"
 
 #: src/Lists/GenericList.vala:306
 msgid ""
 "Due to issues with playing songs on certain iOS devices, playing songs on "
 "devices is currently not supported."
-msgstr ""
+msgstr "由于某些 iOS 设备上播放部分歌曲时出现问题，目前不支持在设备上播放歌曲。"
 
 #: src/Lists/GenericList.vala:452
 msgid "Media Editor"
-msgstr ""
+msgstr "媒体编辑器"
 
 #: src/Lists/GenericList.vala:452
 msgid "Editing of multiple media types is not allowed"
-msgstr ""
+msgstr "不允许同时编辑多种媒体类型"
 
 #: src/Lists/MusicList.vala:106
 msgid "Remove from Queue"
-msgstr ""
+msgstr "从队列中移除"
 
 #: src/Lists/MusicList.vala:126 src/Lists/PodcastList.vala:82
 msgid "Remove from Device"
-msgstr ""
+msgstr "从设备中移除"
 
 #. media list right click menu
 #: src/Lists/MusicList.vala:177
 msgid "Edit Song Info"
-msgstr ""
+msgstr "编辑歌曲信息"
 
 #: src/Lists/MusicList.vala:179 src/Lists/PodcastList.vala:119
 msgid "Add to Queue"
-msgstr ""
+msgstr "添加到队列"
 
 #: src/Lists/MusicList.vala:180
-#, fuzzy
 msgid "Play Next"
-msgstr "下一个"
+msgstr "下一首播放"
 
 #: src/Lists/MusicList.vala:181
 msgid "Move Up"
-msgstr ""
+msgstr "上移"
 
 #: src/Lists/MusicList.vala:182
 msgid "Move Down"
-msgstr ""
+msgstr "下移"
 
 #: src/Lists/MusicList.vala:183
-#, fuzzy
 msgid "Clear Queue"
-msgstr "队列"
+msgstr "清空队列"
 
 #: src/Lists/MusicList.vala:184
 msgid "Save Album Art into the Files"
-msgstr ""
+msgstr "将专辑封面保存到文件中"
 
 #: src/Lists/MusicList.vala:185
 msgid "Fill In Tags from File Names…"
-msgstr ""
+msgstr "从文件名填充标签…"
 
 #: src/Lists/MusicList.vala:186
 msgid "Find and Replace in Tags…"
-msgstr ""
+msgstr "在标签中查找和替换…"
 
 #: src/Lists/MusicList.vala:188 src/Lists/PodcastList.vala:121
 msgid "Add to Playlist"
-msgstr ""
+msgstr "添加到播放列表"
 
 #: src/Lists/MusicList.vala:189
 msgid "Remove Song"
-msgstr ""
+msgstr "移除歌曲"
 
 #. Setup context menu for this view
 #: src/Lists/MusicList.vala:190 src/Lists/PodcastList.vala:124
@@ -1374,17 +1347,17 @@ msgstr "导入到媒体库"
 
 #: src/Lists/MusicList.vala:191
 msgid "Scroll to Current Song"
-msgstr ""
+msgstr "滚动到当前歌曲"
 
 #: src/Lists/MusicList.vala:374 src/Lists/PodcastList.vala:268
 #: src/Lists/RadioList.vala:149
 #, c-format
 msgid "Edit %s"
-msgstr ""
+msgstr "编辑 %s"
 
 #: src/Lists/MusicList.vala:517
 msgid "Album art not saved"
-msgstr ""
+msgstr "专辑封面未保存"
 
 #: src/Lists/MusicList.vala:517
 #, c-format
@@ -1394,40 +1367,40 @@ msgid ""
 msgid_plural ""
 "%d files could not be changed (they may be read-only, or of a kind that has "
 "no room for pictures)."
-msgstr[0] ""
+msgstr[0] "%d 个文件无法更改（可能是只读的，或其格式无法存放图片）。"
 
 #: src/Lists/MusicList.vala:520
 msgid "Album art saved"
-msgstr ""
+msgstr "专辑封面已保存"
 
 #: src/Lists/MusicList.vala:520
 #, c-format
 msgid "Written into %d file"
 msgid_plural "Written into %d files"
-msgstr[0] ""
+msgstr[0] "已写入 %d 个文件"
 
 #. media list right click menu
 #: src/Lists/PodcastList.vala:117
 msgid "Edit Podcast"
-msgstr ""
+msgstr "编辑播客"
 
 #: src/Lists/PodcastList.vala:122
 msgid "Remove Episode"
-msgstr ""
+msgstr "移除单集"
 
 #: src/Lists/PodcastList.vala:123
 msgid "Download"
-msgstr ""
+msgstr "下载"
 
 #: src/Lists/PodcastList.vala:365
 msgid "Stopping File Browse"
-msgstr ""
+msgstr "正在停止文件浏览"
 
 #: src/Lists/PodcastList.vala:365
 msgid ""
 "Too many medias have already been opened in File Browser. Stopping any more "
 "openings."
-msgstr ""
+msgstr "文件浏览器中已打开太多媒体。将不再打开更多。"
 
 #: src/Lists/RadioList.vala:63 src/Lists/RadioList.vala:85
 msgid "Remove Station"
@@ -1436,11 +1409,11 @@ msgstr "删除电台"
 #. media list right click menu
 #: src/Lists/RadioList.vala:84
 msgid "Edit Station"
-msgstr ""
+msgstr "编辑电台"
 
 #: src/Media/Station.vala:76
 msgid "Unknown Song"
-msgstr ""
+msgstr "未知歌曲"
 
 #: src/Preferences/BehaviorPreferences.vala:75 src/Widgets/TrackReport.vala:83
 msgid "Library"
@@ -1449,72 +1422,61 @@ msgstr "媒体库"
 #: src/Preferences/BehaviorPreferences.vala:79
 #: src/Windows/PreferencesWindow.vala:104
 msgid "Libraries"
-msgstr ""
+msgstr "媒体库"
 
 #: src/Preferences/BehaviorPreferences.vala:82
 #: src/Preferences/PodcastPreferences.vala:51
 #: src/Preferences/PodcastPreferences.vala:57
 msgid "Library Management"
-msgstr ""
+msgstr "媒体库管理"
 
 #: src/Preferences/BehaviorPreferences.vala:83
 msgid "Keep media folders organized"
-msgstr ""
+msgstr "保持媒体文件夹有序"
 
 #: src/Preferences/BehaviorPreferences.vala:84
 msgid "Write metadata to file"
-msgstr ""
+msgstr "将元数据写入文件"
 
 #: src/Preferences/BehaviorPreferences.vala:85
 msgid "Import songs that appear in the music folder"
-msgstr ""
+msgstr "导入出现在音乐文件夹中的歌曲"
 
 #: src/Preferences/BehaviorPreferences.vala:87
 msgid "Copy files to library folder when imported"
-msgstr ""
-
-#: src/Preferences/BehaviorPreferences.vala:91
-msgid "Sync play counts, ratings and options with itunes7"
-msgstr ""
-
-#. itunes7 reads beatbox.db: the main library's
-#: src/Preferences/BehaviorPreferences.vala:95
-msgid "Only with the main library open: itunes7 reads its database."
-msgstr ""
+msgstr "导入时将文件复制到媒体库文件夹"
 
 #: src/Preferences/BehaviorPreferences.vala:105
 msgid "(open)"
-msgstr ""
+msgstr "（已打开）"
 
 #: src/Preferences/BehaviorPreferences.vala:113
 msgid "Rename…"
-msgstr ""
+msgstr "重命名…"
 
 #. never the main or the open one
 #: src/Preferences/BehaviorPreferences.vala:117
-#, fuzzy
 msgid "Remove…"
-msgstr "删除"
+msgstr "移除…"
 
 #: src/Preferences/BehaviorPreferences.vala:127
-#, fuzzy
 msgid "Rename Library"
-msgstr "媒体库"
+msgstr "重命名媒体库"
 
 #: src/Preferences/BehaviorPreferences.vala:129
 msgid "Rename"
-msgstr ""
+msgstr "重命名"
 
 #: src/Preferences/BehaviorPreferences.vala:145
 #, c-format
 msgid "Remove the library “%s”?"
-msgstr ""
+msgstr "要移除媒体库“%s”吗？"
 
 #: src/Preferences/BehaviorPreferences.vala:146
 msgid ""
 "Its songs, play counts and playlists are removed from BeatBox; the music "
 "files stay where they are."
-msgstr ""
+msgstr "其歌曲、播放次数和播放列表将从 BeatBox 中移除；音乐文件仍保留在原处。"
 
 #: src/Preferences/BehaviorPreferences.vala:148
 #: src/SourceViews/PlaylistSourceView.vala:57
@@ -1525,7 +1487,6 @@ msgstr "删除"
 
 #: src/Preferences/BehaviorPreferences.vala:160
 #: src/Preferences/BehaviorPreferences.vala:163
-#, fuzzy
 msgid "Playback"
 msgstr "播放"
 
@@ -1535,116 +1496,111 @@ msgid "Off"
 msgstr "关"
 
 #: src/Preferences/BehaviorPreferences.vala:166
-#, fuzzy
 msgid "Per song"
-msgstr "歌曲"
+msgstr "按歌曲"
 
 #: src/Preferences/BehaviorPreferences.vala:167
-#, fuzzy
 msgid "Per album"
-msgstr "扫描专辑"
+msgstr "按专辑"
 
 #: src/Preferences/BehaviorPreferences.vala:170
 msgid "Volume normalization (ReplayGain):"
-msgstr ""
+msgstr "音量标准化（ReplayGain）："
 
 #: src/Preferences/BehaviorPreferences.vala:170
 msgid "from the next song"
-msgstr ""
+msgstr "从下一首开始"
 
 #: src/Preferences/BehaviorPreferences.vala:175
 msgid "Crossfade between songs:"
-msgstr ""
+msgstr "歌曲之间的淡入淡出："
 
 #: src/Preferences/BehaviorPreferences.vala:175
 msgid "seconds (0: none, songs follow without a gap)"
-msgstr ""
+msgstr "秒（0：无，歌曲无间隔衔接）"
 
 #: src/Preferences/BehaviorPreferences.vala:181
 #: src/Preferences/BehaviorPreferences.vala:184
 msgid "Recording"
-msgstr ""
+msgstr "录制"
 
 #: src/Preferences/BehaviorPreferences.vala:185
-#, fuzzy
 msgid "Recordings Folder"
-msgstr "重新扫描音乐文件夹"
+msgstr "录音文件夹"
 
 #: src/Preferences/BehaviorPreferences.vala:194
 msgid "Save recordings of radio stations in:"
-msgstr ""
+msgstr "将电台录音保存到："
 
 #: src/Preferences/BehaviorPreferences.vala:198
 msgid "Start a new file every:"
-msgstr ""
+msgstr "每隔以下时间开始新文件："
 
 #: src/Preferences/BehaviorPreferences.vala:198
-#, fuzzy
 msgid "minutes"
-msgstr "%s 分钟"
+msgstr "分钟"
 
 #: src/Preferences/BehaviorPreferences.vala:199
 msgid ""
 "Right click a station in the radio grid to record it. Needs streamripper."
-msgstr ""
+msgstr "在电台网格中右键单击电台即可录制。需要 streamripper。"
 
 #: src/Preferences/BehaviorPreferences.vala:208
 msgid "Appearance"
-msgstr ""
+msgstr "外观"
 
 #. Skins (plugins: folders in ~/.local/share/beatbox/skins)
 #: src/Preferences/BehaviorPreferences.vala:212
 msgid "Skin"
-msgstr ""
+msgstr "主题"
 
 #: src/Preferences/BehaviorPreferences.vala:221
 msgid "Edit CSS…"
-msgstr ""
+msgstr "编辑 CSS…"
 
 #: src/Preferences/BehaviorPreferences.vala:241
-#, fuzzy
 msgid "Open Skins Folder"
-msgstr "重新扫描音乐文件夹"
+msgstr "打开主题文件夹"
 
 #: src/Preferences/BehaviorPreferences.vala:250
 msgid "Skin:"
-msgstr ""
+msgstr "主题："
 
 #: src/Preferences/BehaviorPreferences.vala:276
 msgid "LCD"
-msgstr ""
+msgstr "LCD"
 
 #: src/Preferences/BehaviorPreferences.vala:279
 msgid "Display"
-msgstr ""
+msgstr "显示"
 
 #: src/Preferences/BehaviorPreferences.vala:281
 msgid "Two lines, artist and album taking turns"
-msgstr ""
+msgstr "两行，艺术家与专辑交替显示"
 
 #: src/Preferences/BehaviorPreferences.vala:282
 msgid "Three lines, synced lyrics on the third"
-msgstr ""
+msgstr "三行，第三行显示同步歌词"
 
 #: src/Preferences/BehaviorPreferences.vala:283
 msgid "One line"
-msgstr ""
+msgstr "一行"
 
 #: src/Preferences/BehaviorPreferences.vala:289
 msgid "Song information in the LCD:"
-msgstr ""
+msgstr "LCD 上显示的歌曲信息："
 
 #: src/Preferences/BehaviorPreferences.vala:291
 msgid "Show synced lyrics when available (lrclib.net)"
-msgstr ""
+msgstr "有同步歌词时显示（lrclib.net）"
 
 #: src/Preferences/BehaviorPreferences.vala:294
 msgid "Show the album cover at the left edge of the LCD"
-msgstr ""
+msgstr "在 LCD 左侧边缘显示专辑封面"
 
 #: src/Preferences/BehaviorPreferences.vala:299
 msgid "Switch between artist and album every:"
-msgstr ""
+msgstr "每隔以下时间在艺术家和专辑之间切换："
 
 #. helper for units
 #: src/Preferences/BehaviorPreferences.vala:299
@@ -1654,179 +1610,176 @@ msgstr "秒"
 
 #: src/Preferences/BehaviorPreferences.vala:304
 msgid "Duration of the slide:"
-msgstr ""
+msgstr "滑动持续时间："
 
 #: src/Preferences/BehaviorPreferences.vala:304
-#, fuzzy
 msgid "milliseconds"
-msgstr "秒"
+msgstr "毫秒"
 
 #: src/Preferences/BehaviorPreferences.vala:307
 msgid "Position bar"
-msgstr ""
+msgstr "进度条"
 
 #: src/Preferences/BehaviorPreferences.vala:310
 msgid "Width of the track:"
-msgstr ""
+msgstr "轨道宽度："
 
 #: src/Preferences/BehaviorPreferences.vala:310
 #: src/Preferences/BehaviorPreferences.vala:325
 msgid "pixels"
-msgstr ""
+msgstr "像素"
 
 #: src/Preferences/BehaviorPreferences.vala:312
 msgid "Diamond"
-msgstr ""
+msgstr "菱形"
 
 #: src/Preferences/BehaviorPreferences.vala:313
 msgid "Circle"
-msgstr ""
+msgstr "圆形"
 
 #: src/Preferences/BehaviorPreferences.vala:314
 msgid "Cup"
-msgstr ""
+msgstr "奖杯"
 
 #: src/Preferences/BehaviorPreferences.vala:315
 msgid "Nyan cat"
-msgstr ""
+msgstr "彩虹猫"
 
 #: src/Preferences/BehaviorPreferences.vala:318
 msgid "Shape of the position marker:"
-msgstr ""
+msgstr "位置标记形状："
 
 #: src/Preferences/BehaviorPreferences.vala:325
 msgid "Size of the position marker:"
-msgstr ""
+msgstr "位置标记大小："
 
 #: src/Preferences/BehaviorPreferences.vala:339
 #: src/Preferences/BehaviorPreferences.vala:342
 msgid "Mini Player"
-msgstr ""
+msgstr "迷你播放器"
 
 #: src/Preferences/BehaviorPreferences.vala:343
 msgid "Keep the mini player above other windows"
-msgstr ""
+msgstr "让迷你播放器保持在其他窗口之上"
 
 #. GTK 3 can't ask a Wayland compositor for that
 #: src/Preferences/BehaviorPreferences.vala:348
 msgid ""
 "On Wayland the desktop keeps windows on top: right-click the toolbar and "
 "choose “Always on Top”."
-msgstr ""
+msgstr "在 Wayland 下，桌面会让窗口保持在顶层：右键单击工具栏并选择“始终置顶”。"
 
 #: src/Preferences/BehaviorPreferences.vala:360
 #: src/Preferences/BehaviorPreferences.vala:366 src/Views/SideTreeView.vala:99
 msgid "Plugins"
-msgstr ""
+msgstr "插件"
 
 #: src/Preferences/BehaviorPreferences.vala:363
 msgid "No plugins are installed."
-msgstr ""
+msgstr "未安装任何插件。"
 
 #: src/Preferences/BehaviorPreferences.vala:376
 msgid "Install Plugin…"
-msgstr ""
+msgstr "安装插件…"
 
 #: src/Preferences/BehaviorPreferences.vala:406
 msgid "Install"
-msgstr ""
+msgstr "安装"
 
 #: src/Preferences/BehaviorPreferences.vala:408
 msgid "BeatBox plugins (*.plugin)"
-msgstr ""
+msgstr "BeatBox 插件 (*.plugin)"
 
 #: src/Preferences/BehaviorPreferences.vala:418
 msgid "Plugin updated"
-msgstr ""
+msgstr "插件已更新"
 
 #: src/Preferences/BehaviorPreferences.vala:418
 msgid ""
 "A plugin with the same name is in use: restart BeatBox to use the one just "
 "installed."
-msgstr ""
+msgstr "正在使用同名插件：请重新启动 BeatBox 以使用刚安装的插件。"
 
 #: src/Preferences/BehaviorPreferences.vala:420
-#, fuzzy
 msgid "Could not install the plugin"
-msgstr "找不到音乐文件夹"
+msgstr "无法安装插件"
 
 #: src/Preferences/BehaviorPreferences.vala:427
-#, fuzzy
 msgid "Album Art"
-msgstr "专辑"
+msgstr "专辑封面"
 
 #: src/Preferences/BehaviorPreferences.vala:430
 msgid "Cover Grid"
-msgstr ""
+msgstr "专辑网格"
 
 #: src/Preferences/BehaviorPreferences.vala:432
 msgid "Unfold it inline, under its row"
-msgstr ""
+msgstr "在其所在行下方原地展开"
 
 #: src/Preferences/BehaviorPreferences.vala:433
 msgid "Open it in a popup window"
-msgstr ""
+msgstr "在弹出窗口中打开"
 
 #: src/Preferences/BehaviorPreferences.vala:436
 msgid "Clicking an album in the cover grid:"
-msgstr ""
+msgstr "点击网格中的专辑时："
 
 #: src/Preferences/BehaviorPreferences.vala:442
 msgid "hidden"
-msgstr ""
+msgstr "隐藏"
 
 #: src/Preferences/BehaviorPreferences.vala:444
 msgid "Size of the cover in the unfolded album:"
-msgstr ""
+msgstr "展开专辑中封面的大小："
 
 #: src/Preferences/BehaviorPreferences.vala:445
 msgid "Share of the band's width; 0 shows no cover"
-msgstr ""
+msgstr "占据条带宽度的比例；0 表示不显示封面"
 
 #: src/Preferences/BehaviorPreferences.vala:451
 msgid "Missing Album Art"
-msgstr ""
+msgstr "缺失的专辑封面"
 
 #: src/Preferences/BehaviorPreferences.vala:452
-msgid "Download missing album art from the internet (MusicBrainz, Apple Music)"
-msgstr ""
+msgid ""
+"Download missing album art from the internet (MusicBrainz, Apple Music)"
+msgstr "从互联网下载缺失的专辑封面（MusicBrainz、Apple Music）"
 
 #: src/Preferences/BehaviorPreferences.vala:463
 msgid "About"
-msgstr ""
+msgstr "关于"
 
 #: src/Preferences/BehaviorPreferences.vala:470
 #, c-format
 msgid "Version %s"
-msgstr ""
+msgstr "版本 %s"
 
 #: src/Preferences/BehaviorPreferences.vala:471
 msgid "A music player for your collection, podcasts and internet radio."
-msgstr ""
+msgstr "为您的收藏、播客和网络电台打造的音乐播放器。"
 
 #: src/Preferences/BehaviorPreferences.vala:475
 msgid "Authors"
-msgstr ""
+msgstr "作者"
 
 #: src/Preferences/BehaviorPreferences.vala:477
 msgid "Contributions"
-msgstr ""
+msgstr "贡献者"
 
 #: src/Preferences/BehaviorPreferences.vala:478
 #, c-format
 msgid "Di Weng (%s): shortening texts by characters instead of bytes"
-msgstr ""
+msgstr "Di Weng（%s）：按字符而非字节缩短文本"
 
 #: src/Preferences/BehaviorPreferences.vala:479
 #: src/Windows/Editors/MediaEditor.vala:148
 #: src/Windows/Editors/SongEditor.vala:234
-#, fuzzy
 msgid "Artwork"
-msgstr "网络"
+msgstr "封面"
 
 #: src/Preferences/BehaviorPreferences.vala:481
 msgid "2026 update"
-msgstr ""
+msgstr "2026 年更新"
 
 #: src/Preferences/BehaviorPreferences.vala:482
 msgid ""
@@ -1834,136 +1787,137 @@ msgid ""
 "the inline cover grid, internet radio and podcast directories, online album "
 "art and skins."
 msgstr ""
+"已移植到 GTK 3、GStreamer 1.0 和 libsoup 3，并带来全新外观、Cover "
+"Flow、专辑网格、网络电台和播客目录、在线专辑封面以及主题。"
 
 #: src/Preferences/BehaviorPreferences.vala:484
-#, fuzzy
 msgid "Services"
-msgstr "设备"
+msgstr "服务"
 
 #: src/Preferences/BehaviorPreferences.vala:485
-#, fuzzy, c-format
+#, c-format
 msgid "Internet radio stations: %s"
-msgstr "未发现网络电台"
+msgstr "网络电台：%s"
 
 #: src/Preferences/BehaviorPreferences.vala:487
-#, fuzzy, c-format
+#, c-format
 msgid "Podcasts: %s"
-msgstr "播客"
+msgstr "播客：%s"
 
 #: src/Preferences/BehaviorPreferences.vala:488
 #, c-format
 msgid "Album art: %s, with %s as fallback"
-msgstr ""
+msgstr "专辑封面：%s，备用为 %s"
 
 #: src/Preferences/BehaviorPreferences.vala:489
 #, c-format
 msgid "Lyrics: %s"
-msgstr ""
+msgstr "歌词：%s"
 
 #: src/Preferences/BehaviorPreferences.vala:490
 #, c-format
 msgid "Scrobbling: %s"
-msgstr ""
+msgstr "Scrobbling：%s"
 
 #: src/Preferences/BehaviorPreferences.vala:492
 msgid "License"
-msgstr ""
+msgstr "许可证"
 
 #: src/Preferences/BehaviorPreferences.vala:493
 #, c-format
 msgid "Free software under the %s."
-msgstr ""
+msgstr "自由软件，依据 %s 发布。"
 
 #: src/Preferences/BehaviorPreferences.vala:493
 msgid "GNU General Public License, version 3"
-msgstr ""
+msgstr "GNU 通用公共许可证第 3 版"
 
 #: src/Preferences/LastfmPreferences.vala:32
 msgid "Scrobbling"
-msgstr ""
+msgstr "Scrobbling"
 
 #: src/Preferences/LastfmPreferences.vala:57
 msgid "Login"
-msgstr ""
+msgstr "登录"
 
 #: src/Preferences/LastfmPreferences.vala:58
 msgid "Logout"
-msgstr ""
+msgstr "注销"
 
 #: src/Preferences/LastfmPreferences.vala:78
 msgid "Username:"
-msgstr ""
+msgstr "用户名："
 
 #: src/Preferences/LastfmPreferences.vala:79
 msgid "Password:"
-msgstr ""
+msgstr "密码："
 
 #: src/Preferences/LastfmPreferences.vala:145
 #, c-format
 msgid ""
 "To identify songs by their sound (Edit Song Info › Identify), register an "
 "application at %s and paste its key here."
-msgstr ""
+msgstr "要通过声音识别歌曲（编辑歌曲信息 › 识别），请在 %s 上注册一个应用并将其密钥粘贴到此处。"
 
 #: src/Preferences/LastfmPreferences.vala:150
 msgid "Application key"
-msgstr ""
+msgstr "应用密钥"
 
 #: src/Preferences/LastfmPreferences.vala:172
 msgid "User token"
-msgstr ""
+msgstr "用户令牌"
 
 #: src/Preferences/LastfmPreferences.vala:174
 msgid "Connect"
-msgstr ""
+msgstr "连接"
 
 #: src/Preferences/LastfmPreferences.vala:175
 msgid "Disconnect"
-msgstr ""
+msgstr "断开连接"
 
 #: src/Preferences/LastfmPreferences.vala:202
 #, c-format
 msgid "Your listens are sent to ListenBrainz as %s."
-msgstr ""
+msgstr "您的收听记录将以 %s 的身份发送到 ListenBrainz。"
 
 #: src/Preferences/LastfmPreferences.vala:205
 #, c-format
 msgid "Paste the user token from %s to send your listens there."
-msgstr ""
+msgstr "粘贴来自 %s 的用户令牌，即可将收听记录发送到那里。"
 
 #: src/Preferences/LastfmPreferences.vala:220
 msgid "ListenBrainz didn't accept that token (or couldn't be reached)."
-msgstr ""
+msgstr "ListenBrainz 未接受该令牌（或无法连接）。"
 
 #: src/Preferences/LastfmPreferences.vala:264
 #, c-format
 msgid "You are logged in as %s."
-msgstr ""
+msgstr "您已以 %s 身份登录。"
 
 #: src/Preferences/LastfmPreferences.vala:272
 #, c-format
 msgid "BeatBox was unable to log in as %s. Please try again."
-msgstr ""
+msgstr "BeatBox 无法以 %s 身份登录。请重试。"
 
 #: src/Preferences/MusicPreferences.vala:45
 #: src/Preferences/MusicPreferences.vala:51
 msgid "Music Library Location"
-msgstr ""
+msgstr "音乐媒体库位置"
 
 #: src/Preferences/MusicPreferences.vala:47
 #: src/Preferences/PodcastPreferences.vala:48
 msgid "Import..."
-msgstr ""
+msgstr "导入…"
 
 #: src/Preferences/MusicPreferences.vala:48
 #: src/Preferences/PodcastPreferences.vala:49
 msgid "Rescan"
-msgstr ""
+msgstr "重新扫描"
 
 #: src/Preferences/MusicPreferences.vala:62
 msgid ""
 "A folder holding a file named .nomedia is left out, with its subfolders."
-msgstr ""
+msgstr "包含名为 .nomedia 的文件的文件夹及其子文件夹将被忽略。"
 
 #: src/Preferences/MusicPreferences.vala:100
 #: src/Preferences/PodcastPreferences.vala:109
@@ -1973,65 +1927,65 @@ msgstr "找不到音乐文件夹"
 #: src/Preferences/MusicPreferences.vala:100
 #: src/Preferences/PodcastPreferences.vala:109
 msgid "Please make sure that your Music folder is accessible and mounted."
-msgstr ""
+msgstr "请确保您的音乐文件夹可访问且已挂载。"
 
 #: src/Preferences/MusicPreferences.vala:116
 msgid ""
 "Please wait until all operations finish before setting your music folder."
-msgstr ""
+msgstr "设置音乐文件夹前，请等待所有操作完成。"
 
 #: src/Preferences/PodcastPreferences.vala:46
 #: src/Preferences/PodcastPreferences.vala:56
 msgid "Podcast Library Location"
-msgstr ""
+msgstr "播客媒体库位置"
 
 #: src/Preferences/PodcastPreferences.vala:47
 msgid "Podcast Folder"
-msgstr ""
+msgstr "播客文件夹"
 
 #: src/Preferences/PodcastPreferences.vala:52
 msgid "Automatically download new podcast episodes"
-msgstr ""
+msgstr "自动下载新的播客单集"
 
 #: src/Preferences/PodcastPreferences.vala:125
 msgid ""
 "Please wait until all operations finish before setting your podcast folder."
-msgstr ""
+msgstr "设置播客文件夹前，请等待所有操作完成。"
 
 #: src/Preferences/ShortcutsPreferences.vala:14
 msgid "Shortcuts"
-msgstr ""
+msgstr "快捷键"
 
 #: src/Preferences/ShortcutsPreferences.vala:22
 msgid "Keyboard Shortcuts"
-msgstr ""
+msgstr "键盘快捷键"
 
 #: src/Preferences/ShortcutsPreferences.vala:23
 msgid ""
-"Click a shortcut and press the new keys; Backspace leaves the action without "
-"one."
-msgstr ""
+"Click a shortcut and press the new keys; Backspace leaves the action without"
+" one."
+msgstr "点击某个快捷键并按下新按键；按退格键可取消该操作的快捷键。"
 
 #: src/Preferences/ShortcutsPreferences.vala:53
 msgid "Restore the Defaults"
-msgstr ""
+msgstr "恢复默认值"
 
 #: src/Preferences/ShortcutsPreferences.vala:85
 #, c-format
 msgid "“%s” used those keys; it has no shortcut now."
-msgstr ""
+msgstr "“%s”曾使用这些按键；现在它没有快捷键了。"
 
 #: src/SourceViews/DefaultSourceView.vala:56
 msgid "No Media Found"
-msgstr ""
+msgstr "未找到媒体"
 
 #: src/SourceViews/DefaultSourceView.vala:56
 msgid "There is no media here."
-msgstr ""
+msgstr "这里没有媒体。"
 
 #: src/SourceViews/DeviceSourceView.vala:52
 msgid "importing audio CDs hasn't been tested on current systems."
-msgstr ""
+msgstr "导入音频 CD 尚未在当前系统上测试。"
 
 #: src/SourceViews/DeviceSourceView.vala:80
 #: src/SourceViews/PodcastSourceView.vala:84
@@ -2042,15 +1996,15 @@ msgstr "未发现播客"
 msgid ""
 "This device supports podcasts. To sync podcasts with this device, edit the "
 "device's preferences."
-msgstr ""
+msgstr "此设备支持播客。要将播客同步到此设备，请编辑设备的首选项。"
 
 #: src/SourceViews/DeviceSourceView.vala:84
 msgid "No Music Found"
-msgstr ""
+msgstr "未找到音乐"
 
 #: src/SourceViews/DeviceSourceView.vala:84
 msgid "To sync music with this device, edit the device's preferences."
-msgstr ""
+msgstr "要将音乐同步到此设备，请编辑设备的首选项。"
 
 #: src/SourceViews/DeviceSourceView.vala:91
 msgid "Audio CD Invalid"
@@ -2062,35 +2016,35 @@ msgstr "BeatBox不能如去此音频CD的内容。"
 
 #: src/SourceViews/DeviceSourceView.vala:171
 msgid "Audiobooks"
-msgstr ""
+msgstr "有声读物"
 
 #: src/SourceViews/DuplicateSourceView.vala:51
 msgid "Remove Checked Items"
-msgstr ""
+msgstr "移除勾选的项目"
 
 #: src/SourceViews/DuplicateSourceView.vala:53
 msgid "Manually select duplicates"
-msgstr ""
+msgstr "手动选择重复项"
 
 #: src/SourceViews/DuplicateSourceView.vala:54
 msgid "Keep highest bitrate"
-msgstr ""
+msgstr "保留比特率最高的"
 
 #: src/SourceViews/DuplicateSourceView.vala:55
 msgid "Keep largest file"
-msgstr ""
+msgstr "保留最大的文件"
 
 #: src/SourceViews/DuplicateSourceView.vala:86
 msgid "Victory! No Duplicates!"
-msgstr ""
+msgstr "胜利！没有重复项！"
 
 #: src/SourceViews/DuplicateSourceView.vala:86
 msgid "Your library has no duplicates."
-msgstr ""
+msgstr "您的媒体库中没有重复项。"
 
 #: src/SourceViews/DuplicateSourceView.vala:187
 msgid "Duplicates"
-msgstr ""
+msgstr "重复项"
 
 #. similar songs right click menu
 #: src/SourceViews/HistorySourceView.vala:44
@@ -2109,18 +2063,18 @@ msgstr "导出..."
 
 #: src/SourceViews/HistorySourceView.vala:62
 msgid "No songs in History"
-msgstr ""
+msgstr "历史记录中没有歌曲"
 
 #: src/SourceViews/HistorySourceView.vala:62
 msgid ""
 "After a part of a song has been played, it is added to the history list."
-msgstr ""
+msgstr "歌曲播放一部分后，会被添加到历史记录列表中。"
 
 #: src/SourceViews/HistorySourceView.vala:63
 msgid ""
 "You can use this list to see all the songs you have played during the "
 "current session."
-msgstr ""
+msgstr "您可以用此列表查看本次会话中播放过的所有歌曲。"
 
 #: src/SourceViews/HistorySourceView.vala:85
 msgid "History"
@@ -2129,7 +2083,7 @@ msgstr "历史记录"
 #: src/SourceViews/HistorySourceView.vala:106
 #: src/SourceViews/HistorySourceView.vala:120
 msgid " play history"
-msgstr ""
+msgstr " 播放历史"
 
 #. Setup welcome screen
 #: src/SourceViews/MusicSourceView.vala:40
@@ -2138,7 +2092,7 @@ msgstr "获取曲目"
 
 #: src/SourceViews/MusicSourceView.vala:40
 msgid "BeatBox can't find your music."
-msgstr ""
+msgstr "BeatBox 找不到您的音乐。"
 
 #: src/SourceViews/MusicSourceView.vala:43
 msgid "Locate"
@@ -2159,11 +2113,11 @@ msgstr "从设备中导入媒体"
 
 #: src/SourceViews/MusicSourceView.vala:149 src/Views/DeviceView.vala:104
 msgid "No External Songs"
-msgstr ""
+msgstr "没有外部歌曲"
 
 #: src/SourceViews/MusicSourceView.vala:149 src/Views/DeviceView.vala:104
 msgid "There were no songs found on this device that are not in your library."
-msgstr ""
+msgstr "此设备上没有找到不在您媒体库中的歌曲。"
 
 #. playlist right click menu
 #: src/SourceViews/PlaylistSourceView.vala:56
@@ -2174,14 +2128,15 @@ msgstr "编辑"
 #: src/SourceViews/PlaylistSourceView.vala:76
 #: src/SourceViews/SmartPlaylistSourceView.vala:127
 msgid "No Media"
-msgstr ""
+msgstr "没有媒体"
 
 #: src/SourceViews/PlaylistSourceView.vala:76
 msgid ""
-"To add to this playlist, drag and drop songs from a list onto the sidebar "
-"item or\n"
+"To add to this playlist, drag and drop songs from a list onto the sidebar item or\n"
 "right click on an item and choose \"Add to Playlist\"."
 msgstr ""
+"要添加到此播放列表，请将列表中的歌曲拖放到侧边栏项目上，或\n"
+"右键单击项目并选择“添加到播放列表”。"
 
 #: src/SourceViews/PodcastSourceView.vala:40
 msgid "podcast"
@@ -2190,62 +2145,60 @@ msgstr "播客"
 #. Setup welcome screen
 #: src/SourceViews/PodcastSourceView.vala:43
 msgid "Subscribe to Podcasts"
-msgstr ""
+msgstr "订阅播客"
 
 #: src/SourceViews/PodcastSourceView.vala:43
 msgid "No Podcasts were found."
-msgstr ""
+msgstr "未找到播客。"
 
 #: src/SourceViews/PodcastSourceView.vala:46
 #: src/Windows/DirectoryDialog.vala:45
-#, fuzzy
 msgid "Find Podcasts"
-msgstr "播客"
+msgstr "查找播客"
 
 #: src/SourceViews/PodcastSourceView.vala:46
 msgid "Search the Apple Podcasts directory."
-msgstr ""
+msgstr "搜索 Apple Podcasts 目录。"
 
 #: src/SourceViews/PodcastSourceView.vala:47
 msgid "Subscribe by Address"
-msgstr ""
+msgstr "按地址订阅"
 
 #: src/SourceViews/PodcastSourceView.vala:47
 msgid "Paste the address of a podcast RSS feed."
-msgstr ""
+msgstr "粘贴播客 RSS 源的地址。"
 
 #. Setup context menu
 #: src/SourceViews/PodcastSourceView.vala:55
 #: src/SourceViews/PodcastSourceView.vala:65
-#, fuzzy
 msgid "Find Podcasts…"
-msgstr "添加播客"
+msgstr "查找播客…"
 
 #: src/SourceViews/PodcastSourceView.vala:56
 msgid "Subscribe by Address…"
-msgstr ""
+msgstr "按地址订阅…"
 
 #: src/SourceViews/PodcastSourceView.vala:84
 msgid ""
 "Use “Find Podcasts…” above to search the directory, or “Subscribe by "
 "Address…” to paste an RSS feed."
-msgstr ""
+msgstr "使用上方的“查找播客…”搜索目录，或使用“按地址订阅…”粘贴 RSS 源。"
 
 #: src/SourceViews/QueueSourceView.vala:62
 msgid "No songs in Queue"
-msgstr ""
+msgstr "队列中没有歌曲"
 
 #: src/SourceViews/QueueSourceView.vala:62
 msgid ""
 "To queue a song, drag and drop a song from a list onto the queue sidebar "
 "item."
-msgstr ""
+msgstr "要将歌曲加入队列，请将列表中的歌曲拖放到侧边栏的队列项目上。"
 
 #: src/SourceViews/QueueSourceView.vala:63
 msgid ""
 "When a song finishes, the queued songs will be played first before the next "
 "song in the currently playing list."
-msgstr ""
+msgstr "歌曲结束时，将先播放队列中的歌曲，然后才播放当前列表中的下一首。"
 
 #: src/SourceViews/QueueSourceView.vala:84
 msgid "Queue"
@@ -2254,35 +2207,35 @@ msgstr "队列"
 #: src/SourceViews/QueueSourceView.vala:119
 #: src/SourceViews/QueueSourceView.vala:133
 msgid " play queue"
-msgstr ""
+msgstr " 播放队列"
 
 #: src/SourceViews/SimilarSourceView.vala:108
 #: src/SourceViews/SimilarSourceView.vala:213
 #, c-format
 msgid "Similar to %s"
-msgstr ""
+msgstr "类似于 %s"
 
 #. still fetching similar media
 #: src/SourceViews/SimilarSourceView.vala:140
 #, c-format
 msgid "BeatBox is finding songs similar to <b>%s</b> by <b>%s</b>"
-msgstr ""
+msgstr "BeatBox 正在查找与 <b>%s</b>（<b>%s</b>）相似的歌曲"
 
 #: src/SourceViews/SimilarSourceView.vala:141
 msgid "Fetching similar songs"
-msgstr ""
+msgstr "正在获取相似歌曲"
 
 #. say we could not find similar media
 #: src/SourceViews/SimilarSourceView.vala:149
 #, c-format
 msgid "BeatBox could not find songs similar to <b>%s</b> by <b>%s</b>. "
-msgstr ""
+msgstr "BeatBox 找不到与 <b>%s</b>（<b>%s</b>）相似的歌曲。"
 
 #: src/SourceViews/SimilarSourceView.vala:150
 msgid ""
 "Make sure all song info is correct and you are connected to the Internet. "
 "Some songs may not have matches."
-msgstr ""
+msgstr "请确认所有歌曲信息正确，并且您已连接互联网。部分歌曲可能没有匹配结果。"
 
 #: src/SourceViews/SimilarSourceView.vala:151
 msgid "No similar songs found"
@@ -2290,130 +2243,126 @@ msgstr "未发现相似歌曲"
 
 #: src/SourceViews/SimilarSourceView.vala:180
 msgid "Similar Songs"
-msgstr ""
+msgstr "相似歌曲"
 
 #: src/SourceViews/SimilarSourceView.vala:213
 msgid "Similar list"
-msgstr ""
+msgstr "相似列表"
 
 #: src/SourceViews/SmartPlaylistSourceView.vala:127
 msgid ""
-"No media fits this smart playlist's rules. To edit its rules, right click on "
-"it in the sidebar and choose \"Edit\"."
-msgstr ""
+"No media fits this smart playlist's rules. To edit its rules, right click on"
+" it in the sidebar and choose \"Edit\"."
+msgstr "没有媒体符合此智能播放列表的规则。要编辑其规则，请在侧边栏中右键单击它并选择“编辑”。"
 
 #: src/SourceViews/SourceView.vala:356
 msgid "No Results"
-msgstr ""
+msgstr "无结果"
 
 #: src/SourceViews/SourceView.vala:356
 msgid "Your search query returned no results."
-msgstr ""
+msgstr "您的搜索没有返回任何结果。"
 
 #. Setup welcome screen
 #: src/SourceViews/StationSourceView.vala:46
 msgid "Turn up the Radio"
-msgstr ""
+msgstr "把收音机音量调大"
 
 #: src/SourceViews/StationSourceView.vala:46
 msgid "No Stations were found."
-msgstr ""
+msgstr "未找到电台。"
 
 #: src/SourceViews/StationSourceView.vala:49
-#, fuzzy
 msgid "Find Stations"
-msgstr "电台"
+msgstr "查找电台"
 
 #: src/SourceViews/StationSourceView.vala:49
 msgid ""
 "Search thousands of stations on radio-browser.info, SHOUTcast, laut.fm and "
 "Icecast."
-msgstr ""
+msgstr "在 radio-browser.info、SHOUTcast、laut.fm 和 Icecast 上搜索数千个电台。"
 
 #: src/SourceViews/StationSourceView.vala:50
 msgid "Add by Address"
-msgstr ""
+msgstr "通过地址添加"
 
 #: src/SourceViews/StationSourceView.vala:50
 msgid "Type the address of a station's stream."
-msgstr ""
+msgstr "输入电台流的地址。"
 
 #: src/SourceViews/StationSourceView.vala:51
-#, fuzzy
 msgid "Import File"
-msgstr "导入"
+msgstr "导入文件"
 
 #: src/SourceViews/StationSourceView.vala:51
 msgid "Add the stations of a .pls or .m3u file."
-msgstr ""
+msgstr "添加 .pls 或 .m3u 文件中的电台。"
 
 #. Setup context menu
 #: src/SourceViews/StationSourceView.vala:79
 #: src/SourceViews/StationSourceView.vala:89
 msgid "Find Stations…"
-msgstr ""
+msgstr "查找电台…"
 
 #: src/SourceViews/StationSourceView.vala:80
 #: src/SourceViews/StationSourceView.vala:91
 msgid "Add by Address…"
-msgstr ""
+msgstr "通过地址添加…"
 
 #: src/SourceViews/StationSourceView.vala:81
-#, fuzzy
 msgid "Import File…"
-msgstr "导入完成"
+msgstr "导入文件…"
 
 #: src/SourceViews/StationSourceView.vala:126
 msgid "REC"
-msgstr ""
+msgstr "录"
 
 #: src/SourceViews/StationSourceView.vala:145
 msgid "Choose Image…"
-msgstr ""
+msgstr "选择图片…"
 
 #: src/SourceViews/StationSourceView.vala:149
-#, fuzzy
 msgid "Stop Recording"
-msgstr "终止同步"
+msgstr "停止录制"
 
 #: src/SourceViews/StationSourceView.vala:149
 msgid "Record"
-msgstr ""
+msgstr "录制"
 
 #: src/SourceViews/StationSourceView.vala:156
-#, fuzzy, c-format
+#, c-format
 msgid "Could not record “%s”"
-msgstr "找不到音乐文件夹"
+msgstr "无法录制“%s”"
 
 #: src/SourceViews/StationSourceView.vala:156
 msgid "streamripper did not start."
-msgstr ""
+msgstr "streamripper 未能启动。"
 
 #: src/SourceViews/StationSourceView.vala:160
 msgid "Needs streamripper (the streamripper package)"
-msgstr ""
+msgstr "需要 streamripper（streamripper 软件包）"
 
 #: src/SourceViews/StationSourceView.vala:164
 msgid "Remove Custom Image"
-msgstr ""
+msgstr "移除自定义图片"
 
 #: src/SourceViews/StationSourceView.vala:174
 #, c-format
 msgid "Image for “%s”"
-msgstr ""
+msgstr "“%s”的图片"
 
 #: src/SourceViews/StationSourceView.vala:175
 msgid "Choose"
-msgstr ""
+msgstr "选择"
 
 #: src/SourceViews/StationSourceView.vala:177
 msgid "Images"
-msgstr ""
+msgstr "图片"
 
 #: src/SourceViews/StationSourceView.vala:184
 #, c-format
 msgid "“%s” is not an image BeatBox can read."
-msgstr ""
+msgstr "“%s”不是 BeatBox 能读取的图片。"
 
 #: src/SourceViews/StationSourceView.vala:211
 msgid "No Internet Radio Stations Found"
@@ -2423,7 +2372,7 @@ msgstr "未发现网络电台"
 msgid ""
 "Use “Find Stations…” above to search the radio-browser.info, SHOUTcast, "
 "laut.fm and Icecast directories."
-msgstr ""
+msgstr "使用上方的“查找电台…”在 radio-browser.info、SHOUTcast、laut.fm 和 Icecast 目录中搜索。"
 
 #: src/SourceViews/StationSourceView.vala:237
 msgid "Internet Radio"
@@ -2431,11 +2380,11 @@ msgstr "网络电台"
 
 #: src/Utils/PlaylistUtils.vala:229
 msgid "Export Playlist"
-msgstr ""
+msgstr "导出播放列表"
 
 #: src/Utils/PlaylistUtils.vala:232
 msgid "_Save"
-msgstr ""
+msgstr "保存(_S)"
 
 #. options at top
 #: src/Views/DeviceSummaryWidget.vala:64
@@ -2454,10 +2403,11 @@ msgstr "当插入时自动同步："
 msgid "Sync:"
 msgstr "同步："
 
-#. audiobook_index = spaceWidget.add_item("Audiobooks", 0.0, SpaceWidget.ItemColor.GREEN);
+#. audiobook_index = spaceWidget.add_item("Audiobooks", 0.0,
+#. SpaceWidget.ItemColor.GREEN);
 #: src/Views/DeviceSummaryWidget.vala:93
 msgid "Other"
-msgstr ""
+msgstr "其他"
 
 #: src/Views/DeviceSummaryWidget.vala:338
 msgid "All Music"
@@ -2497,7 +2447,7 @@ msgstr "设备已经在同步。"
 msgid ""
 "syncing hasn't been tested with current devices. Back up your device before "
 "syncing."
-msgstr ""
+msgstr "同步尚未在当前设备上测试。同步前请备份您的设备。"
 
 #: src/Views/DeviceView.vala:76 src/Widgets/SpaceWidget.vala:172
 msgid "Sync"
@@ -2505,12 +2455,12 @@ msgstr "同步"
 
 #: src/Views/DeviceView.vala:77
 msgid "Unmount"
-msgstr ""
+msgstr "卸载"
 
 #: src/Views/PopupListView.vala:177
 #, c-format
 msgid "%s by %s"
-msgstr ""
+msgstr "%s — %s"
 
 #: src/Views/SideTreeView.vala:97
 msgid "Devices"
@@ -2529,91 +2479,90 @@ msgid "Search..."
 msgstr "搜索..."
 
 #: src/Widgets/AlbumWall.vala:408
-#, fuzzy, c-format
+#, c-format
 msgid "%d song"
 msgid_plural "%d songs"
-msgstr[0] "歌曲"
+msgstr[0] "%d 首歌曲"
 
 #: src/Widgets/AlbumWall.vala:409
-#, fuzzy, c-format
+#, c-format
 msgid "%d minute"
 msgid_plural "%d minutes"
-msgstr[0] "%s 分钟"
+msgstr[0] "%d 分钟"
 
-#. the built-in preset names, for the translations (see Settings.Equalizer.default_presets)
+#. the built-in preset names, for the translations (see
+#. Settings.Equalizer.default_presets)
 #: src/Widgets/PresetList.vala:32
 msgid "Flat"
-msgstr ""
+msgstr "平坦"
 
 #: src/Widgets/PresetList.vala:32
 msgid "Classical"
-msgstr ""
+msgstr "古典"
 
 #: src/Widgets/PresetList.vala:32
 msgid "Club"
-msgstr ""
+msgstr "俱乐部"
 
 #: src/Widgets/PresetList.vala:32
-#, fuzzy
 msgid "Dance"
-msgstr "取消"
+msgstr "舞曲"
 
 #: src/Widgets/PresetList.vala:32
 msgid "Full Bass"
-msgstr ""
+msgstr "全低音"
 
 #: src/Widgets/PresetList.vala:33
 msgid "Full Treble"
-msgstr ""
+msgstr "全高音"
 
 #: src/Widgets/PresetList.vala:33
 msgid "Full Bass + Treble"
-msgstr ""
+msgstr "全低音 + 高音"
 
 #: src/Widgets/PresetList.vala:33 src/Windows/EqualizerWindow.vala:245
 msgid "Headphones"
-msgstr ""
+msgstr "耳机"
 
 #: src/Widgets/PresetList.vala:33
 msgid "Large Hall"
-msgstr ""
+msgstr "大厅"
 
 #: src/Widgets/PresetList.vala:33
 msgid "Live"
-msgstr ""
+msgstr "现场"
 
 #: src/Widgets/PresetList.vala:33
 msgid "Party"
-msgstr ""
+msgstr "派对"
 
 #: src/Widgets/PresetList.vala:34
-#, fuzzy
 msgid "Pop"
-msgstr "顶部"
+msgstr "流行"
 
 #: src/Widgets/PresetList.vala:34
 msgid "Reggae"
-msgstr ""
+msgstr "雷鬼"
 
 #: src/Widgets/PresetList.vala:34
 msgid "Rock"
-msgstr ""
+msgstr "摇滚"
 
 #: src/Widgets/PresetList.vala:34
 msgid "Soft"
-msgstr ""
+msgstr "柔和"
 
 #: src/Widgets/PresetList.vala:34
 msgid "Ska"
-msgstr ""
+msgstr "Ska"
 
 #: src/Widgets/PresetList.vala:34
 msgid "Soft Rock"
-msgstr ""
+msgstr "柔和摇滚"
 
 #: src/Widgets/PresetList.vala:34
 msgid "Techno"
-msgstr ""
+msgstr "电子"
 
 #: src/Widgets/PresetList.vala:57
 msgid "Automatic"
@@ -2621,16 +2570,16 @@ msgstr "自动"
 
 #: src/Widgets/PresetList.vala:58
 msgid "Delete Current"
-msgstr ""
+msgstr "删除当前"
 
 #. * Adding free-space element *
 #: src/Widgets/SpaceWidget.vala:232
 msgid "Free"
-msgstr ""
+msgstr "可用"
 
 #: src/Widgets/SpaceWidget.vala:350
 msgid "Using %s of %s (%.0f%)"
-msgstr ""
+msgstr "已使用 %s / %s（%.0f%%）"
 
 #: src/Widgets/StatusBar.vala:38
 #, c-format
@@ -2639,19 +2588,19 @@ msgstr "%s，%s，%s"
 
 #: src/Widgets/StatusBar.vala:77
 msgid "Repeat Off"
-msgstr ""
+msgstr "重复：关"
 
 #: src/Widgets/StatusBar.vala:78
 msgid "Repeat Song"
-msgstr ""
+msgstr "单曲循环"
 
 #: src/Widgets/StatusBar.vala:79
 msgid "Repeat Album"
-msgstr ""
+msgstr "专辑循环"
 
 #: src/Widgets/StatusBar.vala:80
 msgid "Repeat Artist"
-msgstr ""
+msgstr "艺术家循环"
 
 #: src/Widgets/StatusBar.vala:81 src/Widgets/StatusBar.vala:85
 msgid "All"
@@ -2659,226 +2608,216 @@ msgstr "全部"
 
 #: src/Widgets/StatusBar.vala:81
 msgid "Repeat All"
-msgstr ""
+msgstr "全部循环"
 
 #: src/Widgets/StatusBar.vala:84
 msgid "Shuffle Disabled"
-msgstr ""
+msgstr "随机播放：关"
 
 #: src/Widgets/StatusBar.vala:85
 msgid "Shuffle Enabled"
-msgstr ""
+msgstr "随机播放：开"
 
 #. less than 1 hour show in minute units
 #: src/Widgets/StatusBar.vala:138
 #, c-format
 msgid "%d minutes"
 msgid_plural "%d minutes"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%d 分钟"
 
 #. less than 1 day show in hour units
 #: src/Widgets/StatusBar.vala:141
 #, c-format
 msgid "%d hour"
 msgid_plural "%d hours"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%d 小时"
 
 #. units in days
 #: src/Widgets/StatusBar.vala:144
 #, c-format
 msgid "%d day"
 msgid_plural "%d days"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%d 天"
 
 #: src/Widgets/StatusBar.vala:154
 msgid "episode"
 msgid_plural "episodes"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "单集"
 
 #: src/Widgets/TopDisplay/BufferDisplay.vala:62
 #, c-format
 msgid "Buffering %s..."
-msgstr ""
+msgstr "正在缓冲 %s…"
 
 #: src/Widgets/TopDisplay/BufferDisplay.vala:65
 msgid "Buffering..."
-msgstr ""
+msgstr "正在缓冲…"
 
 #: src/Widgets/TopDisplay/TimeScale.vala:90
 msgid "Click to switch between the time left and the total time"
-msgstr ""
+msgstr "点击可在剩余时间与总时长之间切换"
 
 #: src/Widgets/TrackReport.vala:59
 msgid "Nothing is playing."
-msgstr ""
+msgstr "当前没有播放内容。"
 
 #: src/Widgets/TrackReport.vala:78 src/Windows/Editors/SongEditor.vala:410
 msgid "Reading the file…"
-msgstr ""
+msgstr "正在读取文件…"
 
 #. a stream would be opened just to look at it: only files are read
 #: src/Widgets/TrackReport.vala:88
 msgid "An internet stream: there is no file to read."
-msgstr ""
+msgstr "这是网络流：没有可读取的文件。"
 
 #: src/Widgets/TrackReport.vala:107
 msgid "Error"
-msgstr ""
+msgstr "错误"
 
 #: src/Widgets/TrackReport.vala:117
 msgid "Format and audio"
-msgstr ""
+msgstr "格式与音频"
 
 #: src/Widgets/TrackReport.vala:118
 msgid "Tags in the file"
-msgstr ""
+msgstr "文件中的标签"
 
 #: src/Widgets/TrackReport.vala:118 src/Widgets/TrackReport.vala:121
-#: src/Widgets/TrackReport.vala:183 src/Windows/Editors/SongEditor.vala:178
+#: src/Widgets/TrackReport.vala:182 src/Windows/Editors/SongEditor.vala:178
 msgid "None"
-msgstr ""
+msgstr "无"
 
 #: src/Widgets/TrackReport.vala:119
 msgid "Embedded pictures"
-msgstr ""
+msgstr "嵌入的图片"
 
 #: src/Widgets/TrackReport.vala:127
 msgid "Click to enlarge"
-msgstr ""
+msgstr "点击放大"
 
 #: src/Widgets/TrackReport.vala:130
 msgid "Embedded picture"
-msgstr ""
+msgstr "嵌入的图片"
+
+#: src/Widgets/TrackReport.vala:183
+msgid "Added"
+msgstr "添加于"
+
+#: src/Widgets/TrackReport.vala:183 plugins/statistics/Statistics.vala:95
+msgid "Unknown"
+msgstr "未知"
 
 #: src/Widgets/TrackReport.vala:184
-#, fuzzy
-msgid "Added"
-msgstr "加入日期"
-
-#: src/Widgets/TrackReport.vala:184 plugins/statistics/Statistics.vala:95
-#, fuzzy
-msgid "Unknown"
-msgstr "未知专辑"
-
-#: src/Widgets/TrackReport.vala:185
-#, fuzzy
 msgid "Last played"
 msgstr "上次播放"
 
-#: src/Widgets/TrackReport.vala:185 src/Windows/Editors/SongEditor.vala:319
+#: src/Widgets/TrackReport.vala:184 src/Windows/Editors/SongEditor.vala:319
 msgid "Never"
-msgstr ""
+msgstr "从不"
 
-#: src/Widgets/TrackReport.vala:188
-#, fuzzy
+#: src/Widgets/TrackReport.vala:187
 msgid "Edited"
-msgstr "编辑"
+msgstr "已编辑"
 
-#: src/Widgets/TrackReport.vala:192
+#: src/Widgets/TrackReport.vala:191
 msgid "Volume adjustment"
-msgstr ""
+msgstr "音量调整"
+
+#: src/Widgets/TrackReport.vala:195
+msgid "Shuffle"
+msgstr "随机"
 
 #: src/Widgets/TrackReport.vala:196
-msgid "Shuffle"
-msgstr ""
-
-#: src/Widgets/TrackReport.vala:197
 msgid "Skipped when shuffling"
-msgstr ""
+msgstr "随机播放时跳过"
 
-#: src/Widgets/TrackReport.vala:200
+#: src/Widgets/TrackReport.vala:199
 msgid "Resumes at"
-msgstr ""
+msgstr "继续播放于"
 
-#: src/Widgets/TrackReport.vala:271
+#: src/Widgets/TrackReport.vala:270
 msgid "Size"
-msgstr ""
+msgstr "大小"
 
-#: src/Widgets/TrackReport.vala:274
+#: src/Widgets/TrackReport.vala:273
 msgid "File modified"
-msgstr ""
+msgstr "文件修改时间"
 
-#: src/Widgets/TrackReport.vala:280
-#, fuzzy
+#: src/Widgets/TrackReport.vala:279
 msgid "Container"
-msgstr "包含"
+msgstr "容器"
 
-#: src/Widgets/TrackReport.vala:283
-#, fuzzy
+#: src/Widgets/TrackReport.vala:282
 msgid "Duration"
-msgstr "电台"
+msgstr "时长"
 
-#: src/Widgets/TrackReport.vala:291
+#: src/Widgets/TrackReport.vala:290
 msgid "Codec"
-msgstr ""
+msgstr "编解码器"
 
-#: src/Widgets/TrackReport.vala:291
+#: src/Widgets/TrackReport.vala:290
 msgid "lossless"
-msgstr ""
+msgstr "无损"
 
-#: src/Widgets/TrackReport.vala:291
+#: src/Widgets/TrackReport.vala:290
 msgid "lossy"
-msgstr ""
+msgstr "有损"
 
-#: src/Widgets/TrackReport.vala:293
+#: src/Widgets/TrackReport.vala:292
 msgid "Sample rate"
-msgstr ""
+msgstr "采样率"
 
 #. a lossy one is decoded to whatever depth
-#: src/Widgets/TrackReport.vala:295
+#: src/Widgets/TrackReport.vala:294
 msgid "Bit depth"
-msgstr ""
+msgstr "位深"
 
-#: src/Widgets/TrackReport.vala:298
+#: src/Widgets/TrackReport.vala:297
 msgid "Mono"
-msgstr ""
+msgstr "单声道"
 
-#: src/Widgets/TrackReport.vala:298
+#: src/Widgets/TrackReport.vala:297
 msgid "Stereo"
-msgstr ""
+msgstr "立体声"
 
-#: src/Widgets/TrackReport.vala:298
+#: src/Widgets/TrackReport.vala:297
 #, c-format
 msgid "%u channels"
-msgstr ""
+msgstr "%u 声道"
 
-#: src/Widgets/TrackReport.vala:299
+#: src/Widgets/TrackReport.vala:298
 msgid "Channels"
-msgstr ""
+msgstr "声道"
 
-#: src/Widgets/TrackReport.vala:314
+#: src/Widgets/TrackReport.vala:313
 #, c-format
 msgid "variable (%u–%u kbps)"
-msgstr ""
+msgstr "可变（%u–%u kbps）"
 
-#: src/Widgets/TrackReport.vala:316
+#: src/Widgets/TrackReport.vala:315
 #, c-format
 msgid "nominal %u kbps"
-msgstr ""
+msgstr "标称 %u kbps"
 
-#: src/Widgets/TrackReport.vala:317
+#: src/Widgets/TrackReport.vala:316
 msgid "Bitrate (average)"
-msgstr ""
+msgstr "比特率（平均）"
 
-#: src/Widgets/TrackReport.vala:353
+#: src/Widgets/TrackReport.vala:352
 msgid "Picture"
-msgstr ""
+msgstr "图片"
 
-#: src/Widgets/TrackReport.vala:358
+#: src/Widgets/TrackReport.vala:357
 msgid "Front cover"
-msgstr ""
+msgstr "封面正面"
+
+#: src/Widgets/TrackReport.vala:357
+msgid "Back cover"
+msgstr "封底"
 
 #: src/Widgets/TrackReport.vala:358
-msgid "Back cover"
-msgstr ""
-
-#: src/Widgets/TrackReport.vala:359
 msgid "Disc"
-msgstr ""
+msgstr "光盘"
 
 #. start out by creating all category labels
 #: src/Windows/AddPodcastWindow.vala:76 src/Windows/AddPodcastWindow.vala:84
@@ -2895,309 +2834,307 @@ msgid "Add"
 msgstr "添加"
 
 #: src/Windows/DirectoryDialog.vala:45
-#, fuzzy
 msgid "Find Radio Stations"
-msgstr "未发现网络电台"
+msgstr "查找广播电台"
 
 #: src/Windows/DirectoryDialog.vala:52
 msgid "Station name, city or genre (jazz, news, rock…)"
-msgstr ""
+msgstr "电台名称、城市或流派（爵士、新闻、摇滚…）"
 
 #: src/Windows/DirectoryDialog.vala:53
 msgid "Podcast name, author or topic"
-msgstr ""
+msgstr "播客名称、作者或主题"
 
 #: src/Windows/DirectoryDialog.vala:64 src/Windows/DirectoryDialog.vala:251
 msgid "Country"
-msgstr ""
+msgstr "国家"
 
 #: src/Windows/DirectoryDialog.vala:65
 #: src/Windows/Editors/PodcastEditor.vala:71
 msgid "Author"
-msgstr ""
+msgstr "作者"
 
 #: src/Windows/DirectoryDialog.vala:91
 msgid "Podcasts from the Apple Podcasts directory."
-msgstr ""
+msgstr "来自 Apple Podcasts 目录的播客。"
 
 #: src/Windows/DirectoryDialog.vala:107 src/Windows/DirectoryDialog.vala:524
-#, fuzzy
 msgid "Add Station"
-msgstr "导入电台"
+msgstr "添加电台"
 
 #: src/Windows/DirectoryDialog.vala:107
 msgid "Subscribe"
-msgstr ""
+msgstr "订阅"
 
 #: src/Windows/DirectoryDialog.vala:126
 msgid "Type a name or topic and press Enter."
-msgstr ""
+msgstr "输入名称或主题，然后按回车。"
 
 #: src/Windows/DirectoryDialog.vala:151
 msgid "Country:"
-msgstr ""
+msgstr "国家："
 
 #: src/Windows/DirectoryDialog.vala:157
 msgid "Region:"
-msgstr ""
+msgstr "地区："
 
 #: src/Windows/DirectoryDialog.vala:158
 msgid "Language:"
-msgstr ""
+msgstr "语言："
 
-#: src/Windows/DirectoryDialog.vala:159 src/Windows/Editors/SongEditor.vala:159
-#, fuzzy
+#: src/Windows/DirectoryDialog.vala:159
+#: src/Windows/Editors/SongEditor.vala:159
 msgid "Genre:"
-msgstr "流派"
+msgstr "流派："
 
-#: src/Windows/DirectoryDialog.vala:160 src/Windows/Editors/SongEditor.vala:313
+#: src/Windows/DirectoryDialog.vala:160
+#: src/Windows/Editors/SongEditor.vala:313
 msgid "Format:"
-msgstr ""
+msgstr "格式："
 
 #: src/Windows/DirectoryDialog.vala:163
 msgid "Quality:"
-msgstr ""
+msgstr "质量："
 
 #: src/Windows/DirectoryDialog.vala:165
 #, c-format
 msgid "%d kbps or more"
-msgstr ""
+msgstr "%d kbps 及以上"
 
 #: src/Windows/DirectoryDialog.vala:166
 msgid "Sort by:"
-msgstr ""
+msgstr "排序方式："
 
 #: src/Windows/DirectoryDialog.vala:168
 msgid "Most voted"
-msgstr ""
+msgstr "最多投票"
 
 #: src/Windows/DirectoryDialog.vala:169
-#, fuzzy
 msgid "Most played"
-msgstr "上次播放"
+msgstr "播放最多"
 
 #: src/Windows/DirectoryDialog.vala:170
 msgid "Trending"
-msgstr ""
+msgstr "热门趋势"
 
 #: src/Windows/DirectoryDialog.vala:172
 msgid "Quality"
-msgstr ""
+msgstr "质量"
 
 #: src/Windows/DirectoryDialog.vala:173
 msgid "Random"
-msgstr ""
+msgstr "随机"
 
 #: src/Windows/DirectoryDialog.vala:175
 msgid "HTTPS only"
-msgstr ""
+msgstr "仅 HTTPS"
 
 #: src/Windows/DirectoryDialog.vala:186 src/Windows/DirectoryDialog.vala:193
 #: src/Windows/DirectoryDialog.vala:288
 msgid "Any"
-msgstr ""
+msgstr "任意"
 
 #: src/Windows/DirectoryDialog.vala:251
 msgid "Format"
-msgstr ""
+msgstr "格式"
 
 #: src/Windows/DirectoryDialog.vala:252
 msgid "Stations from radio-browser.info, a free community directory."
-msgstr ""
+msgstr "来自 radio-browser.info 的电台，这是一个由社区维护的免费目录。"
 
 #: src/Windows/DirectoryDialog.vala:253
 msgid "Stations from the SHOUTcast directory."
-msgstr ""
+msgstr "来自 SHOUTcast 目录的电台。"
 
 #: src/Windows/DirectoryDialog.vala:254
 msgid "Stations made by laut.fm’s listeners."
-msgstr ""
+msgstr "由 laut.fm 听众创建的电台。"
 
 #: src/Windows/DirectoryDialog.vala:255
 msgid "Stations from the Icecast directory (dir.xiph.org)."
-msgstr ""
+msgstr "来自 Icecast 目录（dir.xiph.org）的电台。"
 
 #: src/Windows/DirectoryDialog.vala:346 src/Windows/DirectoryDialog.vala:381
 #: src/Windows/Editors/SongEditor.vala:517
 #: src/Windows/Editors/SongEditor.vala:718
 msgid "Searching…"
-msgstr ""
+msgstr "正在搜索…"
 
 #: src/Windows/DirectoryDialog.vala:376
 msgid "Choose a genre or type a station’s name."
-msgstr ""
+msgstr "请选择一个流派或输入电台名称。"
 
 #: src/Windows/DirectoryDialog.vala:380
 msgid "Searching… the Icecast directory is downloaded once a day (9 MB)."
-msgstr ""
+msgstr "正在搜索…Icecast 目录每天下载一次（9 MB）。"
 
 #: src/Windows/DirectoryDialog.vala:398 src/Windows/DirectoryDialog.vala:430
 msgid "Could not reach the directory. Check your internet connection."
-msgstr ""
+msgstr "无法连接目录。请检查您的网络连接。"
 
 #: src/Windows/DirectoryDialog.vala:418 src/Windows/DirectoryDialog.vala:449
 #, c-format
 msgid "Nothing found for “%s”."
-msgstr ""
+msgstr "未找到“%s”的结果。"
 
 #: src/Windows/DirectoryDialog.vala:418
 msgid "No stations match these filters."
-msgstr ""
+msgstr "没有符合这些筛选条件的电台。"
 
 #: src/Windows/DirectoryDialog.vala:420 src/Windows/DirectoryDialog.vala:451
 #, c-format
 msgid "%d result. Double click to add."
 msgid_plural "%d results. Double click to add."
-msgstr[0] ""
+msgstr[0] "%d 个结果。双击即可添加。"
 
 #: src/Windows/DirectoryDialog.vala:475
 #, c-format
 msgid "“%s” is already in your library."
-msgstr ""
+msgstr "“%s”已在您的媒体库中。"
 
 #: src/Windows/DirectoryDialog.vala:481
 #, c-format
 msgid "Subscribing to “%s”… its episodes will appear in Podcasts."
-msgstr ""
+msgstr "正在订阅“%s”…其单集将出现在播客中。"
 
 #. SHOUTcast gives a playlist: its stream is looked up now
 #: src/Windows/DirectoryDialog.vala:485
 #, c-format
 msgid "Looking up the stream of “%s”…"
-msgstr ""
+msgstr "正在查找“%s”的流…"
 
 #: src/Windows/DirectoryDialog.vala:491
 #, c-format
 msgid "“%s” gave no stream to play."
-msgstr ""
+msgstr "“%s”未提供可播放的流。"
 
 #: src/Windows/DirectoryDialog.vala:495 src/Windows/DirectoryDialog.vala:506
 #, c-format
 msgid "Added “%s” to Internet Radio."
-msgstr ""
+msgstr "已将“%s”添加到网络电台。"
 
 #: src/Windows/DirectoryDialog.vala:526
 msgid "My favourite station"
-msgstr ""
+msgstr "我喜欢的电台"
 
 #: src/Windows/DirectoryDialog.vala:531
 msgid "Stream address:"
-msgstr ""
+msgstr "流地址："
 
 #: src/Windows/DirectoryDialog.vala:533
 msgid ""
-"The address of the audio stream itself (often ending in .mp3, .aac or /"
-"stream).\n"
+"The address of the audio stream itself (often ending in .mp3, .aac or /stream).\n"
 "To add a .pls or .m3u file use “Import File…”."
 msgstr ""
+"音频流本身的地址（通常以 .mp3、.aac 或 /stream 结尾）。\n"
+"要添加 .pls 或 .m3u 文件，请使用“导入文件…”。"
 
 #: src/Windows/Editors/FieldEditorImpl.vala:182
 msgid "Apply this field to all the selected songs"
-msgstr ""
+msgstr "将此字段应用于所有选中的歌曲"
 
 #: src/Windows/Editors/InfoViewport.vala:64
 msgid "Location:"
-msgstr ""
+msgstr "位置："
 
 #: src/Windows/Editors/InfoViewport.vala:65
 msgid "File Size:"
-msgstr ""
+msgstr "文件大小："
 
 #: src/Windows/Editors/InfoViewport.vala:66
 msgid "Date Added:"
-msgstr ""
+msgstr "添加日期："
 
 #: src/Windows/Editors/InfoViewport.vala:67
 msgid "Last Played:"
-msgstr ""
+msgstr "上次播放："
 
 #: src/Windows/Editors/InfoViewport.vala:68
 msgid "Last Modified:"
-msgstr ""
+msgstr "上次修改："
 
 #: src/Windows/Editors/InfoViewport.vala:69
 msgid "Play Count:"
-msgstr ""
+msgstr "播放次数："
 
 #: src/Windows/Editors/InfoViewport.vala:71
 msgid "Duration:"
-msgstr ""
+msgstr "时长："
 
 #: src/Windows/Editors/InfoViewport.vala:72
 msgid "Audio Bitrate:"
-msgstr ""
+msgstr "音频比特率："
 
 #: src/Windows/Editors/InfoViewport.vala:73
 msgid "Sample Rate:"
-msgstr ""
+msgstr "采样率："
 
 #: src/Windows/Editors/InfoViewport.vala:165
 msgid "Unknown Size"
-msgstr ""
+msgstr "大小未知"
 
 #: src/Windows/Editors/InfoViewport.vala:181
 msgid "Never Modified"
-msgstr ""
+msgstr "从未修改"
 
 #: src/Windows/Editors/InfoViewport.vala:188
 msgid "No Plays"
-msgstr ""
+msgstr "从未播放"
 
 #: src/Windows/Editors/InfoViewport.vala:195
 msgid "No Skips"
-msgstr ""
+msgstr "从未跳过"
 
 #: src/Windows/Editors/InfoViewport.vala:198
 msgid "Skip"
 msgid_plural "Skips"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "跳过"
 
 #: src/Windows/Editors/InfoViewport.vala:204
 msgid "Unknown Bitrate"
-msgstr ""
+msgstr "比特率未知"
 
 #: src/Windows/Editors/InfoViewport.vala:207
 #, c-format
 msgid "%d kbps"
-msgstr ""
+msgstr "%d kbps"
 
 #: src/Windows/Editors/InfoViewport.vala:211
 msgid "Unknown Sample Rate"
-msgstr ""
+msgstr "采样率未知"
 
 #: src/Windows/Editors/InfoViewport.vala:214
 #, c-format
 msgid "%d Hz"
-msgstr ""
+msgstr "%d Hz"
 
 #: src/Windows/Editors/MediaEditor.vala:85
 msgid "Also write changes to the file"
-msgstr ""
+msgstr "同时将更改写入文件"
 
 #: src/Windows/Editors/MediaEditor.vala:87
 msgid ""
 "Otherwise the changes stay in BeatBox's library and the tags in the files "
 "are left as they are (the same option as in Preferences)"
-msgstr ""
+msgstr "否则更改仅保存在 BeatBox 媒体库中，文件中的标签保持不变（与首选项中的选项相同）"
 
 #: src/Windows/Editors/MediaEditor.vala:95
 msgid "OK"
-msgstr ""
+msgstr "确定"
 
 #: src/Windows/Editors/MediaEditor.vala:96
 msgid "Save the changes and show the previous song (Alt+Left)"
-msgstr ""
+msgstr "保存更改并显示上一首（Alt+左）"
 
 #: src/Windows/Editors/MediaEditor.vala:97
 msgid "Save the changes and show the next song (Alt+Right)"
-msgstr ""
+msgstr "保存更改并显示下一首（Alt+右）"
 
 #: src/Windows/Editors/MediaEditor.vala:142
 #: src/Windows/Editors/MediaEditor.vala:147
 #: src/Windows/Editors/MediaEditor.vala:159
 msgid "Info"
-msgstr ""
+msgstr "信息"
 
 #. the editor's pages in this order, any others after them
 #: src/Windows/Editors/MediaEditor.vala:143
@@ -3205,24 +3142,23 @@ msgstr ""
 #: src/Windows/Editors/MediaEditor.vala:159
 #: src/Windows/Editors/SongEditor.vala:228
 msgid "Summary"
-msgstr ""
+msgstr "摘要"
 
 #: src/Windows/Editors/MediaEditor.vala:144
 #: src/Windows/Editors/MediaEditor.vala:148
 #: src/Windows/EqualizerWindow.vala:285
 msgid "Details"
-msgstr ""
+msgstr "详细信息"
 
 #: src/Windows/Editors/MediaEditor.vala:147
 #: src/Windows/Editors/SongEditor.vala:202
 msgid "Comments"
-msgstr ""
+msgstr "注释"
 
 #: src/Windows/Editors/MediaEditor.vala:147
 #: src/Windows/Editors/SongEditor.vala:209
-#, fuzzy
 msgid "Sorting"
-msgstr "评级"
+msgstr "排序"
 
 #: src/Windows/Editors/MediaEditor.vala:147
 #: src/Windows/Editors/SmartPlaylistEditor.vala:76
@@ -3234,25 +3170,25 @@ msgstr "选项"
 #: src/Windows/Editors/MediaEditor.vala:148
 #: src/Windows/Editors/SongEditor.vala:229
 msgid "Lyrics"
-msgstr ""
+msgstr "歌词"
 
 #: src/Windows/Editors/MediaEditor.vala:148
 #: src/Windows/Editors/SongEditor.vala:230
 msgid "Pictures"
-msgstr ""
+msgstr "图片"
 
 #: src/Windows/Editors/MediaEditor.vala:170
 msgid "Song Info"
-msgstr ""
+msgstr "歌曲信息"
 
 #: src/Windows/Editors/MediaEditor.vala:170
 #, c-format
 msgid "Info for %d Songs"
-msgstr ""
+msgstr "%d 首歌曲的信息"
 
 #: src/Windows/Editors/SmartPlaylistEditor.vala:62
 msgid "Smart Playlist Editor"
-msgstr ""
+msgstr "智能播放列表编辑器"
 
 #. start out by creating all category labels
 #: src/Windows/Editors/SmartPlaylistEditor.vala:74
@@ -3278,11 +3214,11 @@ msgstr "匹配"
 
 #: src/Windows/Editors/SmartPlaylistEditor.vala:95
 msgid "any"
-msgstr ""
+msgstr "任一"
 
 #: src/Windows/Editors/SmartPlaylistEditor.vala:96
 msgid "all"
-msgstr ""
+msgstr "全部"
 
 #: src/Windows/Editors/SmartPlaylistEditor.vala:97
 msgid "of the following:"
@@ -3305,632 +3241,617 @@ msgstr "完成"
 
 #: src/Windows/Editors/SmartPlaylistEditor.vala:495
 msgid "days ago"
-msgstr ""
+msgstr "天前"
 
 #: src/Windows/Editors/SmartPlaylistEditor.vala:499
 msgid "kbps"
 msgstr "kbps"
 
 #: src/Windows/Editors/SongEditor.vala:156
-#, fuzzy
 msgid "Artist:"
-msgstr "艺术家"
+msgstr "艺术家："
 
 #: src/Windows/Editors/SongEditor.vala:157
-#, fuzzy
 msgid "Album artist:"
-msgstr "艺术家"
+msgstr "专辑艺术家："
 
 #: src/Windows/Editors/SongEditor.vala:158
-#, fuzzy
 msgid "Album:"
-msgstr "专辑"
+msgstr "专辑："
 
 #: src/Windows/Editors/SongEditor.vala:160
 msgid "Composer:"
-msgstr ""
+msgstr "作曲："
 
 #: src/Windows/Editors/SongEditor.vala:161
 msgid "Grouping:"
-msgstr ""
+msgstr "分组："
 
 #: src/Windows/Editors/SongEditor.vala:163
 msgid "Track number:"
-msgstr ""
+msgstr "音轨编号："
 
 #: src/Windows/Editors/SongEditor.vala:164
 #: src/Windows/Editors/SongEditor.vala:166
 msgid "of"
-msgstr ""
+msgstr "/"
 
 #: src/Windows/Editors/SongEditor.vala:165
 msgid "Disc number:"
-msgstr ""
+msgstr "光盘编号："
 
 #: src/Windows/Editors/SongEditor.vala:167
-#, fuzzy
 msgid "Year:"
-msgstr "年份"
+msgstr "年份："
 
 #: src/Windows/Editors/SongEditor.vala:168
 msgid "BPM:"
-msgstr ""
+msgstr "BPM："
 
 #: src/Windows/Editors/SongEditor.vala:169
-#, fuzzy
 msgid "Rating:"
-msgstr "评级"
+msgstr "评分："
 
 #: src/Windows/Editors/SongEditor.vala:170
 msgid "Part of a compilation by various artists"
-msgstr ""
+msgstr "属于多位艺术家的合辑"
 
 #: src/Windows/Editors/SongEditor.vala:172
 msgid "Sort name:"
-msgstr ""
+msgstr "排序名称："
 
 #: src/Windows/Editors/SongEditor.vala:173
 msgid "Sort artist:"
-msgstr ""
+msgstr "排序艺术家："
 
 #: src/Windows/Editors/SongEditor.vala:174
 msgid "Sort album artist:"
-msgstr ""
+msgstr "排序专辑艺术家："
 
 #: src/Windows/Editors/SongEditor.vala:175
 msgid "Sort album:"
-msgstr ""
+msgstr "排序专辑："
 
 #: src/Windows/Editors/SongEditor.vala:176
 msgid "Sort composer:"
-msgstr ""
+msgstr "排序作曲："
 
 #: src/Windows/Editors/SongEditor.vala:178
 msgid "Volume adjustment:"
-msgstr ""
+msgstr "音量调整："
 
 #: src/Windows/Editors/SongEditor.vala:179
 msgid "Skip when shuffling"
-msgstr ""
+msgstr "随机播放时跳过"
 
 #: src/Windows/Editors/SongEditor.vala:180
 msgid "Remember the playback position"
-msgstr ""
+msgstr "记住播放位置"
 
 #: src/Windows/Editors/SongEditor.vala:218
 msgid ""
 "The volume adjustment raises or lowers this song next to the others: +100 % "
 "doubles it, −100 % silences it."
-msgstr ""
+msgstr "音量调整会相对于其他歌曲提高或降低此歌曲：+100 % 为两倍，−100 % 为静音。"
 
 #: src/Windows/Editors/SongEditor.vala:312
 msgid "Kind:"
-msgstr ""
+msgstr "类型："
 
 #: src/Windows/Editors/SongEditor.vala:312
 #, c-format
 msgid "%s audio file"
-msgstr ""
+msgstr "%s 音频文件"
 
 #: src/Windows/Editors/SongEditor.vala:312
 msgid "Audio file"
-msgstr ""
+msgstr "音频文件"
 
 #: src/Windows/Editors/SongEditor.vala:314
 msgid "Size:"
-msgstr ""
+msgstr "大小："
 
 #: src/Windows/Editors/SongEditor.vala:315
-#, fuzzy
 msgid "Bit rate:"
-msgstr "比特率"
+msgstr "比特率："
 
 #: src/Windows/Editors/SongEditor.vala:316
 msgid "Sample rate:"
-msgstr ""
+msgstr "采样率："
 
 #: src/Windows/Editors/SongEditor.vala:317
 msgid "Channels:"
-msgstr ""
+msgstr "声道："
 
 #: src/Windows/Editors/SongEditor.vala:318
-#, fuzzy
 msgid "Plays:"
-msgstr "播放"
+msgstr "播放次数："
 
 #: src/Windows/Editors/SongEditor.vala:319
-#, fuzzy
 msgid "Last played:"
-msgstr "上次播放"
+msgstr "上次播放："
 
 #: src/Windows/Editors/SongEditor.vala:320
-#, fuzzy
 msgid "Date modified:"
-msgstr "加入日期"
+msgstr "修改日期："
 
 #: src/Windows/Editors/SongEditor.vala:321
 msgid "Encoded with:"
-msgstr ""
+msgstr "编码器："
 
-#. "Identify": fills the name, artist and album from the song's sound (AcoustID)
+#. "Identify": fills the name, artist and album from the song's sound
+#. (AcoustID)
 #: src/Windows/Editors/SongEditor.vala:341
 #: src/Windows/Editors/SongEditor.vala:554
 msgid "Identify…"
-msgstr ""
+msgstr "识别…"
 
 #: src/Windows/Editors/SongEditor.vala:343
 msgid "Look the song up by its sound on AcoustID"
-msgstr ""
+msgstr "通过 AcoustID 根据声音查找歌曲"
 
 #: src/Windows/Editors/SongEditor.vala:344
 msgid ""
 "Needs fpcalc, from Chromaprint (the chromaprint or libchromaprint-tools "
 "package)"
-msgstr ""
+msgstr "需要 Chromaprint 中的 fpcalc（chromaprint 或 libchromaprint-tools 软件包）"
 
 #: src/Windows/Editors/SongEditor.vala:379
 msgid "Not known"
-msgstr ""
+msgstr "未知"
 
 #: src/Windows/Editors/SongEditor.vala:385
 msgid "This file has no pictures inside it."
-msgstr ""
+msgstr "此文件中没有图片。"
 
 #: src/Windows/Editors/SongEditor.vala:427
 msgid "Add Artwork…"
-msgstr ""
+msgstr "添加封面…"
 
 #: src/Windows/Editors/SongEditor.vala:428
 msgid "Download Artwork"
-msgstr ""
+msgstr "下载封面"
 
 #: src/Windows/Editors/SongEditor.vala:429
 msgid "Embed in File"
-msgstr ""
+msgstr "嵌入到文件中"
 
 #: src/Windows/Editors/SongEditor.vala:430
 msgid "Look the cover up on MusicBrainz and the Apple catalogue"
-msgstr ""
+msgstr "在 MusicBrainz 和 Apple 目录中查找封面"
 
 #: src/Windows/Editors/SongEditor.vala:431
 msgid "Write the cover into the music files (the whole album)"
-msgstr ""
+msgstr "将封面写入音乐文件（整张专辑）"
 
 #: src/Windows/Editors/SongEditor.vala:432
-msgid "This build of BeatBox can't write covers into files (it needs TagLib 2)"
-msgstr ""
+msgid ""
+"This build of BeatBox can't write covers into files (it needs TagLib 2)"
+msgstr "此版本的 BeatBox 无法将封面写入文件（需要 TagLib 2）"
 
 #: src/Windows/Editors/SongEditor.vala:443
 msgid "Writing…"
-msgstr ""
+msgstr "正在写入…"
 
 #: src/Windows/Editors/SongEditor.vala:445
 #, c-format
 msgid "Written into %d file."
 msgid_plural "Written into %d files."
-msgstr[0] ""
+msgstr[0] "已写入 %d 个文件。"
 
 #: src/Windows/Editors/SongEditor.vala:446
 #, c-format
 msgid "Written into %d files; %d failed."
-msgstr ""
+msgstr "已写入 %d 个文件；%d 个失败。"
 
 #: src/Windows/Editors/SongEditor.vala:470
 msgid "Changes here apply to the albums of all the selected songs."
-msgstr ""
+msgstr "此处的更改适用于所有选中歌曲所属的专辑。"
 
 #: src/Windows/Editors/SongEditor.vala:502
 msgid "Choose Image"
-msgstr ""
+msgstr "选择图片"
 
 #: src/Windows/Editors/SongEditor.vala:502
 msgid "Open"
-msgstr ""
+msgstr "打开"
 
 #: src/Windows/Editors/SongEditor.vala:510
 #, c-format
 msgid "Could not open the image: %s"
-msgstr ""
+msgstr "无法打开图片：%s"
 
 #: src/Windows/Editors/SongEditor.vala:526
 #, c-format
 msgid "No cover found for “%s”."
-msgstr ""
+msgstr "未找到“%s”的封面。"
 
 #: src/Windows/Editors/SongEditor.vala:538
 msgid "Identifying songs needs an AcoustID application key"
-msgstr ""
+msgstr "识别歌曲需要 AcoustID 应用密钥"
 
 #: src/Windows/Editors/SongEditor.vala:539
 msgid ""
 "Register a free application at acoustid.org/new-application and paste its "
 "key in Preferences › Last.fm."
-msgstr ""
+msgstr "请在 acoustid.org/new-application 注册免费应用，并将其密钥粘贴到“首选项 › Last.fm”中。"
 
 #: src/Windows/Editors/SongEditor.vala:548
 msgid "Identifying…"
-msgstr ""
+msgstr "正在识别…"
 
 #: src/Windows/Editors/SongEditor.vala:567
 msgid "Identification failed"
-msgstr ""
+msgstr "识别失败"
 
 #: src/Windows/Editors/SongEditor.vala:567
-#, fuzzy
 msgid "No matches found"
-msgstr "未发现播客"
+msgstr "未找到匹配项"
 
 #: src/Windows/Editors/SongEditor.vala:568
 msgid "AcoustID doesn't know this recording."
-msgstr ""
+msgstr "AcoustID 不认识此录音。"
 
 #: src/Windows/Editors/SongEditor.vala:573
 msgid "Identification results"
-msgstr ""
+msgstr "识别结果"
 
 #: src/Windows/Editors/SongEditor.vala:574
 msgid "Apply"
-msgstr ""
+msgstr "应用"
 
 #: src/Windows/Editors/SongEditor.vala:582
 msgid "Score"
-msgstr ""
+msgstr "分数"
 
 #: src/Windows/Editors/SongEditor.vala:590
 msgid "Select a result to apply its title, artist and album to this song:"
-msgstr ""
+msgstr "选择一个结果，将其标题、艺术家和专辑应用到此歌曲："
 
 #: src/Windows/Editors/SongEditor.vala:629
-#, fuzzy
 msgid "Download Lyrics"
-msgstr "下载新的剧集"
+msgstr "下载歌词"
 
 #: src/Windows/Editors/SongEditor.vala:630
 msgid "Look the lyrics up on lrclib.net (they replace the ones here)"
-msgstr ""
+msgstr "在 lrclib.net 上查找歌词（将替换此处的歌词）"
 
 #: src/Windows/Editors/SongEditor.vala:726
 msgid "From lrclib.net"
-msgstr ""
+msgstr "来自 lrclib.net"
 
 #: src/Windows/Editors/SongEditor.vala:729
 #, c-format
 msgid "No lyrics found for “%s”."
-msgstr ""
+msgstr "未找到“%s”的歌词。"
 
 #: src/Windows/EqualizerWindow.vala:158
 msgid "Save preset"
-msgstr ""
+msgstr "保存预设"
 
 #: src/Windows/EqualizerWindow.vala:220
 msgid "Sets all the effects below at once"
-msgstr ""
+msgstr "一次性设置下方所有效果"
 
-#: src/Windows/EqualizerWindow.vala:221 src/Windows/EqualizerWindow.vala:526
+#: src/Windows/EqualizerWindow.vala:221 src/Windows/EqualizerWindow.vala:527
 msgid "Custom"
-msgstr ""
+msgstr "自定义"
 
 #: src/Windows/EqualizerWindow.vala:236
 msgid "Effects preset"
-msgstr ""
+msgstr "效果预设"
 
 #: src/Windows/EqualizerWindow.vala:244
 msgid "Concert hall"
-msgstr ""
+msgstr "音乐厅"
 
 #: src/Windows/EqualizerWindow.vala:247
 msgid "Warm"
-msgstr ""
+msgstr "温暖"
 
 #: src/Windows/EqualizerWindow.vala:248
 msgid "Space"
-msgstr ""
+msgstr "空间"
 
 #: src/Windows/EqualizerWindow.vala:249
 msgid "Vocal cut"
-msgstr ""
+msgstr "消除人声"
 
 #: src/Windows/EqualizerWindow.vala:258
 msgid "Preamp"
-msgstr ""
+msgstr "前级放大"
 
 #: src/Windows/EqualizerWindow.vala:258
 msgid ""
 "Lowers the level before the effects and the equalizer, so boosts don't "
 "distort"
-msgstr ""
+msgstr "在效果器和均衡器之前降低电平，使增益提升不会失真"
 
 #: src/Windows/EqualizerWindow.vala:259
 msgid "Echo"
-msgstr ""
+msgstr "回声"
 
 #: src/Windows/EqualizerWindow.vala:259
 msgid "Repeats of the sound, fading"
-msgstr ""
+msgstr "声音的重复，逐渐衰减"
 
 #: src/Windows/EqualizerWindow.vala:260
 msgid "Vocal reduction"
-msgstr ""
+msgstr "减弱人声"
 
 #: src/Windows/EqualizerWindow.vala:260
 msgid ""
 "Takes out what is in the middle of the stereo image, usually the voice; it "
 "also thins the sound"
-msgstr ""
+msgstr "去除立体声场中间的声音，通常是人声；同时会使声音变薄"
 
 #: src/Windows/EqualizerWindow.vala:261
 msgid "Bass enhancer"
-msgstr ""
+msgstr "低音增强器"
 
 #: src/Windows/EqualizerWindow.vala:261
 msgid "Adds harmonics, so the bass is heard on small speakers and headphones"
-msgstr ""
+msgstr "添加谐波，使低音在小音箱和耳机上也能听到"
 
 #: src/Windows/EqualizerWindow.vala:262
 msgid "Exciter"
-msgstr ""
+msgstr "激励器"
 
 #: src/Windows/EqualizerWindow.vala:262
 msgid "Adds brightness to the high frequencies"
-msgstr ""
+msgstr "为高频增添亮度"
 
 #: src/Windows/EqualizerWindow.vala:263
 msgid "Stereo width"
-msgstr ""
+msgstr "立体声宽度"
 
 #: src/Windows/EqualizerWindow.vala:263
 msgid "Spreads the stereo image"
-msgstr ""
+msgstr "扩展立体声场"
 
 #: src/Windows/EqualizerWindow.vala:264
-#, fuzzy
 msgid "Saturation"
-msgstr "电台"
+msgstr "饱和"
 
 #: src/Windows/EqualizerWindow.vala:264
 msgid "Warmth, with a little distortion"
-msgstr ""
+msgstr "带一点失真的温暖感"
 
 #: src/Windows/EqualizerWindow.vala:265
-#, fuzzy
 msgid "Limiter"
-msgstr "限制为"
+msgstr "限幅器"
 
 #: src/Windows/EqualizerWindow.vala:265
 msgid "A ceiling for the peaks, so loud parts don't clip"
-msgstr ""
+msgstr "为峰值设置上限，使响亮部分不削波"
 
 #: src/Windows/EqualizerWindow.vala:266
 msgid "Compressor"
-msgstr ""
+msgstr "压缩器"
 
 #: src/Windows/EqualizerWindow.vala:266
 msgid "Holds down the loudest parts, for an even level"
-msgstr ""
+msgstr "压低最响的部分，使音量更均匀"
 
 #: src/Windows/EqualizerWindow.vala:267
 msgid "Chorus"
-msgstr ""
+msgstr "合唱"
 
 #: src/Windows/EqualizerWindow.vala:267
 msgid "Copies of the sound, slightly out of tune, so it sounds thicker"
-msgstr ""
+msgstr "略微走音的声音副本，使声音更饱满"
 
 #: src/Windows/EqualizerWindow.vala:268
 msgid "Flanger"
-msgstr ""
+msgstr "镶边"
 
 #: src/Windows/EqualizerWindow.vala:268
 msgid "A short delay that sweeps up and down, like a jet passing"
-msgstr ""
+msgstr "一段上下扫动的短延迟，像飞机掠过"
 
 #: src/Windows/EqualizerWindow.vala:269
 msgid "Phaser"
-msgstr ""
+msgstr "移相器"
 
 #: src/Windows/EqualizerWindow.vala:269
 msgid "Sweeping notches in the sound, like a slow wah"
-msgstr ""
+msgstr "在声音中扫过的陷波，像缓慢的哇音"
 
 #: src/Windows/EqualizerWindow.vala:270
 msgid "Reverb"
-msgstr ""
+msgstr "混响"
 
 #: src/Windows/EqualizerWindow.vala:270
 msgid "Adds the sound of a room"
-msgstr ""
+msgstr "添加房间的声音"
 
 #: src/Windows/EqualizerWindow.vala:272
 msgid "Crossfeed"
-msgstr ""
+msgstr "交叉馈送"
 
 #: src/Windows/EqualizerWindow.vala:273
 msgid ""
 "For headphones: each ear hears a little of the other channel, as with "
 "speakers"
-msgstr ""
+msgstr "用于耳机：每只耳朵都会听到另一声道的一小部分，就像用音箱一样"
 
 #: src/Windows/EqualizerWindow.vala:281
 msgid "Echo delay"
-msgstr ""
+msgstr "回声延迟"
 
 #: src/Windows/EqualizerWindow.vala:281
 msgid "Time between the repeats"
-msgstr ""
+msgstr "重复之间的时间"
 
 #: src/Windows/EqualizerWindow.vala:282
 msgid "Echo feedback"
-msgstr ""
+msgstr "回声反馈"
 
 #: src/Windows/EqualizerWindow.vala:282
 msgid "How many repeats are heard, fading"
-msgstr ""
+msgstr "可听到的重复次数，逐渐衰减"
 
 #: src/Windows/EqualizerWindow.vala:283
 msgid "Room size"
-msgstr ""
+msgstr "房间大小"
 
 #: src/Windows/EqualizerWindow.vala:283
 msgid "Size of the simulated room"
-msgstr ""
+msgstr "模拟房间的大小"
 
 #: src/Windows/EqualizerWindow.vala:284
 msgid "Damping"
-msgstr ""
+msgstr "阻尼"
 
 #: src/Windows/EqualizerWindow.vala:284
 msgid "How much the highs fade in the room: more is warmer"
-msgstr ""
+msgstr "房间中高频的衰减程度：越多越温暖"
 
-#: src/Windows/EqualizerWindow.vala:521
+#: src/Windows/EqualizerWindow.vala:522
 msgid "Custom Preset"
-msgstr ""
+msgstr "自定义预设"
 
-#: src/Windows/EqualizerWindow.vala:526
+#: src/Windows/EqualizerWindow.vala:527
 msgid " Preset"
-msgstr ""
+msgstr " 预设"
 
 #: src/Windows/PreferencesWindow.vala:103
 msgid "General"
-msgstr ""
+msgstr "常规"
 
 #: src/Windows/SkinEditor.vala:22 src/Windows/SkinEditor.vala:98
 #, c-format
 msgid "Edit Skin: %s"
-msgstr ""
+msgstr "编辑主题：%s"
 
 #: src/Windows/SkinEditor.vala:46
 msgid "Revert"
-msgstr ""
+msgstr "还原"
 
 #: src/Windows/SkinEditor.vala:47
 msgid "Back to the last saved version"
-msgstr ""
+msgstr "恢复到上次保存的版本"
 
 #: src/Windows/SkinEditor.vala:49 src/Windows/SkinEditor.vala:99
 #: src/Windows/SkinEditor.vala:120
 msgid "Save"
-msgstr ""
+msgstr "保存"
 
 #: src/Windows/SkinEditor.vala:49
-#, fuzzy
 msgid "Save as Copy"
-msgstr "保存为播放列表"
+msgstr "另存为副本"
 
 #: src/Windows/SkinEditor.vala:50
 msgid "A bundled skin can't be changed: the copy goes to the skins folder"
-msgstr ""
+msgstr "内置主题无法修改：副本将保存到主题文件夹"
 
 #: src/Windows/SkinEditor.vala:86
 msgid "Not saved"
-msgstr ""
+msgstr "未保存"
 
 #: src/Windows/SkinEditor.vala:107
-#, fuzzy, c-format
+#, c-format
 msgid "Could not save: %s"
-msgstr "找不到音乐文件夹"
+msgstr "无法保存：%s"
 
 #: src/Windows/SkinEditor.vala:117
 msgid "Save the changes to the skin?"
-msgstr ""
+msgstr "要保存对主题的更改吗？"
 
 #: src/Windows/SkinEditor.vala:118
 msgid "Close Without Saving"
-msgstr ""
+msgstr "不保存并关闭"
 
 #: plugins/statistics/Statistics.vala:19
 msgid "Listening _Statistics"
-msgstr ""
+msgstr "收听统计(_S)"
 
 #: plugins/statistics/Statistics.vala:53
 msgid "Listening Statistics"
-msgstr ""
+msgstr "收听统计"
 
 #: plugins/statistics/Statistics.vala:78
 msgid "Nothing has been played yet."
-msgstr ""
+msgstr "还没有播放过任何内容。"
 
 #: plugins/statistics/Statistics.vala:79
 #, c-format
 msgid "%u play of %u song"
 msgid_plural "%u plays of %u songs"
-msgstr[0] ""
+msgstr[0] "%u 次播放，共 %u 首歌曲"
 
 #: plugins/statistics/Statistics.vala:80
 #, c-format
 msgid "%s of listening"
-msgstr ""
+msgstr "%s 的收听时长"
 
 #: plugins/statistics/Statistics.vala:84
-#, fuzzy
 msgid "Most Played Artists"
-msgstr "导出播放列表"
+msgstr "播放最多的艺术家"
 
 #: plugins/statistics/Statistics.vala:85
-#, fuzzy
 msgid "Most Played Albums"
-msgstr "上次播放"
+msgstr "播放最多的专辑"
 
 #: plugins/statistics/Statistics.vala:86
-#, fuzzy
 msgid "Most Played Genres"
-msgstr "上次播放"
+msgstr "播放最多的流派"
 
 #: plugins/statistics/Statistics.vala:110
-#, fuzzy, c-format
+#, c-format
 msgid "%u day"
 msgid_plural "%u days"
-msgstr[0] "%s 天"
+msgstr[0] "%u 天"
 
 #: plugins/statistics/Statistics.vala:112
-#, fuzzy, c-format
+#, c-format
 msgid "%u hour"
 msgid_plural "%u hours"
-msgstr[0] "%s 小时"
+msgstr[0] "%u 小时"
 
 #: plugins/statistics/Statistics.vala:113
-#, fuzzy, c-format
+#, c-format
 msgid "%u minute"
 msgid_plural "%u minutes"
-msgstr[0] "%s 分钟"
+msgstr[0] "%u 分钟"
 
 #: plugins/statistics/Statistics.vala:132
 msgid "No plays yet"
-msgstr ""
+msgstr "还没有播放记录"
 
 #: src/Windows/RemoveDuplicatesDialog.vala:44
 #, c-format
 msgid "Analyzing %d of %d..."
-msgstr ""
+msgstr "正在分析 %d / %d…"
 
 #: src/Windows/RemoveDuplicatesDialog.vala:51
 msgid "Duplicates Remover"
-msgstr ""
+msgstr "重复项清理器"
 
 #: src/Windows/RemoveDuplicatesDialog.vala:70
 msgid "Analyze..."
-msgstr ""
+msgstr "分析…"
 
 #: src/Windows/RemoveDuplicatesDialog.vala:73
 msgid "Media must match by at least "
-msgstr ""
+msgstr "媒体须至少匹配"
 
 #: src/Windows/RemoveDuplicatesDialog.vala:74
 msgid " percent."
-msgstr ""
+msgstr "%。"
 
 #. fancy up the category labels
 #: src/Windows/RemoveDuplicatesDialog.vala:93
 msgid "Matching Criteria"
-msgstr ""
+msgstr "匹配条件"
 
 #: src/Windows/RemoveDuplicatesDialog.vala:94
 msgid "Title and Artist"
-msgstr ""
+msgstr "歌曲名和艺术家"
 
 #: src/Windows/RemoveDuplicatesDialog.vala:95
 msgid "Title, Artist, and Album"
-msgstr ""
+msgstr "歌曲名、艺术家和专辑"
 
 #~ msgid ""
 #~ "To add a podcast, visit a website such as Miro Guide to find RSS Feeds."
@@ -3939,8 +3860,7 @@ msgstr ""
 #~ msgid ""
 #~ "You can then copy and paste the feed into the \"Add Podcast\" window by "
 #~ "right clicking on \"Podcasts\"."
-#~ msgstr ""
-#~ "您可以通过右键在“播客”上点击选择“添加播客”，粘帖订阅地址来添加播客。"
+#~ msgstr "您可以通过右键在“播客”上点击选择“添加播客”，粘帖订阅地址来添加播客。"
 
 #~ msgid "Eject"
 #~ msgstr "弹出"
@@ -3968,8 +3888,8 @@ msgstr ""
 #~ msgstr "您可以在搜寻完成后播放或保存这些媒体，以便以后查看。"
 
 #~ msgid ""
-#~ "In this view, BeatBox will automatically find medias similar to the one "
-#~ "you are playing."
+#~ "In this view, BeatBox will automatically find medias similar to the one you "
+#~ "are playing."
 #~ msgstr "在此视图中，BeatBox将自动搜寻与您正在播放的相似的媒体。"
 
 #~ msgid "Similar Media View"
@@ -4025,8 +3945,7 @@ msgstr ""
 #~ msgstr "BeatBox已经导入您的媒体库。"
 
 #~ msgid ""
-#~ "Make sure all song info is correct and you are connected to the "
-#~ "Internet.\n"
+#~ "Make sure all song info is correct and you are connected to the Internet.\n"
 #~ "Some songs may not have matches."
 #~ msgstr ""
 #~ "请确认歌曲的信息正确，并已经正确的连接到网络\n"

@@ -88,12 +88,6 @@ public class BeatBox.LibraryPreferences : SimplePreferences {
 		organize.toggled.connect(() => { App.settings.main.update_folder_hierarchy = organize.active; });
 		write.toggled.connect(() => { App.settings.main.write_metadata_to_file = write.active; });
 		copy.toggled.connect(() => { App.settings.main.copy_imported_music = copy.active; });
-		var itunes7 = add_check(_("Sync play counts, ratings and options with itunes7"), App.settings.main.itunes7_sync);
-		itunes7.toggled.connect(() => { App.settings.main.itunes7_sync = itunes7.active; });
-		if (App.settings.main.library != "") { // itunes7 reads beatbox.db: the main library's
-			itunes7.sensitive = false;
-			itunes7.tooltip_text = _("Only with the main library open: itunes7 reads its database.");
-		}
 	}
 	
 	void fill_libraries() {
@@ -268,6 +262,9 @@ public class BeatBox.AppearancePreferences : SimplePreferences {
 			}
 		});
 		skinChooser.changed();
+
+		var aqua = add_check(_("Mac OS X Tiger scrollbars (applies on restart)"), App.settings.main.aqua_scrollbars);
+		aqua.toggled.connect(() => { App.settings.main.aqua_scrollbars = aqua.active; });
 	}
 }
 

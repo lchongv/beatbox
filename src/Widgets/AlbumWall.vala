@@ -31,6 +31,7 @@ public class BeatBox.AlbumWall : Layout {
 	Revealer? detail = null; // placed in the layout, unfolds the band
 	Widget? holder = null;   // its child, given the height content wants
 	Widget? content = null;  // measured to size the holder
+	ScrolledWindow? detail_list = null; // the band's track list: takes the wheel when the wall can't scroll
 	Gdk.Pixbuf? detail_source = null;  // full size cover of the open album
 	Image? detail_cover = null;
 	Box? detail_left = null;
@@ -45,6 +46,7 @@ public class BeatBox.AlbumWall : Layout {
 	// GTK3 controllers need a reference
 	GestureMultiPress click_gesture;
 	EventControllerMotion motion_controller;
+	EventControllerScroll wheel;
 
 	public AlbumWall (GenericGrid grid, SourceView wrapper) {
 		this.grid = grid;
@@ -55,6 +57,8 @@ public class BeatBox.AlbumWall : Layout {
 		click_gesture.pressed.connect (on_pressed);
 		motion_controller = new EventControllerMotion (this);
 		motion_controller.motion.connect (on_motion);
+		wheel = new EventControllerScroll (this, EventControllerScrollFlags.VERTICAL);
+		wheel.scroll.connect (on_wheel);
 
 		grid.visible_changed.connect (refresh);
 		App.covers.cover_changed.connect (() => queue_draw ());
@@ -304,6 +308,18 @@ public class BeatBox.AlbumWall : Layout {
 		click_gesture.set_state (EventSequenceState.CLAIMED);
 	}
 
+	/** A wall with nothing to scroll hands the wheel to the open band's track list.
+	 *  (Nothing to stop: the wall's own scrolled window can't move either.) */
+	void on_wheel (double dx, double dy) {
+		var adj = vadjustment;
+		if (detail_list == null || adj.upper > adj.page_size)
+			return;
+		var list = detail_list.vadjustment;
+		double max = list.upper - list.page_size;
+		if (max > list.lower)
+			list.value = (list.value + dy * Math.pow (list.page_size, 2.0 / 3.0)).clamp (list.lower, max); // the step GtkRange takes
+	}
+
 	void on_motion (double widget_x, double widget_y) {
 		double x, y;
 		if (bin_coords (out x, out y))
@@ -330,6 +346,7 @@ public class BeatBox.AlbumWall : Layout {
 			detail.destroy ();
 		detail = null;
 		holder = content = null;
+		detail_list = null;
 		detail_cover = null;
 		detail_left = null;
 		detail_source = null;
@@ -450,13 +467,14 @@ public class BeatBox.AlbumWall : Layout {
 		list_scroll.max_content_height = 440;
 		list_scroll.valign = Align.FILL; // as tall as the band: the cover column may be taller than 440
 		list_scroll.add (list);
+		detail_list = list_scroll;
 
 		var band = new Box (Orientation.HORIZONTAL, 18);
 		band.get_style_context ().add_class ("album-detail");
 		band.border_width = 16;
 		band.add(left);
 		list_scroll.hexpand = true;
-		band.add (list_scroll);
+		band.add (AquaScroll.wrap (list_scroll));
 		return band;
 	}
 }

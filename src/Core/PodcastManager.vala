@@ -55,14 +55,12 @@ public class BeatBox.PodcastManager : GLib.Object, BeatBox.PodcastInterface {
 
 	void find_new_podcasts_start_async (Operation op) {
 		HashSet<string> rss_urls = new HashSet<string>();
-		HashSet<string> mp3_urls = new HashSet<string>();
 		HashMap<string, string> rss_names = new HashMap<string, string>();
-		
+
 		foreach(Media pod in App.library.podcast_library.medias()) {
 			if(!pod.isTemporary) {
-				if(pod.rss_uri != null)	rss_urls.add(pod.rss_uri);
-				if(pod.podcast_url != null)	mp3_urls.add(pod.podcast_url);
-				if(pod.rss_uri != null) rss_names.set(pod.rss_uri, pod.artist);
+				if(pod.rss_uri != null && pod.rss_uri != "")	rss_urls.add(pod.rss_uri);
+				if(pod.rss_uri != null && pod.rss_uri != "") rss_names.set(pod.rss_uri, pod.artist);
 			}
 		}
 		
@@ -70,7 +68,7 @@ public class BeatBox.PodcastManager : GLib.Object, BeatBox.PodcastInterface {
 		App.operations.operation_total = 10 * rss_urls.size;
 		App.operations.current_status = FETCHING_NEW;
 		
-		LinkedList<Media> new_podcasts = new LinkedList<Media>();
+		LinkedList<Media> parsed = new LinkedList<Media>();
 		var rss_index = 0;
 		foreach(string rss in rss_urls) {
 			if(App.operations.operation_cancelled)
@@ -89,9 +87,9 @@ public class BeatBox.PodcastManager : GLib.Object, BeatBox.PodcastInterface {
 			
 			Xml.Node* node = getRootNode(body);
 			if(node != null) {
-				findNewItems(rss, node, mp3_urls, ref new_podcasts);
+				findNewItems(rss, node, ref parsed);
 			}
-			
+
 			++rss_index;
 			App.operations.operation_progress = rss_index * 10;
 		}
@@ -99,9 +97,9 @@ public class BeatBox.PodcastManager : GLib.Object, BeatBox.PodcastInterface {
 		App.operations.operation_progress = App.operations.operation_total;
 		
 		Idle.add( () => {
-			App.library.podcast_library.add_medias(new_podcasts);
+			Collection<Media> new_podcasts = store_episodes(parsed);
 			App.operations.finish_operation();
-			
+
 			if(App.settings.main.download_new_podcasts) {
 				download_podcasts(new_podcasts);
 			}
@@ -162,26 +160,19 @@ public class BeatBox.PodcastManager : GLib.Object, BeatBox.PodcastInterface {
 		if(node == null) {
 			warning("Failed to find root xml node for new rss feed. Cannot add feed");
 			App.operations.finish_operation();
+			return;
 		}
 		
 		App.operations.operation_progress = 8;
 			
-		HashSet<string> mp3_urls = new HashSet<string>();
-		LinkedList<Media> new_podcasts = new LinkedList<Media>();
-		foreach(Media m in App.library.podcast_library.medias()) {
-			Podcast pod = (Podcast)m;
-			if(pod.podcast_url == null)
-				pod.podcast_url = "";
-			
-			mp3_urls.add(pod.podcast_url);
-		}
-		
+		LinkedList<Media> parsed = new LinkedList<Media>();
+
 		// This is where it actually goes into the xml to extract the episodes
-		findNewItems(rss, node, mp3_urls, ref new_podcasts);
-		
+		findNewItems(rss, node, ref parsed);
+
 		App.operations.operation_progress = 10;
-		
-		App.library.add_medias(new_podcasts);
+
+		store_episodes(parsed);
 		App.operations.finish_operation();
 	}
 	
@@ -206,14 +197,19 @@ public class BeatBox.PodcastManager : GLib.Object, BeatBox.PodcastInterface {
 	}
 	
 	// parses a xml root node for new podcasts
-	void findNewItems(string rss, Xml.Node* node, HashSet<string> existing, ref LinkedList<Media> found) {
+	void findNewItems(string rss, Xml.Node* node, ref LinkedList<Media> found) {
 		string pod_title = ""; string pod_author = ""; string category = ""; string summary = ""; string image_url = "";
 		int image_width, image_height;
 		int visited_items = 0;
 		
-		node = node->children->next;
-		
-		for (Xml.Node* iter = node->children; iter != null; iter = iter->next) {
+		// the channel is the first element under <rss>; minified feeds have no text node before it
+		Xml.Node* channel = node->children;
+		while (channel != null && channel->type != Xml.ElementType.ELEMENT_NODE)
+			channel = channel->next;
+		if (channel == null)
+			return;
+
+		for (Xml.Node* iter = channel->children; iter != null; iter = iter->next) {
 			if (iter->type != Xml.ElementType.ELEMENT_NODE) {
 				continue; // should this be break?
 			}
@@ -294,7 +290,7 @@ public class BeatBox.PodcastManager : GLib.Object, BeatBox.PodcastInterface {
 					}
 				}
 				
-				if(new_p.podcast_url != null && !existing.contains(new_p.podcast_url) && new_p.podcast_url != "") {
+				if(new_p.podcast_url != null && new_p.podcast_url != "") {
 					if(pod_author == null || pod_author == "")
 						pod_author = pod_title;
 					if(category == null || category == "")
@@ -319,6 +315,87 @@ public class BeatBox.PodcastManager : GLib.Object, BeatBox.PodcastInterface {
 				//	return;
 			}
 		}
+	}
+	
+	/** Puts the parsed episodes in the library. One we already have (same enclosure URL) gets its feed, date and
+	 * local file; the others are new. Returns the new ones. */
+	Collection<Media> store_episodes(Collection<Media> parsed) {
+		var known = new HashMap<string, Media>();
+		foreach(Media m in App.library.podcast_library.medias()) {
+			if(m.isTemporary)
+				continue;
+			string url = (m.podcast_url != "") ? m.podcast_url : m.uri;
+			if(url.has_prefix("http"))
+				known.set(url, m);
+		}
+
+		var added = new LinkedList<Media>();
+		var changed = new LinkedList<Media>();
+		foreach(Media m in parsed) {
+			Podcast p = (Podcast)m;
+			Media? old = known.get(p.podcast_url);
+			if(old == null) {
+				link_saved_file(p);
+				known.set(p.podcast_url, p);
+				added.add(p);
+			}
+			else if(old.rowid != 0) { // rowid 0: an episode of this same batch, already added
+				Podcast e = (Podcast)old;
+				e.rss_uri = p.rss_uri;
+				e.podcast_url = p.podcast_url;
+				if(e.date_released == 0)
+					e.date_released = p.date_released;
+				if(e.uri.has_prefix("http"))
+					link_saved_file(e);
+				changed.add(e);
+			}
+		}
+
+		App.library.podcast_library.add_medias(added);
+		if(changed.size > 0)
+			App.library.podcast_library.update_medias(changed, false, false, true);
+		return added;
+	}
+
+	/** iTunes7 saves an episode as <podcast folder>/<feed>/YYYY-MM-DD_HHMM_<title>.<ext>, the date in UTC. When that
+	 * file is there, the episode plays and stays from it. */
+	void link_saved_file(Podcast p) {
+		if(p.date_released <= 0 || p.album == "" || p.podcast_url == "")
+			return;
+
+		string path = p.podcast_url.split("?")[0];
+		int dot = path.last_index_of(".");
+		string ext = (dot > path.last_index_of("/")) ? path.substring(dot + 1) : "mp3";
+
+		string feed = p.album.replace("/", "_").replace("\\", "_");
+		string title = p.title.replace("/", "_").replace("\\", "_").replace(":", "_").replace("\"", "_").replace("\n", "_");
+		string name = new DateTime.from_unix_utc(p.date_released).format("%Y-%m-%d_%H%M_") + title + "." + ext;
+
+		File file = File.new_for_path(Path.build_path("/", App.settings.main.podcast_folder, feed, name));
+		if(file.query_exists())
+			p.uri = file.get_uri();
+	}
+
+	/** The same iTunes7 file name gives the date to a local episode that has none yet */
+	public void date_from_file_names() {
+		var changed = new LinkedList<Media>();
+		foreach(Media m in App.library.podcast_library.medias()) {
+			if(m.date_released != 0 || !m.uri.has_prefix("file://"))
+				continue;
+			// the match keeps a pointer to its subject: the name must outlive the MatchInfo
+			string name = File.new_for_uri(m.uri).get_basename();
+			MatchInfo info;
+			if(!/^(\d{4})-(\d{2})-(\d{2})_(\d{2})(\d{2})_/.match(name, 0, out info))
+				continue;
+			
+			var date = new DateTime.utc(int.parse(info.fetch(1)), int.parse(info.fetch(2)), int.parse(info.fetch(3)),
+			                            int.parse(info.fetch(4)), int.parse(info.fetch(5)), 0);
+			m.date_released = (int)date.to_unix();
+			changed.add(m);
+		}
+		
+		if(changed.size > 0)
+			App.library.podcast_library.update_medias(changed, false, false, true);
 	}
 	
 	/** Save episodes locally operation **/
@@ -351,7 +428,9 @@ public class BeatBox.PodcastManager : GLib.Object, BeatBox.PodcastInterface {
 		foreach(Media s in downloads) {
 			if(App.operations.operation_cancelled || canceller.is_cancelled())
 				break;
-			
+			if(!s.uri.has_prefix("http")) // already a local file (iTunes7's copy)
+				continue;
+
 			var online_file = File.new_for_uri(s.podcast_url);
 			if(online_file.query_exists() && s.uri == s.uri) {
 				App.operations.current_status = DOWNLOADING_LOCALLY.printf("<b>" + Markup.escape_text(s.title) + "</b>", (current_download_index + 1), downloads.size);

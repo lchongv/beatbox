@@ -3,16 +3,12 @@
 # This file is distributed under the same license as the beat-box package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2012.
 #
-#. if less than one hour, show minutes + seconds
-#. There is obviously more than one minute. Otherwise we would have returned
-#. waay earlier
-#: core/Utils/TimeUtils.vala:82
-#, fuzzy, c-format
+#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: beat-box\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-13 22:24-0300\n"
+"POT-Creation-Date: 2026-10-13 23:10-0300\n"
 "PO-Revision-Date: 2012-11-12 09:23+0000\n"
 "Last-Translator: Eugene Marshal <Unknown>\n"
 "Language-Team: Russian <ru@li.org>\n"
@@ -20,28 +16,25 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
-"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Launchpad-Export-Date: 2012-11-20 05:11+0000\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Generator: Launchpad (build 16286)\n"
+"X-Launchpad-Export-Date: 2012-11-20 05:11+0000\n"
 
 #: core/CellRenderers/CellDataFunctionHelper.vala:132
 msgid " kbps"
 msgstr " Кбит/с"
 
 #: core/Media/Media.vala:40 src/Widgets/StatusBar.vala:78
-#, fuzzy
 msgid "Song"
 msgid_plural "Songs"
-msgstr[0] "Композиция"
-msgstr[1] "Композиция"
-msgstr[2] "Композиция"
+msgstr[0] "Трек"
+msgstr[1] "Трека"
+msgstr[2] "Треков"
 
 #: core/Media/Media.vala:42 src/Lists/GenericList.vala:128
 #: src/Lists/PodcastList.vala:108 src/Windows/DirectoryDialog.vala:65
 #: src/Windows/Editors/PodcastEditor.vala:72
 #: src/Windows/EqualizerWindow.vala:246
-#, fuzzy
 msgid "Podcast"
 msgid_plural "Podcasts"
 msgstr[0] "Подкаст"
@@ -59,7 +52,6 @@ msgstr[2] "Аудиокниг"
 #: core/Media/Media.vala:46 src/Lists/GenericList.vala:129
 #: src/Lists/RadioList.vala:77 src/Windows/DirectoryDialog.vala:64
 #: src/Windows/Editors/StationEditor.vala:61
-#, fuzzy
 msgid "Station"
 msgid_plural "Stations"
 msgstr[0] "Станция"
@@ -83,9 +75,9 @@ msgstr[2] "Телевизионных шоу"
 #: core/Media/Media.vala:52
 msgid "Item"
 msgid_plural "Items"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Элемент"
+msgstr[1] "Элемент"
+msgstr[2] "Элемент"
 
 #: core/Media/Preview.vala:57 src/Media/Podcast.vala:77 src/Media/Song.vala:57
 #: src/NowPlayingView/PodcastSummarySection.vala:292
@@ -181,21 +173,22 @@ msgstr "Тип данных"
 
 #: core/Playlists/SmartQuery.vala:75
 msgid "Play Count"
-msgstr ""
+msgstr "Число воспроизведений"
 
 #: core/Playlists/SmartQuery.vala:77 src/Lists/DuplicateList.vala:127
 #: src/Lists/GenericList.vala:127 src/Lists/MusicList.vala:168
 #: src/Lists/PodcastList.vala:112 src/Lists/RadioList.vala:79
-#: src/Widgets/TrackReport.vala:183 src/Windows/Editors/PodcastEditor.vala:76
+#: src/Widgets/TrackReport.vala:182 src/Windows/Editors/PodcastEditor.vala:76
 #: src/Windows/Editors/StationEditor.vala:63
 msgid "Rating"
 msgstr "Оценка"
 
 #: core/Playlists/SmartQuery.vala:79 src/Windows/Editors/InfoViewport.vala:70
 msgid "Skip Count"
-msgstr ""
+msgstr "Число пропусков"
 
-#. Column titles are translated at runtime (see add_columns); listed here for xgettext
+#. Column titles are translated at runtime (see add_columns); listed here for
+#. xgettext
 #. if(s.media_type != sum.media_type)
 #. sum.media_type = MediaType.SONG;
 #: core/Playlists/SmartQuery.vala:81 src/Dialogs/FillTagsDialog.vala:47
@@ -218,7 +211,7 @@ msgstr "является"
 
 #: core/Playlists/SmartQuery.vala:156
 msgid "is exactly"
-msgstr ""
+msgstr "точно равно"
 
 #: core/Playlists/SmartQuery.vala:158
 msgid "is not"
@@ -226,19 +219,19 @@ msgstr "не является"
 
 #: core/Playlists/SmartQuery.vala:160
 msgid "is at least"
-msgstr ""
+msgstr "не меньше"
 
 #: core/Playlists/SmartQuery.vala:162
 msgid "is at most"
-msgstr ""
+msgstr "не больше"
 
 #: core/Playlists/SmartQuery.vala:164
 msgid "is within"
-msgstr ""
+msgstr "в пределах"
 
 #: core/Playlists/SmartQuery.vala:166
 msgid "is before"
-msgstr ""
+msgstr "раньше"
 
 #: core/Playlists/SmartQuery.vala:168
 msgid "contains"
@@ -298,21 +291,20 @@ msgstr "%s, %s и %s"
 
 #: core/Utils/UI.vala:155
 msgid "Experimental:"
-msgstr ""
+msgstr "Экспериментально:"
 
 #: src/Core/AcoustId.vala:39
-#, fuzzy
 msgid "Could not compute the fingerprint of this file."
-msgstr "BeatBox не может прочитать содержимое звукового компакт-диска."
+msgstr "Не удалось вычислить отпечаток этого файла."
 
 #: src/Core/AcoustId.vala:50
 msgid "AcoustID could not be reached."
-msgstr ""
+msgstr "Сервис AcoustID недоступен."
 
 #: src/Core/AcoustId.vala:55
 #, c-format
 msgid "AcoustID answered: %s"
-msgstr ""
+msgstr "AcoustID ответил: %s"
 
 #: src/Core/Actions.vala:50
 msgid "Create Playlist"
@@ -381,7 +373,7 @@ msgstr "Выйти"
 #: src/Core/Actions.vala:133
 #, c-format
 msgid "Choose %s Folder"
-msgstr ""
+msgstr "Выбрать папку %s"
 
 #: src/Core/Actions.vala:135 src/Core/Actions.vala:153
 #: src/Core/Actions.vala:292 src/Dialogs/FileNotFoundDialog.vala:154
@@ -389,15 +381,14 @@ msgstr ""
 #: src/Dialogs/SetLibraryFolderConfirmation.vala:72
 #: src/Dialogs/SetLibraryFolderConfirmation.vala:135
 #: src/Utils/PlaylistUtils.vala:231
-#, fuzzy
 msgid "_Cancel"
-msgstr "Отменить"
+msgstr "_Отмена"
 
 #: src/Core/Actions.vala:136 src/Core/Actions.vala:154
 #: src/Core/Actions.vala:293 src/Dialogs/FileNotFoundDialog.vala:155
 #: src/Dialogs/SetLibraryFolderConfirmation.vala:136
 msgid "_Open"
-msgstr ""
+msgstr "_Открыть"
 
 #: src/Core/Actions.vala:151 src/Core/Actions.vala:290
 #, c-format
@@ -411,8 +402,8 @@ msgstr "Невозможно импортировать"
 #: src/Core/Actions.vala:179
 #, c-format
 msgid ""
-"Your library's %s folder could not be found. Please make sure your %s folder "
-"is mounted before importing."
+"Your library's %s folder could not be found. Please make sure your %s folder"
+" is mounted before importing."
 msgstr ""
 "Папка вашей фонотеки %s не найдена. Пожалуйста, убедитесь, что ваша папка "
 "подключена %s, перед выполнение импортирования."
@@ -438,7 +429,8 @@ msgstr "Недопустимый список воспроизведения"
 msgid "Unrecognized playlist file. Import failed."
 msgstr "Нераспознанный файл списка воспроизведения. Импортирование прервано."
 
-#. If the user wants their imports to be copied to their music folder, transition
+#. If the user wants their imports to be copied to their music folder,
+#. transition
 #. into that copy right now. If they don't, finish.
 #: src/Core/FileOperator.vala:510
 #, c-format
@@ -459,27 +451,24 @@ msgid "Music"
 msgstr "Музыка"
 
 #: src/Core/LibrarySwitcher.vala:45
-#, fuzzy
 msgid "New Library…"
-msgstr "Фонотека"
+msgstr "Новая медиатека…"
 
 #: src/Core/LibrarySwitcher.vala:46
-#, fuzzy
 msgid "Manage Libraries…"
-msgstr "Коллекции"
+msgstr "Управление медиатеками…"
 
 #: src/Core/LibrarySwitcher.vala:55
 msgid "Cannot Switch Libraries"
-msgstr ""
+msgstr "Нельзя переключить медиатеку"
 
 #: src/Core/LibrarySwitcher.vala:55
 msgid "Wait until the current import or operation finishes."
-msgstr ""
+msgstr "Дождитесь завершения текущего импорта или операции."
 
 #: src/Core/LibrarySwitcher.vala:78
-#, fuzzy
 msgid "New Library"
-msgstr "Фонотека"
+msgstr "Новая медиатека"
 
 #: src/Core/LibrarySwitcher.vala:80 src/Dialogs/FillTagsDialog.vala:73
 #: src/Preferences/BehaviorPreferences.vala:129
@@ -498,12 +487,11 @@ msgstr "Отменить"
 
 #: src/Core/LibrarySwitcher.vala:80
 msgid "Create"
-msgstr ""
+msgstr "Создать"
 
 #: src/Core/LibrarySwitcher.vala:81
-#, fuzzy
 msgid "External Disk"
-msgstr "Нет внешних композиций"
+msgstr "Внешний диск"
 
 #: src/Core/LibrarySwitcher.vala:82 src/Preferences/MusicPreferences.vala:46
 msgid "Music Folder"
@@ -512,80 +500,75 @@ msgstr "Папка с музыкой"
 #: src/Core/LibrarySwitcher.vala:84 src/Windows/DirectoryDialog.vala:529
 #: src/Windows/Editors/SongEditor.vala:155
 msgid "Name:"
-msgstr ""
+msgstr "Имя:"
 
 #: src/Core/LibrarySwitcher.vala:86
-#, fuzzy
 msgid "Music folder:"
-msgstr "Папка с музыкой"
+msgstr "Папка с музыкой:"
 
 #: src/Core/LibrarySwitcher.vala:88
 msgid "BeatBox restarts with the new library and imports the folder."
-msgstr ""
+msgstr "BeatBox перезапустится с новой медиатекой и импортирует папку."
 
 #. an Image gets no clicks of its own
 #: src/Core/LibraryWindow.vala:327
 msgid "Click to enlarge; drag to copy it into another application or folder"
 msgstr ""
+"Нажмите, чтобы увеличить; перетащите, чтобы скопировать в другое приложение "
+"или папку"
 
 #: src/Core/LibraryWindow.vala:392
-#, fuzzy
 msgid "_Library"
-msgstr "Фонотека"
+msgstr "_Медиатека"
 
 #: src/Core/LibraryWindow.vala:393
-#, fuzzy
 msgid "_Mini Player"
-msgstr "Музыкальный проигрыватель"
+msgstr "_Мини-плеер"
 
 #: src/Core/LibraryWindow.vala:441
 msgid "Resolve"
-msgstr ""
+msgstr "Разрешить"
 
 #: src/Core/LibraryWindow.vala:494
 msgid "Information about the song playing (Ctrl+Shift+I)"
-msgstr ""
+msgstr "Сведения о текущем треке (Ctrl+Shift+I)"
 
 #: src/Core/LibraryWindow.vala:552 src/Dialogs/FindReplaceDialog.vala:96
 #: src/Windows/DirectoryDialog.vala:106
 msgid "Close"
-msgstr ""
+msgstr "Закрыть"
 
 #: src/Core/LibraryWindow.vala:552
 msgid "Minimize"
-msgstr ""
+msgstr "Свернуть"
 
 #: src/Core/LibraryWindow.vala:552
 msgid "Maximize (Alt: mini player)"
-msgstr ""
+msgstr "Развернуть (Alt: мини-плеер)"
 
 #: src/Core/LibraryWindow.vala:859
-#, fuzzy
 msgid "Play / Pause"
-msgstr "Воспроизвести/приостановить"
+msgstr "Воспроизведение/пауза"
 
 #: src/Core/LibraryWindow.vala:860
-#, fuzzy
 msgid "Next song"
-msgstr "Следующая"
+msgstr "Следующий трек"
 
 #: src/Core/LibraryWindow.vala:861
-#, fuzzy
 msgid "Previous song"
-msgstr "Предыдущая"
+msgstr "Предыдущий трек"
 
 #: src/Core/LibraryWindow.vala:862
 msgid "Volume up"
-msgstr ""
+msgstr "Громче"
 
 #: src/Core/LibraryWindow.vala:863
 msgid "Volume down"
-msgstr ""
+msgstr "Тише"
 
 #: src/Core/LibraryWindow.vala:864
-#, fuzzy
 msgid "Mini player"
-msgstr "Музыкальный проигрыватель"
+msgstr "Мини-плеер"
 
 #: src/Core/LibraryWindow.vala:865
 msgid "Search"
@@ -593,17 +576,18 @@ msgstr "Поиск"
 
 #: src/Core/LibraryWindow.vala:869
 msgid "Now playing"
-msgstr ""
+msgstr "Сейчас играет"
 
 #: src/Core/LibraryWindow.vala:870
 msgid "Information panel"
-msgstr ""
+msgstr "Панель сведений"
 
 #: src/Core/LibraryWindow.vala:873
 msgid "Quit"
-msgstr ""
+msgstr "Выход"
 
-#. FIXME: We already do this and more in the library_manager import_operation_finished. Use that
+#. FIXME: We already do this and more in the library_manager
+#. import_operation_finished. Use that
 #. and use the same text as here for CD imports
 #: src/Core/LibraryWindow.vala:983 src/Devices/CDRomDevice.vala:339
 msgid "Import Complete"
@@ -657,7 +641,7 @@ msgstr "Загрузка новых подкастов"
 
 #: src/Core/PodcastManager.vala:135
 msgid "Parsing new Podcast RSS"
-msgstr ""
+msgstr "Разбор RSS-канала подкаста"
 
 #: src/Core/PodcastManager.vala:331
 msgid "Downloading Podcast Episodes"
@@ -670,20 +654,21 @@ msgstr "Загрузка эпизодов подкаста..."
 #: src/Core/Skins.vala:128
 #, c-format
 msgid "Line %u: %s"
-msgstr ""
+msgstr "Строка %u: %s"
 
 #. a skin may have no skin.ini
 #: src/Core/Skins.vala:158
 #, c-format
 msgid "%s (edited)"
-msgstr ""
+msgstr "%s (изменено)"
 
 #: src/DBus/UnityIntegration.vala:58 src/DBus/UnityIntegration.vala:129
 #: src/Widgets/AlbumWall.vala:421 src/Windows/Editors/InfoViewport.vala:191
 msgid "Play"
 msgid_plural "Plays"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Воспроизвести"
+msgstr[1] "Воспроизвести"
+msgstr[2] "Воспроизвести"
 
 #: src/DBus/UnityIntegration.vala:129
 msgid "Pause"
@@ -736,7 +721,8 @@ msgstr "Синхронизация "
 #: src/Devices/iPodDevice.vala:307
 msgid "Removing old medias from iPod and updating current ones"
 msgstr ""
-"Удаление устаревших мультимедийных файлов из iPod и его актуальное обновление"
+"Удаление устаревших мультимедийных файлов из iPod и его актуальное "
+"обновление"
 
 #. now add all in list that weren't in medias
 #: src/Devices/iPodDevice.vala:357
@@ -763,11 +749,11 @@ msgstr "Добавление"
 
 #: src/Devices/iPodDevice.vala:534 src/Devices/iPodDevice.vala:673
 msgid "by"
-msgstr ""
+msgstr "—"
 
 #: src/Devices/iPodDevice.vala:535
 msgid "to"
-msgstr ""
+msgstr "в"
 
 #: src/Devices/iPodDevice.vala:607
 msgid "Removing from "
@@ -779,7 +765,7 @@ msgstr "Удаление"
 
 #: src/Devices/iPodDevice.vala:674
 msgid "from"
-msgstr ""
+msgstr "из"
 
 #. should be called from thread
 #. index = 75 at this point. will go to 95
@@ -807,20 +793,20 @@ msgstr "в фонотеку"
 
 #: src/Dialogs/FillTagsDialog.vala:11
 msgid "Nothing to fill in"
-msgstr ""
+msgstr "Нечего заполнять"
 
 #: src/Dialogs/FillTagsDialog.vala:11
 msgid "The file names don't add anything to these songs' tags."
-msgstr ""
+msgstr "Имена файлов не дают для тегов этих треков ничего нового."
 
 #: src/Dialogs/FillTagsDialog.vala:20
 msgid "Fill In Tags from File Names"
-msgstr ""
+msgstr "Заполнить теги из имён файлов"
 
 #: src/Dialogs/FillTagsDialog.vala:47 src/Widgets/TrackReport.vala:107
-#: src/Widgets/TrackReport.vala:268
+#: src/Widgets/TrackReport.vala:267
 msgid "File"
-msgstr ""
+msgstr "Файл"
 
 #: src/Dialogs/FillTagsDialog.vala:47 src/Lists/DuplicateList.vala:119
 #: src/Lists/GenericList.vala:127 src/Lists/MusicList.vala:160
@@ -832,97 +818,94 @@ msgstr "Композиция"
 #, c-format
 msgid "%d song gets the tags in bold. Tags already set are kept."
 msgid_plural "%d songs get the tags in bold. Tags already set are kept."
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "%d трек получит теги жирным. Уже заданные теги сохраняются."
+msgstr[1] "%d трек получит теги жирным. Уже заданные теги сохраняются."
+msgstr[2] "%d трек получит теги жирным. Уже заданные теги сохраняются."
 
 #: src/Dialogs/FillTagsDialog.vala:74
 msgid "Fill In"
-msgstr ""
+msgstr "Заполнить"
 
 #: src/Dialogs/FindReplaceDialog.vala:28
 msgid "Find and Replace in Tags"
-msgstr ""
+msgstr "Поиск и замена в тегах"
 
 #: src/Dialogs/FindReplaceDialog.vala:38
-#, fuzzy
 msgid "Album Artist"
 msgstr "Исполнитель альбома"
 
 #: src/Dialogs/FindReplaceDialog.vala:47
-#, fuzzy
 msgid "Match case"
-msgstr "Схожие"
+msgstr "Учитывать регистр"
 
 #: src/Dialogs/FindReplaceDialog.vala:48
 msgid "Regular expression"
-msgstr ""
+msgstr "Регулярное выражение"
 
 #: src/Dialogs/FindReplaceDialog.vala:49
 msgid "The replacement may use \\1, \\2… for the parts in parentheses"
-msgstr ""
+msgstr "В замене можно использовать \\1, \\2… для частей в скобках"
 
 #: src/Dialogs/FindReplaceDialog.vala:50
 msgid "Whole words"
-msgstr ""
+msgstr "Целые слова"
 
 #: src/Dialogs/FindReplaceDialog.vala:55
 msgid "Tag:"
-msgstr ""
+msgstr "Тег:"
 
 #: src/Dialogs/FindReplaceDialog.vala:55
 msgid "Find:"
-msgstr ""
+msgstr "Найти:"
 
 #: src/Dialogs/FindReplaceDialog.vala:55
 msgid "Replace with:"
-msgstr ""
+msgstr "Заменить на:"
 
 #: src/Dialogs/FindReplaceDialog.vala:71
 msgid "Now"
-msgstr ""
+msgstr "Сейчас"
 
 #: src/Dialogs/FindReplaceDialog.vala:71
 msgid "After"
-msgstr ""
+msgstr "После"
 
 #: src/Dialogs/FindReplaceDialog.vala:97
-#, fuzzy
 msgid "Replace All"
-msgstr "Повторять всё"
+msgstr "Заменить все"
 
 #: src/Dialogs/FindReplaceDialog.vala:125
 #, c-format
 msgid "%d song chosen. Type what to find."
 msgid_plural "%d songs chosen. Type what to find."
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Выбран трек: %d. Введите, что искать."
+msgstr[1] "Выбран трек: %d. Введите, что искать."
+msgstr[2] "Выбран трек: %d. Введите, что искать."
 
 #: src/Dialogs/FindReplaceDialog.vala:141
 #, c-format
 msgid "%d of %d songs changes."
 msgid_plural "%d of %d songs change."
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Изменений в %d из %d треков."
+msgstr[1] "Изменений в %d из %d треков."
+msgstr[2] "Изменений в %d из %d треков."
 
 #: src/Dialogs/FindReplaceDialog.vala:143
 #, c-format
 msgid "The regular expression is not valid: %s"
-msgstr ""
+msgstr "Недопустимое регулярное выражение: %s"
 
 #: src/Dialogs/FindReplaceDialog.vala:155
 msgid "Tags replaced"
-msgstr ""
+msgstr "Теги заменены"
 
 #: src/Dialogs/FindReplaceDialog.vala:155
-#, fuzzy, c-format
+#, c-format
 msgid "%d song changed"
 msgid_plural "%d songs changed"
-msgstr[0] "%d секунда"
-msgstr[1] "%d секунды"
-msgstr[2] "%d секунд"
+msgstr[0] "Изменён трек: %d"
+msgstr[1] "Изменён трек: %d"
+msgstr[2] "Изменён трек: %d"
 
 #: src/Dialogs/FileNotFoundDialog.vala:80 src/Lists/MusicList.vala:97
 #: src/Lists/PodcastList.vala:77
@@ -930,14 +913,12 @@ msgid "Remove from Library"
 msgstr "Удалить из фонотеки"
 
 #: src/Dialogs/FileNotFoundDialog.vala:81
-#, fuzzy
 msgid "Rescan Library"
-msgstr "Повторное сканирование фонотеки %s"
+msgstr "Пересканировать медиатеку"
 
 #: src/Dialogs/FileNotFoundDialog.vala:82
-#, fuzzy
 msgid "Locate File…"
-msgstr "Выбрать музыкальный файл"
+msgstr "Найти файл…"
 
 #: src/Dialogs/FileNotFoundDialog.vala:83
 #: src/Dialogs/InstallGstreamerPluginsDialog.vala:65
@@ -946,17 +927,16 @@ msgstr "Ничего не делать"
 
 #. pretty up labels
 #: src/Dialogs/FileNotFoundDialog.vala:87
-#, fuzzy
 msgid "Could not find the file"
 msgid_plural "Could not find the files"
-msgstr[0] "Невозможно найти %s %s"
-msgstr[1] "Невозможно найти %s %s"
-msgstr[2] "Невозможно найти %s %s"
+msgstr[0] "Файл не найден"
+msgstr[1] "Файл не найден"
+msgstr[2] "Файл не найден"
 
 #: src/Dialogs/FileNotFoundDialog.vala:91
 #, c-format
 msgid "The file for %s by %s could not be found. What would you like to do?"
-msgstr ""
+msgstr "Файл для «%s» (%s) не найден. Что делать?"
 
 #: src/Dialogs/FileNotFoundDialog.vala:93
 #, c-format
@@ -987,18 +967,19 @@ msgstr ""
 " Ваши дальнейшие действия?"
 
 #: src/Dialogs/NotImportedDialog.vala:52
-#, fuzzy
 msgid "Not Imported Files"
-msgstr "Невозможно импортировать"
+msgstr "Непимпортированные файлы"
 
 #: src/Dialogs/NotImportedDialog.vala:70
-#, fuzzy
 msgid "BeatBox could not read it. It may be damaged or not be audio."
 msgid_plural ""
 "BeatBox could not read them. They may be damaged or not be audio."
-msgstr[0] "BeatBox не может прочитать содержимое звукового компакт-диска."
-msgstr[1] "BeatBox не может прочитать содержимое звукового компакт-диска."
-msgstr[2] "BeatBox не может прочитать содержимое звукового компакт-диска."
+msgstr[0] ""
+"BeatBox не смог его прочитать. Возможно, он повреждён или это не аудио."
+msgstr[1] ""
+"BeatBox не смог его прочитать. Возможно, он повреждён или это не аудио."
+msgstr[2] ""
+"BeatBox не смог его прочитать. Возможно, он повреждён или это не аудио."
 
 #: src/Dialogs/NotImportedDialog.vala:71
 msgid "Move all corrupted files to trash"
@@ -1014,12 +995,12 @@ msgstr "Пропустить"
 
 #. pretty up labels
 #: src/Dialogs/NotImportedDialog.vala:81
-#, fuzzy, c-format
+#, c-format
 msgid "Could not import %d file"
 msgid_plural "Could not import %d files"
-msgstr[0] "Невозможно найти %s %s"
-msgstr[1] "Невозможно найти %s %s"
-msgstr[2] "Невозможно найти %s %s"
+msgstr[0] "Не удалось импортировать файлов: %d"
+msgstr[1] "Не удалось импортировать файлов: %d"
+msgstr[2] "Не удалось импортировать файлов: %d"
 
 #: src/Dialogs/NotImportedDialog.vala:104
 msgid "File Location"
@@ -1085,12 +1066,11 @@ msgid "Remove %d %s from BeatBox?"
 msgstr "Удалить %d %s из BeatBox?"
 
 #: src/Dialogs/RemoveFilesDialog.vala:92
-#, fuzzy, c-format
+#, c-format
 msgid "Remove “%s” from BeatBox?"
-msgstr "Удалить %s из BeatBox?"
+msgstr "Удалить «%s» из BeatBox?"
 
 #: src/Dialogs/RemoveFilesDialog.vala:99
-#, fuzzy
 msgid ""
 "It will be removed from your library and from any device that syncs "
 "automatically with BeatBox."
@@ -1098,14 +1078,14 @@ msgid_plural ""
 "They will be removed from your library and from any device that syncs "
 "automatically with BeatBox."
 msgstr[0] ""
-"Эта операция приведёт к удалению %s из вашей фонотеки и всех устройств, "
-"которые автоматически синхронизируются с BeatBox."
+"Он будет удалён из медиатеки и с любого устройства, которое синхронизируется"
+" с BeatBox автоматически."
 msgstr[1] ""
-"Эта операция приведёт к удалению %s из вашей фонотеки и всех устройств, "
-"которые автоматически синхронизируются с BeatBox."
+"Он будет удалён из медиатеки и с любого устройства, которое синхронизируется"
+" с BeatBox автоматически."
 msgstr[2] ""
-"Эта операция приведёт к удалению %s из вашей фонотеки и всех устройств, "
-"которые автоматически синхронизируются с BeatBox."
+"Он будет удалён из медиатеки и с любого устройства, которое синхронизируется"
+" с BeatBox автоматически."
 
 #: src/Dialogs/SetLibraryFolderConfirmation.vala:70
 msgid "Export Playlists"
@@ -1114,13 +1094,13 @@ msgstr "Экспортировать списки воспроизведений
 #: src/Dialogs/SetLibraryFolderConfirmation.vala:71
 #, c-format
 msgid "Set %s Folder"
-msgstr ""
+msgstr "Задать папку %s"
 
 #. pretty up labels
 #: src/Dialogs/SetLibraryFolderConfirmation.vala:78
 #, c-format
 msgid "Set %s Folder?"
-msgstr ""
+msgstr "Задать папку %s?"
 
 #: src/Dialogs/SetLibraryFolderConfirmation.vala:81
 #, c-format
@@ -1128,6 +1108,7 @@ msgid ""
 "Are you sure you want to set the %s folder to %s? This will reset your %s "
 "library."
 msgstr ""
+"Вы точно хотите задать папку %s как %s? Это сбросит вашу медиатеку %s."
 
 #: src/Dialogs/SetLibraryFolderConfirmation.vala:133
 msgid "Choose Music Folder"
@@ -1145,8 +1126,8 @@ msgid ""
 "on the sync list. Would you like to import them to your library first?"
 msgstr ""
 "Если вы продолжите синхронизацию, файлы будут удалены с %s, так как "
-"отсутствуют в списке синхронизации. Вы действительно хотите импортировать их "
-"сначала в вашу фонотеку?"
+"отсутствуют в списке синхронизации. Вы действительно хотите импортировать их"
+" сначала в вашу фонотеку?"
 
 #: src/Dialogs/SyncWarningDialog.vala:70
 msgid "Import medias to Library"
@@ -1172,8 +1153,8 @@ msgstr "Импортировать файлы из"
 #: src/Dialogs/TransferFromDeviceDialog.vala:72
 #, c-format
 msgid ""
-"The following files were found on %s, but are not in your library. Check all "
-"files you would like to import."
+"The following files were found on %s, but are not in your library. Check all"
+" files you would like to import."
 msgstr ""
 "следующие файлы найдены на %s, но не расположены в вашей библиотеке. "
 "Выберите все файлы, которые вы хотите импортировать."
@@ -1220,7 +1201,7 @@ msgstr ""
 #: src/Libraries/BaseLibrary.vala:149
 #, c-format
 msgid "Setting %s Folder"
-msgstr ""
+msgstr "Задание папки %s"
 
 #: src/Libraries/BaseLibrary.vala:163
 #, c-format
@@ -1290,7 +1271,8 @@ msgstr "Недавно воспроизведённые"
 msgid "Recent Favorites"
 msgstr "Последние понравившиеся"
 
-#: src/Libraries/SongLibrary.vala:563 src/Windows/Editors/InfoViewport.vala:174
+#: src/Libraries/SongLibrary.vala:563
+#: src/Windows/Editors/InfoViewport.vala:174
 msgid "Never Played"
 msgstr "Не воспроизводившиеся ранее"
 
@@ -1314,12 +1296,12 @@ msgid "#"
 msgstr "№"
 
 #: src/Lists/DuplicateList.vala:128 src/Lists/GenericList.vala:127
-#: src/Lists/MusicList.vala:169 src/Widgets/TrackReport.vala:181
+#: src/Lists/MusicList.vala:169 src/Widgets/TrackReport.vala:180
 msgid "Plays"
 msgstr "Прослушиваний"
 
 #: src/Lists/DuplicateList.vala:129 src/Lists/GenericList.vala:127
-#: src/Lists/MusicList.vala:170 src/Widgets/TrackReport.vala:182
+#: src/Lists/MusicList.vala:170 src/Widgets/TrackReport.vala:181
 msgid "Skips"
 msgstr "Пропусков"
 
@@ -1347,22 +1329,21 @@ msgstr "Отключить устройство"
 
 #. column chooser menu (header right click)
 #: src/Lists/GenericList.vala:128 src/Lists/PodcastList.vala:104
-#, fuzzy
 msgid "Episode"
-msgstr "эпизод"
+msgstr "Выпуск"
 
 #: src/Lists/GenericList.vala:128 src/Lists/PodcastList.vala:105
 #: src/Windows/DirectoryDialog.vala:171
 msgid "Name"
-msgstr ""
+msgstr "Название"
 
 #: src/Lists/GenericList.vala:128 src/Lists/PodcastList.vala:109
 msgid "Date"
-msgstr ""
+msgstr "Дата"
 
 #: src/Lists/GenericList.vala:129 src/Lists/PodcastList.vala:110
 msgid "Category"
-msgstr ""
+msgstr "Категория"
 
 #: src/Lists/GenericList.vala:306
 msgid "Playing not Supported"
@@ -1373,8 +1354,8 @@ msgid ""
 "Due to issues with playing songs on certain iOS devices, playing songs on "
 "devices is currently not supported."
 msgstr ""
-"В связи с неполадками с воспроизведением композиций на некоторых устройствах "
-"на базе iOS, воспроизведение композиций на устройствах в данный момент не "
+"В связи с неполадками с воспроизведением композиций на некоторых устройствах"
+" на базе iOS, воспроизведение композиций на устройствах в данный момент не "
 "поддерживается."
 
 #: src/Lists/GenericList.vala:452
@@ -1400,38 +1381,35 @@ msgstr "Изменить сведения о композиции"
 
 #: src/Lists/MusicList.vala:179 src/Lists/PodcastList.vala:119
 msgid "Add to Queue"
-msgstr ""
+msgstr "Добавить в очередь"
 
 #: src/Lists/MusicList.vala:180
-#, fuzzy
 msgid "Play Next"
-msgstr "Следующая"
+msgstr "Воспроизвести далее"
 
 #: src/Lists/MusicList.vala:181
 msgid "Move Up"
-msgstr ""
+msgstr "Переместить вверх"
 
 #: src/Lists/MusicList.vala:182
-#, fuzzy
 msgid "Move Down"
-msgstr "Удалить композицию"
+msgstr "Переместить вниз"
 
 #: src/Lists/MusicList.vala:183
-#, fuzzy
 msgid "Clear Queue"
-msgstr "Поставить в очередь"
+msgstr "Очистить очередь"
 
 #: src/Lists/MusicList.vala:184
 msgid "Save Album Art into the Files"
-msgstr ""
+msgstr "Сохранить обложки в файлы"
 
 #: src/Lists/MusicList.vala:185
 msgid "Fill In Tags from File Names…"
-msgstr ""
+msgstr "Заполнить теги из имён файлов…"
 
 #: src/Lists/MusicList.vala:186
 msgid "Find and Replace in Tags…"
-msgstr ""
+msgstr "Поиск и замена в тегах…"
 
 #: src/Lists/MusicList.vala:188 src/Lists/PodcastList.vala:121
 msgid "Add to Playlist"
@@ -1459,7 +1437,7 @@ msgstr "Изменить %s"
 
 #: src/Lists/MusicList.vala:517
 msgid "Album art not saved"
-msgstr ""
+msgstr "Обложка не сохранена"
 
 #: src/Lists/MusicList.vala:517
 #, c-format
@@ -1470,21 +1448,26 @@ msgid_plural ""
 "%d files could not be changed (they may be read-only, or of a kind that has "
 "no room for pictures)."
 msgstr[0] ""
+"Не удалось изменить файлов: %d (возможно, они только для чтения или такого "
+"типа, что не могут содержать изображения)."
 msgstr[1] ""
+"Не удалось изменить файлов: %d (возможно, они только для чтения или такого "
+"типа, что не могут содержать изображения)."
 msgstr[2] ""
+"Не удалось изменить файлов: %d (возможно, они только для чтения или такого "
+"типа, что не могут содержать изображения)."
 
 #: src/Lists/MusicList.vala:520
-#, fuzzy
 msgid "Album art saved"
-msgstr "Исполнитель альбома"
+msgstr "Обложка сохранена"
 
 #: src/Lists/MusicList.vala:520
-#, fuzzy, c-format
+#, c-format
 msgid "Written into %d file"
 msgid_plural "Written into %d files"
-msgstr[0] "Записывать метаданные в файлы"
-msgstr[1] "Записывать метаданные в файлы"
-msgstr[2] "Записывать метаданные в файлы"
+msgstr[0] "Записано в файлов: %d"
+msgstr[1] "Записано в файлов: %d"
+msgstr[2] "Записано в файлов: %d"
 
 #. media list right click menu
 #: src/Lists/PodcastList.vala:117
@@ -1549,55 +1532,45 @@ msgstr "Записывать метаданные в файлы"
 
 #: src/Preferences/BehaviorPreferences.vala:85
 msgid "Import songs that appear in the music folder"
-msgstr ""
+msgstr "Импортировать треки, которые появляются в папке с музыкой"
 
 #: src/Preferences/BehaviorPreferences.vala:87
 msgid "Copy files to library folder when imported"
 msgstr "Копировать файлы в папку фонотеки при импортировании"
 
-#: src/Preferences/BehaviorPreferences.vala:91
-msgid "Sync play counts, ratings and options with itunes7"
-msgstr ""
-
-#. itunes7 reads beatbox.db: the main library's
-#: src/Preferences/BehaviorPreferences.vala:95
-msgid "Only with the main library open: itunes7 reads its database."
-msgstr ""
-
 #: src/Preferences/BehaviorPreferences.vala:105
 msgid "(open)"
-msgstr ""
+msgstr "(открыта)"
 
 #: src/Preferences/BehaviorPreferences.vala:113
 msgid "Rename…"
-msgstr ""
+msgstr "Переименовать…"
 
 #. never the main or the open one
 #: src/Preferences/BehaviorPreferences.vala:117
-#, fuzzy
 msgid "Remove…"
-msgstr "Удалить"
+msgstr "Удалить…"
 
 #: src/Preferences/BehaviorPreferences.vala:127
-#, fuzzy
 msgid "Rename Library"
-msgstr "Повторное сканирование фонотеки %s"
+msgstr "Переименовать медиатеку"
 
 #: src/Preferences/BehaviorPreferences.vala:129
-#, fuzzy
 msgid "Rename"
-msgstr "Имя пользователя:"
+msgstr "Переименовать"
 
 #: src/Preferences/BehaviorPreferences.vala:145
 #, c-format
 msgid "Remove the library “%s”?"
-msgstr ""
+msgstr "Удалить медиатеку «%s»?"
 
 #: src/Preferences/BehaviorPreferences.vala:146
 msgid ""
 "Its songs, play counts and playlists are removed from BeatBox; the music "
 "files stay where they are."
 msgstr ""
+"Её треки, счётчики воспроизведений и плейлисты будут удалены из BeatBox; "
+"музыкальные файлы останутся на своих местах."
 
 #: src/Preferences/BehaviorPreferences.vala:148
 #: src/SourceViews/PlaylistSourceView.vala:57
@@ -1608,9 +1581,8 @@ msgstr "Удалить"
 
 #: src/Preferences/BehaviorPreferences.vala:160
 #: src/Preferences/BehaviorPreferences.vala:163
-#, fuzzy
 msgid "Playback"
-msgstr "Прослушиваний"
+msgstr "Воспроизведение"
 
 #: src/Preferences/BehaviorPreferences.vala:165 src/Widgets/StatusBar.vala:77
 #: src/Widgets/StatusBar.vala:84
@@ -1618,116 +1590,113 @@ msgid "Off"
 msgstr "Выкл."
 
 #: src/Preferences/BehaviorPreferences.vala:166
-#, fuzzy
 msgid "Per song"
-msgstr "композиция"
+msgstr "По трекам"
 
 #: src/Preferences/BehaviorPreferences.vala:167
-#, fuzzy
 msgid "Per album"
-msgstr "Проверить альбом"
+msgstr "По альбомам"
 
 #: src/Preferences/BehaviorPreferences.vala:170
 msgid "Volume normalization (ReplayGain):"
-msgstr ""
+msgstr "Выравнивание громкости (ReplayGain):"
 
 #: src/Preferences/BehaviorPreferences.vala:170
 msgid "from the next song"
-msgstr ""
+msgstr "начиная со следующего трека"
 
 #: src/Preferences/BehaviorPreferences.vala:175
 msgid "Crossfade between songs:"
-msgstr ""
+msgstr "Перекрёстное затухание между треками:"
 
 #: src/Preferences/BehaviorPreferences.vala:175
 msgid "seconds (0: none, songs follow without a gap)"
-msgstr ""
+msgstr "секунд (0: нет, треки идут без паузы)"
 
 #: src/Preferences/BehaviorPreferences.vala:181
 #: src/Preferences/BehaviorPreferences.vala:184
 msgid "Recording"
-msgstr ""
+msgstr "Запись"
 
 #: src/Preferences/BehaviorPreferences.vala:185
-#, fuzzy
 msgid "Recordings Folder"
-msgstr "Повторное сканирование папки %s"
+msgstr "Папка для записей"
 
 #: src/Preferences/BehaviorPreferences.vala:194
 msgid "Save recordings of radio stations in:"
-msgstr ""
+msgstr "Сохранять записи радиостанций в:"
 
 #: src/Preferences/BehaviorPreferences.vala:198
 msgid "Start a new file every:"
-msgstr ""
+msgstr "Начинать новый файл каждые:"
 
 #: src/Preferences/BehaviorPreferences.vala:198
-#, fuzzy
 msgid "minutes"
-msgstr "%d минута"
+msgstr "минут"
 
 #: src/Preferences/BehaviorPreferences.vala:199
 msgid ""
 "Right click a station in the radio grid to record it. Needs streamripper."
 msgstr ""
+"Щёлкните правой кнопкой станцию в сетке радио, чтобы записать её. Нужен "
+"streamripper."
 
 #: src/Preferences/BehaviorPreferences.vala:208
 msgid "Appearance"
-msgstr ""
+msgstr "Оформление"
 
 #. Skins (plugins: folders in ~/.local/share/beatbox/skins)
 #: src/Preferences/BehaviorPreferences.vala:212
 msgid "Skin"
-msgstr ""
+msgstr "Тема"
 
 #: src/Preferences/BehaviorPreferences.vala:221
 msgid "Edit CSS…"
-msgstr ""
+msgstr "Изменить CSS…"
 
 #: src/Preferences/BehaviorPreferences.vala:241
-#, fuzzy
 msgid "Open Skins Folder"
-msgstr "Повторное сканирование папки %s"
+msgstr "Открыть папку тем"
 
 #: src/Preferences/BehaviorPreferences.vala:250
 msgid "Skin:"
-msgstr ""
+msgstr "Тема:"
 
 #: src/Preferences/BehaviorPreferences.vala:276
 msgid "LCD"
-msgstr ""
+msgstr "ЖК-дисплей"
 
 #: src/Preferences/BehaviorPreferences.vala:279
 msgid "Display"
-msgstr ""
+msgstr "Дисплей"
 
 #: src/Preferences/BehaviorPreferences.vala:281
 msgid "Two lines, artist and album taking turns"
-msgstr ""
+msgstr "Две строки: исполнитель и альбом по очереди"
 
 #: src/Preferences/BehaviorPreferences.vala:282
 msgid "Three lines, synced lyrics on the third"
-msgstr ""
+msgstr "Три строки, синхронизированный текст песни на третьей"
 
 #: src/Preferences/BehaviorPreferences.vala:283
 msgid "One line"
-msgstr ""
+msgstr "Одна строка"
 
 #: src/Preferences/BehaviorPreferences.vala:289
 msgid "Song information in the LCD:"
-msgstr ""
+msgstr "Сведения о треке на ЖК-дисплее:"
 
 #: src/Preferences/BehaviorPreferences.vala:291
 msgid "Show synced lyrics when available (lrclib.net)"
-msgstr ""
+msgstr "Показывать синхронизированный текст песни, если он есть (lrclib.net)"
 
 #: src/Preferences/BehaviorPreferences.vala:294
 msgid "Show the album cover at the left edge of the LCD"
-msgstr ""
+msgstr "Показывать обложку альбома у левого края ЖК-дисплея"
 
 #: src/Preferences/BehaviorPreferences.vala:299
 msgid "Switch between artist and album every:"
-msgstr ""
+msgstr "Переключать исполнителя и альбом каждые:"
 
 #. helper for units
 #: src/Preferences/BehaviorPreferences.vala:299
@@ -1737,59 +1706,57 @@ msgstr "с"
 
 #: src/Preferences/BehaviorPreferences.vala:304
 msgid "Duration of the slide:"
-msgstr ""
+msgstr "Длительность смены:"
 
 #: src/Preferences/BehaviorPreferences.vala:304
-#, fuzzy
 msgid "milliseconds"
-msgstr "с"
+msgstr "миллисекунд"
 
 #: src/Preferences/BehaviorPreferences.vala:307
 msgid "Position bar"
-msgstr ""
+msgstr "Полоса позиции"
 
 #: src/Preferences/BehaviorPreferences.vala:310
 msgid "Width of the track:"
-msgstr ""
+msgstr "Ширина полосы:"
 
 #: src/Preferences/BehaviorPreferences.vala:310
 #: src/Preferences/BehaviorPreferences.vala:325
 msgid "pixels"
-msgstr ""
+msgstr "пикселей"
 
 #: src/Preferences/BehaviorPreferences.vala:312
 msgid "Diamond"
-msgstr ""
+msgstr "Ромб"
 
 #: src/Preferences/BehaviorPreferences.vala:313
 msgid "Circle"
-msgstr ""
+msgstr "Круг"
 
 #: src/Preferences/BehaviorPreferences.vala:314
 msgid "Cup"
-msgstr ""
+msgstr "Кубок"
 
 #: src/Preferences/BehaviorPreferences.vala:315
 msgid "Nyan cat"
-msgstr ""
+msgstr "Nyan cat"
 
 #: src/Preferences/BehaviorPreferences.vala:318
 msgid "Shape of the position marker:"
-msgstr ""
+msgstr "Форма маркера позиции:"
 
 #: src/Preferences/BehaviorPreferences.vala:325
 msgid "Size of the position marker:"
-msgstr ""
+msgstr "Размер маркера позиции:"
 
 #: src/Preferences/BehaviorPreferences.vala:339
 #: src/Preferences/BehaviorPreferences.vala:342
-#, fuzzy
 msgid "Mini Player"
-msgstr "Музыкальный проигрыватель"
+msgstr "Мини-плеер"
 
 #: src/Preferences/BehaviorPreferences.vala:343
 msgid "Keep the mini player above other windows"
-msgstr ""
+msgstr "Держать мини-плеер поверх других окон"
 
 #. GTK 3 can't ask a Wayland compositor for that
 #: src/Preferences/BehaviorPreferences.vala:348
@@ -1797,6 +1764,8 @@ msgid ""
 "On Wayland the desktop keeps windows on top: right-click the toolbar and "
 "choose “Always on Top”."
 msgstr ""
+"В Wayland рабочий стол сам держит окна поверх других: щёлкните правой "
+"кнопкой по панели инструментов и выберите «Всегда поверх»."
 
 #: src/Preferences/BehaviorPreferences.vala:360
 #: src/Preferences/BehaviorPreferences.vala:366 src/Views/SideTreeView.vala:99
@@ -1805,116 +1774,113 @@ msgstr "Надстройки"
 
 #: src/Preferences/BehaviorPreferences.vala:363
 msgid "No plugins are installed."
-msgstr ""
+msgstr "Плагины не установлены."
 
 #: src/Preferences/BehaviorPreferences.vala:376
-#, fuzzy
 msgid "Install Plugin…"
-msgstr "Установить надстройку"
+msgstr "Установить плагин…"
 
 #: src/Preferences/BehaviorPreferences.vala:406
-#, fuzzy
 msgid "Install"
-msgstr "Установить надстройку"
+msgstr "Установить"
 
 #: src/Preferences/BehaviorPreferences.vala:408
 msgid "BeatBox plugins (*.plugin)"
-msgstr ""
+msgstr "Плагины BeatBox (*.plugin)"
 
 #: src/Preferences/BehaviorPreferences.vala:418
 msgid "Plugin updated"
-msgstr ""
+msgstr "Плагин обновлён"
 
 #: src/Preferences/BehaviorPreferences.vala:418
 msgid ""
 "A plugin with the same name is in use: restart BeatBox to use the one just "
 "installed."
 msgstr ""
+"Плагин с таким же именем уже используется: перезапустите BeatBox, чтобы "
+"использовать только что установленный."
 
 #: src/Preferences/BehaviorPreferences.vala:420
-#, fuzzy
 msgid "Could not install the plugin"
-msgstr "Невозможно найти %s %s"
+msgstr "Не удалось установить плагин"
 
 #: src/Preferences/BehaviorPreferences.vala:427
-#, fuzzy
 msgid "Album Art"
-msgstr "Исполнитель альбома"
+msgstr "Обложки альбомов"
 
 #: src/Preferences/BehaviorPreferences.vala:430
 msgid "Cover Grid"
-msgstr ""
+msgstr "Сетка альбомов"
 
 #: src/Preferences/BehaviorPreferences.vala:432
 msgid "Unfold it inline, under its row"
-msgstr ""
+msgstr "Раскрывать на месте, под его строкой"
 
 #: src/Preferences/BehaviorPreferences.vala:433
 msgid "Open it in a popup window"
-msgstr ""
+msgstr "Открывать во всплывающем окне"
 
 #: src/Preferences/BehaviorPreferences.vala:436
 msgid "Clicking an album in the cover grid:"
-msgstr ""
+msgstr "При щелчке по альбому в сетке:"
 
 #: src/Preferences/BehaviorPreferences.vala:442
 msgid "hidden"
-msgstr ""
+msgstr "скрыта"
 
 #: src/Preferences/BehaviorPreferences.vala:444
 msgid "Size of the cover in the unfolded album:"
-msgstr ""
+msgstr "Размер обложки в раскрытом альбоме:"
 
 #: src/Preferences/BehaviorPreferences.vala:445
 msgid "Share of the band's width; 0 shows no cover"
-msgstr ""
+msgstr "Доля ширины полосы; 0 не показывает обложку"
 
 #: src/Preferences/BehaviorPreferences.vala:451
-#, fuzzy
 msgid "Missing Album Art"
-msgstr "Исполнитель альбома"
+msgstr "Отсутствующие обложки"
 
 #: src/Preferences/BehaviorPreferences.vala:452
-msgid "Download missing album art from the internet (MusicBrainz, Apple Music)"
-msgstr ""
+msgid ""
+"Download missing album art from the internet (MusicBrainz, Apple Music)"
+msgstr "Загружать недостающие обложки из интернета (MusicBrainz, Apple Music)"
 
 #: src/Preferences/BehaviorPreferences.vala:463
 msgid "About"
-msgstr ""
+msgstr "О программе"
 
 #: src/Preferences/BehaviorPreferences.vala:470
 #, c-format
 msgid "Version %s"
-msgstr ""
+msgstr "Версия %s"
 
 #: src/Preferences/BehaviorPreferences.vala:471
 msgid "A music player for your collection, podcasts and internet radio."
 msgstr ""
+"Музыкальный проигрыватель для вашей коллекции, подкастов и интернет-радио."
 
 #: src/Preferences/BehaviorPreferences.vala:475
-#, fuzzy
 msgid "Authors"
-msgstr "Автор"
+msgstr "Авторы"
 
 #: src/Preferences/BehaviorPreferences.vala:477
 msgid "Contributions"
-msgstr ""
+msgstr "Вклад"
 
 #: src/Preferences/BehaviorPreferences.vala:478
 #, c-format
 msgid "Di Weng (%s): shortening texts by characters instead of bytes"
-msgstr ""
+msgstr "Di Weng (%s): сокращение текстов по символам, а не по байтам"
 
 #: src/Preferences/BehaviorPreferences.vala:479
 #: src/Windows/Editors/MediaEditor.vala:148
 #: src/Windows/Editors/SongEditor.vala:234
-#, fuzzy
 msgid "Artwork"
-msgstr "Сеть"
+msgstr "Обложки"
 
 #: src/Preferences/BehaviorPreferences.vala:481
 msgid "2026 update"
-msgstr ""
+msgstr "Обновление 2026"
 
 #: src/Preferences/BehaviorPreferences.vala:482
 msgid ""
@@ -1922,53 +1888,55 @@ msgid ""
 "the inline cover grid, internet radio and podcast directories, online album "
 "art and skins."
 msgstr ""
+"Перенесено на GTK 3, GStreamer 1.0 и libsoup 3, с новым оформлением, Cover "
+"Flow, сеткой альбомов, каталогами интернет-радио и подкастов, онлайн-"
+"обложками и темами."
 
 #: src/Preferences/BehaviorPreferences.vala:484
-#, fuzzy
 msgid "Services"
-msgstr "Устройства"
+msgstr "Сервисы"
 
 #: src/Preferences/BehaviorPreferences.vala:485
-#, fuzzy, c-format
+#, c-format
 msgid "Internet radio stations: %s"
-msgstr "Интернет-радиостанций не найдено"
+msgstr "Станции интернет-радио: %s"
 
 #: src/Preferences/BehaviorPreferences.vala:487
-#, fuzzy, c-format
+#, c-format
 msgid "Podcasts: %s"
-msgstr "Подкасты"
+msgstr "Подкасты: %s"
 
 #: src/Preferences/BehaviorPreferences.vala:488
 #, c-format
 msgid "Album art: %s, with %s as fallback"
-msgstr ""
+msgstr "Обложки альбомов: %s, запасной — %s"
 
 #: src/Preferences/BehaviorPreferences.vala:489
-#, fuzzy, c-format
+#, c-format
 msgid "Lyrics: %s"
-msgstr "Текст композиции"
+msgstr "Тексты песен: %s"
 
 #: src/Preferences/BehaviorPreferences.vala:490
 #, c-format
 msgid "Scrobbling: %s"
-msgstr ""
+msgstr "Скробблинг: %s"
 
 #: src/Preferences/BehaviorPreferences.vala:492
 msgid "License"
-msgstr ""
+msgstr "Лицензия"
 
 #: src/Preferences/BehaviorPreferences.vala:493
 #, c-format
 msgid "Free software under the %s."
-msgstr ""
+msgstr "Свободное программное обеспечение по лицензии %s."
 
 #: src/Preferences/BehaviorPreferences.vala:493
 msgid "GNU General Public License, version 3"
-msgstr ""
+msgstr "Стандартная общественная лицензия GNU, версия 3"
 
 #: src/Preferences/LastfmPreferences.vala:32
 msgid "Scrobbling"
-msgstr ""
+msgstr "Скробблинг"
 
 #: src/Preferences/LastfmPreferences.vala:57
 msgid "Login"
@@ -1992,36 +1960,40 @@ msgid ""
 "To identify songs by their sound (Edit Song Info › Identify), register an "
 "application at %s and paste its key here."
 msgstr ""
+"Чтобы распознавать треки по звучанию (Изменить сведения о треке › "
+"Распознать), зарегистрируйте приложение на %s и вставьте его ключ сюда."
 
 #: src/Preferences/LastfmPreferences.vala:150
 msgid "Application key"
-msgstr ""
+msgstr "Ключ приложения"
 
 #: src/Preferences/LastfmPreferences.vala:172
 msgid "User token"
-msgstr ""
+msgstr "Токен пользователя"
 
 #: src/Preferences/LastfmPreferences.vala:174
 msgid "Connect"
-msgstr ""
+msgstr "Подключить"
 
 #: src/Preferences/LastfmPreferences.vala:175
 msgid "Disconnect"
-msgstr ""
+msgstr "Отключить"
 
 #: src/Preferences/LastfmPreferences.vala:202
 #, c-format
 msgid "Your listens are sent to ListenBrainz as %s."
-msgstr ""
+msgstr "Ваши прослушивания отправляются в ListenBrainz как %s."
 
 #: src/Preferences/LastfmPreferences.vala:205
 #, c-format
 msgid "Paste the user token from %s to send your listens there."
 msgstr ""
+"Вставьте токен пользователя с %s, чтобы отправлять туда свои прослушивания."
 
 #: src/Preferences/LastfmPreferences.vala:220
 msgid "ListenBrainz didn't accept that token (or couldn't be reached)."
 msgstr ""
+"ListenBrainz не принял этот токен (или не удалось связаться с сервисом)."
 
 #: src/Preferences/LastfmPreferences.vala:264
 #, c-format
@@ -2051,7 +2023,7 @@ msgstr "Повторно сканировать"
 #: src/Preferences/MusicPreferences.vala:62
 msgid ""
 "A folder holding a file named .nomedia is left out, with its subfolders."
-msgstr ""
+msgstr "Папка с файлом .nomedia пропускается вместе с подпапками."
 
 #: src/Preferences/MusicPreferences.vala:100
 #: src/Preferences/PodcastPreferences.vala:109
@@ -2092,26 +2064,28 @@ msgstr ""
 
 #: src/Preferences/ShortcutsPreferences.vala:14
 msgid "Shortcuts"
-msgstr ""
+msgstr "Сочетания клавиш"
 
 #: src/Preferences/ShortcutsPreferences.vala:22
 msgid "Keyboard Shortcuts"
-msgstr ""
+msgstr "Сочетания клавиш"
 
 #: src/Preferences/ShortcutsPreferences.vala:23
 msgid ""
-"Click a shortcut and press the new keys; Backspace leaves the action without "
-"one."
+"Click a shortcut and press the new keys; Backspace leaves the action without"
+" one."
 msgstr ""
+"Щёлкните сочетание и нажмите новые клавиши; Backspace убирает сочетание у "
+"действия."
 
 #: src/Preferences/ShortcutsPreferences.vala:53
 msgid "Restore the Defaults"
-msgstr ""
+msgstr "Восстановить по умолчанию"
 
 #: src/Preferences/ShortcutsPreferences.vala:85
 #, c-format
 msgid "“%s” used those keys; it has no shortcut now."
-msgstr ""
+msgstr "«%s» использовал эти клавиши; теперь у него нет сочетания."
 
 #: src/SourceViews/DefaultSourceView.vala:56
 msgid "No Media Found"
@@ -2123,7 +2097,7 @@ msgstr "Файлы отсутствуют."
 
 #: src/SourceViews/DeviceSourceView.vala:52
 msgid "importing audio CDs hasn't been tested on current systems."
-msgstr ""
+msgstr "Импорт с аудио-CD не проверялся на современных системах."
 
 #: src/SourceViews/DeviceSourceView.vala:80
 #: src/SourceViews/PodcastSourceView.vala:84
@@ -2145,7 +2119,8 @@ msgstr "Музыка не найдена"
 #: src/SourceViews/DeviceSourceView.vala:84
 msgid "To sync music with this device, edit the device's preferences."
 msgstr ""
-"Для синхронизации музыки с данным устройством, измените настройки устройства."
+"Для синхронизации музыки с данным устройством, измените настройки "
+"устройства."
 
 #: src/SourceViews/DeviceSourceView.vala:91
 msgid "Audio CD Invalid"
@@ -2227,7 +2202,7 @@ msgstr "Журнал"
 #: src/SourceViews/HistorySourceView.vala:106
 #: src/SourceViews/HistorySourceView.vala:120
 msgid " play history"
-msgstr ""
+msgstr " история воспроизведения"
 
 #. Setup welcome screen
 #: src/SourceViews/MusicSourceView.vala:40
@@ -2276,8 +2251,7 @@ msgstr "Нет файлов"
 
 #: src/SourceViews/PlaylistSourceView.vala:76
 msgid ""
-"To add to this playlist, drag and drop songs from a list onto the sidebar "
-"item or\n"
+"To add to this playlist, drag and drop songs from a list onto the sidebar item or\n"
 "right click on an item and choose \"Add to Playlist\"."
 msgstr ""
 "Чтобы добавить этот список воспроизведения, перетаскивайте композиции из "
@@ -2299,40 +2273,38 @@ msgstr "Подкасты не найдены."
 
 #: src/SourceViews/PodcastSourceView.vala:46
 #: src/Windows/DirectoryDialog.vala:45
-#, fuzzy
 msgid "Find Podcasts"
-msgstr "Подкасты"
+msgstr "Найти подкасты"
 
 #: src/SourceViews/PodcastSourceView.vala:46
 msgid "Search the Apple Podcasts directory."
-msgstr ""
+msgstr "Поиск в каталоге Apple Podcasts."
 
 #: src/SourceViews/PodcastSourceView.vala:47
-#, fuzzy
 msgid "Subscribe by Address"
-msgstr "Подписаться на подкасты"
+msgstr "Подписаться по адресу"
 
 #: src/SourceViews/PodcastSourceView.vala:47
 msgid "Paste the address of a podcast RSS feed."
-msgstr ""
+msgstr "Вставьте адрес RSS-канала подкаста."
 
 #. Setup context menu
 #: src/SourceViews/PodcastSourceView.vala:55
 #: src/SourceViews/PodcastSourceView.vala:65
-#, fuzzy
 msgid "Find Podcasts…"
-msgstr "Непрослушанные подкасты"
+msgstr "Найти подкасты…"
 
 #: src/SourceViews/PodcastSourceView.vala:56
-#, fuzzy
 msgid "Subscribe by Address…"
-msgstr "Подписаться на подкасты"
+msgstr "Подписаться по адресу…"
 
 #: src/SourceViews/PodcastSourceView.vala:84
 msgid ""
 "Use “Find Podcasts…” above to search the directory, or “Subscribe by "
 "Address…” to paste an RSS feed."
 msgstr ""
+"Используйте «Найти подкасты…» выше для поиска в каталоге или «Подписаться по"
+" адресу…», чтобы вставить RSS-канал."
 
 #: src/SourceViews/QueueSourceView.vala:62
 msgid "No songs in Queue"
@@ -2361,7 +2333,7 @@ msgstr "Поставить в очередь"
 #: src/SourceViews/QueueSourceView.vala:119
 #: src/SourceViews/QueueSourceView.vala:133
 msgid " play queue"
-msgstr ""
+msgstr " очередь воспроизведения"
 
 #: src/SourceViews/SimilarSourceView.vala:108
 #: src/SourceViews/SimilarSourceView.vala:213
@@ -2374,8 +2346,8 @@ msgstr "Похожие на %s"
 #, c-format
 msgid "BeatBox is finding songs similar to <b>%s</b> by <b>%s</b>"
 msgstr ""
-"BeatBox выполняет поиск композиций похожих на <b>%s</b> в исполнении <b>%s</"
-"b>"
+"BeatBox выполняет поиск композиций похожих на <b>%s</b> в исполнении "
+"<b>%s</b>"
 
 #: src/SourceViews/SimilarSourceView.vala:141
 msgid "Fetching similar songs"
@@ -2386,8 +2358,8 @@ msgstr "Получение сведений о похожих композици
 #, c-format
 msgid "BeatBox could not find songs similar to <b>%s</b> by <b>%s</b>. "
 msgstr ""
-"BeatBox не может найти композиции похожие на <b>%s</b> в исполнении <b>%s</"
-"b>. "
+"BeatBox не может найти композиции похожие на <b>%s</b> в исполнении "
+"<b>%s</b>. "
 
 #: src/SourceViews/SimilarSourceView.vala:150
 msgid ""
@@ -2411,8 +2383,8 @@ msgstr "Список похожих"
 
 #: src/SourceViews/SmartPlaylistSourceView.vala:127
 msgid ""
-"No media fits this smart playlist's rules. To edit its rules, right click on "
-"it in the sidebar and choose \"Edit\"."
+"No media fits this smart playlist's rules. To edit its rules, right click on"
+" it in the sidebar and choose \"Edit\"."
 msgstr ""
 "Отсутствуют файлы соответствующие правилам динамического списка "
 "воспроизведения. Чтобы внести изменения в его  правила, щёлкните на нём "
@@ -2436,102 +2408,97 @@ msgid "No Stations were found."
 msgstr "Станции не найдены."
 
 #: src/SourceViews/StationSourceView.vala:49
-#, fuzzy
 msgid "Find Stations"
-msgstr "Станции"
+msgstr "Найти станции"
 
 #: src/SourceViews/StationSourceView.vala:49
 msgid ""
 "Search thousands of stations on radio-browser.info, SHOUTcast, laut.fm and "
 "Icecast."
 msgstr ""
+"Ищите тысячи станций на radio-browser.info, SHOUTcast, laut.fm и Icecast."
 
 #: src/SourceViews/StationSourceView.vala:50
 msgid "Add by Address"
-msgstr ""
+msgstr "Добавить по адресу"
 
 #: src/SourceViews/StationSourceView.vala:50
 msgid "Type the address of a station's stream."
-msgstr ""
+msgstr "Введите адрес потока станции."
 
 #: src/SourceViews/StationSourceView.vala:51
-#, fuzzy
 msgid "Import File"
-msgstr "Невозможно импортировать"
+msgstr "Импорт файла"
 
 #: src/SourceViews/StationSourceView.vala:51
 msgid "Add the stations of a .pls or .m3u file."
-msgstr ""
+msgstr "Добавить станции из файла .pls или .m3u."
 
 #. Setup context menu
 #: src/SourceViews/StationSourceView.vala:79
 #: src/SourceViews/StationSourceView.vala:89
-#, fuzzy
 msgid "Find Stations…"
-msgstr "Станции"
+msgstr "Найти станции…"
 
 #: src/SourceViews/StationSourceView.vala:80
 #: src/SourceViews/StationSourceView.vala:91
 msgid "Add by Address…"
-msgstr ""
+msgstr "Добавить по адресу…"
 
 #: src/SourceViews/StationSourceView.vala:81
-#, fuzzy
 msgid "Import File…"
-msgstr "Невозможно импортировать"
+msgstr "Импорт файла…"
 
 #: src/SourceViews/StationSourceView.vala:126
 msgid "REC"
-msgstr ""
+msgstr "ЗАП"
 
 #: src/SourceViews/StationSourceView.vala:145
 msgid "Choose Image…"
-msgstr ""
+msgstr "Выбрать изображение…"
 
 #: src/SourceViews/StationSourceView.vala:149
-#, fuzzy
 msgid "Stop Recording"
-msgstr "Остановить синхронизацию"
+msgstr "Остановить запись"
 
 #: src/SourceViews/StationSourceView.vala:149
 msgid "Record"
-msgstr ""
+msgstr "Записать"
 
 #: src/SourceViews/StationSourceView.vala:156
-#, fuzzy, c-format
+#, c-format
 msgid "Could not record “%s”"
-msgstr "Невозможно найти %s %s"
+msgstr "Не удалось записать «%s»"
 
 #: src/SourceViews/StationSourceView.vala:156
 msgid "streamripper did not start."
-msgstr ""
+msgstr "streamripper не запустился."
 
 #: src/SourceViews/StationSourceView.vala:160
 msgid "Needs streamripper (the streamripper package)"
-msgstr ""
+msgstr "Нужен streamripper (пакет streamripper)"
 
 #: src/SourceViews/StationSourceView.vala:164
-#, fuzzy
 msgid "Remove Custom Image"
-msgstr "Удалить из очереди"
+msgstr "Удалить своё изображение"
 
 #: src/SourceViews/StationSourceView.vala:174
 #, c-format
 msgid "Image for “%s”"
-msgstr ""
+msgstr "Изображение для «%s»"
 
 #: src/SourceViews/StationSourceView.vala:175
 msgid "Choose"
-msgstr ""
+msgstr "Выбрать"
 
 #: src/SourceViews/StationSourceView.vala:177
 msgid "Images"
-msgstr ""
+msgstr "Изображения"
 
 #: src/SourceViews/StationSourceView.vala:184
 #, c-format
 msgid "“%s” is not an image BeatBox can read."
-msgstr ""
+msgstr "«%s» — не изображение, которое BeatBox может прочитать."
 
 #: src/SourceViews/StationSourceView.vala:211
 msgid "No Internet Radio Stations Found"
@@ -2542,6 +2509,8 @@ msgid ""
 "Use “Find Stations…” above to search the radio-browser.info, SHOUTcast, "
 "laut.fm and Icecast directories."
 msgstr ""
+"Используйте «Найти станции…» выше, чтобы искать в каталогах radio-"
+"browser.info, SHOUTcast, laut.fm и Icecast."
 
 #: src/SourceViews/StationSourceView.vala:237
 msgid "Internet Radio"
@@ -2553,7 +2522,7 @@ msgstr "Экспортировать список воспроизведения
 
 #: src/Utils/PlaylistUtils.vala:232
 msgid "_Save"
-msgstr ""
+msgstr "_Сохранить"
 
 #. options at top
 #: src/Views/DeviceSummaryWidget.vala:64
@@ -2572,7 +2541,8 @@ msgstr "Автоматически синхронизировать при по�
 msgid "Sync:"
 msgstr "Синхронизировать:"
 
-#. audiobook_index = spaceWidget.add_item("Audiobooks", 0.0, SpaceWidget.ItemColor.GREEN);
+#. audiobook_index = spaceWidget.add_item("Audiobooks", 0.0,
+#. SpaceWidget.ItemColor.GREEN);
 #: src/Views/DeviceSummaryWidget.vala:93
 msgid "Other"
 msgstr "Другие"
@@ -2620,6 +2590,8 @@ msgid ""
 "syncing hasn't been tested with current devices. Back up your device before "
 "syncing."
 msgstr ""
+"Синхронизация не проверялась на современных устройствах. Сделайте резервную "
+"копию устройства перед синхронизацией."
 
 #: src/Views/DeviceView.vala:76 src/Widgets/SpaceWidget.vala:172
 msgid "Sync"
@@ -2651,95 +2623,94 @@ msgid "Search..."
 msgstr "Найти…"
 
 #: src/Widgets/AlbumWall.vala:408
-#, fuzzy, c-format
+#, c-format
 msgid "%d song"
 msgid_plural "%d songs"
-msgstr[0] "%d секунда"
-msgstr[1] "%d секунды"
-msgstr[2] "%d секунд"
+msgstr[0] "%d трек"
+msgstr[1] "%d трек"
+msgstr[2] "%d трек"
 
 #: src/Widgets/AlbumWall.vala:409
-#, fuzzy, c-format
+#, c-format
 msgid "%d minute"
 msgid_plural "%d minutes"
 msgstr[0] "%d минута"
-msgstr[1] "%d минуты"
-msgstr[2] "%d минут"
+msgstr[1] "%d минута"
+msgstr[2] "%d минута"
 
-#. the built-in preset names, for the translations (see Settings.Equalizer.default_presets)
+#. the built-in preset names, for the translations (see
+#. Settings.Equalizer.default_presets)
 #: src/Widgets/PresetList.vala:32
 msgid "Flat"
-msgstr ""
+msgstr "Плоский"
 
 #: src/Widgets/PresetList.vala:32
 msgid "Classical"
-msgstr ""
+msgstr "Классика"
 
 #: src/Widgets/PresetList.vala:32
 msgid "Club"
-msgstr ""
+msgstr "Клуб"
 
 #: src/Widgets/PresetList.vala:32
-#, fuzzy
 msgid "Dance"
-msgstr "Отменить"
+msgstr "Танцевальный"
 
 #: src/Widgets/PresetList.vala:32
 msgid "Full Bass"
-msgstr ""
+msgstr "Полные басы"
 
 #: src/Widgets/PresetList.vala:33
 msgid "Full Treble"
-msgstr ""
+msgstr "Полные верхи"
 
 #: src/Widgets/PresetList.vala:33
 msgid "Full Bass + Treble"
-msgstr ""
+msgstr "Полные басы и верхи"
 
 #: src/Widgets/PresetList.vala:33 src/Windows/EqualizerWindow.vala:245
 msgid "Headphones"
-msgstr ""
+msgstr "Наушники"
 
 #: src/Widgets/PresetList.vala:33
 msgid "Large Hall"
-msgstr ""
+msgstr "Большой зал"
 
 #: src/Widgets/PresetList.vala:33
 msgid "Live"
-msgstr ""
+msgstr "Концерт"
 
 #: src/Widgets/PresetList.vala:33
 msgid "Party"
-msgstr ""
+msgstr "Вечеринка"
 
 #: src/Widgets/PresetList.vala:34
-#, fuzzy
 msgid "Pop"
-msgstr "Вверх"
+msgstr "Поп"
 
 #: src/Widgets/PresetList.vala:34
 msgid "Reggae"
-msgstr ""
+msgstr "Регги"
 
 #: src/Widgets/PresetList.vala:34
 msgid "Rock"
-msgstr ""
+msgstr "Рок"
 
 #: src/Widgets/PresetList.vala:34
 msgid "Soft"
-msgstr ""
+msgstr "Мягкий"
 
 #: src/Widgets/PresetList.vala:34
 msgid "Ska"
-msgstr ""
+msgstr "Ска"
 
 #: src/Widgets/PresetList.vala:34
 msgid "Soft Rock"
-msgstr ""
+msgstr "Мягкий рок"
 
 #: src/Widgets/PresetList.vala:34
 msgid "Techno"
-msgstr ""
+msgstr "Техно"
 
 #: src/Widgets/PresetList.vala:57
 msgid "Automatic"
@@ -2840,176 +2811,167 @@ msgstr "Буферизация..."
 
 #: src/Widgets/TopDisplay/TimeScale.vala:90
 msgid "Click to switch between the time left and the total time"
-msgstr ""
+msgstr "Щёлкните, чтобы переключаться между оставшимся и общим временем"
 
 #: src/Widgets/TrackReport.vala:59
 msgid "Nothing is playing."
-msgstr ""
+msgstr "Ничего не воспроизводится."
 
 #: src/Widgets/TrackReport.vala:78 src/Windows/Editors/SongEditor.vala:410
 msgid "Reading the file…"
-msgstr ""
+msgstr "Чтение файла…"
 
 #. a stream would be opened just to look at it: only files are read
 #: src/Widgets/TrackReport.vala:88
 msgid "An internet stream: there is no file to read."
-msgstr ""
+msgstr "Интернет-поток: читать нечего."
 
 #: src/Widgets/TrackReport.vala:107
 msgid "Error"
-msgstr ""
+msgstr "Ошибка"
 
 #: src/Widgets/TrackReport.vala:117
 msgid "Format and audio"
-msgstr ""
+msgstr "Формат и аудио"
 
 #: src/Widgets/TrackReport.vala:118
 msgid "Tags in the file"
-msgstr ""
+msgstr "Теги в файле"
 
 #: src/Widgets/TrackReport.vala:118 src/Widgets/TrackReport.vala:121
-#: src/Widgets/TrackReport.vala:183 src/Windows/Editors/SongEditor.vala:178
+#: src/Widgets/TrackReport.vala:182 src/Windows/Editors/SongEditor.vala:178
 msgid "None"
-msgstr ""
+msgstr "Нет"
 
 #: src/Widgets/TrackReport.vala:119
 msgid "Embedded pictures"
-msgstr ""
+msgstr "Встроенные изображения"
 
 #: src/Widgets/TrackReport.vala:127
 msgid "Click to enlarge"
-msgstr ""
+msgstr "Щёлкните, чтобы увеличить"
 
 #: src/Widgets/TrackReport.vala:130
 msgid "Embedded picture"
-msgstr ""
+msgstr "Встроенное изображение"
+
+#: src/Widgets/TrackReport.vala:183
+msgid "Added"
+msgstr "Добавлен"
+
+#: src/Widgets/TrackReport.vala:183 plugins/statistics/Statistics.vala:95
+msgid "Unknown"
+msgstr "Неизвестно"
 
 #: src/Widgets/TrackReport.vala:184
-#, fuzzy
-msgid "Added"
-msgstr "Дата добавления"
-
-#: src/Widgets/TrackReport.vala:184 plugins/statistics/Statistics.vala:95
-#, fuzzy
-msgid "Unknown"
-msgstr "Неизвестная композиция"
-
-#: src/Widgets/TrackReport.vala:185
-#, fuzzy
 msgid "Last played"
 msgstr "Последнее воспроизведение"
 
-#: src/Widgets/TrackReport.vala:185 src/Windows/Editors/SongEditor.vala:319
+#: src/Widgets/TrackReport.vala:184 src/Windows/Editors/SongEditor.vala:319
 msgid "Never"
-msgstr ""
+msgstr "Никогда"
 
-#: src/Widgets/TrackReport.vala:188
-#, fuzzy
+#: src/Widgets/TrackReport.vala:187
 msgid "Edited"
-msgstr "Изменить"
+msgstr "Изменён"
 
-#: src/Widgets/TrackReport.vala:192
+#: src/Widgets/TrackReport.vala:191
 msgid "Volume adjustment"
-msgstr ""
+msgstr "Регулировка громкости"
+
+#: src/Widgets/TrackReport.vala:195
+msgid "Shuffle"
+msgstr "Перемешать"
 
 #: src/Widgets/TrackReport.vala:196
-#, fuzzy
-msgid "Shuffle"
-msgstr "Случайный порядок включён"
-
-#: src/Widgets/TrackReport.vala:197
 msgid "Skipped when shuffling"
-msgstr ""
+msgstr "Пропускается при перемешивании"
 
-#: src/Widgets/TrackReport.vala:200
+#: src/Widgets/TrackReport.vala:199
 msgid "Resumes at"
-msgstr ""
+msgstr "Продолжится с"
 
-#: src/Widgets/TrackReport.vala:271
+#: src/Widgets/TrackReport.vala:270
 msgid "Size"
-msgstr ""
+msgstr "Размер"
 
-#: src/Widgets/TrackReport.vala:274
-#, fuzzy
+#: src/Widgets/TrackReport.vala:273
 msgid "File modified"
-msgstr "Размер файла:"
+msgstr "Файл изменён"
 
-#: src/Widgets/TrackReport.vala:280
-#, fuzzy
+#: src/Widgets/TrackReport.vala:279
 msgid "Container"
-msgstr "содержит"
+msgstr "Контейнер"
 
-#: src/Widgets/TrackReport.vala:283
-#, fuzzy
+#: src/Widgets/TrackReport.vala:282
 msgid "Duration"
-msgstr "Длительность:"
+msgstr "Длительность"
 
-#: src/Widgets/TrackReport.vala:291
+#: src/Widgets/TrackReport.vala:290
 msgid "Codec"
-msgstr ""
+msgstr "Кодек"
 
-#: src/Widgets/TrackReport.vala:291
+#: src/Widgets/TrackReport.vala:290
 msgid "lossless"
-msgstr ""
+msgstr "без потерь"
 
-#: src/Widgets/TrackReport.vala:291
+#: src/Widgets/TrackReport.vala:290
 msgid "lossy"
-msgstr ""
+msgstr "с потерями"
 
-#: src/Widgets/TrackReport.vala:293
-#, fuzzy
+#: src/Widgets/TrackReport.vala:292
 msgid "Sample rate"
-msgstr "Частота дискретизации:"
+msgstr "Частота дискретизации"
 
 #. a lossy one is decoded to whatever depth
-#: src/Widgets/TrackReport.vala:295
+#: src/Widgets/TrackReport.vala:294
 msgid "Bit depth"
-msgstr ""
+msgstr "Разрядность"
 
-#: src/Widgets/TrackReport.vala:298
+#: src/Widgets/TrackReport.vala:297
 msgid "Mono"
-msgstr ""
+msgstr "Моно"
 
-#: src/Widgets/TrackReport.vala:298
+#: src/Widgets/TrackReport.vala:297
 msgid "Stereo"
-msgstr ""
+msgstr "Стерео"
 
-#: src/Widgets/TrackReport.vala:298
+#: src/Widgets/TrackReport.vala:297
 #, c-format
 msgid "%u channels"
-msgstr ""
+msgstr "Каналов: %u"
 
-#: src/Widgets/TrackReport.vala:299
+#: src/Widgets/TrackReport.vala:298
 msgid "Channels"
-msgstr ""
+msgstr "Каналы"
 
-#: src/Widgets/TrackReport.vala:314
+#: src/Widgets/TrackReport.vala:313
 #, c-format
 msgid "variable (%u–%u kbps)"
-msgstr ""
+msgstr "переменный (%u–%u кбит/с)"
 
-#: src/Widgets/TrackReport.vala:316
+#: src/Widgets/TrackReport.vala:315
 #, c-format
 msgid "nominal %u kbps"
-msgstr ""
+msgstr "номинально %u кбит/с"
 
-#: src/Widgets/TrackReport.vala:317
+#: src/Widgets/TrackReport.vala:316
 msgid "Bitrate (average)"
-msgstr ""
+msgstr "Битрейт (средний)"
 
-#: src/Widgets/TrackReport.vala:353
+#: src/Widgets/TrackReport.vala:352
 msgid "Picture"
-msgstr ""
+msgstr "Изображение"
 
-#: src/Widgets/TrackReport.vala:358
+#: src/Widgets/TrackReport.vala:357
 msgid "Front cover"
-msgstr ""
+msgstr "Передняя обложка"
+
+#: src/Widgets/TrackReport.vala:357
+msgid "Back cover"
+msgstr "Задняя обложка"
 
 #: src/Widgets/TrackReport.vala:358
-msgid "Back cover"
-msgstr ""
-
-#: src/Widgets/TrackReport.vala:359
 msgid "Disc"
 msgstr "Диск"
 
@@ -3028,21 +2990,20 @@ msgid "Add"
 msgstr "Добавить"
 
 #: src/Windows/DirectoryDialog.vala:45
-#, fuzzy
 msgid "Find Radio Stations"
-msgstr "Найти радиостанции в интернете"
+msgstr "Поиск радиостанций"
 
 #: src/Windows/DirectoryDialog.vala:52
 msgid "Station name, city or genre (jazz, news, rock…)"
-msgstr ""
+msgstr "Название станции, город или жанр (джаз, новости, рок…)"
 
 #: src/Windows/DirectoryDialog.vala:53
 msgid "Podcast name, author or topic"
-msgstr ""
+msgstr "Название подкаста, автор или тема"
 
 #: src/Windows/DirectoryDialog.vala:64 src/Windows/DirectoryDialog.vala:251
 msgid "Country"
-msgstr ""
+msgstr "Страна"
 
 #: src/Windows/DirectoryDialog.vala:65
 #: src/Windows/Editors/PodcastEditor.vala:71
@@ -3051,189 +3012,186 @@ msgstr "Автор"
 
 #: src/Windows/DirectoryDialog.vala:91
 msgid "Podcasts from the Apple Podcasts directory."
-msgstr ""
+msgstr "Подкасты из каталога Apple Podcasts."
 
 #: src/Windows/DirectoryDialog.vala:107 src/Windows/DirectoryDialog.vala:524
-#, fuzzy
 msgid "Add Station"
-msgstr "Свойства станции"
+msgstr "Добавить станцию"
 
 #: src/Windows/DirectoryDialog.vala:107
-#, fuzzy
 msgid "Subscribe"
-msgstr "Подписаться на подкасты"
+msgstr "Подписаться"
 
 #: src/Windows/DirectoryDialog.vala:126
 msgid "Type a name or topic and press Enter."
-msgstr ""
+msgstr "Введите название или тему и нажмите Enter."
 
 #: src/Windows/DirectoryDialog.vala:151
-#, fuzzy
 msgid "Country:"
-msgstr "Воспроизведено:"
+msgstr "Страна:"
 
 #: src/Windows/DirectoryDialog.vala:157
 msgid "Region:"
-msgstr ""
+msgstr "Регион:"
 
 #: src/Windows/DirectoryDialog.vala:158
 msgid "Language:"
-msgstr ""
+msgstr "Язык:"
 
-#: src/Windows/DirectoryDialog.vala:159 src/Windows/Editors/SongEditor.vala:159
-#, fuzzy
+#: src/Windows/DirectoryDialog.vala:159
+#: src/Windows/Editors/SongEditor.vala:159
 msgid "Genre:"
-msgstr "Жанр"
+msgstr "Жанр:"
 
-#: src/Windows/DirectoryDialog.vala:160 src/Windows/Editors/SongEditor.vala:313
+#: src/Windows/DirectoryDialog.vala:160
+#: src/Windows/Editors/SongEditor.vala:313
 msgid "Format:"
-msgstr ""
+msgstr "Формат:"
 
 #: src/Windows/DirectoryDialog.vala:163
 msgid "Quality:"
-msgstr ""
+msgstr "Качество:"
 
 #: src/Windows/DirectoryDialog.vala:165
-#, fuzzy, c-format
+#, c-format
 msgid "%d kbps or more"
-msgstr "%d Кбит/с"
+msgstr "%d кбит/с и выше"
 
 #: src/Windows/DirectoryDialog.vala:166
-#, fuzzy
 msgid "Sort by:"
-msgstr "Имя пользователя:"
+msgstr "Сортировать по:"
 
 #: src/Windows/DirectoryDialog.vala:168
 msgid "Most voted"
-msgstr ""
+msgstr "Самые популярные"
 
 #: src/Windows/DirectoryDialog.vala:169
-#, fuzzy
 msgid "Most played"
-msgstr "Последнее воспроизведение"
+msgstr "Чаще всего слушают"
 
 #: src/Windows/DirectoryDialog.vala:170
 msgid "Trending"
-msgstr ""
+msgstr "В тренде"
 
 #: src/Windows/DirectoryDialog.vala:172
 msgid "Quality"
-msgstr ""
+msgstr "Качество"
 
 #: src/Windows/DirectoryDialog.vala:173
 msgid "Random"
-msgstr ""
+msgstr "Случайно"
 
 #: src/Windows/DirectoryDialog.vala:175
 msgid "HTTPS only"
-msgstr ""
+msgstr "Только HTTPS"
 
 #: src/Windows/DirectoryDialog.vala:186 src/Windows/DirectoryDialog.vala:193
 #: src/Windows/DirectoryDialog.vala:288
-#, fuzzy
 msgid "Any"
-msgstr "с любым"
+msgstr "Любой"
 
 #: src/Windows/DirectoryDialog.vala:251
 msgid "Format"
-msgstr ""
+msgstr "Формат"
 
 #: src/Windows/DirectoryDialog.vala:252
 msgid "Stations from radio-browser.info, a free community directory."
 msgstr ""
+"Станции из radio-browser.info, свободного каталога, который ведётся "
+"сообществом."
 
 #: src/Windows/DirectoryDialog.vala:253
 msgid "Stations from the SHOUTcast directory."
-msgstr ""
+msgstr "Станции из каталога SHOUTcast."
 
 #: src/Windows/DirectoryDialog.vala:254
 msgid "Stations made by laut.fm’s listeners."
-msgstr ""
+msgstr "Станции, созданные слушателями laut.fm."
 
 #: src/Windows/DirectoryDialog.vala:255
 msgid "Stations from the Icecast directory (dir.xiph.org)."
-msgstr ""
+msgstr "Станции из каталога Icecast (dir.xiph.org)."
 
 #: src/Windows/DirectoryDialog.vala:346 src/Windows/DirectoryDialog.vala:381
 #: src/Windows/Editors/SongEditor.vala:517
 #: src/Windows/Editors/SongEditor.vala:718
-#, fuzzy
 msgid "Searching…"
-msgstr "Поиск"
+msgstr "Поиск…"
 
 #: src/Windows/DirectoryDialog.vala:376
 msgid "Choose a genre or type a station’s name."
-msgstr ""
+msgstr "Выберите жанр или введите название станции."
 
 #: src/Windows/DirectoryDialog.vala:380
 msgid "Searching… the Icecast directory is downloaded once a day (9 MB)."
-msgstr ""
+msgstr "Поиск… каталог Icecast загружается раз в сутки (9 МБ)."
 
 #: src/Windows/DirectoryDialog.vala:398 src/Windows/DirectoryDialog.vala:430
 msgid "Could not reach the directory. Check your internet connection."
-msgstr ""
+msgstr "Не удалось связаться с каталогом. Проверьте подключение к интернету."
 
 #: src/Windows/DirectoryDialog.vala:418 src/Windows/DirectoryDialog.vala:449
 #, c-format
 msgid "Nothing found for “%s”."
-msgstr ""
+msgstr "По запросу «%s» ничего не найдено."
 
 #: src/Windows/DirectoryDialog.vala:418
 msgid "No stations match these filters."
-msgstr ""
+msgstr "Нет станций, подходящих под эти фильтры."
 
 #: src/Windows/DirectoryDialog.vala:420 src/Windows/DirectoryDialog.vala:451
 #, c-format
 msgid "%d result. Double click to add."
 msgid_plural "%d results. Double click to add."
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Результатов: %d. Дважды щёлкните, чтобы добавить."
+msgstr[1] "Результатов: %d. Дважды щёлкните, чтобы добавить."
+msgstr[2] "Результатов: %d. Дважды щёлкните, чтобы добавить."
 
 #: src/Windows/DirectoryDialog.vala:475
 #, c-format
 msgid "“%s” is already in your library."
-msgstr ""
+msgstr "«%s» уже есть в вашей медиатеке."
 
 #: src/Windows/DirectoryDialog.vala:481
 #, c-format
 msgid "Subscribing to “%s”… its episodes will appear in Podcasts."
-msgstr ""
+msgstr "Подписка на «%s»… его выпуски появятся в разделе Подкасты."
 
 #. SHOUTcast gives a playlist: its stream is looked up now
 #: src/Windows/DirectoryDialog.vala:485
 #, c-format
 msgid "Looking up the stream of “%s”…"
-msgstr ""
+msgstr "Поиск потока «%s»…"
 
 #: src/Windows/DirectoryDialog.vala:491
 #, c-format
 msgid "“%s” gave no stream to play."
-msgstr ""
+msgstr "«%s» не предоставил поток для воспроизведения."
 
 #: src/Windows/DirectoryDialog.vala:495 src/Windows/DirectoryDialog.vala:506
 #, c-format
 msgid "Added “%s” to Internet Radio."
-msgstr ""
+msgstr "«%s» добавлен в интернет-радио."
 
 #: src/Windows/DirectoryDialog.vala:526
 msgid "My favourite station"
-msgstr ""
+msgstr "Моя любимая станция"
 
 #: src/Windows/DirectoryDialog.vala:531
 msgid "Stream address:"
-msgstr ""
+msgstr "Адрес потока:"
 
 #: src/Windows/DirectoryDialog.vala:533
 msgid ""
-"The address of the audio stream itself (often ending in .mp3, .aac or /"
-"stream).\n"
+"The address of the audio stream itself (often ending in .mp3, .aac or /stream).\n"
 "To add a .pls or .m3u file use “Import File…”."
 msgstr ""
+"Адрес самого аудиопотока (часто оканчивается на .mp3, .aac или /stream).\n"
+"Чтобы добавить файл .pls или .m3u, используйте «Импорт файла…»."
 
 #: src/Windows/Editors/FieldEditorImpl.vala:182
 msgid "Apply this field to all the selected songs"
-msgstr ""
+msgstr "Применить это поле ко всем выбранным трекам"
 
 #: src/Windows/Editors/InfoViewport.vala:64
 msgid "Location:"
@@ -3277,21 +3235,22 @@ msgstr "Неизвестный размер"
 
 #: src/Windows/Editors/InfoViewport.vala:181
 msgid "Never Modified"
-msgstr ""
+msgstr "Никогда не изменялся"
 
 #: src/Windows/Editors/InfoViewport.vala:188
 msgid "No Plays"
-msgstr ""
+msgstr "Никогда не воспроизводился"
 
 #: src/Windows/Editors/InfoViewport.vala:195
 msgid "No Skips"
-msgstr ""
+msgstr "Никогда не пропускался"
 
 #: src/Windows/Editors/InfoViewport.vala:198
 msgid "Skip"
 msgid_plural "Skips"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Пропуск"
+msgstr[1] "Пропуск"
+msgstr[2] "Пропуск"
 
 #: src/Windows/Editors/InfoViewport.vala:204
 msgid "Unknown Bitrate"
@@ -3313,25 +3272,27 @@ msgstr "%d Гц"
 
 #: src/Windows/Editors/MediaEditor.vala:85
 msgid "Also write changes to the file"
-msgstr ""
+msgstr "Записать изменения и в файл"
 
 #: src/Windows/Editors/MediaEditor.vala:87
 msgid ""
 "Otherwise the changes stay in BeatBox's library and the tags in the files "
 "are left as they are (the same option as in Preferences)"
 msgstr ""
+"Иначе изменения остаются в медиатеке BeatBox, а теги в файлах не меняются "
+"(та же опция, что в настройках)"
 
 #: src/Windows/Editors/MediaEditor.vala:95
 msgid "OK"
-msgstr ""
+msgstr "ОК"
 
 #: src/Windows/Editors/MediaEditor.vala:96
 msgid "Save the changes and show the previous song (Alt+Left)"
-msgstr ""
+msgstr "Сохранить изменения и показать предыдущий трек (Alt+Влево)"
 
 #: src/Windows/Editors/MediaEditor.vala:97
 msgid "Save the changes and show the next song (Alt+Right)"
-msgstr ""
+msgstr "Сохранить изменения и показать следующий трек (Alt+Вправо)"
 
 #: src/Windows/Editors/MediaEditor.vala:142
 #: src/Windows/Editors/MediaEditor.vala:147
@@ -3345,25 +3306,23 @@ msgstr "Сведения"
 #: src/Windows/Editors/MediaEditor.vala:159
 #: src/Windows/Editors/SongEditor.vala:228
 msgid "Summary"
-msgstr ""
+msgstr "Сводка"
 
 #: src/Windows/Editors/MediaEditor.vala:144
 #: src/Windows/Editors/MediaEditor.vala:148
 #: src/Windows/EqualizerWindow.vala:285
 msgid "Details"
-msgstr ""
+msgstr "Подробности"
 
 #: src/Windows/Editors/MediaEditor.vala:147
 #: src/Windows/Editors/SongEditor.vala:202
-#, fuzzy
 msgid "Comments"
-msgstr "Описание"
+msgstr "Комментарии"
 
 #: src/Windows/Editors/MediaEditor.vala:147
 #: src/Windows/Editors/SongEditor.vala:209
-#, fuzzy
 msgid "Sorting"
-msgstr "Импортирование"
+msgstr "Сортировка"
 
 #: src/Windows/Editors/MediaEditor.vala:147
 #: src/Windows/Editors/SmartPlaylistEditor.vala:76
@@ -3380,17 +3339,16 @@ msgstr "Текст композиции"
 #: src/Windows/Editors/MediaEditor.vala:148
 #: src/Windows/Editors/SongEditor.vala:230
 msgid "Pictures"
-msgstr ""
+msgstr "Изображения"
 
 #: src/Windows/Editors/MediaEditor.vala:170
-#, fuzzy
 msgid "Song Info"
-msgstr "Изменить сведения о композиции"
+msgstr "Сведения о треке"
 
 #: src/Windows/Editors/MediaEditor.vala:170
 #, c-format
 msgid "Info for %d Songs"
-msgstr ""
+msgstr "Сведения о треках: %d"
 
 #: src/Windows/Editors/SmartPlaylistEditor.vala:62
 msgid "Smart Playlist Editor"
@@ -3454,302 +3412,292 @@ msgid "kbps"
 msgstr "кбит/с"
 
 #: src/Windows/Editors/SongEditor.vala:156
-#, fuzzy
 msgid "Artist:"
-msgstr "Исполнитель"
+msgstr "Исполнитель:"
 
 #: src/Windows/Editors/SongEditor.vala:157
-#, fuzzy
 msgid "Album artist:"
-msgstr "Исполнитель альбома"
+msgstr "Исполнитель альбома:"
 
 #: src/Windows/Editors/SongEditor.vala:158
-#, fuzzy
 msgid "Album:"
-msgstr "Альбом"
+msgstr "Альбом:"
 
 #: src/Windows/Editors/SongEditor.vala:160
-#, fuzzy
 msgid "Composer:"
-msgstr "Композитор"
+msgstr "Композитор:"
 
 #: src/Windows/Editors/SongEditor.vala:161
-#, fuzzy
 msgid "Grouping:"
-msgstr "Группа"
+msgstr "Группировка:"
 
 #: src/Windows/Editors/SongEditor.vala:163
 msgid "Track number:"
-msgstr ""
+msgstr "Номер трека:"
 
 #: src/Windows/Editors/SongEditor.vala:164
 #: src/Windows/Editors/SongEditor.vala:166
 msgid "of"
-msgstr ""
+msgstr "из"
 
 #: src/Windows/Editors/SongEditor.vala:165
 msgid "Disc number:"
-msgstr ""
+msgstr "Номер диска:"
 
 #: src/Windows/Editors/SongEditor.vala:167
-#, fuzzy
 msgid "Year:"
-msgstr "Год"
+msgstr "Год:"
 
 #: src/Windows/Editors/SongEditor.vala:168
 msgid "BPM:"
-msgstr ""
+msgstr "BPM:"
 
 #: src/Windows/Editors/SongEditor.vala:169
-#, fuzzy
 msgid "Rating:"
-msgstr "Оценка"
+msgstr "Оценка:"
 
 #: src/Windows/Editors/SongEditor.vala:170
 msgid "Part of a compilation by various artists"
-msgstr ""
+msgstr "Часть сборника разных исполнителей"
 
 #: src/Windows/Editors/SongEditor.vala:172
-#, fuzzy
 msgid "Sort name:"
-msgstr "Имя пользователя:"
+msgstr "Имя для сортировки:"
 
 #: src/Windows/Editors/SongEditor.vala:173
 msgid "Sort artist:"
-msgstr ""
+msgstr "Исполнитель для сортировки:"
 
 #: src/Windows/Editors/SongEditor.vala:174
-#, fuzzy
 msgid "Sort album artist:"
-msgstr "Исполнитель альбома"
+msgstr "Исполнитель альбома для сортировки:"
 
 #: src/Windows/Editors/SongEditor.vala:175
 msgid "Sort album:"
-msgstr ""
+msgstr "Альбом для сортировки:"
 
 #: src/Windows/Editors/SongEditor.vala:176
-#, fuzzy
 msgid "Sort composer:"
-msgstr "Композитор"
+msgstr "Композитор для сортировки:"
 
 #: src/Windows/Editors/SongEditor.vala:178
 msgid "Volume adjustment:"
-msgstr ""
+msgstr "Регулировка громкости:"
 
 #: src/Windows/Editors/SongEditor.vala:179
 msgid "Skip when shuffling"
-msgstr ""
+msgstr "Пропускать при перемешивании"
 
 #: src/Windows/Editors/SongEditor.vala:180
 msgid "Remember the playback position"
-msgstr ""
+msgstr "Запоминать позицию воспроизведения"
 
 #: src/Windows/Editors/SongEditor.vala:218
 msgid ""
 "The volume adjustment raises or lowers this song next to the others: +100 % "
 "doubles it, −100 % silences it."
 msgstr ""
+"Регулировка громкости поднимает или опускает этот трек относительно других: "
+"+100 % удваивает, −100 % делает его беззвучным."
 
 #: src/Windows/Editors/SongEditor.vala:312
 msgid "Kind:"
-msgstr ""
+msgstr "Тип:"
 
 #: src/Windows/Editors/SongEditor.vala:312
 #, c-format
 msgid "%s audio file"
-msgstr ""
+msgstr "Аудиофайл %s"
 
 #: src/Windows/Editors/SongEditor.vala:312
-#, fuzzy
 msgid "Audio file"
-msgstr "Музыкальный проигрыватель"
+msgstr "Аудиофайл"
 
 #: src/Windows/Editors/SongEditor.vala:314
-#, fuzzy
 msgid "Size:"
-msgstr "Размер файла:"
+msgstr "Размер:"
 
 #: src/Windows/Editors/SongEditor.vala:315
-#, fuzzy
 msgid "Bit rate:"
-msgstr "Качество звука"
+msgstr "Битрейт:"
 
 #: src/Windows/Editors/SongEditor.vala:316
-#, fuzzy
 msgid "Sample rate:"
 msgstr "Частота дискретизации:"
 
 #: src/Windows/Editors/SongEditor.vala:317
 msgid "Channels:"
-msgstr ""
+msgstr "Каналы:"
 
 #: src/Windows/Editors/SongEditor.vala:318
-#, fuzzy
 msgid "Plays:"
-msgstr "Прослушиваний"
+msgstr "Воспроизведений:"
 
 #: src/Windows/Editors/SongEditor.vala:319
-#, fuzzy
 msgid "Last played:"
 msgstr "Последнее воспроизведение:"
 
 #: src/Windows/Editors/SongEditor.vala:320
-#, fuzzy
 msgid "Date modified:"
-msgstr "Изменён:"
+msgstr "Дата изменения:"
 
 #: src/Windows/Editors/SongEditor.vala:321
 msgid "Encoded with:"
-msgstr ""
+msgstr "Кодирован:"
 
-#. "Identify": fills the name, artist and album from the song's sound (AcoustID)
+#. "Identify": fills the name, artist and album from the song's sound
+#. (AcoustID)
 #: src/Windows/Editors/SongEditor.vala:341
 #: src/Windows/Editors/SongEditor.vala:554
 msgid "Identify…"
-msgstr ""
+msgstr "Распознать…"
 
 #: src/Windows/Editors/SongEditor.vala:343
 msgid "Look the song up by its sound on AcoustID"
-msgstr ""
+msgstr "Найти трек по звучанию в AcoustID"
 
 #: src/Windows/Editors/SongEditor.vala:344
 msgid ""
 "Needs fpcalc, from Chromaprint (the chromaprint or libchromaprint-tools "
 "package)"
 msgstr ""
+"Нужен fpcalc из Chromaprint (пакет chromaprint или libchromaprint-tools)"
 
 #: src/Windows/Editors/SongEditor.vala:379
 msgid "Not known"
-msgstr ""
+msgstr "Неизвестно"
 
 #: src/Windows/Editors/SongEditor.vala:385
 msgid "This file has no pictures inside it."
-msgstr ""
+msgstr "В этом файле нет изображений."
 
 #: src/Windows/Editors/SongEditor.vala:427
 msgid "Add Artwork…"
-msgstr ""
+msgstr "Добавить обложку…"
 
 #: src/Windows/Editors/SongEditor.vala:428
-#, fuzzy
 msgid "Download Artwork"
-msgstr "Загрузить"
+msgstr "Загрузить обложку"
 
 #: src/Windows/Editors/SongEditor.vala:429
 msgid "Embed in File"
-msgstr ""
+msgstr "Встроить в файл"
 
 #: src/Windows/Editors/SongEditor.vala:430
 msgid "Look the cover up on MusicBrainz and the Apple catalogue"
-msgstr ""
+msgstr "Найти обложку в MusicBrainz и каталоге Apple"
 
 #: src/Windows/Editors/SongEditor.vala:431
 msgid "Write the cover into the music files (the whole album)"
-msgstr ""
+msgstr "Записать обложку в музыкальные файлы (весь альбом)"
 
 #: src/Windows/Editors/SongEditor.vala:432
-msgid "This build of BeatBox can't write covers into files (it needs TagLib 2)"
+msgid ""
+"This build of BeatBox can't write covers into files (it needs TagLib 2)"
 msgstr ""
+"Эта версия BeatBox не может записывать обложки в файлы (нужен TagLib 2)"
 
 #: src/Windows/Editors/SongEditor.vala:443
 msgid "Writing…"
-msgstr ""
+msgstr "Запись…"
 
 #: src/Windows/Editors/SongEditor.vala:445
-#, fuzzy, c-format
+#, c-format
 msgid "Written into %d file."
 msgid_plural "Written into %d files."
-msgstr[0] "Записывать метаданные в файлы"
-msgstr[1] "Записывать метаданные в файлы"
-msgstr[2] "Записывать метаданные в файлы"
+msgstr[0] "Записано в файлов: %d."
+msgstr[1] "Записано в файлов: %d."
+msgstr[2] "Записано в файлов: %d."
 
 #: src/Windows/Editors/SongEditor.vala:446
 #, c-format
 msgid "Written into %d files; %d failed."
-msgstr ""
+msgstr "Записано в файлов: %d; ошибок: %d."
 
 #: src/Windows/Editors/SongEditor.vala:470
 msgid "Changes here apply to the albums of all the selected songs."
-msgstr ""
+msgstr "Изменения здесь относятся к альбомам всех выбранных треков."
 
 #: src/Windows/Editors/SongEditor.vala:502
 msgid "Choose Image"
-msgstr ""
+msgstr "Выбрать изображение"
 
 #: src/Windows/Editors/SongEditor.vala:502
 msgid "Open"
-msgstr ""
+msgstr "Открыть"
 
 #: src/Windows/Editors/SongEditor.vala:510
-#, fuzzy, c-format
+#, c-format
 msgid "Could not open the image: %s"
-msgstr "Невозможно найти %s %s"
+msgstr "Не удалось открыть изображение: %s"
 
 #: src/Windows/Editors/SongEditor.vala:526
 #, c-format
 msgid "No cover found for “%s”."
-msgstr ""
+msgstr "Обложка для «%s» не найдена."
 
 #: src/Windows/Editors/SongEditor.vala:538
 msgid "Identifying songs needs an AcoustID application key"
-msgstr ""
+msgstr "Для распознавания треков нужен ключ приложения AcoustID"
 
 #: src/Windows/Editors/SongEditor.vala:539
 msgid ""
 "Register a free application at acoustid.org/new-application and paste its "
 "key in Preferences › Last.fm."
 msgstr ""
+"Зарегистрируйте бесплатное приложение на acoustid.org/new-application и "
+"вставьте его ключ в Настройки › Last.fm."
 
 #: src/Windows/Editors/SongEditor.vala:548
 msgid "Identifying…"
-msgstr ""
+msgstr "Распознавание…"
 
 #: src/Windows/Editors/SongEditor.vala:567
 msgid "Identification failed"
-msgstr ""
+msgstr "Не удалось распознать"
 
 #: src/Windows/Editors/SongEditor.vala:567
-#, fuzzy
 msgid "No matches found"
-msgstr "Подкасты не найдены"
+msgstr "Совпадений не найдено"
 
 #: src/Windows/Editors/SongEditor.vala:568
 msgid "AcoustID doesn't know this recording."
-msgstr ""
+msgstr "AcoustID не знает эту запись."
 
 #: src/Windows/Editors/SongEditor.vala:573
 msgid "Identification results"
-msgstr ""
+msgstr "Результаты распознавания"
 
 #: src/Windows/Editors/SongEditor.vala:574
 msgid "Apply"
-msgstr ""
+msgstr "Применить"
 
 #: src/Windows/Editors/SongEditor.vala:582
 msgid "Score"
-msgstr ""
+msgstr "Оценка"
 
 #: src/Windows/Editors/SongEditor.vala:590
 msgid "Select a result to apply its title, artist and album to this song:"
 msgstr ""
+"Выберите результат, чтобы применить его название, исполнителя и альбом к "
+"этому треку:"
 
 #: src/Windows/Editors/SongEditor.vala:629
-#, fuzzy
 msgid "Download Lyrics"
-msgstr "Загрузить"
+msgstr "Загрузить текст песни"
 
 #: src/Windows/Editors/SongEditor.vala:630
 msgid "Look the lyrics up on lrclib.net (they replace the ones here)"
-msgstr ""
+msgstr "Найти текст на lrclib.net (он заменит текущий)"
 
 #: src/Windows/Editors/SongEditor.vala:726
 msgid "From lrclib.net"
-msgstr ""
+msgstr "С lrclib.net"
 
 #: src/Windows/Editors/SongEditor.vala:729
 #, c-format
 msgid "No lyrics found for “%s”."
-msgstr ""
+msgstr "Текст песни для «%s» не найден."
 
 #: src/Windows/EqualizerWindow.vala:158
 msgid "Save preset"
@@ -3757,191 +3705,195 @@ msgstr "Сохранить профиль"
 
 #: src/Windows/EqualizerWindow.vala:220
 msgid "Sets all the effects below at once"
-msgstr ""
+msgstr "Задаёт все эффекты ниже одним действием"
 
-#: src/Windows/EqualizerWindow.vala:221 src/Windows/EqualizerWindow.vala:526
+#: src/Windows/EqualizerWindow.vala:221 src/Windows/EqualizerWindow.vala:527
 msgid "Custom"
 msgstr "Настроить..."
 
 #: src/Windows/EqualizerWindow.vala:236
-#, fuzzy
 msgid "Effects preset"
-msgstr "Сохранить профиль"
+msgstr "Пресет эффектов"
 
 #: src/Windows/EqualizerWindow.vala:244
 msgid "Concert hall"
-msgstr ""
+msgstr "Концертный зал"
 
 #: src/Windows/EqualizerWindow.vala:247
 msgid "Warm"
-msgstr ""
+msgstr "Тёплый"
 
 #: src/Windows/EqualizerWindow.vala:248
 msgid "Space"
-msgstr ""
+msgstr "Пространство"
 
 #: src/Windows/EqualizerWindow.vala:249
 msgid "Vocal cut"
-msgstr ""
+msgstr "Подавление голоса"
 
 #: src/Windows/EqualizerWindow.vala:258
 msgid "Preamp"
-msgstr ""
+msgstr "Предусиление"
 
 #: src/Windows/EqualizerWindow.vala:258
 msgid ""
 "Lowers the level before the effects and the equalizer, so boosts don't "
 "distort"
 msgstr ""
+"Снижает уровень перед эффектами и эквалайзером, чтобы усиление не искажало "
+"звук"
 
 #: src/Windows/EqualizerWindow.vala:259
 msgid "Echo"
-msgstr ""
+msgstr "Эхо"
 
 #: src/Windows/EqualizerWindow.vala:259
 msgid "Repeats of the sound, fading"
-msgstr ""
+msgstr "Повторы звука, затухающие"
 
 #: src/Windows/EqualizerWindow.vala:260
 msgid "Vocal reduction"
-msgstr ""
+msgstr "Уменьшение голоса"
 
 #: src/Windows/EqualizerWindow.vala:260
 msgid ""
 "Takes out what is in the middle of the stereo image, usually the voice; it "
 "also thins the sound"
 msgstr ""
+"Убирает то, что находится в центре стереокартины, обычно голос; звук при "
+"этом становится тоньше"
 
 #: src/Windows/EqualizerWindow.vala:261
 msgid "Bass enhancer"
-msgstr ""
+msgstr "Усилитель басов"
 
 #: src/Windows/EqualizerWindow.vala:261
 msgid "Adds harmonics, so the bass is heard on small speakers and headphones"
 msgstr ""
+"Добавляет гармоники, чтобы басы было слышно на маленьких колонках и в "
+"наушниках"
 
 #: src/Windows/EqualizerWindow.vala:262
 msgid "Exciter"
-msgstr ""
+msgstr "Эксайтер"
 
 #: src/Windows/EqualizerWindow.vala:262
 msgid "Adds brightness to the high frequencies"
-msgstr ""
+msgstr "Добавляет блеска высоким частотам"
 
 #: src/Windows/EqualizerWindow.vala:263
 msgid "Stereo width"
-msgstr ""
+msgstr "Ширина стерео"
 
 #: src/Windows/EqualizerWindow.vala:263
 msgid "Spreads the stereo image"
-msgstr ""
+msgstr "Расширяет стереокартину"
 
 #: src/Windows/EqualizerWindow.vala:264
-#, fuzzy
 msgid "Saturation"
-msgstr "Станция"
+msgstr "Насыщенность"
 
 #: src/Windows/EqualizerWindow.vala:264
 msgid "Warmth, with a little distortion"
-msgstr ""
+msgstr "Теплота с небольшими искажениями"
 
 #: src/Windows/EqualizerWindow.vala:265
-#, fuzzy
 msgid "Limiter"
-msgstr "Ограничить до"
+msgstr "Лимитер"
 
 #: src/Windows/EqualizerWindow.vala:265
 msgid "A ceiling for the peaks, so loud parts don't clip"
-msgstr ""
+msgstr "Потолок для пиков, чтобы громкие места не обрезались"
 
 #: src/Windows/EqualizerWindow.vala:266
-#, fuzzy
 msgid "Compressor"
-msgstr "Композитор"
+msgstr "Компрессор"
 
 #: src/Windows/EqualizerWindow.vala:266
 msgid "Holds down the loudest parts, for an even level"
-msgstr ""
+msgstr "Сдерживает самые громкие места для ровного уровня"
 
 #: src/Windows/EqualizerWindow.vala:267
 msgid "Chorus"
-msgstr ""
+msgstr "Хорус"
 
 #: src/Windows/EqualizerWindow.vala:267
 msgid "Copies of the sound, slightly out of tune, so it sounds thicker"
-msgstr ""
+msgstr "Копии звука, слегка расстроенные, чтобы звучало объёмнее"
 
 #: src/Windows/EqualizerWindow.vala:268
 msgid "Flanger"
-msgstr ""
+msgstr "Фленджер"
 
 #: src/Windows/EqualizerWindow.vala:268
 msgid "A short delay that sweeps up and down, like a jet passing"
 msgstr ""
+"Короткая задержка, которая поднимается и опускается, как пролетающий самолёт"
 
 #: src/Windows/EqualizerWindow.vala:269
 msgid "Phaser"
-msgstr ""
+msgstr "Фейзер"
 
 #: src/Windows/EqualizerWindow.vala:269
 msgid "Sweeping notches in the sound, like a slow wah"
-msgstr ""
+msgstr "Движущиеся провалы в звуке, как медленное «уа-уа»"
 
 #: src/Windows/EqualizerWindow.vala:270
 msgid "Reverb"
-msgstr ""
+msgstr "Реверберация"
 
 #: src/Windows/EqualizerWindow.vala:270
 msgid "Adds the sound of a room"
-msgstr ""
+msgstr "Добавляет звук комнаты"
 
 #: src/Windows/EqualizerWindow.vala:272
 msgid "Crossfeed"
-msgstr ""
+msgstr "Кроссфид"
 
 #: src/Windows/EqualizerWindow.vala:273
 msgid ""
 "For headphones: each ear hears a little of the other channel, as with "
 "speakers"
 msgstr ""
+"Для наушников: каждое ухо слышит немного другого канала, как при колонках"
 
 #: src/Windows/EqualizerWindow.vala:281
 msgid "Echo delay"
-msgstr ""
+msgstr "Задержка эха"
 
 #: src/Windows/EqualizerWindow.vala:281
 msgid "Time between the repeats"
-msgstr ""
+msgstr "Время между повторами"
 
 #: src/Windows/EqualizerWindow.vala:282
 msgid "Echo feedback"
-msgstr ""
+msgstr "Обратная связь эха"
 
 #: src/Windows/EqualizerWindow.vala:282
 msgid "How many repeats are heard, fading"
-msgstr ""
+msgstr "Сколько повторов слышно, затухая"
 
 #: src/Windows/EqualizerWindow.vala:283
 msgid "Room size"
-msgstr ""
+msgstr "Размер комнаты"
 
 #: src/Windows/EqualizerWindow.vala:283
 msgid "Size of the simulated room"
-msgstr ""
+msgstr "Размер смоделированной комнаты"
 
 #: src/Windows/EqualizerWindow.vala:284
 msgid "Damping"
-msgstr ""
+msgstr "Затухание"
 
 #: src/Windows/EqualizerWindow.vala:284
 msgid "How much the highs fade in the room: more is warmer"
-msgstr ""
+msgstr "Насколько гаснут высокие в комнате: больше — теплее"
 
-#: src/Windows/EqualizerWindow.vala:521
+#: src/Windows/EqualizerWindow.vala:522
 msgid "Custom Preset"
 msgstr "Настраиваемый профиль"
 
-#: src/Windows/EqualizerWindow.vala:526
+#: src/Windows/EqualizerWindow.vala:527
 msgid " Preset"
 msgstr " Профиль"
 
@@ -3950,116 +3902,112 @@ msgid "General"
 msgstr "Общие"
 
 #: src/Windows/SkinEditor.vala:22 src/Windows/SkinEditor.vala:98
-#, fuzzy, c-format
+#, c-format
 msgid "Edit Skin: %s"
-msgstr "Изменение «%s»"
+msgstr "Изменить тему: %s"
 
 #: src/Windows/SkinEditor.vala:46
 msgid "Revert"
-msgstr ""
+msgstr "Вернуть"
 
 #: src/Windows/SkinEditor.vala:47
 msgid "Back to the last saved version"
-msgstr ""
+msgstr "Вернуться к последней сохранённой версии"
 
 #: src/Windows/SkinEditor.vala:49 src/Windows/SkinEditor.vala:99
 #: src/Windows/SkinEditor.vala:120
 msgid "Save"
-msgstr ""
+msgstr "Сохранить"
 
 #: src/Windows/SkinEditor.vala:49
-#, fuzzy
 msgid "Save as Copy"
-msgstr "Сохранить как список воспроизведения"
+msgstr "Сохранить копию"
 
 #: src/Windows/SkinEditor.vala:50
 msgid "A bundled skin can't be changed: the copy goes to the skins folder"
-msgstr ""
+msgstr "Встроенную тему нельзя изменить: копия сохранится в папку тем"
 
 #: src/Windows/SkinEditor.vala:86
 msgid "Not saved"
-msgstr ""
+msgstr "Не сохранено"
 
 #: src/Windows/SkinEditor.vala:107
-#, fuzzy, c-format
+#, c-format
 msgid "Could not save: %s"
-msgstr "Невозможно найти %s %s"
+msgstr "Не удалось сохранить: %s"
 
 #: src/Windows/SkinEditor.vala:117
 msgid "Save the changes to the skin?"
-msgstr ""
+msgstr "Сохранить изменения темы?"
 
 #: src/Windows/SkinEditor.vala:118
 msgid "Close Without Saving"
-msgstr ""
+msgstr "Закрыть без сохранения"
 
 #: plugins/statistics/Statistics.vala:19
 msgid "Listening _Statistics"
-msgstr ""
+msgstr "_Статистика прослушивания"
 
 #: plugins/statistics/Statistics.vala:53
 msgid "Listening Statistics"
-msgstr ""
+msgstr "Статистика прослушивания"
 
 #: plugins/statistics/Statistics.vala:78
 msgid "Nothing has been played yet."
-msgstr ""
+msgstr "Ещё ничего не воспроизводилось."
 
 #: plugins/statistics/Statistics.vala:79
 #, c-format
 msgid "%u play of %u song"
 msgid_plural "%u plays of %u songs"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Воспроизведений: %u (треков: %u)"
+msgstr[1] "Воспроизведений: %u (треков: %u)"
+msgstr[2] "Воспроизведений: %u (треков: %u)"
 
 #: plugins/statistics/Statistics.vala:80
 #, c-format
 msgid "%s of listening"
-msgstr ""
+msgstr "%s прослушивания"
 
 #: plugins/statistics/Statistics.vala:84
-#, fuzzy
 msgid "Most Played Artists"
-msgstr "Название и исполнитель"
+msgstr "Чаще всего воспроизводимые исполнители"
 
 #: plugins/statistics/Statistics.vala:85
-#, fuzzy
 msgid "Most Played Albums"
-msgstr "Последнее воспроизведение"
+msgstr "Чаще всего воспроизводимые альбомы"
 
 #: plugins/statistics/Statistics.vala:86
-#, fuzzy
 msgid "Most Played Genres"
-msgstr "Последнее воспроизведение"
+msgstr "Чаще всего воспроизводимые жанры"
 
 #: plugins/statistics/Statistics.vala:110
-#, fuzzy, c-format
+#, c-format
 msgid "%u day"
 msgid_plural "%u days"
-msgstr[0] "%i день"
-msgstr[1] "%i дня"
-msgstr[2] "%i дней"
+msgstr[0] "%u день"
+msgstr[1] "%u день"
+msgstr[2] "%u день"
 
 #: plugins/statistics/Statistics.vala:112
-#, fuzzy, c-format
+#, c-format
 msgid "%u hour"
 msgid_plural "%u hours"
-msgstr[0] "%i час"
-msgstr[1] "%i часа"
-msgstr[2] "%i часов"
+msgstr[0] "%u час"
+msgstr[1] "%u час"
+msgstr[2] "%u час"
 
 #: plugins/statistics/Statistics.vala:113
-#, fuzzy, c-format
+#, c-format
 msgid "%u minute"
 msgid_plural "%u minutes"
-msgstr[0] "%i минута"
-msgstr[1] "%i минуты"
-msgstr[2] "%i минут"
+msgstr[0] "%u минута"
+msgstr[1] "%u минута"
+msgstr[2] "%u минута"
 
 #: plugins/statistics/Statistics.vala:132
 msgid "No plays yet"
-msgstr ""
+msgstr "Воспроизведений пока нет"
 
 #: src/Windows/RemoveDuplicatesDialog.vala:44
 #, c-format
@@ -4283,8 +4231,8 @@ msgstr "Название, исполнитель и альбом"
 #~ msgstr "Просмотр похожих файлов"
 
 #~ msgid ""
-#~ "In this view, BeatBox will automatically find medias similar to the one "
-#~ "you are playing."
+#~ "In this view, BeatBox will automatically find medias similar to the one you "
+#~ "are playing."
 #~ msgstr ""
 #~ "В этом режиме просмотра BeatBox автоматически найдёт файлы, похожие на "
 #~ "воспроизводимый сейчас."
@@ -4302,12 +4250,10 @@ msgstr "Название, исполнитель и альбом"
 #~ msgstr "BeatBox не удалось найти композиции, похожие на"
 
 #~ msgid ""
-#~ "Make sure all song info is correct and you are connected to the "
-#~ "Internet.\n"
+#~ "Make sure all song info is correct and you are connected to the Internet.\n"
 #~ "Some songs may not have matches."
 #~ msgstr ""
-#~ "Убедитесь, что вся информация о композиции верна и компьютер подключён к "
-#~ "Интернету.\n"
+#~ "Убедитесь, что вся информация о композиции верна и компьютер подключён к Интернету.\n"
 #~ "У некоторых композиций может не быть соответствий."
 
 #~ msgid "Add Playlist"
@@ -4346,8 +4292,8 @@ msgstr "Название, исполнитель и альбом"
 #~ "The provided source is invalid. Make sure you are entering an RSS feed in "
 #~ "XML format."
 #~ msgstr ""
-#~ "Предоставленный источник является недопустимым. Убедитесь, что вы входите "
-#~ "на RSS-канал в формате XML."
+#~ "Предоставленный источник является недопустимым. Убедитесь, что вы входите на"
+#~ " RSS-канал в формате XML."
 
 #, c-format
 #~ msgid "<b>Name of Playlist</b>"

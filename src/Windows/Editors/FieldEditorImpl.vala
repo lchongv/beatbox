@@ -132,7 +132,7 @@ public class BeatBox.FieldEditorImpl : Box, FieldEditor {
 		
 		edit_widget = text_view;
 		scroll.vexpand = scroll.hexpand = true;
-		this.add(scroll);
+		this.add(AquaScroll.wrap(scroll));
 	}
 	
 	public FieldEditorImpl.for_rating(string field_name, int original) {

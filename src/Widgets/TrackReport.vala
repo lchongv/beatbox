@@ -151,17 +151,16 @@ public class BeatBox.TrackReport : ScrolledWindow {
 		content.add (heading);
 	}
 
-	/** A heading and its label/value pairs, the labels dim and to the right */
+	/** A heading and its label/value pairs: each label dim, with its value below it at the full width of the
+	 *  panel, so a narrow panel still leaves the values room to wrap */
 	void add_section (string? title, string[] pairs) {
 		if (title != null)
 			add_heading (title);
-		var grid = new Grid ();
-		grid.column_spacing = 8;
-		grid.row_spacing = 2;
+		var box = new Box (Orientation.VERTICAL, 2);
 		for (int i = 0; i + 1 < pairs.length; i += 2) {
 			var key = new Label (pairs[i]);
-			key.xalign = 1;
-			key.yalign = 0;
+			key.xalign = 0;
+			key.margin_top = (i == 0) ? 0 : 6;
 			key.get_style_context ().add_class ("dim-label");
 			var val = new Label (pairs[i + 1]);
 			val.xalign = 0;
@@ -170,10 +169,10 @@ public class BeatBox.TrackReport : ScrolledWindow {
 			val.selectable = true;
 			val.can_focus = false;
 			val.hexpand = true;
-			grid.attach (key, 0, i / 2);
-			grid.attach (val, 1, i / 2);
+			box.add (key);
+			box.add (val);
 		}
-		content.add (grid);
+		content.add (box);
 	}
 
 	static string[] library_facts (Media m) {
