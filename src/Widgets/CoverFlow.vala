@@ -11,6 +11,7 @@ using Gtk;
 public class BeatBox.CoverFlow : DrawingArea {
 	const int STRIPS = 48;          // perspective quality of side covers
 	const double SIDE_SCALE = 0.36; // horizontal squash of side covers
+	const double SIDE_SIZE = 0.8;   // size of a side cover, relative to the centered one
 	const double FAR_SCALE = 0.78;  // height of a side cover's far edge
 	const double REFLECTION = 0.4;  // reflection height, relative to cover
 	const int CROP = 6;             // shadow margin baked into cached covers
@@ -129,17 +130,26 @@ public class BeatBox.CoverFlow : DrawingArea {
 		return Source.CONTINUE;
 	}
 
-	/** Cover + fading floor reflection, rendered once per album */
+	/** Cover + fading floor reflection, rendered once per album at the largest size shown.
+	 *  The original file is read when it is in the cache: the views' covers are 180 px thumbnails. */
 	Cairo.ImageSurface surface_for(Album album, int size) {
 		var cached = surfaces.get(album);
 		if (cached != null && cached.get_width() == size)
 			return cached;
 
 		var art = App.covers.get_album_art_from_key(album.get_album_artist(), album.get_album());
-		var pix = art ?? App.covers.DEFAULT_COVER_SHADOW;
-		if (pix.width > 2 * CROP && pix.height > 2 * CROP)
-			pix = new Gdk.Pixbuf.subpixbuf(pix, CROP, CROP, pix.width - 2 * CROP, pix.height - 2 * CROP);
-		pix = pix.scale_simple(size, size, Gdk.InterpType.BILINEAR);
+		Gdk.Pixbuf? pix = null;
+		try { // the key is CoverManager's get_media_coverart_key()
+			string key = (album.get_album_artist() + " - " + album.get_album()).replace("/", "_");
+			pix = new Gdk.Pixbuf.from_file_at_scale(App.covers.get_cached_album_art_path(key), size, size, false);
+		} catch (Error err) {}
+		bool pix_from_file = pix != null;
+		if (!pix_from_file) {
+			pix = art ?? App.covers.DEFAULT_COVER_SHADOW;
+			if (pix.width > 2 * CROP && pix.height > 2 * CROP)
+				pix = new Gdk.Pixbuf.subpixbuf(pix, CROP, CROP, pix.width - 2 * CROP, pix.height - 2 * CROP);
+			pix = pix.scale_simple(size, size, Gdk.InterpType.BILINEAR);
+		}
 
 		int reflection = (int)(size * REFLECTION);
 		var surface = new Cairo.ImageSurface(Cairo.Format.ARGB32, size, size + reflection);
@@ -160,7 +170,7 @@ public class BeatBox.CoverFlow : DrawingArea {
 		cr.mask(fade);
 		cr.restore();
 
-		if (art != null) // the real cover may still be loading: don't cache the placeholder
+		if (art != null || pix_from_file) // the real cover may still be loading: don't cache the placeholder
 			surfaces.set(album, surface);
 		return surface;
 	}
@@ -224,7 +234,7 @@ public class BeatBox.CoverFlow : DrawingArea {
 			return true;
 		double floor_y = height * 0.06 + size;
 		double center = width / 2.0;
-		double side_w = size * SIDE_SCALE;
+		double side_w = size * SIDE_SIZE * SIDE_SCALE;
 		double gap = size * 0.78;     // from the center cover to the first side cover
 		double spacing = side_w * 0.55;
 
@@ -243,11 +253,13 @@ public class BeatBox.CoverFlow : DrawingArea {
 			double offset = i - position;           // <0 left, >0 right
 			double d = offset.abs();
 			double k = double.min(d, 1);             // 0 = facing, 1 = fully turned
-			double w = size + (side_w - size) * k;
+			// the centered cover is the biggest: the side ones shrink as they turn away
+			double s = size * (1 - (1 - SIDE_SIZE) * k);
+			double w = s * (1 - (1 - SIDE_SCALE) * k);
 			// Side covers face the center: their outer edge is closer to the
 			// viewer (taller) and their inner edge farther away (shorter)
-			double outer_h = size * (1 - 0.04 * k);
-			double inner_h = size * (1 - (1 - FAR_SCALE) * k);
+			double outer_h = s * (1 - 0.04 * k);
+			double inner_h = s * (1 - (1 - FAR_SCALE) * k);
 
 			double cx = center + Math.copysign(gap * k + spacing * double.max(d - 1, 0), offset);
 			double x0 = cx - w / 2, x1 = cx + w / 2;
@@ -277,7 +289,7 @@ public class BeatBox.CoverFlow : DrawingArea {
 
 	/** Cover edge in pixels: as big as the stage allows */
 	int cover_size(int width, int height) {
-		return int.min((int)(height * 0.64), (int)(width * 0.34));
+		return int.min((int)(height * 0.64), (int)(width * 0.46)); // the side covers run off the edges
 	}
 	
 	/** Which album is under x (center cover first, then the side ones) */
@@ -288,7 +300,7 @@ public class BeatBox.CoverFlow : DrawingArea {
 		double center = width / 2.0;
 		if ((x - center).abs() <= size / 2.0)
 			return target;
-		double side_w = size * SIDE_SCALE;
+		double side_w = size * SIDE_SIZE * SIDE_SCALE;
 		double gap = size * 0.78, spacing = side_w * 0.55;
 		double dist = (x - center).abs() - gap + side_w / 2;
 		int steps = 1 + (int)Math.floor(double.max(dist, 0) / spacing);

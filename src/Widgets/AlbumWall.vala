@@ -46,7 +46,6 @@ public class BeatBox.AlbumWall : Layout {
 	// GTK3 controllers need a reference
 	GestureMultiPress click_gesture;
 	EventControllerMotion motion_controller;
-	EventControllerScroll wheel;
 
 	public AlbumWall (GenericGrid grid, SourceView wrapper) {
 		this.grid = grid;
@@ -57,8 +56,6 @@ public class BeatBox.AlbumWall : Layout {
 		click_gesture.pressed.connect (on_pressed);
 		motion_controller = new EventControllerMotion (this);
 		motion_controller.motion.connect (on_motion);
-		wheel = new EventControllerScroll (this, EventControllerScrollFlags.VERTICAL);
-		wheel.scroll.connect (on_wheel);
 
 		grid.visible_changed.connect (refresh);
 		App.covers.cover_changed.connect (() => queue_draw ());
@@ -309,15 +306,16 @@ public class BeatBox.AlbumWall : Layout {
 	}
 
 	/** A wall with nothing to scroll hands the wheel to the open band's track list.
-	 *  (Nothing to stop: the wall's own scrolled window can't move either.) */
-	void on_wheel (double dx, double dy) {
-		var adj = vadjustment;
-		if (detail_list == null || adj.upper > adj.page_size)
-			return;
-		var list = detail_list.vadjustment;
-		double max = list.upper - list.page_size;
-		if (max > list.lower)
-			list.value = (list.value + dy * Math.pow (list.page_size, 2.0 / 3.0)).clamp (list.lower, max); // the step GtkRange takes
+	 *  Not an EventControllerScroll: that one takes every wheel event, so the scrolled window
+	 *  above never got it. Returning false lets the event go on to that window. */
+	public override bool scroll_event (Gdk.EventScroll e) {
+		var list = detail_list?.vadjustment;
+		double dy = (e.direction == Gdk.ScrollDirection.SMOOTH) ? e.delta_y
+		          : (e.direction == Gdk.ScrollDirection.UP) ? -1 : (e.direction == Gdk.ScrollDirection.DOWN) ? 1 : 0;
+		if (dy == 0 || list == null || vadjustment.upper > vadjustment.page_size || list.upper - list.page_size <= list.lower)
+			return base.scroll_event (e);
+		list.value = (list.value + dy * Math.pow (list.page_size, 2.0 / 3.0)).clamp (list.lower, list.upper - list.page_size); // the step GtkRange takes
+		return true;
 	}
 
 	void on_motion (double widget_x, double widget_y) {
