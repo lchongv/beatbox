@@ -305,17 +305,43 @@ public class BeatBox.AlbumWall : Layout {
 		click_gesture.set_state (EventSequenceState.CLAIMED);
 	}
 
+	/** Vertical step of a wheel event: a click (±1) or the delta of a smooth wheel; 0 for the rest */
+	static double wheel_dy (Gdk.EventScroll e) {
+		return (e.direction == Gdk.ScrollDirection.SMOOTH) ? e.delta_y
+		     : (e.direction == Gdk.ScrollDirection.UP) ? -1 : (e.direction == Gdk.ScrollDirection.DOWN) ? 1 : 0;
+	}
+
+	/** Moves adj by a wheel step (the one GtkRange takes); false when it can't move that way */
+	static bool wheel_scroll (Adjustment adj, double dy) {
+		double max = adj.upper - adj.page_size;
+		if (max <= adj.lower)
+			return false;
+		double to = (adj.value + dy * Math.pow (adj.page_size, 2.0 / 3.0)).clamp (adj.lower, max);
+		if (to == adj.value)
+			return false;
+		adj.value = to;
+		return true;
+	}
+
+	/** The band's track list takes the wheel while it can scroll, then the wall does. Done here, not by
+	 *  the list's ScrolledWindow: it takes the wheel even when it has nothing to scroll (Aqua or not). */
+	bool on_list_wheel (Gdk.EventScroll e) {
+		double dy = wheel_dy (e);
+		if (dy == 0)
+			return false;
+		if (!wheel_scroll (detail_list.vadjustment, dy))
+			wheel_scroll (vadjustment, dy);
+		return true;
+	}
+
 	/** A wall with nothing to scroll hands the wheel to the open band's track list.
 	 *  Not an EventControllerScroll: that one takes every wheel event, so the scrolled window
 	 *  above never got it. Returning false lets the event go on to that window. */
 	public override bool scroll_event (Gdk.EventScroll e) {
-		var list = detail_list?.vadjustment;
-		double dy = (e.direction == Gdk.ScrollDirection.SMOOTH) ? e.delta_y
-		          : (e.direction == Gdk.ScrollDirection.UP) ? -1 : (e.direction == Gdk.ScrollDirection.DOWN) ? 1 : 0;
-		if (dy == 0 || list == null || vadjustment.upper > vadjustment.page_size || list.upper - list.page_size <= list.lower)
+		double dy = wheel_dy (e);
+		if (dy == 0 || detail_list == null || vadjustment.upper > vadjustment.page_size)
 			return base.scroll_event (e);
-		list.value = (list.value + dy * Math.pow (list.page_size, 2.0 / 3.0)).clamp (list.lower, list.upper - list.page_size); // the step GtkRange takes
-		return true;
+		return wheel_scroll (detail_list.vadjustment, dy);
 	}
 
 	void on_motion (double widget_x, double widget_y) {
@@ -466,6 +492,7 @@ public class BeatBox.AlbumWall : Layout {
 		list_scroll.valign = Align.FILL; // as tall as the band: the cover column may be taller than 440
 		list_scroll.add (list);
 		detail_list = list_scroll;
+		list_scroll.scroll_event.connect (on_list_wheel);
 
 		var band = new Box (Orientation.HORIZONTAL, 18);
 		band.get_style_context ().add_class ("album-detail");
