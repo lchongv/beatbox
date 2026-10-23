@@ -61,15 +61,7 @@ public class BeatBox.Pipeline : GLib.Object {
 	// the effects after the equalizer (build_effects); null when the plugin is missing
 	dynamic Element? echo_el = null;
 	dynamic Element? karaoke_el = null;
-	dynamic Element? bass_el = null;
-	dynamic Element? exciter_el = null;
-	dynamic Element? stereo_el = null;
-	dynamic Element? saturator_el = null;
-	dynamic Element? limiter_el = null;
 	dynamic Element? compressor_el = null;
-	dynamic Element? chorus_el = null;
-	dynamic Element? flanger_el = null;
-	dynamic Element? phaser_el = null;
 	dynamic Element? reverb_el = null;
 	dynamic Element? selector = null;   // crossfeed on or off: which of the two paths is heard
 	Pad? direct_pad = null;
@@ -198,28 +190,19 @@ public class BeatBox.Pipeline : GLib.Object {
 	}*/
 	
 	/* The effects between the equalizer and the sink, in the order they are heard. Each one is
-	 * neutral at 0 (echo intensity 0, karaoke level 0, Calf amounts 0, limit 1, reverb level 0,
-	 * compressor ratio 1), so an idle effect costs nothing. A plugin that is not installed (the
-	 * Calf ones are LV2) is skipped. Crossfeed has no neutral setting: both paths exist and a
-	 * selector picks one. */
+	 * neutral at 0 (echo intensity 0, karaoke level 0, reverb level 0, compressor ratio 1), so an
+	 * idle effect costs nothing. A plugin that is not installed is skipped. No LV2 plugins here:
+	 * one that is active aborts (gst_lv2_filter_setup) when it gets new caps during playback.
+	 * Crossfeed has no neutral setting: both paths exist and a selector picks one. */
 	void build_effects() {
 		var chain = new Gee.ArrayList<Gst.Element> ();
 		echo_el = ElementFactory.make("audioecho", "echo");
 		karaoke_el = ElementFactory.make("audiokaraoke", "vocal-reduction");
-		bass_el = ElementFactory.make("calf-sourceforge-net-plugins-BassEnhancer", "bass-enhancer");
-		exciter_el = ElementFactory.make("calf-sourceforge-net-plugins-Exciter", "exciter");
-		stereo_el = ElementFactory.make("calf-sourceforge-net-plugins-StereoTools", "stereo-width");
-		saturator_el = ElementFactory.make("calf-sourceforge-net-plugins-Saturator", "saturation");
-		limiter_el = ElementFactory.make("calf-sourceforge-net-plugins-Limiter", "limiter");
 		compressor_el = ElementFactory.make("audiodynamic", "compressor");
-		chorus_el = ElementFactory.make("calf-sourceforge-net-plugins-MultiChorus", "chorus");
-		flanger_el = ElementFactory.make("calf-sourceforge-net-plugins-Flanger", "flanger");
-		phaser_el = ElementFactory.make("calf-sourceforge-net-plugins-Phaser", "phaser");
 		reverb_el = ElementFactory.make("freeverb", "reverb");
-		foreach (var e in new Gst.Element[] { echo_el, karaoke_el, bass_el, exciter_el, stereo_el, saturator_el, limiter_el, compressor_el, chorus_el, flanger_el, phaser_el, reverb_el }) {
+		foreach (var e in new Gst.Element[] { echo_el, karaoke_el, compressor_el, reverb_el }) {
 			if (e == null)
 				continue;
-			// a convert in front of each: the LV2 plugins take float stereo, the rest whatever comes
 			chain.add(ElementFactory.make("audioconvert", null));
 			chain.add(e);
 		}
@@ -258,13 +241,6 @@ public class BeatBox.Pipeline : GLib.Object {
 		(effects_out ?? eq_audioconvert2).link(audiosink);
 	}
 
-	/** A Calf effect that mixes wet and dry: 0 is the sound as it is, 1 all of the effect */
-	static void set_calf_mix(dynamic Element e, int value) {
-		double wet = value / 100.0;
-		e.amount = wet;
-		e.dry = 1.0 - wet;
-	}
-
 	/** Sets the effects from Settings (also the ones of a song that starts playing now) */
 	public void apply_effects() {
 		var s = App.settings.equalizer;
@@ -275,27 +251,11 @@ public class BeatBox.Pipeline : GLib.Object {
 		}
 		if (karaoke_el != null)
 			karaoke_el.level = s.vocal_reduction / 100.0;
-		if (bass_el != null)
-			bass_el.amount = 12.0 * s.bass / 100.0;     // Calf's range is 0..64; 1 is its default
-		if (exciter_el != null)
-			exciter_el.amount = 12.0 * s.exciter / 100.0;
-		if (stereo_el != null)
-			stereo_el.stereo_base = s.stereo_width / 100.0;
-		if (saturator_el != null)
-			saturator_el.mix = s.saturation / 100.0;
-		if (limiter_el != null)
-			limiter_el.limit = 1.0 - 0.9 * s.limiter / 100.0; // linear: 1 is no limiting
 		if (compressor_el != null) {
 			double amount = s.compressor / 100.0;
 			compressor_el.threshold = 1.0 - 0.6 * amount; // linear: 1.0 is no compression
 			compressor_el.ratio = 1.0 - 0.5 * amount;     // below 1: the part over the threshold is held down
 		}
-		if (chorus_el != null)
-			set_calf_mix (chorus_el, s.chorus);
-		if (flanger_el != null)
-			set_calf_mix (flanger_el, s.flanger);
-		if (phaser_el != null)
-			set_calf_mix (phaser_el, s.phaser);
 		if (reverb_el != null) {
 			double room = s.reverb / 100.0;
 			reverb_el.level = 0.4 * room;

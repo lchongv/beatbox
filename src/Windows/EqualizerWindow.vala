@@ -258,15 +258,7 @@ public class BeatBox.EqualizerWindow : Gtk.Window {
 		add_effect (grid, ref n, _("Preamp"), -12, 0, eq.preamp_db, _("Lowers the level before the effects and the equalizer, so boosts don't distort"), "%+d dB", (v) => { eq.preamp_db = v; });
 		add_effect (grid, ref n, _("Echo"), 0, 100, eq.echo, _("Repeats of the sound, fading"), "%d%%", (v) => { eq.echo = v; });
 		add_effect (grid, ref n, _("Vocal reduction"), 0, 100, eq.vocal_reduction, _("Takes out what is in the middle of the stereo image, usually the voice; it also thins the sound"), "%d%%", (v) => { eq.vocal_reduction = v; });
-		add_effect (grid, ref n, _("Bass enhancer"), 0, 100, eq.bass, _("Adds harmonics, so the bass is heard on small speakers and headphones"), "%d%%", (v) => { eq.bass = v; });
-		add_effect (grid, ref n, _("Exciter"), 0, 100, eq.exciter, _("Adds brightness to the high frequencies"), "%d%%", (v) => { eq.exciter = v; });
-		add_effect (grid, ref n, _("Stereo width"), 0, 100, eq.stereo_width, _("Spreads the stereo image"), "%d%%", (v) => { eq.stereo_width = v; });
-		add_effect (grid, ref n, _("Saturation"), 0, 100, eq.saturation, _("Warmth, with a little distortion"), "%d%%", (v) => { eq.saturation = v; });
-		add_effect (grid, ref n, _("Limiter"), 0, 100, eq.limiter, _("A ceiling for the peaks, so loud parts don't clip"), "%d%%", (v) => { eq.limiter = v; });
 		add_effect (grid, ref n, _("Compressor"), 0, 100, eq.compressor, _("Holds down the loudest parts, for an even level"), "%d%%", (v) => { eq.compressor = v; });
-		add_effect (grid, ref n, _("Chorus"), 0, 100, eq.chorus, _("Copies of the sound, slightly out of tune, so it sounds thicker"), "%d%%", (v) => { eq.chorus = v; });
-		add_effect (grid, ref n, _("Flanger"), 0, 100, eq.flanger, _("A short delay that sweeps up and down, like a jet passing"), "%d%%", (v) => { eq.flanger = v; });
-		add_effect (grid, ref n, _("Phaser"), 0, 100, eq.phaser, _("Sweeping notches in the sound, like a slow wah"), "%d%%", (v) => { eq.phaser = v; });
 		add_effect (grid, ref n, _("Reverb"), 0, 100, eq.reverb, _("Adds the sound of a room"), "%d%%", (v) => { eq.reverb = v; });
 
 		var crossfeed = new CheckButton.with_label (_("Crossfeed"));

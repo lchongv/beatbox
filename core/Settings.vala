@@ -380,14 +380,6 @@ public class BeatBox.Settings {
         public bool crossfeed { get; set; } // headphones: each ear hears a little of the other channel
         public int echo { get; set; }             // 0..100: repeats of the sound
         public int vocal_reduction { get; set; }  // 0..100: takes out what is in the middle (usually the voice)
-        public int bass { get; set; }             // 0..100: harmonics that make the bass heard on small speakers
-        public int exciter { get; set; }          // 0..100: adds brightness to the high frequencies
-        public int stereo_width { get; set; }     // 0..100: spreads the stereo image
-        public int saturation { get; set; }       // 0..100: warmth, a little distortion
-        public int limiter { get; set; }          // 0..100: a ceiling for the peaks
-        public int chorus { get; set; }           // 0..100: copies of the sound, slightly detuned
-        public int flanger { get; set; }          // 0..100: a short sweeping delay, a jet-plane whoosh
-        public int phaser { get; set; }           // 0..100: a sweeping notch filter
         public int echo_delay { get; set; }       // 50..1000 ms: time between repeats
         public int echo_feedback { get; set; }    // 0..100: how many repeats are heard, fading
         public int reverb_room { get; set; }      // 0..100: size of the simulated room
@@ -396,18 +388,17 @@ public class BeatBox.Settings {
         /** The neutral value of every effect: a preset is written over these */
         const string[] EFFECT_DEFAULTS = {
             "preamp_db=0", "compressor=0", "reverb=0", "crossfeed=0", "echo=0", "vocal_reduction=0",
-            "bass=0", "exciter=0", "stereo_width=0", "saturation=0", "limiter=0", "chorus=0", "flanger=0",
-            "phaser=0", "echo_delay=350", "echo_feedback=40", "reverb_room=50", "reverb_damping=20"
+            "echo_delay=350", "echo_feedback=40", "reverb_room=50", "reverb_damping=20"
         };
 
         /** Effect presets: the name, then the effects that differ from EFFECT_DEFAULTS. The names are the
          *  keys; the window shows them translated */
         const string[] EFFECT_PRESETS = {
             "Concert hall|reverb=45,reverb_room=80,reverb_damping=35,echo=8,echo_delay=180,echo_feedback=25",
-            "Headphones|crossfeed=1,bass=25,stereo_width=20",
-            "Podcast|compressor=60,limiter=50,preamp_db=-3",
-            "Warm|saturation=35,bass=20,compressor=15,reverb=10",
-            "Space|flanger=35,phaser=20,echo=25,echo_delay=500,echo_feedback=55,reverb=30,reverb_room=90",
+            "Headphones|crossfeed=1",
+            "Podcast|compressor=60,preamp_db=-3",
+            "Warm|compressor=15,reverb=10",
+            "Space|echo=25,echo_delay=500,echo_feedback=55,reverb=30,reverb_room=90",
             "Vocal cut|vocal_reduction=70"
         };
 
@@ -441,9 +432,6 @@ public class BeatBox.Settings {
 
         public Equalizer () {
             replaygain = 1;
-            chorus = 0;
-            flanger = 0;
-            phaser = 0;
             echo_delay = 350;
             echo_feedback = 40;
             reverb_room = 50;
@@ -454,11 +442,6 @@ public class BeatBox.Settings {
             crossfeed = false;
             echo = 0;
             vocal_reduction = 0;
-            bass = 0;
-            exciter = 0;
-            stereo_width = 0;
-            saturation = 0;
-            limiter = 0;
             auto_switch_preset = true;
             selected_preset = "";
             custom_presets = {};
