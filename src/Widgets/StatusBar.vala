@@ -60,6 +60,7 @@ public class BeatBox.StatusBar : Gtk.ActionBar {
     public StatusBar () {
 		set_center_widget (status_label);
 		repeat_chooser = new SimpleOptionChooser();
+		repeat_chooser.first_step = 1; // the left click cycle: Off, Song, then the last album/artist/all
 		shuffle_chooser = new SimpleOptionChooser();
 		show_eq_button = App.icons.EQ.render_image (Gtk.IconSize.MENU);
 		

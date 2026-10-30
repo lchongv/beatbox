@@ -38,6 +38,7 @@ public class BeatBox.SimpleOptionChooser : EventBox {
 
 	int clicked_index;
 	int previous_index; // for left click
+	public int first_step = -1; // left click from off goes here before previous_index (repeat: Song)
 
 	public signal void option_changed(int index);
 
@@ -98,6 +99,9 @@ public class BeatBox.SimpleOptionChooser : EventBox {
 		uint button = press_gesture.get_current_button();
 		if(button == 1) {
 			if(clicked_index == 0) {
+				setOption(first_step >= 0 ? first_step : previous_index);
+			}
+			else if(clicked_index == first_step) {
 				setOption(previous_index);
 			}
 			else {
