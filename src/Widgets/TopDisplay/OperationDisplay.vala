@@ -45,6 +45,7 @@ public class BeatBox.OperationDisplay : BeatBox.Display, Box {
 		
 		this.set_orientation(Orientation.HORIZONTAL);
 		left_box.hexpand = true;
+		left_box.valign = Align.CENTER; // the text and the bar sit in the middle of the LCD
 		add(left_box);
 		
 		App.operations.operation_started.connect(operation_started);
@@ -63,10 +64,14 @@ public class BeatBox.OperationDisplay : BeatBox.Display, Box {
 	
 	void operation_started() {
 		_is_enabled = true;
+		// no progress known yet: a barber pole (see theme.css) until the first update
+		operation_bar.get_style_context().add_class("live");
 		enabled();
 	}
 	
 	void operation_progress_updated(double progress) {
+		if(progress > 0)
+			operation_bar.get_style_context().remove_class("live");
 		operation_bar.set_fraction(progress);
 	}
 	
