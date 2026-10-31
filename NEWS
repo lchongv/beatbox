@@ -4,6 +4,23 @@ BeatBox — what changed, newest first
 Packages for each version: https://github.com/lchongv/beatbox/releases
 
 
+1.1 (31 October 2026)
+---------------------
+
+- The album band (the track list that unfolds under a cover) no longer grows
+  and shrinks over and over when the grid needs a scrollbar.
+- The album band's track list hands the wheel to the grid when it can't
+  scroll itself.
+- The album grid scrolls with the wheel again; Cover Flow shows the centred
+  cover bigger and sharper.
+- The repeat button's left click goes Off, Song, then the last album, artist
+  or all.
+- The LCD shows a job with no known progress (such as searching for new
+  podcast episodes) centred, with a thicker sky-blue barber pole.
+- The Calf LV2 effects are gone: their filter aborted on format changes in
+  playback.
+
+
 1.0.0 (18 October 2026)
 -----------------------
 
