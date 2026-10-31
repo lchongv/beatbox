@@ -130,15 +130,23 @@ toolbar.app-header .lcd button:not(.traffic-light):active {
   margin: -5px -4px;
   box-shadow: none;
 }
-/* a radio station: no position, a barber pole running left with the marker in its middle;
-   a job with no known progress yet (the LCD's progress bar) runs the same pole */
-.lcd scale.live trough, .lcd progressbar.live trough {
+/* a radio station: no position, a barber pole running left with the marker in its middle */
+.lcd scale.live trough {
   background-image: repeating-linear-gradient(-45deg, alpha(@bb_lcd_text, .45) 0px, alpha(@bb_lcd_text, .45) 3.5355px,
                                               alpha(@bb_lcd_text, .12) 3.5355px, alpha(@bb_lcd_text, .12) 7.0711px);
   background-size: 10px 10px; /* two stripes on the diagonal: the tiles meet seamlessly */
   animation: lcd-barber-pole 0.5s linear infinite;
 }
-.lcd scale.live highlight, .lcd progressbar.live progress { background-color: transparent; }
+.lcd scale.live highlight { background-color: transparent; }
+/* a job with no known progress yet: a thicker sky-blue barber pole, running the same way */
+.lcd progressbar.live trough {
+  min-height: 12px;
+  background-image: repeating-linear-gradient(-45deg, #4fb3e8 0px, #4fb3e8 3.5355px,
+                                              #bfe6f8 3.5355px, #bfe6f8 7.0711px);
+  background-size: 10px 10px; /* two stripes on the diagonal: the tiles meet seamlessly */
+  animation: lcd-barber-pole 0.5s linear infinite;
+}
+.lcd progressbar.live progress { background-color: transparent; }
 @keyframes lcd-barber-pole { from { background-position: 0 0; } to { background-position: -10px 0; } }
 
 /* ===== View toggle (segmented) and generic header buttons ===== */

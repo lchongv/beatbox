@@ -39,7 +39,7 @@ public class BeatBox.OperationDisplay : BeatBox.Display, Box {
 		operation_bar = new ProgressBar();
 		
 		
-		var left_box = new Box(Orientation.VERTICAL, 0);
+		var left_box = new Box(Orientation.VERTICAL, 6);
 		left_box.add(operation_status);
 		left_box.add(operation_bar);
 		
