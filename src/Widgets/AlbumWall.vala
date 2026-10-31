@@ -19,6 +19,7 @@ public class BeatBox.AlbumWall : Layout {
 	const int ARROW_H = 14;
 	const int DETAIL_TEXT_W = 220;  // width of the band's left column without a cover
 	const int ANIMATION_MS = 250;   // the band unfolding and the scroll to it
+	const int SIDE_SLACK = 12;      // the cover keeps its side for smaller moves (see set_detail_side)
 
 	GenericGrid grid;
 	SourceView wrapper;
@@ -36,6 +37,7 @@ public class BeatBox.AlbumWall : Layout {
 	Image? detail_cover = null;
 	Box? detail_left = null;
 	int detail_side = -1;    // current side of detail_cover, from the settings' percentage
+	int detail_percent = -1; // the percentage detail_side was made with
 	int detail_h = 0;        // height of the band (arrow included)
 	bool scroll_to_detail = false;
 	uint scroll_tick = 0;
@@ -402,11 +404,17 @@ public class BeatBox.AlbumWall : Layout {
 	}
 
 	/** Cover side = band width × Preferences percentage (0 hides it). No-op when unchanged,
-	 * so calling it from size_allocate doesn't loop. */
+	 * so calling it from size_allocate doesn't loop. A move under SIDE_SLACK keeps the old side:
+	 * the wall's scrollbar comes and goes with the band's height and takes its width, and a side
+	 * that followed every pixel would make the band taller and shorter in turn. */
 	void set_detail_side (int width) {
-		int side = width * App.settings.main.album_detail_cover_percent / 100;
+		int percent = App.settings.main.album_detail_cover_percent;
+		int side = width * percent / 100;
+		if (percent == detail_percent && detail_side >= 0 && (side - detail_side).abs() < SIDE_SLACK)
+			return;
 		if (side == detail_side || detail_cover == null)
 			return;
+		detail_percent = percent;
 		detail_side = side;
 		if (side < 16) {
 			detail_cover.hide ();
