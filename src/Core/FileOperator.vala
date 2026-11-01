@@ -30,6 +30,8 @@ using Gee;
 #if HAVE_EMBED_COVER
 [CCode (cname = "beatbox_write_tags")]
 extern bool beatbox_write_tags (string path, string[] keys, string[] values);
+[CCode (cname = "beatbox_read_playcount")]
+extern uint beatbox_read_playcount (string path);
 #endif
 
 public class BeatBox.FileOperator : Object, FileInterface {

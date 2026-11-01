@@ -391,6 +391,12 @@ compilation=:compilation, skip_shuffle=:skip_shuffle, volume_adjust=:volume_adju
 				s.sort_album = sort;
 			if(tags.get_string(Gst.Tags.COMPOSER_SORTNAME, out sort))
 				s.sort_composer = sort;
+#if HAVE_EMBED_COVER
+			// the play count another player wrote (FMPS_PLAYCOUNT); GStreamer shows it only for some formats
+			string? local = File.new_for_uri(info.get_uri()).get_path();
+			if(local != null)
+				s.play_count = beatbox_read_playcount(local);
+#endif
 			if(info.get_audio_streams().length() > 0)
 				s.samplerate = ((Gst.PbUtils.DiscovererAudioInfo) info.get_audio_streams().nth_data(0)).get_sample_rate();
 			

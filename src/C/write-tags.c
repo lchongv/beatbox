@@ -33,3 +33,22 @@ beatbox_write_tags (const char *path, char **keys, int n_keys, char **values, in
 	taglib_file_free (file);
 	return ok;
 }
+
+/* The FMPS_PLAYCOUNT property another player wrote, 0 when there is none. */
+unsigned int
+beatbox_read_playcount (const char *path)
+{
+	TagLib_File *file = taglib_file_new (path);
+	if (file == NULL)
+		return 0;
+
+	unsigned int count = 0;
+	if (taglib_file_is_valid (file)) {
+		char **values = taglib_property_get (file, "FMPS_PLAYCOUNT");
+		if (values != NULL && values[0] != NULL)
+			count = (unsigned int) g_ascii_strtod (values[0], NULL);
+		taglib_property_free (values);
+	}
+	taglib_file_free (file);
+	return count;
+}
