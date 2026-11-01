@@ -733,7 +733,7 @@ public class BeatBox.PlaybackManager : GLib.Object, BeatBox.PlaybackInterface {
 			play_counted = true;
 			current_media.play_count++;
 			current_media.last_played = (int)time_t();
-			App.library.update_media(current_media, false, false, true);
+			App.library.update_media(current_media, true, false, true); // true: the count goes into the file too
 		}
 
 		// at about 3 seconds, update last fm. we wait to avoid excessive querying last.fm for info

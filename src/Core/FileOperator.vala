@@ -245,15 +245,16 @@ public class BeatBox.FileOperator : Object, FileInterface {
 		return n == 0 ? "" : (total == 0 ? n.to_string() : "%u/%u".printf(n, total));
 	}
 	
-	/** Every field the editor shows, under TagLib's property names */
+	/** Every field the editor shows, under TagLib's property names, and the play count as FMPS_PLAYCOUNT (what Amarok, Clementine, Strawberry and Quod Libet read) */
 	static bool write_all_tags(string path, Media s) {
 		string[] keys = { "TITLE", "ARTIST", "ALBUM", "ALBUMARTIST", "COMPOSER", "GROUPING", "GENRE", "COMMENT", "DATE",
 		                  "TRACKNUMBER", "DISCNUMBER", "BPM", "LYRICS", "COMPILATION",
-		                  "TITLESORT", "ARTISTSORT", "ALBUMARTISTSORT", "ALBUMSORT", "COMPOSERSORT" };
+		                  "TITLESORT", "ARTISTSORT", "ALBUMARTISTSORT", "ALBUMSORT", "COMPOSERSORT", "FMPS_PLAYCOUNT" };
 		string[] values = { s.title, s.artist, s.album, s.album_artist, s.composer, s.grouping, s.genre, s.comment,
 		                    s.year == 0 ? "" : s.year.to_string(), number_of(s.track, s.track_count),
 		                    number_of(s.album_number, s.album_count), s.bpm == 0 ? "" : s.bpm.to_string(), s.lyrics,
-		                    s.compilation ? "1" : "", s.sort_title, s.sort_artist, s.sort_album_artist, s.sort_album, s.sort_composer };
+		                    s.compilation ? "1" : "", s.sort_title, s.sort_artist, s.sort_album_artist, s.sort_album, s.sort_composer,
+		                    s.play_count == 0 ? "" : s.play_count.to_string() };
 		return beatbox_write_tags(path, keys, values);
 	}
 #endif
