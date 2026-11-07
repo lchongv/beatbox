@@ -13,7 +13,7 @@ public class BeatBox.CoverFlow : DrawingArea {
 	const double SIDE_SCALE = 0.36; // horizontal squash of side covers
 	const double SIDE_SIZE = 0.8;   // size of a side cover, relative to the centered one
 	const double FAR_SCALE = 0.78;  // height of a side cover's far edge
-	const double REFLECTION = 0.4;  // reflection height, relative to cover
+	const double REFLECTION = 0.3;  // reflection height, relative to cover
 	const int CROP = 6;             // shadow margin baked into cached covers
 
 	GenericGrid grid;
@@ -23,6 +23,7 @@ public class BeatBox.CoverFlow : DrawingArea {
 	double position = 0;  // animated, fractional index of the centered cover
 	int target = 0;       // index we're animating to
 	uint tick_id = 0;
+	Gtk.Window? fs_window = null; // set on the CoverFlow that lives in the fullscreen window
 	int64 last_frame = 0;
 
 	/** The centered album changed (after the user navigated) */
@@ -46,9 +47,14 @@ public class BeatBox.CoverFlow : DrawingArea {
 		click_gesture.button = 0; // any button takes the focus
 		click_gesture.pressed.connect(on_pressed);
 
-		grid.visible_changed.connect(refresh);
-		App.covers.cover_changed.connect(() => { surfaces.remove_all(); queue_draw(); });
-		App.playback.media_played.connect((m, old) => center_on(m));
+		var h1 = grid.visible_changed.connect(refresh);
+		var h2 = App.covers.cover_changed.connect(() => { surfaces.remove_all(); queue_draw(); });
+		var h3 = App.playback.media_played.connect((m, old) => center_on(m));
+		destroy.connect(() => { // the fullscreen copy must not outlive its window
+			SignalHandler.disconnect(grid, h1);
+			SignalHandler.disconnect(App.covers, h2);
+			SignalHandler.disconnect(App.playback, h3);
+		});
 		refresh();
 	}
 
@@ -93,6 +99,39 @@ public class BeatBox.CoverFlow : DrawingArea {
 		}
 	}
 	
+	/** Jump (without animation) to an album, e.g. when opening the fullscreen copy */
+	void jump_to(Album? album) {
+		for (int i = 0; album != null && i < albums.length; i++)
+			if (albums[i].get_album() == album.get_album() && albums[i].get_album_artist() == album.get_album_artist())
+				target = i;
+		position = target;
+		queue_draw();
+	}
+
+	/** Fullscreen: a second Cover Flow of the same grid in its own window (Esc / F / F11 to leave) */
+	public void toggle_fullscreen() {
+		if (fs_window != null) {
+			fs_window.destroy();
+			return;
+		}
+		var flow = new CoverFlow(grid);
+		flow.jump_to(get_selected());
+		flow.album_selected.connect((a) => {
+			for (int i = 0; i < albums.length; i++)
+				if (albums[i].get_album() == a.get_album() && albums[i].get_album_artist() == a.get_album_artist())
+					go_to(i); // the track list behind follows
+		});
+		flow.album_activated.connect((a) => album_activated(a));
+		var win = new Gtk.Window();
+		win.get_style_context().add_class("coverflow");
+		win.add(flow);
+		flow.fs_window = win;
+		win.destroy.connect(() => { fs_window = null; });
+		win.show_all();
+		win.fullscreen();
+		flow.grab_focus();
+	}
+
 	void go_to(int index) {
 		if (albums.length > 0 && index.clamp(0, albums.length - 1) != target) {
 			move_to(index);
@@ -119,8 +158,8 @@ public class BeatBox.CoverFlow : DrawingArea {
 		last_frame = now;
 
 		// exponential easing towards the target
-		position += (target - position) * (1 - Math.exp(-dt * 10));
-		if ((target - position).abs() < 0.002) {
+		position += (target - position) * (1 - Math.exp(-dt * 16));
+		if ((target - position).abs() < 0.01) {
 			position = target;
 			queue_draw();
 			tick_id = 0;
@@ -197,19 +236,27 @@ public class BeatBox.CoverFlow : DrawingArea {
 			return;
 		}
 
-		double strip_w = (x1 - x0) / STRIPS;
-		double src_w = (double)size / STRIPS;
-		for (int i = 0; i < STRIPS; i++) {
-			double t = (i + 0.5) / STRIPS;
-			double h = h0 + (h1 - h0) * t;
-			double s = h / size;
+		// one strip per ~3 px is enough; a fill (no clip) per strip is much cheaper than clip + paint
+		int n = ((int)((x1 - x0) / 3)).clamp(6, STRIPS);
+		double strip_w = (x1 - x0) / n;
+		double src_w = (double)size / n;
+		for (int i = 0; i < n; i++) {
+			double h = h0 + (h1 - h0) * (i + 0.5) / n;
 			cr.save();
-			cr.rectangle(x0 + i * strip_w, floor_y - h, strip_w + 0.6, total_h * s);
-			cr.clip();
 			cr.translate(x0 + i * strip_w, floor_y - h);
-			cr.scale(strip_w / src_w, s);
+			cr.scale(strip_w / src_w, h / size);
 			cr.set_source_surface(surface, -i * src_w, 0);
-			cr.paint_with_alpha(alpha);
+			if (tick_id != 0)
+				cr.get_source().set_filter(Cairo.Filter.FAST); // while moving nobody sees the difference
+			if (alpha < 1) {
+				cr.rectangle(0, 0, src_w + 0.6 * src_w / strip_w, total_h);
+				cr.clip();
+				cr.paint_with_alpha(alpha);
+			}
+			else {
+				cr.rectangle(0, 0, src_w + 0.6 * src_w / strip_w, total_h);
+				cr.fill();
+			}
 			cr.restore();
 		}
 	}
@@ -232,7 +279,7 @@ public class BeatBox.CoverFlow : DrawingArea {
 		int size = cover_size(width, height);
 		if (size < 16)
 			return true;
-		double floor_y = height * 0.06 + size;
+		double floor_y = height * 0.04 + size;
 		double center = width / 2.0;
 		double side_w = size * SIDE_SIZE * SIDE_SCALE;
 		double gap = size * 0.78;     // from the center cover to the first side cover
@@ -263,6 +310,8 @@ public class BeatBox.CoverFlow : DrawingArea {
 
 			double cx = center + Math.copysign(gap * k + spacing * double.max(d - 1, 0), offset);
 			double x0 = cx - w / 2, x1 = cx + w / 2;
+			if (x1 < 0 || x0 > width)
+				continue; // off screen
 			double alpha = (d > 8) ? double.max(0, 1 - (d - 8) / 4) : 1;
 			var surface = surface_for(albums[i], size);
 			if (offset < 0)
@@ -284,12 +333,18 @@ public class BeatBox.CoverFlow : DrawingArea {
 		cr.set_source_rgb(1, 1, 1);
 		cr.move_to(center - width * 0.4, height - th - 10);
 		Pango.cairo_show_layout(cr, layout);
+
+		// fullscreen toggle in the top-right corner
+		var icon = create_pango_layout((fs_window != null) ? "✕" : "⛶");
+		cr.set_source_rgba(1, 1, 1, 0.5);
+		cr.move_to(width - 30, 6);
+		Pango.cairo_show_layout(cr, icon);
 		return true;
 	}
 
 	/** Cover edge in pixels: as big as the stage allows */
 	int cover_size(int width, int height) {
-		return int.min((int)(height * 0.64), (int)(width * 0.46)); // the side covers run off the edges
+		return int.min((int)(height * 0.72), (int)(width * 0.46)); // the side covers run off the edges
 	}
 	
 	/** Which album is under x (center cover first, then the side ones) */
@@ -311,6 +366,11 @@ public class BeatBox.CoverFlow : DrawingArea {
 		grab_focus();
 		if (click_gesture.get_current_button() != 1 || albums.length == 0)
 			return;
+		if (x > get_allocated_width() - 36 && y < 36) {
+			toggle_fullscreen();
+			click_gesture.set_state(Gtk.EventSequenceState.CLAIMED);
+			return;
+		}
 		int index = index_at(x);
 		if (n_press == 2 && index == target)
 			album_activated(albums[target]);
@@ -339,6 +399,15 @@ public class BeatBox.CoverFlow : DrawingArea {
 			case Gdk.Key.Right: go_to(target + 1); return true;
 			case Gdk.Key.Home:  go_to(0); return true;
 			case Gdk.Key.End:   go_to(albums.length - 1); return true;
+			case Gdk.Key.F:
+			case Gdk.Key.f:
+			case Gdk.Key.F11:
+				toggle_fullscreen();
+				return true;
+			case Gdk.Key.Escape:
+				if (fs_window != null)
+					fs_window.destroy();
+				return true;
 			case Gdk.Key.Return:
 			case Gdk.Key.KP_Enter:
 				if (albums.length > 0)
