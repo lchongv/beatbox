@@ -10,7 +10,7 @@
  * Sin OpenGL: es el respaldo de projectM (Preferencias › Apariencia, y cuando
  * projectM no arranca). Los estilos y su dibujo se copian del clon tal cual;
  * cambian la entrada (10 bandas 0..1 que da BeatBox en cada paso de ~33 ms),
- * el logo de la distro (tema de iconos de GTK3) y la carátula (la pone
+ * el logo de la distro (tema de iconos de GTK) y la carátula (la pone
  * BeatBox). Las opciones vis.* del clon quedan en sus valores por omisión. */
 #include <gtk/gtk.h>
 #include <math.h>
@@ -699,11 +699,14 @@ load_distro_logo (BbClassicVis *self)
 
   GdkPixbuf *pb = NULL;
 
-  /* 1) tema de iconos de GTK3 */
-  GtkIconInfo *info = gtk_icon_theme_lookup_icon (gtk_icon_theme_get_default (), name, 256,
-                                                  GTK_ICON_LOOKUP_FORCE_SIZE);
+  /* 1) tema de iconos de GTK */
+  GtkIconPaintable *info = gtk_icon_theme_lookup_icon (
+      gtk_icon_theme_get_for_display (gdk_display_get_default ()), name, NULL, 256, 1,
+      GTK_TEXT_DIR_NONE, 0);
   if (info) {
-    const char *p = gtk_icon_info_get_filename (info);
+    GFile *file = gtk_icon_paintable_get_file (info);   /* referencia nueva; NULL si no es un archivo */
+    g_autofree char *p = file ? g_file_get_path (file) : NULL;
+    g_clear_object (&file);
     if (p) pb = gdk_pixbuf_new_from_file_at_scale (p, 256, 256, TRUE, NULL);
     g_object_unref (info);
   }

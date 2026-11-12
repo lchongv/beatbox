@@ -29,7 +29,7 @@ etapa 2 con el andamio; `tools/gtk4-check.sh` tarda ~2 s.
 | T26 «Reproduciendo» | H | [ ] | | | |
 | T27 ventana principal | H | [ ] | | | |
 | T28 núcleo de la aplicación | H | [ ] | | | |
-| T29 código C | H | [ ] | | | |
+| T29 código C | H | [x] | | 0 | comentarios nuevos en español, como el resto de ese archivo |
 | T30 cierre de compilación | H | [ ] | | | |
 | T31 pruebas y primer arranque | H | [ ] | | | |
 | T40 avisos y widgets ocultos | H | [ ] | | | |

@@ -1,13 +1,12 @@
-/* aqua-scrollbar.c — barra de desplazamiento Aqua de Mac OS X Tiger, GTK3.
+/* aqua-scrollbar.c — barra de desplazamiento Aqua de Mac OS X Tiger, GTK4.
  *
- * Dibuja el arte de aqua-art.c en el «draw» del widget, con sus flechas ▲▼
+ * Dibuja el arte de aqua-art.c en el «snapshot» del widget, con sus flechas ▲▼
  * juntas al pie (Tiger las pone en todas las barras): clic = un paso, mantener
  * = repetición. Clic en el canal = una página. La horizontal es la vertical
  * traspuesta. Comparte el GtkAdjustment del GtkScrolledWindow.
  *
  * El dibujo y la geometría no dependen de GTK (aqua-art.c, aqua-geometry.c);
- * aquí solo va la capa de GTK3: draw, medidas, gestos y cajas. La migración a
- * GTK4 cambia esta capa (snapshot, medidas y controladores de GTK4), no el arte. */
+ * aquí solo va la capa de GTK4: snapshot, medidas, gestos y cajas. */
 #include "aqua-scrollbar.h"
 #include "aqua-art.h"
 #include "aqua-geometry.h"
@@ -40,8 +39,8 @@ static double
 bar_len (AquaScrollbar *self)
 {
   return self->orientation == GTK_ORIENTATION_HORIZONTAL
-           ? gtk_widget_get_allocated_width  (GTK_WIDGET (self))
-           : gtk_widget_get_allocated_height (GTK_WIDGET (self));
+           ? gtk_widget_get_width  (GTK_WIDGET (self))
+           : gtk_widget_get_height (GTK_WIDGET (self));
 }
 
 /* Recorrido del pomo: entre el remate superior y las flechas. */
@@ -88,13 +87,17 @@ arrow_at (AquaScrollbar *self, double at)
 
 /* ── dibujo y medidas ─────────────────────────────────────────────── */
 
-static gboolean
-aqua_scrollbar_draw (GtkWidget *w, cairo_t *cr)
+static void
+aqua_scrollbar_snapshot (GtkWidget *w, GtkSnapshot *snapshot)
 {
   AquaScrollbar *self = AQUA_SCROLLBAR (w);
-  if (gtk_widget_get_allocated_width (w) <= 0 || gtk_widget_get_allocated_height (w) <= 0)
-    return GDK_EVENT_PROPAGATE;
+  int width = gtk_widget_get_width (w), height = gtk_widget_get_height (w);
+  if (width <= 0 || height <= 0)
+    return;
 
+  graphene_rect_t bounds;
+  graphene_rect_init (&bounds, 0, 0, width, height);
+  cairo_t *cr = gtk_snapshot_append_cairo (snapshot, &bounds);
   cairo_save (cr);
   if (self->orientation == GTK_ORIENTATION_HORIZONTAL)
     aqua_art_transpose (cr);   /* desde aquí todo se dibuja en vertical */
@@ -103,31 +106,24 @@ aqua_scrollbar_draw (GtkWidget *w, cairo_t *cr)
   gboolean has_thumb = thumb_rect (self, &ty, &tl);
   aqua_art_draw (cr, bar_len (self), ty, has_thumb ? tl : 0, self->press);
   cairo_restore (cr);
-  return GDK_EVENT_STOP;
+  cairo_destroy (cr);
 }
 
 /* A lo largo del eje caben el remate y las flechas; a lo ancho, los 15 px de
  * Tiger. */
 static void
-aqua_scrollbar_get_preferred_width (GtkWidget *w, gint *min, gint *nat)
+aqua_scrollbar_measure (GtkWidget *w, GtkOrientation orientation, int for_size,
+                        int *min, int *nat, int *min_base, int *nat_base)
 {
+  (void) for_size;
   AquaScrollbar *self = AQUA_SCROLLBAR (w);
-  gint size = self->orientation == GTK_ORIENTATION_HORIZONTAL
+  gint size = orientation == self->orientation
                 ? (gint) (AQUA_ART_THUMB_TOP + AQUA_ART_THUMB_END)
                 : (gint) AQUA_ART_W;
   if (min) *min = size;
   if (nat) *nat = size;
-}
-
-static void
-aqua_scrollbar_get_preferred_height (GtkWidget *w, gint *min, gint *nat)
-{
-  AquaScrollbar *self = AQUA_SCROLLBAR (w);
-  gint size = self->orientation == GTK_ORIENTATION_VERTICAL
-                ? (gint) (AQUA_ART_THUMB_TOP + AQUA_ART_THUMB_END)
-                : (gint) AQUA_ART_W;
-  if (min) *min = size;
-  if (nat) *nat = size;
+  if (min_base) *min_base = -1;
+  if (nat_base) *nat_base = -1;
 }
 
 /* ── señales del adjustment ───────────────────────────────────────── */
@@ -303,49 +299,8 @@ aqua_scrollbar_dispose (GObject *o)
     if (self->h_changed) g_clear_signal_handler (&self->h_changed, self->adj);
   }
   g_clear_object (&self->adj);
-  g_clear_object (&self->drag);
-  g_clear_object (&self->scroll);
+  /* drag y scroll los posee el widget (gtk_widget_add_controller): no se sueltan aquí. */
   G_OBJECT_CLASS (aqua_scrollbar_parent_class)->dispose (o);
-}
-
-/* La ventana propia (sin pintar; el dibujo va en «draw») sigue al widget. */
-static void
-aqua_scrollbar_realize (GtkWidget *w)
-{
-  GtkAllocation a;
-  gtk_widget_get_allocation (w, &a);
-  GdkWindowAttr attr = { 0 };
-  attr.window_type = GDK_WINDOW_CHILD;
-  attr.x = a.x;
-  attr.y = a.y;
-  attr.width = a.width;
-  attr.height = a.height;
-  attr.wclass = GDK_INPUT_OUTPUT;
-  attr.visual = gtk_widget_get_visual (w);
-  attr.event_mask = gtk_widget_get_events (w) | GDK_EXPOSURE_MASK;
-  GdkWindow *window = gdk_window_new (gtk_widget_get_parent_window (w), &attr,
-                                      GDK_WA_X | GDK_WA_Y | GDK_WA_VISUAL);
-  gtk_widget_set_window (w, window);
-  gtk_widget_register_window (w, window);
-  gtk_widget_set_realized (w, TRUE);
-}
-
-static void
-aqua_scrollbar_unrealize (GtkWidget *w)
-{
-  GdkWindow *window = gtk_widget_get_window (w);
-  gtk_widget_unregister_window (w, window);
-  gdk_window_destroy (window);
-  gtk_widget_set_window (w, NULL);
-  gtk_widget_set_realized (w, FALSE);
-}
-
-static void
-aqua_scrollbar_size_allocate (GtkWidget *w, GtkAllocation *a)
-{
-  gtk_widget_set_allocation (w, a);
-  if (gtk_widget_get_realized (w))
-    gdk_window_move_resize (gtk_widget_get_window (w), a->x, a->y, a->width, a->height);
 }
 
 static void
@@ -353,26 +308,20 @@ aqua_scrollbar_class_init (AquaScrollbarClass *k)
 {
   G_OBJECT_CLASS (k)->dispose = aqua_scrollbar_dispose;
   GtkWidgetClass *wc = GTK_WIDGET_CLASS (k);
-  wc->realize = aqua_scrollbar_realize;
-  wc->unrealize = aqua_scrollbar_unrealize;
-  wc->size_allocate = aqua_scrollbar_size_allocate;
-  wc->draw = aqua_scrollbar_draw;
-  wc->get_preferred_width  = aqua_scrollbar_get_preferred_width;
-  wc->get_preferred_height = aqua_scrollbar_get_preferred_height;
+  wc->snapshot = aqua_scrollbar_snapshot;
+  wc->measure = aqua_scrollbar_measure;
 }
 
 static void
 aqua_scrollbar_init (AquaScrollbar *self)
 {
   self->orientation = GTK_ORIENTATION_VERTICAL;
-  /* Tiene su propia ventana: en GTK3 un widget sin ventana no recibe el ratón. */
-  gtk_widget_set_has_window (GTK_WIDGET (self), TRUE);
-  gtk_widget_add_events (GTK_WIDGET (self),
-                         GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK |
-                         GDK_POINTER_MOTION_MASK | GDK_SCROLL_MASK | GDK_SMOOTH_SCROLL_MASK);
-  gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (self)), "aqua-scrollbar");
+  gtk_widget_add_css_class (GTK_WIDGET (self), "aqua-scrollbar");
 
-  self->drag = gtk_gesture_drag_new (GTK_WIDGET (self));
+  /* GTK4: los gestos son controladores añadidos al widget; no hace falta una
+   * ventana propia ni máscaras de eventos. */
+  self->drag = gtk_gesture_drag_new ();
+  gtk_widget_add_controller (GTK_WIDGET (self), GTK_EVENT_CONTROLLER (self->drag));
   g_signal_connect (self->drag, "drag-begin",  G_CALLBACK (on_drag_begin),  self);
   g_signal_connect (self->drag, "drag-update", G_CALLBACK (on_drag_update), self);
   g_signal_connect (self->drag, "drag-end",    G_CALLBACK (on_drag_end),    self);
@@ -385,8 +334,8 @@ aqua_scrollbar_new (GtkAdjustment *adj, GtkOrientation orientation)
 {
   AquaScrollbar *self = g_object_new (AQUA_TYPE_SCROLLBAR, NULL);
   self->orientation = orientation;
-  /* Su visibilidad la decide el adjustment: un show_all del padre no debe mostrarla. */
-  gtk_widget_set_no_show_all (GTK_WIDGET (self), TRUE);
+  /* Empieza oculta: su visibilidad la decide el adjustment (update_visibility). */
+  gtk_widget_set_visible (GTK_WIDGET (self), FALSE);
   if (adj) {
     self->adj = g_object_ref (adj);
     self->h_value =
@@ -395,14 +344,15 @@ aqua_scrollbar_new (GtkAdjustment *adj, GtkOrientation orientation)
         g_signal_connect (adj, "changed", G_CALLBACK (on_adj_changed), self);
     update_visibility (self);
   }
-  gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (self)),
+  gtk_widget_add_css_class (GTK_WIDGET (self),
       orientation == GTK_ORIENTATION_HORIZONTAL ? "aqua-hbar" : "aqua-vbar");
 
   GtkEventControllerScrollFlags flags =
       (orientation == GTK_ORIENTATION_HORIZONTAL)
           ? GTK_EVENT_CONTROLLER_SCROLL_HORIZONTAL
           : GTK_EVENT_CONTROLLER_SCROLL_VERTICAL;
-  self->scroll = gtk_event_controller_scroll_new (GTK_WIDGET (self), flags);
+  self->scroll = gtk_event_controller_scroll_new (flags);
+  gtk_widget_add_controller (GTK_WIDGET (self), self->scroll);
   g_signal_connect (self->scroll, "scroll", G_CALLBACK (on_scroll), self);
   return GTK_WIDGET (self);
 }
@@ -450,24 +400,24 @@ aqua_scrollbar_wrap (GtkWidget *sw)
   GtkWidget *row = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
   gtk_widget_set_hexpand (sw, TRUE);
   gtk_widget_set_vexpand (sw, TRUE);
-  gtk_box_pack_start (GTK_BOX (row), sw, TRUE, TRUE, 0);
+  gtk_box_append (GTK_BOX (row), sw);
 
   GtkWidget *vbar = aqua_scrollbar_new (
       gtk_scrolled_window_get_vadjustment (scroll), GTK_ORIENTATION_VERTICAL);
   gtk_widget_set_vexpand (vbar, TRUE);
-  gtk_box_pack_start (GTK_BOX (row), vbar, FALSE, TRUE, 0);
+  gtk_box_append (GTK_BOX (row), vbar);
 
   GtkWidget *hrow = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
   GtkWidget *hbar = aqua_scrollbar_new (
       gtk_scrolled_window_get_hadjustment (scroll), GTK_ORIENTATION_HORIZONTAL);
   gtk_widget_set_hexpand (hbar, TRUE);
-  gtk_box_pack_start (GTK_BOX (hrow), hbar, TRUE, TRUE, 0);
+  gtk_box_append (GTK_BOX (hrow), hbar);
 
+  /* La esquina se muestra u oculta en sync_corner, justo al crearla. */
   GtkWidget *corner = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
-  gtk_style_context_add_class (gtk_widget_get_style_context (corner), "aqua-corner");
-  gtk_widget_set_no_show_all (corner, TRUE);
+  gtk_widget_add_css_class (corner, "aqua-corner");
   gtk_widget_set_size_request (corner, (int) AQUA_ART_W, (int) AQUA_ART_W);
-  gtk_box_pack_start (GTK_BOX (hrow), corner, FALSE, TRUE, 0);
+  gtk_box_append (GTK_BOX (hrow), corner);
   g_object_set_data (G_OBJECT (corner), "aqua-vbar", vbar);
   g_object_set_data (G_OBJECT (corner), "aqua-hbar", hbar);
   g_signal_connect_object (vbar, "notify::visible", G_CALLBACK (sync_corner), corner, 0);
@@ -485,12 +435,12 @@ aqua_scrollbar_wrap (GtkWidget *sw)
   gtk_widget_set_margin_end (col, margins[3]);
   gtk_widget_set_hexpand (row, TRUE);
   gtk_widget_set_vexpand (row, TRUE);
-  gtk_box_pack_start (GTK_BOX (col), row, TRUE, TRUE, 0);
-  gtk_box_pack_start (GTK_BOX (col), hrow, FALSE, TRUE, 0);
-  gtk_widget_show (sw);
-  gtk_widget_show (row);
-  gtk_widget_show (hrow);
-  gtk_widget_show (col);
+  gtk_box_append (GTK_BOX (col), row);
+  gtk_box_append (GTK_BOX (col), hrow);
+  gtk_widget_set_visible (sw, TRUE);
+  gtk_widget_set_visible (row, TRUE);
+  gtk_widget_set_visible (hrow, TRUE);
+  gtk_widget_set_visible (col, TRUE);
   /* Devuelve una referencia propia: quien lo recibe (Vala) la suelta cuando
    * ya la tiene el contenedor. */
   return g_object_ref_sink (col);

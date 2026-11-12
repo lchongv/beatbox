@@ -1,4 +1,4 @@
-project('beatbox', 'vala', 'c', version: '1.2.10')
+project('beatbox', 'vala', 'c', version: '1.2.11')
 
 gnome = import('gnome')
 i18n = import('i18n')
@@ -139,6 +139,7 @@ core_sources = files(
   'core/TopDisplay/Display.vala',
   'core/Widgets/FieldEditor.vala',
   'core/Widgets/NavigationArrows.vala',
+  'core/Widgets/PopMenu.vala',
   'core/Widgets/StyledBox.vala',
 )
 
@@ -384,6 +385,7 @@ test('rfc822', executable('test-rfc822', 'tests/rfc822.vala', dependencies: core
 test('tag-guess', executable('test-tag-guess', 'tests/tag-guess.vala', dependencies: core_dep))
 test('sqlheavy-busy', executable('test-sqlheavy-busy', 'tests/sqlheavy-busy.vala', dependencies: core_dep))
 test('peer-sync', executable('test-peer-sync', 'tests/peer-sync.vala', dependencies: core_dep))
+test('ui-children', executable('test-ui-children', 'tests/ui-children.vala', dependencies: core_dep))
 # the options that belong to a library and the list of libraries, in a temporary config folder
 test('libraries', executable('test-libraries', 'tests/libraries.vala', dependencies: core_dep))
 # the reader compiled on its own: it needs nothing else from the application
