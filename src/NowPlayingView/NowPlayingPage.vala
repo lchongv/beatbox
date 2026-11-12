@@ -95,48 +95,34 @@ public class BeatBox.NowPlayingPage : ScrolledWindow {
 	private static int SECTION_PADDING = 18;
 	
 	public NowPlayingPage() {
-		EventBox ebox = new EventBox();
-		Viewport vp = new Viewport(null, null);
 		contents = new Box(Orientation.VERTICAL, 0);
-		
+
 		// Apply styling
 		if(style_provider == null) {
 			style_provider = new CssProvider();
-			try  {
-				style_provider.load_from_data (WIDGET_STYLESHEET, -1);
-			} catch (Error e) {
-				stderr.printf ("\nNowPlayingPage: Couldn't load style provider.\n");
-			}
+			style_provider.load_from_data (WIDGET_STYLESHEET.data);
 		}
-		
+
 		set_policy(PolicyType.AUTOMATIC, PolicyType.AUTOMATIC);
-		
-		vp.get_style_context().add_class("NowPlayingPage");
-		vp.get_style_context().add_provider(style_provider, STYLE_PROVIDER_PRIORITY_APPLICATION);
-        ebox.get_style_context().add_class("NowPlayingPage");
-		ebox.get_style_context().add_provider(style_provider, STYLE_PROVIDER_PRIORITY_APPLICATION);
-		
-		vp.set_shadow_type(ShadowType.NONE);
-		
-		ebox.add(contents);
-		vp.add(ebox);
-		add(vp);
-		
-		show_all();
-		set_no_show_all(true);
+
+		// The box takes the styling the old Viewport and EventBox had
+		contents.add_css_class("NowPlayingPage");
+		contents.get_style_context().add_provider(style_provider, STYLE_PROVIDER_PRIORITY_APPLICATION);
+
+		set_child(contents);
 	}
-	
+
 	public void add_section(Widget w) {
 		w.vexpand = false; // its natural height; the page scrolls
-		int top_padding = (contents.get_children().length() == 0) ? SECTION_PADDING : 0;
-		contents.add(UI.wrap_alignment(w, top_padding, SECTION_PADDING, SECTION_PADDING, SECTION_PADDING));
+		int top_padding = (UI.children(contents).length() == 0) ? SECTION_PADDING : 0;
+		contents.append(UI.wrap_alignment(w, top_padding, SECTION_PADDING, SECTION_PADDING, SECTION_PADDING));
 	}
-	
+
 	public void remove_section(Widget w) {
 		contents.remove(w);
 	}
-	
+
 	public int section_count() {
-		return (int)contents.get_children().length();
+		return (int)UI.children(contents).length();
 	}
 }

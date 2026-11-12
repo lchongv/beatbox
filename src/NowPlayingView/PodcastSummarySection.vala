@@ -84,23 +84,16 @@ public class BeatBox.PodcastSummarySection : Box {
 		
 		if(style_provider == null) {
 			style_provider = new CssProvider();
-			try  {
-				style_provider.load_from_data (WIDGET_STYLESHEET, -1);
-			} catch (Error e) {
-				warning("Couldn't load style provider.\n");
-			}
+			style_provider.load_from_data (WIDGET_STYLESHEET.data);
 		}
 		
 		build_ui();
 		
-		show_all();
-		set_no_show_all(true);
 		set_visible(App.playback.current_media != null);
 		
 		App.playback.media_played.connect(media_played);
 		App.playback.playback_stopped.connect(playback_stopped);
 		App.library.medias_updated.connect(medias_updated);
-		size_allocate.connect(size_allocate_signal);
 		App.info.track_info_updated.connect(update_summary);
 		App.info.album_info_updated.connect(update_summary);
 		App.info.album_info_updated.connect(update_album_songs);
@@ -118,49 +111,50 @@ public class BeatBox.PodcastSummarySection : Box {
 		meta_artist = new Label("");
 		meta_album = new Label("");
 		Box rate_box = new Box(Orientation.HORIZONTAL, 0);
-		rating = new RatingWidget(false, IconSize.MENU, false, null);
+		rating = new RatingWidget(false, IconSize.NORMAL, false, null);
 		meta_year = new Label("");
 		summary_text = new Label("");
 		description = new Label("");
 		
-		rate_box.add(rating);
+		rate_box.append(rating);
 		
-		metadata.add(coverArt);
-		metadata.add(UI.wrap_alignment(meta_labels, 0, 0, 0, 6));
-		meta_labels.add(meta_title);
-		meta_labels.add(meta_artist);
-		meta_labels.add(meta_album);
-		meta_labels.add(meta_year);
-		meta_labels.add(rate_box);
+		metadata.append(coverArt);
+		metadata.append(UI.wrap_alignment(meta_labels, 0, 0, 0, 6));
+		meta_labels.append(meta_title);
+		meta_labels.append(meta_artist);
+		meta_labels.append(meta_album);
+		meta_labels.append(meta_year);
+		meta_labels.append(rate_box);
 		
-		coverArt.xalign = 0.0f;
+		coverArt.halign = Gtk.Align.START;
 		meta_title.xalign = 0.0f;
 		meta_artist.xalign = 0.0f;
 		meta_album.xalign = 0.0f;
 		meta_year.xalign = 0.0f;
 		summary_text.xalign = 0.0f;
 		description.xalign = 0.0f;
-		coverArt.yalign = 0.0f;
+		coverArt.valign = Gtk.Align.START;
 		meta_title.yalign = 0.0f;
 		meta_artist.yalign = 0.0f;
 		meta_album.yalign = 0.0f;
 		meta_year.yalign = 0.0f;
 		summary_text.yalign = 0.0f;
 		description.yalign = 0.0f;
-		meta_title.set_line_wrap(true);
-		meta_artist.set_line_wrap(true);
-		meta_album.set_line_wrap(true);
-		summary_text.set_line_wrap(true);
-		description.set_line_wrap(true);
+		meta_title.wrap = true;
+		meta_artist.wrap = true;
+		meta_album.wrap = true;
+		summary_text.wrap = true;
+		description.wrap = true;
 		coverArt.set_size_request (Icons.ALBUM_VIEW_IMAGE_SIZE, Icons.ALBUM_VIEW_IMAGE_SIZE);
 		
 		rating.rating_changed.connect(rating_changed);
 		
-		drag_dest_set(this, DestDefaults.ALL, {}, Gdk.DragAction.MOVE);
-		Gtk.drag_dest_add_uri_targets(this);
-		drag_motion.connect(drag_motion_signal);
-		drag_leave.connect(drag_leave_signal);
-		drag_data_received.connect(drag_received);
+		var dest = new Gtk.DropTarget (GLib.Type.INVALID, Gdk.DragAction.COPY);
+		dest.set_gtypes ({ typeof (string), typeof (Gdk.FileList) });
+		dest.motion.connect (drag_motion_signal);
+		dest.leave.connect (drag_leave_signal);
+		dest.on_drop.connect (drag_received);
+		add_controller (dest);
 		
 		// Now the album list on left side under metadata
 		album_songs_holder = new StyledBox("Album Songs", "white");
@@ -168,22 +162,20 @@ public class BeatBox.PodcastSummarySection : Box {
 		album_songs = new MusicList(tvs);
 		album_songs.is_mixed = true;
 		album_songs.set_sort_column_id(tvs.sort_column_id, tvs.sort_direction);
-		album_songs.get_style_context().add_class("AlbumSongList");
+		album_songs.add_css_class("AlbumSongList");
 		//album_songs.get_style_context().add_provider(style_provider, STYLE_PROVIDER_PRIORITY_APPLICATION);
-		var scroll = new ScrolledWindow(null, null);
-		scroll.add(album_songs);
+		var scroll = new ScrolledWindow();
+		scroll.set_child(album_songs);
 		scroll.set_policy(PolicyType.AUTOMATIC, PolicyType.AUTOMATIC);
 		scroll.set_size_request(-1, 160);
 		album_songs_holder.set_widget(AquaScroll.wrap(scroll));
 		
 		// Summaries go under album list
 		//summary_holder = new StyledBox("", "gray");
-		var summary_scroll = new ScrolledWindow(null, null);
-		var summary_eb = new EventBox();
-		summary_eb.get_style_context().add_class("pure_white");
-		summary_eb.get_style_context().add_provider(style_provider, STYLE_PROVIDER_PRIORITY_APPLICATION);
-		summary_eb.add(summary_text);
-		//summary_scroll.add(summary_eb);
+		var summary_scroll = new ScrolledWindow();
+		summary_text.add_css_class("pure_white");
+		summary_text.get_style_context().add_provider(style_provider, STYLE_PROVIDER_PRIORITY_APPLICATION);
+		//summary_scroll.set_child(summary_text);
 		summary_scroll.set_policy(PolicyType.AUTOMATIC, PolicyType.AUTOMATIC);
 		summary_scroll.set_size_request(-1, 130);
 		//summary_holder.set_widget(summary_scroll);
@@ -193,24 +185,22 @@ public class BeatBox.PodcastSummarySection : Box {
 		description.get_style_context().add_class("white_text");
 		description.get_style_context().add_class("padding");
 		description.get_style_context().add_provider(style_provider, STYLE_PROVIDER_PRIORITY_APPLICATION);
-		var description_scroll = new ScrolledWindow(null, null);
-		var description_eb = new EventBox();
-		description_eb.get_style_context().add_class("black");
-		description_eb.get_style_context().add_provider(style_provider, STYLE_PROVIDER_PRIORITY_APPLICATION);
-		description_eb.add(description);
-		description_scroll.add(description_eb);
+		var description_scroll = new ScrolledWindow();
+		description_scroll.add_css_class("black");
+		description_scroll.get_style_context().add_provider(style_provider, STYLE_PROVIDER_PRIORITY_APPLICATION);
+		description_scroll.set_child(description);
 		description_scroll.set_policy(PolicyType.AUTOMATIC, PolicyType.AUTOMATIC);
 		description_holder.set_size_request(300, -1);
 		description_holder.set_widget(AquaScroll.wrap(description_scroll));
 		
-		left_side.add(metadata);
-		summary_eb.vexpand = album_songs_holder.vexpand = true;
-		left_side.add(UI.wrap_alignment(summary_eb, 6, 0, 0, 0));
-		left_side.add(UI.wrap_alignment(album_songs_holder, 6, 0, 0, 0));
+		left_side.append(metadata);
+		summary_text.vexpand = album_songs_holder.vexpand = true;
+		left_side.append(UI.wrap_alignment(summary_text, 6, 0, 0, 0));
+		left_side.append(UI.wrap_alignment(album_songs_holder, 6, 0, 0, 0));
 		
 		left_side.hexpand = true;
-		add(UI.wrap_alignment(left_side, 0, 0, 0, 0));
-		add(UI.wrap_alignment(description_holder, 0, 0, 0, 12));
+		append(UI.wrap_alignment(left_side, 0, 0, 0, 0));
+		append(UI.wrap_alignment(description_holder, 0, 0, 0, 12));
 	}
 	
 	void media_played(Media m, Media? old) {
@@ -239,27 +229,33 @@ public class BeatBox.PodcastSummarySection : Box {
 				typeDown.has_suffix(".png"));
 	}
 	
-	bool drag_motion_signal(Gdk.DragContext context, int x, int y, uint time) {
-		drag_highlight(coverArt);
-		coverArt.show();
-		coverArt.set_from_pixbuf(App.icons.DROP_ALBUM_PIXBUF);
-		
-		return false;
+	Gdk.DragAction drag_motion_signal(double x, double y) {
+		coverArt.set_state_flags(Gtk.StateFlags.DROP_ACTIVE, false);
+		coverArt.visible = true;
+		UI.show_pixbuf(coverArt, App.icons.DROP_ALBUM_PIXBUF);
+
+		return Gdk.DragAction.COPY;
 	}
-	
-	void drag_leave_signal(Gdk.DragContext context, uint time) {
-		drag_unhighlight(coverArt);
+
+	void drag_leave_signal() {
+		coverArt.unset_state_flags(Gtk.StateFlags.DROP_ACTIVE);
 		update_cover_art();
 	}
 	
-	void drag_received(Gdk.DragContext context, int x, int y, Gtk.SelectionData data, uint info, uint timestamp) {
+	bool drag_received(Value value, double x, double y) {
 		if(App.playback.current_media == null || App.playback.current_media.isTemporary)
-			return;
-		
+			return false;
+
 		bool success = true;
-		
-		foreach(string uri in data.get_uris()) {
-			
+
+		string[] uris = {};
+		if(value.holds(typeof(Gdk.FileList)))
+			foreach(unowned File f in ((Gdk.FileList)value.get_boxed()).get_files()) uris += f.get_uri();
+		else
+			uris = value.get_string().split("\n");
+
+		foreach(string uri in uris) {
+
 			if(is_valid_image_type(uri) && App.playback.current_media != null) {
 				message("Saving dragged album art as image\n");
 				App.covers.save_album_locally(App.playback.current_media, uri);
@@ -267,11 +263,11 @@ public class BeatBox.PodcastSummarySection : Box {
 			else {
 				message("Dragged album art is not valid image\n");
 			}
-			
-			Gtk.drag_finish (context, success, false, timestamp);
-			return;
+
+			return success;
 		}
-    }
+		return false;
+	}
 	
 	void update_sensitivities() {
 		/*bool media_playing = App.playback.current_media != null;
@@ -319,10 +315,10 @@ public class BeatBox.PodcastSummarySection : Box {
 		var coverart_pixbuf = App.covers.get_album_art_from_key(App.playback.current_media.artist, App.playback.current_media.album);
 
 		if(coverart_pixbuf != null) {
-			coverArt.set_from_pixbuf(coverart_pixbuf);
+			UI.show_pixbuf(coverArt, coverart_pixbuf);
 		}
 		else {
-			coverArt.set_from_pixbuf(App.icons.DEFAULT_ALBUM_ART_PIXBUF);
+			UI.show_pixbuf(coverArt, App.icons.DEFAULT_ALBUM_ART_PIXBUF);
 		}
 	}
 	
@@ -376,7 +372,8 @@ public class BeatBox.PodcastSummarySection : Box {
 		}
 	}*/
 	
-	void size_allocate_signal(Allocation all) {
+	public override void size_allocate(int width, int height, int baseline) {
+		base.size_allocate(width, height, baseline);
 		update_description();
 	}
 	
@@ -386,7 +383,7 @@ public class BeatBox.PodcastSummarySection : Box {
 			return;
 		
 		description.set_label(Markup.escape_text(m.comment));
-		bool show_description = m.comment != null && m.comment != "" && get_allocated_width() > 800;
+		bool show_description = m.comment != null && m.comment != "" && get_width() > 800;
 		description_holder.set_visible(show_description);
 	}
 	

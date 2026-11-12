@@ -21,12 +21,12 @@ etapa 2 con el andamio; `tools/gtk4-check.sh` tarda ~2 s.
 | T15 widgets simples | D | [~] | | | |
 | T16 vistas de origen | D | [~] | | | |
 | T20 listas (base y música) | H | [x] | | 0 | arrastre de varias filas sin probar (riesgo 3, revisión manual); «Añadir a lista» abre el submenú al pulsar, no al pasar el ratón; DropTarget de la cola sin confirmar en 4.6 |
-| T21 otras listas | D | [ ] | | | |
+| T21 otras listas | D | [~] | | | |
 | T22 rejillas y lista emergente | H | [~] | | | |
 | T23 muro de álbumes | H | [x] | | 0 | pulsar en el relleno vacío de la banda ya no la cierra (antes sí): revisión manual; SourceView.vala lo cubre T16 (wall_scroll.set_child) |
 | T24 widgets dibujados | H | [~] | | | |
-| T25 barra lateral | H | [ ] | | | |
-| T26 «Reproduciendo» | H | [~] | | | |
+| T25 barra lateral | H | [~] | | | |
+| T26 «Reproduciendo» | H | [x] | | 0 | video_area_xid borrado: LibraryWindow.vala:50 (T27) y Streamer.vala 269/338/424/517/519 (T14) lo leían: decidir 0 o quitarlo (T42); EventBox de letras y resumen pasa al widget que envolvía, sin GestureClick |
 | T27 ventana principal | H | [~] | | | |
 | T28 núcleo de la aplicación | H | [ ] | | | |
 | T29 código C | H | [x] | | 0 | comentarios nuevos en español, como el resto de ese archivo |

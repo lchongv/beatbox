@@ -30,7 +30,6 @@ using Gee;
 
 public class BeatBox.NowPlayingView : Notebook, NowPlayingViewInterface {
 	bool video_is_enabled;
-	public ulong video_area_xid { get; private set; }
 	DrawingArea video_area;
 	HashMap<MediaType, NowPlayingPage> types_to_pages;
 	
@@ -56,7 +55,6 @@ public class BeatBox.NowPlayingView : Notebook, NowPlayingViewInterface {
 		App.playback.media_played.connect(media_played);
 		App.playback.playback_stopped.connect(playback_stopped);
 		App.playback.video_enabled.connect(video_enabled);
-		video_area.realize.connect(video_area_realized);
 	}
 	
 	public void add_section(MediaType media_key, Widget w) {
@@ -125,13 +123,6 @@ public class BeatBox.NowPlayingView : Notebook, NowPlayingViewInterface {
 		video_is_enabled = true;
 		
 		update_current_page();
-	}
-	
-	void video_area_realized() {
-		// only X11 windows have an id to hand to a video sink (and video output is off for now)
-		var window = video_area.get_window();
-		// GTK4-PENDIENTE(T26): if (window is Gdk.X11.Window)
-			// GTK4-PENDIENTE(T26): video_area_xid = (ulong)((Gdk.X11.Window)window).get_xid();
 	}
 	
 	private void update_current_page() {
