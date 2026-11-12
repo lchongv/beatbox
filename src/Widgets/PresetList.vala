@@ -87,8 +87,6 @@ public class BeatBox.PresetList : ComboBox {
 		this.add_attribute(cell, "text", 1);
 
 		this.changed.connect(listSelectionChange);
-
-		this.show_all();
 	}
 
 	private void clearList() {

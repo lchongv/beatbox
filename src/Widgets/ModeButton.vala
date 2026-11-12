@@ -19,11 +19,12 @@ public class BeatBox.ModeButton : Gtk.Box {
 
 	public ModeButton () {
 		homogeneous = true;
-		get_style_context ().add_class (Gtk.STYLE_CLASS_LINKED);
+		add_css_class ("linked");
 		get_style_context ().add_class ("raised");
 
 		// the wheel moves to the next or previous sensitive button
-		wheel = new Gtk.EventControllerScroll (this, Gtk.EventControllerScrollFlags.BOTH_AXES | Gtk.EventControllerScrollFlags.DISCRETE);
+		wheel = new Gtk.EventControllerScroll (Gtk.EventControllerScrollFlags.BOTH_AXES | Gtk.EventControllerScrollFlags.DISCRETE);
+		add_controller (wheel);
 		wheel.scroll.connect ((dx, dy) => {
 			int offset = (dy > 0 || dx > 0) ? 1 : -1;
 			for (int i = _selected + offset; i >= 0 && i < items.size; i += offset) {
@@ -38,8 +39,7 @@ public class BeatBox.ModeButton : Gtk.Box {
 	public void append (Gtk.Widget child) {
 		int index = items.size;
 		var item = new Gtk.ToggleButton ();
-		item.add_events (Gdk.EventMask.SCROLL_MASK); // the wheel reaches the buttons, then the box's controller
-		item.add (child);
+		item.child = child;
 		item.toggled.connect (() => {
 			if (item.active)
 				selected = index;
@@ -47,8 +47,7 @@ public class BeatBox.ModeButton : Gtk.Box {
 				item.active = true; // a click on the active button keeps it active
 		});
 		items.add (item);
-		add (item);
-		item.show_all ();
+		append (item);
 	}
 
 	void set_active (int index) {

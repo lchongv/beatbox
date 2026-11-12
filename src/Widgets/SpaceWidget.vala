@@ -152,19 +152,14 @@ public class BeatBox.SpaceWidget : StyledContentBox {
 
     public SpaceWidget (uint64 size) {
         // Wrapper properties
-        this.set_shadow_type(Gtk.ShadowType.NONE);
+        this.has_frame = false;
         this.min_content_width = MIN_WIDTH;
         this.min_content_height = MIN_HEIGHT;
-        this.set_border_width(0);
         this.set_policy(PolicyType.AUTOMATIC, PolicyType.NEVER);
 
         style_provider = new CssProvider();
 
-        try  {
-            style_provider.load_from_data (WIDGET_STYLESHEET, -1);
-        } catch (Error e) {
-            warning("Couldn't load style provider.\n");
-        }
+        style_provider.load_from_data (WIDGET_STYLESHEET.data);
         
         get_style_context().add_class("spaceWidgetBase");
         get_style_context().add_provider(style_provider, STYLE_PROVIDER_PRIORITY_APPLICATION);
@@ -181,47 +176,48 @@ public class BeatBox.SpaceWidget : StyledContentBox {
         var top_box = new Box (Orientation.HORIZONTAL, 0);
 
         // the legend between left and right spacing
-        top_box.add (new Box (Orientation.HORIZONTAL, 0) { hexpand = true });
-        top_box.add (legend_wrapper);
-        top_box.add (new Box (Orientation.HORIZONTAL, 0) { hexpand = true });
+        top_box.append (new Box (Orientation.HORIZONTAL, 0) { hexpand = true });
+        top_box.append (legend_wrapper);
+        top_box.append (new Box (Orientation.HORIZONTAL, 0) { hexpand = true });
 
         bar_wrapper = new Box (Orientation.HORIZONTAL, 0);
         full_bar_wrapper = new Box (Orientation.HORIZONTAL, 0);
+        full_bar_wrapper.visible = false;
 
         // the bar between left and right spacing
         var bottom_box = new Box (Orientation.HORIZONTAL, 0);
-        bottom_box.add (new Box (Orientation.HORIZONTAL, 0) { hexpand = true });
-        bottom_box.add (bar_wrapper);
-        bottom_box.add (full_bar_wrapper);
-        bottom_box.add (new Box (Orientation.HORIZONTAL, 0) { hexpand = true });
+        bottom_box.append (new Box (Orientation.HORIZONTAL, 0) { hexpand = true });
+        bottom_box.append (bar_wrapper);
+        bottom_box.append (full_bar_wrapper);
+        bottom_box.append (new Box (Orientation.HORIZONTAL, 0) { hexpand = true });
 
         left_box = new Box (Orientation.VERTICAL, 3);
         top_box.vexpand = bottom_box.vexpand = true;
         top_box.valign = bottom_box.valign = Align.CENTER;
         status_label.margin_top = status_label.margin_bottom = 5;
-        left_box.add (top_box);
-        left_box.add (bottom_box);
-        left_box.add (status_label);
+        left_box.append (top_box);
+        left_box.append (bottom_box);
+        left_box.append (status_label);
 		
         var right_box = new Box (Orientation.VERTICAL, 3);
         sync_button.vexpand = true;
         sync_button.valign = Align.END;
-        right_box.add (sync_button);
+        right_box.append (sync_button);
 
         // the button between top and bottom spacing
         var right_box_padding = new Box (Orientation.VERTICAL, 0);
         right_box.vexpand = true;
-        right_box_padding.add (new Box (Orientation.VERTICAL, 0) { vexpand = true });
-        right_box_padding.add (right_box);
-        right_box_padding.add (new Box (Orientation.VERTICAL, 0) { vexpand = true });
+        right_box_padding.append (new Box (Orientation.VERTICAL, 0) { vexpand = true });
+        right_box_padding.append (right_box);
+        right_box_padding.append (new Box (Orientation.VERTICAL, 0) { vexpand = true });
 
         var wrapper = new Box (Orientation.HORIZONTAL, 0);
         left_box.hexpand = true;
         left_box.margin_start = left_box.margin_end = 2 * DEFAULT_PADDING + 4;
         right_box_padding.margin_start = DEFAULT_PADDING;
         right_box_padding.margin_end = 3 * DEFAULT_PADDING;
-        wrapper.add (left_box);
-        wrapper.add (right_box_padding);
+        wrapper.append (left_box);
+        wrapper.append (right_box_padding);
         
         set_content(wrapper);
 
@@ -281,11 +277,11 @@ public class BeatBox.SpaceWidget : StyledContentBox {
         items.set(index, item);
 		
         item.legend.hexpand = true;
-        bar_wrapper.add (item.bar_item);
-        legend_wrapper.add (item.legend);
+        bar_wrapper.append (item.bar_item);
+        legend_wrapper.append (item.legend);
         if (pos == ItemPosition.START && items.has_key (0)) { // the free space (item 0, at the END) stays last
-            bar_wrapper.reorder_child (items[0].bar_item, -1);
-            legend_wrapper.reorder_child (items[0].legend, -1);
+            bar_wrapper.reorder_child_after (items[0].bar_item, null);
+            legend_wrapper.reorder_child_after (items[0].legend, null);
         }
 
         update_bar_item_sizes();
@@ -294,7 +290,7 @@ public class BeatBox.SpaceWidget : StyledContentBox {
 
     private void update_bar_item_sizes () {
         int item_list_size = items.size;
-        int actual_width = left_box.get_allocated_width ();
+        int actual_width = left_box.get_width ();
         int bar_width = (actual_width * 7) / 10;
 
         if (item_list_size < 1)
@@ -316,7 +312,7 @@ public class BeatBox.SpaceWidget : StyledContentBox {
                 full_bar_item.set_size (bar_width);
             } else {
                 show_full_bar_item (true, items.get(last_visible_id).color);
-                full_bar_item.show();
+                full_bar_item.visible = true;
                 full_bar_item.set_size (bar_width);
             }
 
@@ -352,23 +348,22 @@ public class BeatBox.SpaceWidget : StyledContentBox {
 
     private void show_full_bar_item (bool show_item, ItemColor? color) {
         if (show_item && color != null) {
-            bar_wrapper.hide ();
-            bar_wrapper.set_no_show_all (true);
-            full_bar_wrapper.set_no_show_all (false);
+            bar_wrapper.visible = false;
+            full_bar_wrapper.visible = true;
             full_bar_item = new SpaceWidgetBarFullItem (color, 0);
-            full_bar_wrapper.add(full_bar_item);
+            full_bar_wrapper.append (full_bar_item);
             single_item_visible = true;
         } else {
-            full_bar_item.destroy ();
-            bar_wrapper.set_no_show_all (false);
-            full_bar_wrapper.set_no_show_all (true);
-            bar_wrapper.show_all ();
+            if (full_bar_item != null && full_bar_item.get_parent () != null)
+                full_bar_wrapper.remove (full_bar_item);
+            bar_wrapper.visible = true;
+            full_bar_wrapper.visible = false;
             single_item_visible = false;
         }
     }
 
-    public override void size_allocate (Gtk.Allocation allocation) {
-        base.size_allocate (allocation);
+    public override void size_allocate (int width, int height, int baseline) {
+        base.size_allocate (width, height, baseline);
         update_bar_item_sizes ();
     }
 }
@@ -423,9 +418,9 @@ private class BeatBox.SpaceWidgetBarItem : Gtk.Button {
         this.set_size_request (hsize, BAR_HEIGHT);
 
         if (size < 1 && this.visible) {
-            this.hide ();
+            this.visible = false;
         } else if (!this.visible) {
-            this.show ();
+            this.visible = true;
         }
     }
 }
@@ -512,25 +507,25 @@ private class BeatBox.SpaceWidgetItem : GLib.Object {
         var legend_icon_wrapper = new Gtk.Box (Gtk.Orientation.VERTICAL, 0);
 
         // the icon between top and bottom spacing
-        legend_icon_wrapper.add (new Gtk.Box (Gtk.Orientation.VERTICAL, 0) { vexpand = true });
-        legend_icon_wrapper.add (legend_icon);
-        legend_icon_wrapper.add (new Gtk.Box (Gtk.Orientation.VERTICAL, 0) { vexpand = true });
+        legend_icon_wrapper.append (new Gtk.Box (Gtk.Orientation.VERTICAL, 0) { vexpand = true });
+        legend_icon_wrapper.append (legend_icon);
+        legend_icon_wrapper.append (new Gtk.Box (Gtk.Orientation.VERTICAL, 0) { vexpand = true });
 
         legend_icon_wrapper.hexpand = true;
-        legend.add (legend_icon_wrapper);
+        legend.append (legend_icon_wrapper);
 
         title_label = new Gtk.Label ("<span weight='medium' size='10700'>" + Markup.escape_text(name) + "</span>");
         title_label.use_markup = true;
 
         var label_wrapper = new Gtk.Box (Gtk.Orientation.VERTICAL, 2);
         title_label.vexpand = size_label.vexpand = true;
-        label_wrapper.add (title_label);
-        label_wrapper.add (size_label);
+        label_wrapper.append (title_label);
+        label_wrapper.append (size_label);
 
         label_wrapper.hexpand = true;
         label_wrapper.margin_start = 7;
         label_wrapper.margin_end = (id > 0) ? 7 + 2 * 20 : 7; // room before the next legend
-        legend.add (label_wrapper);
+        legend.append (label_wrapper);
 
         bar_item = new SpaceWidgetBarItem (color, 0);
     }
@@ -558,22 +553,22 @@ private class BeatBox.SpaceWidgetItem : GLib.Object {
     /** These functions shouldn't be called directly **/
     public void hide_bar_item () {
         if (bar_item.visible)
-            bar_item.hide ();
+            bar_item.visible = false;
     }
 
     public void show_bar_item () {
         if (!bar_item.visible)
-            bar_item.show ();
+            bar_item.visible = true;
     }
 
     public void hide_legend () {
         if (legend.visible)
-            legend.hide ();
+            legend.visible = false;
     }
 
     public void show_legend () {
         if (!legend.visible)
-            legend.show_all ();
+            legend.visible = true;
     }
 
 }

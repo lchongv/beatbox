@@ -43,18 +43,28 @@ public class BeatBox.StatusBar : Gtk.ActionBar {
 
     /** The icon is painted in the text color, so the skin's bar recolors it */
     public static void follow_text_color (Image image) {
-        image.draw.connect ((cr) => {
-            if (image.storage_type != ImageType.PIXBUF)
-                return false;
-            var pix = image.pixbuf;
-            var color = image.get_style_context ().get_color (image.get_state_flags ());
-            Gdk.cairo_set_source_pixbuf (cr, pix, (image.get_allocated_width () - pix.width) / 2,
-                                         (image.get_allocated_height () - pix.height) / 2);
-            var icon = cr.get_source ();
-            Gdk.cairo_set_source_rgba (cr, color);
-            cr.mask (icon);
-            return true;
-        });
+        var paintable = image.get_paintable ();
+        if (!(paintable is Gdk.Texture))
+            return;
+        Gdk.Pixbuf? pix = Gdk.pixbuf_get_from_texture ((Gdk.Texture) paintable);
+        if (pix == null)
+            return;
+
+        int size = image.pixel_size;
+        if (size > 0 && (pix.width != size || pix.height != size))
+            pix = pix.scale_simple (size, size, Gdk.InterpType.BILINEAR);
+
+        var surface = new Cairo.ImageSurface (Cairo.Format.ARGB32, pix.width, pix.height);
+        var cr = new Cairo.Context (surface);
+        Gdk.cairo_set_source_pixbuf (cr, pix, 0, 0);
+        cr.paint ();
+        var icon = cr.get_source ();
+        var color = image.get_style_context ().get_color ();
+        Gdk.cairo_set_source_rgba (cr, color);
+        cr.mask (icon);
+        UI.show_pixbuf (image, Gdk.pixbuf_get_from_surface (surface, 0, 0, pix.width, pix.height));
+        // GTK4-PENDIENTE: the icon is tinted once, when created: a later skin change
+        // of the bar's text color no longer recolors it (GTK4 has no draw signal here).
     }
 
     public StatusBar () {
@@ -62,13 +72,13 @@ public class BeatBox.StatusBar : Gtk.ActionBar {
 		repeat_chooser = new SimpleOptionChooser();
 		repeat_chooser.first_step = 1; // the left click cycle: Off, Song, then the last album/artist/all
 		shuffle_chooser = new SimpleOptionChooser();
-		show_eq_button = App.icons.EQ.render_image (Gtk.IconSize.MENU);
+		show_eq_button = App.icons.EQ.render_image (Gtk.IconSize.NORMAL);
 		
-		var shuffle_on_image   = App.icons.SHUFFLE_ON.render_image (Gtk.IconSize.MENU);
-        var shuffle_off_image  = App.icons.SHUFFLE_OFF.render_image (Gtk.IconSize.MENU);
-        var repeat_on_image    = App.icons.REPEAT_ON.render_image (Gtk.IconSize.MENU);
-        var repeat_once_image   = App.icons.REPEAT_ONCE.render_image (Gtk.IconSize.MENU);
-        var repeat_off_image   = App.icons.REPEAT_OFF.render_image (Gtk.IconSize.MENU);
+		var shuffle_on_image   = App.icons.SHUFFLE_ON.render_image (Gtk.IconSize.NORMAL);
+        var shuffle_off_image  = App.icons.SHUFFLE_OFF.render_image (Gtk.IconSize.NORMAL);
+        var repeat_on_image    = App.icons.REPEAT_ON.render_image (Gtk.IconSize.NORMAL);
+        var repeat_once_image   = App.icons.REPEAT_ONCE.render_image (Gtk.IconSize.NORMAL);
+        var repeat_off_image   = App.icons.REPEAT_OFF.render_image (Gtk.IconSize.NORMAL);
         
         // the dark "off" icons follow the bar's text color, so skins can recolor them;
         // the blue "on" ones keep their color
@@ -86,25 +96,20 @@ public class BeatBox.StatusBar : Gtk.ActionBar {
         shuffle_chooser.append_option (_("All"), shuffle_on_image, _("Shuffle Enabled"));
         shuffle_chooser.setOption ((int)App.settings.main.shuffle_mode);
         
-		var eq_eventbox = new EventBox();
-		eq_eventbox.add(show_eq_button);
-		eq_eventbox.set_above_child(true);
-		eq_eventbox.set_visible_window(false);
+		show_eq_button.margin_end = 6;
         
-        repeat_chooser.margin_start = shuffle_chooser.margin_start = eq_eventbox.margin_end = 6;
+        repeat_chooser.margin_start = shuffle_chooser.margin_start = 6;
         
         insert_widget(shuffle_chooser, true);
         insert_widget(repeat_chooser, true);
-        insert_widget(eq_eventbox, false);
-		
-        show_all();
+        insert_widget(show_eq_button, false);
         
         repeat_chooser.option_changed.connect(repeat_chooser_option_changed);
         shuffle_chooser.option_changed.connect(shuffle_chooser_option_changed);
-        var eq_press = new GestureClick(eq_eventbox);
+        var eq_press = new GestureClick();
         eq_press.button = 0;
         eq_press.pressed.connect(show_eq_button_clicked);
-        eq_eventbox.set_data("press-gesture", eq_press); // GTK3 controllers need a reference
+        show_eq_button.add_controller (eq_press);
     }
 
     public void insert_widget (Widget w, bool left) {

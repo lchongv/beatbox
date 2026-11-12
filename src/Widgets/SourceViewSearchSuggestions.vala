@@ -36,8 +36,8 @@ public class BeatBox.SourceViewSearchSuggestions : GLib.Object {
 		TOP_GENRES
 	}
 	
-	public static GLib.List<Gtk.MenuItem> get_suggestions(SourceView source_view, GLib.List<weak Media> medias, string given_search) {
-		var rv = new GLib.List<Gtk.MenuItem>();
+	public static GLib.List<BeatBox.PopMenuItem> get_suggestions(SourceView source_view, GLib.List<weak Media> medias, string given_search) {
+		var rv = new GLib.List<BeatBox.PopMenuItem>();
 		var search = given_search.down();
 		
 		var track_score = new HashMap<Media, int>(); // media.rowid, score
@@ -117,7 +117,7 @@ public class BeatBox.SourceViewSearchSuggestions : GLib.Object {
 			foreach(var m in tracks) {
 				var item = create_menu_item(m, GroupType.TOP_MEDIAS);
 				rv.append(item);
-				item.activate.connect( () => {
+				item.clicked.connect( () => {
 					App.playback.play_media(m, false);
 					if(!App.playback.playing)
 						App.playback.play();
@@ -127,7 +127,7 @@ public class BeatBox.SourceViewSearchSuggestions : GLib.Object {
 			}
 			
 			if(albums.size > 0 || artists.size > 0 || genres.size > 0)
-				rv.append(new SeparatorMenuItem());
+				rv.append(separator_item ());
 		}
 		if(albums.size > 0) {
 			results = true;
@@ -135,7 +135,7 @@ public class BeatBox.SourceViewSearchSuggestions : GLib.Object {
 			foreach(var m in albums) {
 				var item = create_menu_item(m, GroupType.TOP_ALBUMS);
 				rv.append(item);
-				item.activate.connect( () => {
+				item.clicked.connect( () => {
 					source_view.album_filter = m.album;
 					source_view.artist_filter = m.album_artist;
 					
@@ -146,7 +146,7 @@ public class BeatBox.SourceViewSearchSuggestions : GLib.Object {
 			}
 			
 			if(artists.size > 0 || genres.size > 0)
-				rv.append(new SeparatorMenuItem());
+				rv.append(separator_item ());
 		}
 		if(artists.size > 0) {
 			results = true;
@@ -154,13 +154,13 @@ public class BeatBox.SourceViewSearchSuggestions : GLib.Object {
 			foreach(var m in artists) {
 				var item = create_menu_item(m, GroupType.TOP_ARTISTS);
 				rv.append(item);
-				item.activate.connect( () => {
+				item.clicked.connect( () => {
 					source_view.artist_filter = m.album_artist;
 				});
 			}
 			
 			if(genres.size > 0)
-				rv.append(new SeparatorMenuItem());
+				rv.append(separator_item ());
 		}
 		if(genres.size > 0) {
 			results = true;
@@ -168,7 +168,7 @@ public class BeatBox.SourceViewSearchSuggestions : GLib.Object {
 			foreach(var m in genres) {
 				var item = create_menu_item(m, GroupType.TOP_GENRES);
 				rv.append(item);
-				item.activate.connect( () => {
+				item.clicked.connect( () => {
 					source_view.genre_filter = m.genre;
 				});
 			}
@@ -177,8 +177,15 @@ public class BeatBox.SourceViewSearchSuggestions : GLib.Object {
 		return rv;
 	}
 	
-	static Gtk.MenuItem create_menu_item(Media m, GroupType type) {
-		Gtk.MenuItem item;
+	// the suggestions list only holds PopMenuItem: the separator travels inside one
+	static BeatBox.PopMenuItem separator_item () {
+		var item = new BeatBox.PopMenuItem.with_child (new PopMenuSeparator ());
+		item.keep_open = true;
+		return item;
+	}
+	
+	static BeatBox.PopMenuItem create_menu_item(Media m, GroupType type) {
+		BeatBox.PopMenuItem item;
 		Gdk.Pixbuf? pixbuf = null;
 		
 		if(type == GroupType.TOP_ALBUMS || type == GroupType.TOP_MEDIAS)

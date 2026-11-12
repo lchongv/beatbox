@@ -51,10 +51,10 @@ public class BeatBox.VolumeWidget : Gtk.Box {
 		volume.set_value(vol);
 		volume.vexpand = true;
 		volume.margin_top = volume.margin_bottom = 6;
-		add(volume);
+		append(volume);
 		
 		image = new Gtk.Image();
-		add(image);
+		append(image);
 		update_image();
 		
 		volume.value_changed.connect(value_changed);
@@ -68,13 +68,13 @@ public class BeatBox.VolumeWidget : Gtk.Box {
     void update_image() {
 		double val = volume.get_value();
 		if(val < MUTED_MINIMUM)
-			image.set_from_icon_name(icons[0], Gtk.IconSize.MENU);
+			image.set_from_icon_name(icons[0]);
 		else if(val < LOW_MINIMUM)
-			image.set_from_icon_name(icons[1], Gtk.IconSize.MENU);
+			image.set_from_icon_name(icons[1]);
 		else if(val < FULL_MINIMUM)
-			image.set_from_icon_name(icons[2], Gtk.IconSize.MENU);
+			image.set_from_icon_name(icons[2]);
 		else
-			image.set_from_icon_name(icons[3], Gtk.IconSize.MENU);
+			image.set_from_icon_name(icons[3]);
 	}
 	
 	public double get_volume() {

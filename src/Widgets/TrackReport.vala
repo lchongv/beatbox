@@ -35,8 +35,9 @@ public class BeatBox.TrackReport : ScrolledWindow {
 		hscrollbar_policy = PolicyType.NEVER;
 		get_style_context ().add_class ("track-report");
 		content = new Box (Orientation.VERTICAL, 4);
-		content.margin = 10;
-		add (content);
+		content.margin_top = content.margin_bottom = 10;
+		content.margin_start = content.margin_end = 10;
+		set_child (content);
 
 		App.playback.media_played.connect ((m, old) => refresh ());
 		App.playback.playback_stopped.connect ((m) => refresh ());
@@ -52,15 +53,14 @@ public class BeatBox.TrackReport : ScrolledWindow {
 		if (!get_mapped ())
 			return;
 		uint mine = ++request;
-		content.foreach ((w) => w.destroy ());
+		UI.clear (content);
 
 		var m = App.playback.media_active ? App.playback.current_media : null;
 		if (m == null) {
 			var nothing = new Label (_("Nothing is playing."));
 			nothing.get_style_context ().add_class ("dim-label");
 			nothing.margin_top = 20;
-			content.add (nothing);
-			content.show_all ();
+			content.append (nothing);
 			return;
 		}
 
@@ -68,20 +68,19 @@ public class BeatBox.TrackReport : ScrolledWindow {
 		title.set_markup ("<b><big>%s</big></b>".printf (Markup.escape_text (m.title)));
 		title.wrap = true;
 		title.xalign = 0;
-		content.add (title);
+		content.append (title);
 		var who = new Label ((m.media_type == MediaType.STATION) ? m.artist : string.joinv (" — ", { m.artist, m.album }));
 		who.wrap = true;
 		who.xalign = 0;
 		who.get_style_context ().add_class ("dim-label");
-		content.add (who);
+		content.append (who);
 
 		var reading = new Label (_("Reading the file…"));
 		reading.get_style_context ().add_class ("dim-label");
 		reading.xalign = 0;
 		reading.margin_top = 10;
-		content.add (reading);
+		content.append (reading);
 		add_section (_("Library"), library_facts (m));
-		content.show_all ();
 
 		// a stream would be opened just to look at it: only files are read
 		if (!m.uri.has_prefix ("file://")) {
@@ -93,7 +92,7 @@ public class BeatBox.TrackReport : ScrolledWindow {
 			var facts = read_file (uri);
 			Idle.add (() => {
 				if (mine == request) {
-					reading.destroy ();
+					content.remove (reading);
 					show_file_facts (facts);
 				}
 				return false;
@@ -105,12 +104,12 @@ public class BeatBox.TrackReport : ScrolledWindow {
 	void show_file_facts (FileFacts facts) {
 		if (facts.error != null) {
 			add_section (_("File"), { _("Error"), facts.error });
-			content.show_all ();
 			return;
 		}
 		// before the library section, which is already there
-		var library = content.get_children ().last ().data;
-		var heading = content.get_children ().nth_data (content.get_children ().length () - 2);
+		var children = UI.children (content);
+		var library = children.last ().data;
+		var heading = children.nth_data (children.length () - 2);
 		content.remove (heading);
 		content.remove (library);
 
@@ -122,25 +121,28 @@ public class BeatBox.TrackReport : ScrolledWindow {
 		for (int i = 0; i < facts.images.length; i++) {
 			var row = new Box (Orientation.HORIZONTAL, 8);
 			// a click shows the picture at full size
-			var picture = new EventBox ();
-			picture.add (new Image.from_pixbuf (facts.images[i]));
+			var picture = new Image ();
+			UI.show_pixbuf (picture, facts.images[i]);
 			picture.tooltip_text = _("Click to enlarge");
 			var full = facts.full_images[i];
-			picture.button_press_event.connect (() => {
-				LcdCover.show_picture ((Gtk.Window) picture.get_toplevel (), full, _("Embedded picture"));
-				return true;
+			var click = new Gtk.GestureClick ();
+			click.pressed.connect ((n_press, x, y) => {
+				var window = UI.window_of (picture);
+				if (window != null)
+					LcdCover.show_picture (window, full, _("Embedded picture"));
+				click.set_state (Gtk.EventSequenceState.CLAIMED);
 			});
-			row.add (picture);
+			picture.add_controller (click);
+			row.append (picture);
 			var text = new Label (facts.image_texts[i]);
 			text.xalign = 0;
 			text.wrap = true;
 			text.selectable = true;
-			row.add (text);
-			content.add (row);
+			row.append (text);
+			content.append (row);
 		}
-		content.add (heading);
-		content.add (library);
-		content.show_all ();
+		content.append (heading);
+		content.append (library);
 	}
 
 	void add_heading (string text) {
@@ -148,7 +150,7 @@ public class BeatBox.TrackReport : ScrolledWindow {
 		heading.set_markup ("<b>%s</b>".printf (Markup.escape_text (text)));
 		heading.xalign = 0;
 		heading.margin_top = 12;
-		content.add (heading);
+		content.append (heading);
 	}
 
 	/** A heading and its label/value pairs: each label dim, with its value below it at the full width of the
@@ -167,12 +169,12 @@ public class BeatBox.TrackReport : ScrolledWindow {
 			val.wrap = true;
 			val.wrap_mode = Pango.WrapMode.WORD_CHAR;
 			val.selectable = true;
-			val.can_focus = false;
+			val.focusable = false;
 			val.hexpand = true;
-			box.add (key);
-			box.add (val);
+			box.append (key);
+			box.append (val);
 		}
-		content.add (box);
+		content.append (box);
 	}
 
 	static string[] library_facts (Media m) {

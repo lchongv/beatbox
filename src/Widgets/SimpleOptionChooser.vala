@@ -29,7 +29,7 @@ using Gtk;
 using Gdk;
 using Gee;
 
-public class BeatBox.SimpleOptionChooser : EventBox {
+public class BeatBox.SimpleOptionChooser : Box {
 	GLib.Menu menu = new GLib.Menu(); // right click: one radio item per option
 	SimpleAction option = new SimpleAction.stateful("option", VariantType.INT32, new Variant.int32(0));
 	Gtk.Popover? popover = null;
@@ -43,14 +43,12 @@ public class BeatBox.SimpleOptionChooser : EventBox {
 	public signal void option_changed(int index);
 
 	public SimpleOptionChooser () {
+		orientation = Orientation.VERTICAL;
+		spacing = 0;
 		images = new LinkedList<Gtk.Image>();
 
 		clicked_index = 0;
 		previous_index = 0;
-
-		// make the event box transparent
-		set_above_child(true);
-		set_visible_window(false);
 
 		option.activate.connect((index) => {
 			if(index.get_int32() != clicked_index)
@@ -61,9 +59,10 @@ public class BeatBox.SimpleOptionChooser : EventBox {
 		actions.add_action(option);
 		insert_action_group("chooser", actions);
 
-		press_gesture = new Gtk.GestureClick(this);
+		press_gesture = new Gtk.GestureClick();
 		press_gesture.button = 0;
 		press_gesture.pressed.connect(buttonPress);
+		add_controller (press_gesture);
 	}
 
 	public void setOption(int index) {
@@ -75,12 +74,10 @@ public class BeatBox.SimpleOptionChooser : EventBox {
 		clicked_index = index;
 		option_changed(index);
 
-		if (get_child () != null)
-			remove (get_child ());
+		if (get_first_child () != null)
+			remove (get_first_child ());
 
-		add (images.get(index));
-
-		show_all ();
+		append (images.get(index));
 	}
 
 	public int append_option(string text, Gtk.Image image, string tooltip) {

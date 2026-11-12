@@ -28,11 +28,10 @@
 using Gtk;
 
 public class BeatBox.AdvancedSearchBox : Gtk.SearchEntry {
-	Gtk.Menu search_suggester;
+	PopMenu search_suggester;
 	Gtk.EventControllerKey suggester_keys; // GTK3 controllers need a reference
 	bool listen_for_change;
 	string last_search;
-	Gdk.Event? last_key; // the key press behind the last change: popup_at_widget wants one
 	
 	View current_view;
 	HashTable<View, string> views_search;
@@ -40,8 +39,7 @@ public class BeatBox.AdvancedSearchBox : Gtk.SearchEntry {
 	public AdvancedSearchBox() {
 		placeholder_text = _("Search...");
 		
-		search_suggester = new Gtk.Menu();
-		search_suggester.attach_to_widget(this, null);
+		search_suggester = new PopMenu();
 		search_suggester.set_size_request (Icons.ALBUM_VIEW_IMAGE_SIZE, -1);
 		
 		listen_for_change = true;
@@ -50,9 +48,10 @@ public class BeatBox.AdvancedSearchBox : Gtk.SearchEntry {
 		this.changed.connect(search_field_changed);
 		this.activate.connect(search_field_activate);
 		// CAPTURE: before the menu's own key handling
-		suggester_keys = new Gtk.EventControllerKey(search_suggester);
+		suggester_keys = new Gtk.EventControllerKey();
 		suggester_keys.propagation_phase = Gtk.PropagationPhase.CAPTURE;
 		suggester_keys.key_pressed.connect(keyPressed);
+		((Gtk.Widget) search_suggester).add_controller (suggester_keys);
 		App.window.view_changed.connect(view_changed);
 	}
 	
@@ -86,7 +85,6 @@ public class BeatBox.AdvancedSearchBox : Gtk.SearchEntry {
 		View view = App.window.get_current_view();
 		var new_search = get_text();
 		last_search = new_search;
-		last_key = Gtk.get_current_event();
 		
 		if(view.supports_search()) {
 			// First notify that the search field changed
@@ -134,12 +132,11 @@ public class BeatBox.AdvancedSearchBox : Gtk.SearchEntry {
 		Idle.add( () => {
 			if(new_menu_items != null) {
 				clear_menu();
-				foreach(Gtk.MenuItem item in new_menu_items) {
+				foreach(var item in new_menu_items) {
 					search_suggester.append(item);
 				}
 				
-				search_suggester.show_all();
-				search_suggester.popup_at_widget(this, Gdk.Gravity.SOUTH_WEST, Gdk.Gravity.NORTH_WEST, last_key);
+				search_suggester.popup_under(this);
 			}
 			
 			return false;
@@ -149,27 +146,47 @@ public class BeatBox.AdvancedSearchBox : Gtk.SearchEntry {
 	}
 	
 	public void clear_menu() {
-		foreach(var child in search_suggester.get_children()) {
-			search_suggester.remove(child);
-		}
+		UI.clear (search_suggester);
 	}
 	
 	bool keyPressed(uint keyval, uint keycode, Gdk.ModifierType state) {
-		var event = (Gdk.EventKey) Gtk.get_current_event(); // for its text
 		// Handled here: letting the menu pass the key on typed every letter twice
-		if(event.keyval == 0xff08) { //backspace
+		if(keyval == Gdk.Key.BackSpace) { //backspace
 			backspace ();
 			return true;
 		}
-		else if(Regex.match_simple("[a-zA-Z0-9]", event.str) || 
-				event.str == "-" || event.str == "-" || event.str == "&" ||
-				event.str == "(" || event.str == ")" || event.str == "/" ||
-				event.str == "." || event.str == "!" || event.str == "?" ||
-				event.str == " ") {
-			insert_at_cursor(event.str);
-			return true;
+		else {
+			unichar c = Gdk.keyval_to_unicode (keyval);
+			string str = c.to_string ();
+			if(Regex.match_simple("[a-zA-Z0-9]", str) || 
+					str == "-" || str == "-" || str == "&" ||
+					str == "(" || str == ")" || str == "/" ||
+					str == "." || str == "!" || str == "?" ||
+					str == " ") {
+				insert_at_cursor(str);
+				return true;
+			}
 		}
 
 		return false;
+	}
+	
+	void backspace () {
+		int pos = get_position ();
+		if (pos <= 0)
+			return;
+		string text = get_text ();
+		int start = text.index_of_nth_char (pos - 1);
+		int end = text.index_of_nth_char (pos);
+		set_text (text.substring (0, start) + text.substring (end));
+		set_position (pos - 1);
+	}
+	
+	void insert_at_cursor (string str) {
+		int pos = get_position ();
+		string text = get_text ();
+		int at = text.index_of_nth_char (pos);
+		set_text (text.substring (0, at) + str + text.substring (at));
+		set_position (pos + str.char_count ());
 	}
 }

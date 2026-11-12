@@ -25,7 +25,7 @@
  * Authored by: Victor Eduardo <victoreduardm@gmail.com>
  */
 
-public class BeatBox.EmbeddedAlert : Gtk.EventBox {
+public class BeatBox.EmbeddedAlert : Gtk.Box {
 
     const string INFO_ICON = "dialog-information";
     const string WARNING_ICON = "dialog-warning";
@@ -44,7 +44,9 @@ public class BeatBox.EmbeddedAlert : Gtk.EventBox {
     const int MIN_VERTICAL_MARGIN = 48;
 
     public EmbeddedAlert () {
-        get_style_context ().add_class (Gtk.STYLE_CLASS_VIEW);
+        orientation = Gtk.Orientation.VERTICAL;
+        spacing = 0;
+        add_css_class ("view");
         // get_style_context ().add_class (Granite.STYLE_CLASS_CONTENT_VIEW);
 
         primary_text_label = new Gtk.Label (null);
@@ -68,19 +70,19 @@ public class BeatBox.EmbeddedAlert : Gtk.EventBox {
         set_alert ("", "", false);
 
         var message_vbox = new Gtk.Box (Gtk.Orientation.VERTICAL, 0);
-        message_vbox.add(primary_text_label);
-        message_vbox.add(secondary_text_label);
+        message_vbox.append(primary_text_label);
+        message_vbox.append(secondary_text_label);
 
         content_hbox = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0);
         content_hbox.halign = content_hbox.valign = Gtk.Align.CENTER; // center-align the content
         content_hbox.margin_top = content_hbox.margin_bottom = MIN_VERTICAL_MARGIN;
         content_hbox.margin_start = content_hbox.margin_end = MIN_HORIZONTAL_MARGIN;
 
-        content_hbox.add(image);
+        content_hbox.append(image);
         message_vbox.hexpand = true;
-        content_hbox.add (message_vbox);
+        content_hbox.append (message_vbox);
 
-        add (content_hbox);
+        append (content_hbox);
     }
 
 
@@ -104,7 +106,7 @@ public class BeatBox.EmbeddedAlert : Gtk.EventBox {
             primary_text_label.halign = secondary_text_label.halign = Gtk.Align.START;
             primary_text_label.justify = Gtk.Justification.LEFT;
             secondary_text_label.justify = Gtk.Justification.FILL;
-            image.set_from_icon_name (get_icon_name_for_message_type (type), Gtk.IconSize.DIALOG);
+            image.set_from_icon_name (get_icon_name_for_message_type (type));
         }
         else {
             primary_text_label.halign = secondary_text_label.halign = Gtk.Align.CENTER;
@@ -157,7 +159,6 @@ public class BeatBox.EmbeddedAlert : Gtk.EventBox {
     }
 
     private static void set_widget_visible (Gtk.Widget widget, bool visible) {
-        widget.set_no_show_all (!visible);
-        widget.set_visible (visible);
+        widget.visible = visible;
     }
 }

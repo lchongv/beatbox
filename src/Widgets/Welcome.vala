@@ -6,15 +6,17 @@
  * and Corentin Noël. Same widgets and style classes, so it looks the same.
  */
 
-public class BeatBox.Welcome : Gtk.EventBox {
+public class BeatBox.Welcome : Gtk.Box {
 	public signal void activated (int index);
 
 	GLib.List<Gtk.Button> buttons = new GLib.List<Gtk.Button> ();
 	Gtk.Grid options;
 
 	public Welcome (string title, string subtitle) {
-		get_style_context ().add_class (Gtk.STYLE_CLASS_VIEW);
-		get_style_context ().add_class ("welcome");
+		orientation = Gtk.Orientation.VERTICAL;
+		spacing = 0;
+		add_css_class ("view");
+		add_css_class ("welcome");
 
 		var title_label = new Gtk.Label (title);
 		title_label.justify = Gtk.Justification.CENTER;
@@ -26,7 +28,7 @@ public class BeatBox.Welcome : Gtk.EventBox {
 		subtitle_label.hexpand = true;
 		subtitle_label.wrap = true;
 		subtitle_label.wrap_mode = Pango.WrapMode.WORD;
-		subtitle_label.get_style_context ().add_class (Gtk.STYLE_CLASS_DIM_LABEL);
+		subtitle_label.get_style_context ().add_class ("dim-label");
 		subtitle_label.get_style_context ().add_class ("h2");
 
 		options = new Gtk.Grid ();
@@ -36,25 +38,28 @@ public class BeatBox.Welcome : Gtk.EventBox {
 		options.margin_top = 24;
 
 		var content = new Gtk.Grid ();
-		content.expand = true;
-		content.margin = 12;
+		content.hexpand = content.vexpand = true;
+		content.margin_top = content.margin_bottom = 12;
+		content.margin_start = content.margin_end = 12;
 		content.orientation = Gtk.Orientation.VERTICAL;
 		content.valign = Gtk.Align.CENTER;
-		content.add (title_label);
-		content.add (subtitle_label);
-		content.add (options);
+		content.attach (title_label, 0, 0, 1, 1);
+		content.attach (subtitle_label, 0, 1, 1, 1);
+		content.attach (options, 0, 2, 1, 1);
 
-		add (content);
+		base.append (content);
 	}
 
 	public int append (string icon_name, string title, string description) {
-		var image = new Gtk.Image.from_icon_name (icon_name, Gtk.IconSize.DIALOG);
+		var image = new Gtk.Image.from_icon_name (icon_name);
 		image.use_fallback = true;
 		return append_with_image (image, title, description);
 	}
 
 	public int append_with_pixbuf (Gdk.Pixbuf? pixbuf, string title, string description) {
-		return append_with_image (new Gtk.Image.from_pixbuf (pixbuf), title, description);
+		var image = new Gtk.Image ();
+		UI.show_pixbuf (image, pixbuf);
+		return append_with_image (image, title, description);
 	}
 
 	public int append_with_image (Gtk.Image? image, string title, string description) {
@@ -68,7 +73,7 @@ public class BeatBox.Welcome : Gtk.EventBox {
 		description_label.valign = Gtk.Align.START;
 		description_label.wrap = true;
 		description_label.wrap_mode = Pango.WrapMode.WORD;
-		description_label.get_style_context ().add_class (Gtk.STYLE_CLASS_DIM_LABEL);
+		description_label.get_style_context ().add_class ("dim-label");
 
 		var grid = new Gtk.Grid ();
 		grid.column_spacing = 12;
@@ -82,11 +87,11 @@ public class BeatBox.Welcome : Gtk.EventBox {
 		}
 
 		var button = new Gtk.Button ();
-		button.get_style_context ().add_class (Gtk.STYLE_CLASS_FLAT);
-		button.add (grid);
+		button.add_css_class ("flat");
+		button.child = grid;
 		button.clicked.connect (() => activated (buttons.index (button)));
 		buttons.append (button);
-		options.add (button);
+		options.attach (button, 0, buttons.index (button), 1, 1);
 
 		return buttons.index (button);
 	}
@@ -94,8 +99,11 @@ public class BeatBox.Welcome : Gtk.EventBox {
 	public void remove_item (uint index) {
 		unowned Gtk.Button? button = buttons.nth_data (index);
 		if (button != null) {
-			button.destroy (); // the list's reference keeps it alive until it leaves the list
+			options.remove (button);
 			buttons.remove (button);
+			// keep the remaining buttons in consecutive rows
+			for (int i = 0; i < buttons.length (); i++)
+				options.attach (buttons.nth_data (i), 0, i, 1, 1);
 		}
 	}
 
