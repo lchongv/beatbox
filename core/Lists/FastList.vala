@@ -67,13 +67,20 @@ public class BeatBox.FastList : TreeView {
 		set_model(fm);
 		
 		get_style_context().add_class("tracklist");
-		draw.connect(draw_stripes);
 	}
 	
+	public override void snapshot (Gtk.Snapshot s) {
+		var r = Graphene.Rect ();
+		r.init (0, 0, get_width (), get_height ());
+		var cr = s.append_cairo (r);
+		draw_stripes (cr);
+		base.snapshot (s); // the header and the rows go over the stripes
+	}
+
 	/** Zebra rows (GTK3 no longer paints them). The tree's own
 	 * background is transparent (see theme.css), so we paint white and pale
 	 * blue bands before GTK draws the rows on top. */
-	bool draw_stripes(Cairo.Context cr) {
+	void draw_stripes(Cairo.Context cr) {
 		int row_height = 18, first_y = 0;
 		Gdk.Rectangle area;
 		var first = new TreePath.first();
@@ -86,14 +93,14 @@ public class BeatBox.FastList : TreeView {
 			convert_bin_window_to_widget_coords(0, 0, null, out first_y);
 		}
 		
-		int height = get_allocated_height();
-		int width = get_allocated_width();
+		int height = get_height();
+		int width = get_width();
 		// skins may recolor the stripes (see theme.css)
 		Gdk.RGBA row_a, row_b;
 		if(!get_style_context().lookup_color("bb_row_a", out row_a))
 			row_a = { 1, 1, 1, 1 };
 		if(!get_style_context().lookup_color("bb_row_b", out row_b))
-			row_b = { 0xdd/255.0, 0xe8/255.0, 0xf5/255.0, 1 };
+			row_b = { 0xdd/255.0f, 0xe8/255.0f, 0xf5/255.0f, 1 };
 		Gdk.cairo_set_source_rgba(cr, row_a);
 		cr.paint();
 		Gdk.cairo_set_source_rgba(cr, row_b);
@@ -103,7 +110,6 @@ public class BeatBox.FastList : TreeView {
 				cr.rectangle(0, y, width, row_height);
 		}
 		cr.fill();
-		return false;
 	}
 	
 	/** Should not be manipulated by client */

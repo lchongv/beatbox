@@ -90,20 +90,16 @@ public class BeatBox.StyledContentBox : ScrolledWindow {
 		}
 		""";
 	
-	EventBox ebox;
+	Box ebox;
 	
 	public StyledContentBox() {
-		ebox = new EventBox();
+		ebox = new Box(Orientation.VERTICAL, 0);
 		Viewport vp = new Viewport(null, null);
 		
 		// Apply styling
 		if(style_provider == null) {
 			style_provider = new CssProvider();
-			try  {
-				style_provider.load_from_data (WIDGET_STYLESHEET, -1);
-			} catch (Error e) {
-				stderr.printf ("\nNowPlayingPage: Couldn't load style provider.\n");
-			}
+			style_provider.load_from_data (WIDGET_STYLESHEET.data);
 		}
 		
 		set_policy(PolicyType.AUTOMATIC, PolicyType.AUTOMATIC);
@@ -112,13 +108,12 @@ public class BeatBox.StyledContentBox : ScrolledWindow {
 		vp.get_style_context().add_provider(style_provider, STYLE_PROVIDER_PRIORITY_APPLICATION);
         ebox.get_style_context().add_class("NowPlayingPage");
 		ebox.get_style_context().add_provider(style_provider, STYLE_PROVIDER_PRIORITY_APPLICATION);
-		vp.set_shadow_type(ShadowType.NONE);
 		
-		vp.add(ebox);
-		add(vp);
+		vp.set_child(ebox);
+		set_child(vp);
 	}
 	
 	public void set_content(Widget w) {
-		ebox.add(w);
+		ebox.append(w);
 	}
 }

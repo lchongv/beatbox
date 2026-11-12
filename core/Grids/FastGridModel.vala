@@ -32,7 +32,7 @@ using Gtk;
  * users here.
 **/
 [GIR (visible = false)] // internal, not for plugins
-public class BeatBox.FastGridModel : GLib.Object, TreeModel, TreeDragSource {
+public class BeatBox.FastGridModel : GLib.Object, TreeModel {
 	int stamp; // all iters must match this
 	
 	/* data storage variables */
@@ -206,27 +206,5 @@ public class BeatBox.FastGridModel : GLib.Object, TreeModel, TreeDragSource {
 		iter.user_data = (void*)index;
 		
 		row_changed(path, iter);
-	}
-	
-	/************************************
-	 * Drag'n'drop
-	 ************************************/
-	bool drag_data_delete(TreePath path) {
-		return false;
-	}
-	
-	bool drag_data_get(TreePath path, SelectionData data) {
-		/*string[] old = data.get_uris();
-		string[] cp = new string[old.length + 1];
-		for(int i = 0; i < old.length; ++i)
-			cp[i] = old[i];
-		
-		cp[cp.length - 1] = rows[int.parse(path.to_string())].uri;*/
-		
-		return true;
-	}
-	
-	bool row_draggable(TreePath path) {
-		return true;
 	}
 }

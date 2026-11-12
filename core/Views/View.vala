@@ -77,7 +77,7 @@ public interface BeatBox.View : Gtk.Box {
 	public abstract void set_as_current_view();
 	public abstract void unset_as_current_view();
 	public abstract bool can_receive_drop();
-	public abstract void drag_received(Gtk.SelectionData data);
+	public abstract void drag_received(string[] uris);
 	public abstract SideTreeCategory get_sidetree_category();
 	
 	// Search
@@ -85,7 +85,7 @@ public interface BeatBox.View : Gtk.Box {
 	public abstract void search_activated(string search); // Again, i think it'd be good to only tell current view
 	public abstract void search_changed(string search); // This is called after requested_search_timeout(). Can return null or search suggestions
 	public abstract int requested_search_timeout(); // how long to wait before calling get_search_menu
-	public abstract GLib.List<Gtk.MenuItem>? get_search_menu(string search);
+	public abstract GLib.List<BeatBox.PopMenuItem>? get_search_menu(string search);
 	
 	// View selector
 	public abstract bool supports_view_selector();

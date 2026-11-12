@@ -12,7 +12,7 @@ etapa 2 con el andamio; `tools/gtk4-check.sh` tarda ~2 s.
 |---|---|---|---|---|---|
 | T00 rama, meson y andamio | orquestador | [x] | | | total de errores: 1549 (etapa 2) |
 | T01 utilidades y PopMenu | H | [x] | | 2 | icono simbólico sin colores de contexto (Icon.vala:213); WindowHandle también maximiza con doble clic (UI.vala:117) |
-| T02 resto de core | H | [ ] | | | |
+| T02 resto de core | H | [x] | | 0 | a verificar en T31: rayas de FastList (se pintan antes que el fondo), rueda de StyledBox.set_widget (mismo comportamiento que antes: sin handler) |
 | T10 diálogos | D | [ ] | | | |
 | T11 preferencias | D | [ ] | | | |
 | T12 ventanas | D | [ ] | | | |

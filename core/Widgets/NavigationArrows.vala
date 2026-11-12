@@ -68,11 +68,7 @@ public class BeatBox.NavigationArrows : Gtk.Box {
 		if (style_provider == null)
 		{
 			style_provider = new CssProvider ();
-			try {
-				style_provider.load_from_data (STYLESHEET, -1);
-			} catch (Error e) {
-				warning ("GraniteNavigationArrows: %s. The widget will not look as intended", e.message);
-			}
+			style_provider.load_from_data (STYLESHEET.data);
 		}
 
 		widget_style = get_style_context ();
@@ -80,40 +76,34 @@ public class BeatBox.NavigationArrows : Gtk.Box {
 
 		homogeneous = true;
 		spacing = 0;
-		app_paintable = true;
-
-		set_visual (get_screen ().get_rgba_visual ());
 
 		can_focus = true;
 		
 		previous_button = new NavigationArrow ();
-		var previous_image = new Image.from_icon_name ("go-previous-symbolic", IconSize.MENU);
-		previous_button.set_image (previous_image);
+		var previous_image = new Image.from_icon_name ("go-previous-symbolic");
+		previous_button.child = previous_image;
 		
 		previous_button.clicked.connect (() => {
 			previous_clicked ();
 		});
 		
 		next_button = new NavigationArrow ();
-		var next_image = new Image.from_icon_name ("go-next-symbolic", IconSize.MENU);
-		next_button.set_image (next_image);
+		var next_image = new Image.from_icon_name ("go-next-symbolic");
+		next_button.child = next_image;
 		
 		next_button.clicked.connect (() => {
 			next_clicked ();
 		});
 		
-		add (previous_button);
-		add (next_button);
-		previous_button.show_all ();
-		next_button.show_all ();
+		append (previous_button);
+		append (next_button);
 	}
 
 	public void set_item_visible (int index, bool val) {
-		var item = get_children ().nth_data (index);
+		var item = UI.children (this).nth_data (index);
 		if (item == null)
 			return;
 
-		item.set_no_show_all (!val);
 		item.set_visible (val);
 	}
 
@@ -121,7 +111,7 @@ public class BeatBox.NavigationArrows : Gtk.Box {
 
 private class BeatBox.NavigationArrow : Gtk.Button {
 	public NavigationArrow () {
-		can_focus = false;
+		focusable = false;
 
 		const int style_priority = Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION;
 

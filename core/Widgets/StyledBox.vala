@@ -112,7 +112,7 @@ public class BeatBox.StyledBox : Gtk.Box {
     
     Gtk.Box inner;
 	Gtk.Label title_label;
-	Gtk.EventBox center;
+	Gtk.Box center;
 	Gtk.Box content;
 	
 	public StyledBox(string title, string class_style) {
@@ -121,11 +121,7 @@ public class BeatBox.StyledBox : Gtk.Box {
 		content = new Box(Orientation.VERTICAL, 0);
 		
 		style_provider = new CssProvider();
-        try  {
-            style_provider.load_from_data (WIDGET_STYLESHEET, -1);
-        } catch (Error e) {
-            stderr.printf ("\nStyledBox: Couldn't load style provider.\n");
-        }
+        style_provider.load_from_data (WIDGET_STYLESHEET.data);
         
 		get_style_context().add_class("StyledBox");
 		get_style_context().add_class(class_style);
@@ -138,32 +134,32 @@ public class BeatBox.StyledBox : Gtk.Box {
 		var bottom = new Button();
 		var left = new Button();
 		
-		center = new EventBox();
+		center = new Box(Orientation.VERTICAL, 0);
 		if(class_style != "white") {
 			center.get_style_context().add_class(class_style);
 			center.get_style_context().add_provider(style_provider, STYLE_PROVIDER_PRIORITY_APPLICATION);
 		}
-		center.add(content);
+		center.append(content);
 		
 		if(title != "") {
-			EventBox title_box = new EventBox();
+			Box title_box = new Box(Orientation.VERTICAL, 0);
 			title_box.get_style_context().add_class("pure_" + class_style);
 			title_box.get_style_context().add_provider(style_provider, STYLE_PROVIDER_PRIORITY_APPLICATION);
-			title_box.add(title_label);
+			title_box.append(title_label);
 			title_label.set_markup("<b>" + Markup.escape_text(title) + "</b>");
-			content.add(title_box);
+			content.append(title_box);
 		}
 		
-		inner.add(left);
+		inner.append(left);
 		center.hexpand = true;
-		inner.add(center);
-		inner.add(right);
+		inner.append(center);
+		inner.append(right);
 		
 		this.set_orientation(Orientation.VERTICAL);
-		add(top);
+		append(top);
 		inner.vexpand = true;
-		add(inner);
-		add(bottom);
+		append(inner);
+		append(bottom);
 		hexpand = vexpand = false; // its parts fill it; it doesn't ask its parent for more room
 		
 		top.get_style_context().add_class("top");
@@ -178,10 +174,10 @@ public class BeatBox.StyledBox : Gtk.Box {
 		right.get_style_context().add_class(class_style);
 		bottom.get_style_context().add_class(class_style);
 		left.get_style_context().add_class(class_style);
-		top.get_style_context().remove_class(Gtk.STYLE_CLASS_BUTTON);
-		right.get_style_context().remove_class(Gtk.STYLE_CLASS_BUTTON);
-		bottom.get_style_context().remove_class(Gtk.STYLE_CLASS_BUTTON);
-		left.get_style_context().remove_class(Gtk.STYLE_CLASS_BUTTON);
+		top.get_style_context().remove_class("button");
+		right.get_style_context().remove_class("button");
+		bottom.get_style_context().remove_class("button");
+		left.get_style_context().remove_class("button");
 		
 		top.get_style_context().add_provider(style_provider, STYLE_PROVIDER_PRIORITY_APPLICATION);
 		right.get_style_context().add_provider(style_provider, STYLE_PROVIDER_PRIORITY_APPLICATION);
@@ -202,14 +198,14 @@ public class BeatBox.StyledBox : Gtk.Box {
 	
 	public void set_widget(Widget w) {
 		w.vexpand = true;
-		content.add(w);
+		content.append(w);
 		w.get_style_context().add_provider(style_provider, STYLE_PROVIDER_PRIORITY_APPLICATION);
 		
 		// Turn off scrolling on w: the controller takes the wheel before w sees it
 		if(w is ScrolledWindow) {
-			var no_scroll = new EventControllerScroll(w, EventControllerScrollFlags.BOTH_AXES);
+			var no_scroll = new EventControllerScroll(EventControllerScrollFlags.BOTH_AXES);
 			no_scroll.propagation_phase = PropagationPhase.CAPTURE;
-			w.set_data("no-scroll", no_scroll); // GTK3 controllers need a reference
+			w.add_controller(no_scroll);
 		}
 	}
 }
