@@ -775,7 +775,17 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 			int width = int.max(App.settings.saved_state.more_width, 260);
 			report.set_size_request(200, -1);
 			report.show();
-			contentToReport.position = int.max(200, contentToReport.get_allocated_width() - width);
+			if(contentToReport.get_allocated_width() > 1)
+				contentToReport.position = int.max(200, contentToReport.get_allocated_width() - width);
+			else {
+				// at startup the window is not laid out yet: place the divider once it is,
+				// from the width it gets (the report saves its width again after this move)
+				ulong id = 0;
+				id = contentToReport.size_allocate.connect((a) => {
+					SignalHandler.disconnect(contentToReport, id);
+					contentToReport.position = int.max(200, a.width - width);
+				});
+			}
 		}
 		else
 			report.hide();
