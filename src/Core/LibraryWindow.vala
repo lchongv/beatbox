@@ -70,6 +70,8 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 	public Gtk.Paned sourcesToMedias { get; private set; } //allows for draggable
 	Box contentBox;
 	Gtk.Paned contentToReport; // the lists, and the report on the song playing at their right
+	bool placing_report = false; // our own moves of that divider are not the user's
+	int report_split_width = 0; // the window width the divider was last placed for
 	TrackReport report;
 	ToggleButton reportButton;
 	Box sideBox;
@@ -501,9 +503,18 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		contentToReport.pack1(contentBox, true, false);
 		contentToReport.pack2(report, false, false);
 		sourcesToMedias.pack2(contentToReport, true, true);
-		report.size_allocate.connect((a) => {
-			if(report.visible && a.width > 1)
-				App.settings.saved_state.more_width = a.width;
+		// the report keeps the width it was left at: dragging the divider saves it, resizing the window does not change it
+		contentToReport.notify["position"].connect(() => {
+			if(report.visible && !placing_report && contentToReport.get_allocated_width() > 1)
+				App.settings.saved_state.more_width = contentToReport.get_allocated_width() - contentToReport.position;
+		});
+		contentToReport.size_allocate.connect((a) => {
+			if(!report.visible || a.width <= 1 || a.width == report_split_width)
+				return;
+			report_split_width = a.width;
+			placing_report = true;
+			contentToReport.position = int.max(200, a.width - int.max(App.settings.saved_state.more_width, 200));
+			placing_report = false;
 		});
 		
 		reportButton = new ToggleButton();
@@ -793,20 +804,9 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 	void show_report(bool show) {
 		App.settings.saved_state.more_visible = show;
 		if(show) {
-			int width = int.max(App.settings.saved_state.more_width, 260);
 			report.set_size_request(200, -1);
 			report.show();
-			if(contentToReport.get_allocated_width() > 1)
-				contentToReport.position = int.max(200, contentToReport.get_allocated_width() - width);
-			else {
-				// at startup the window is not laid out yet: place the divider once it is,
-				// from the width it gets (the report saves its width again after this move)
-				ulong id = 0;
-				id = contentToReport.size_allocate.connect((a) => {
-					SignalHandler.disconnect(contentToReport, id);
-					contentToReport.position = int.max(200, a.width - width);
-				});
-			}
+			report_split_width = 0; // placed at the next allocation, from the saved width
 		}
 		else
 			report.hide();

@@ -9,6 +9,8 @@ namespace ProjectM {
 	public void destroy (void* instance);
 	[CCode (cname = "projectm_set_window_size")]
 	public void set_window_size (void* instance, size_t width, size_t height);
+	[CCode (cname = "projectm_set_texture_search_paths")]
+	public void set_texture_search_paths (void* instance, [CCode (array_length = false)] string[] paths, size_t count);
 	[CCode (cname = "projectm_load_preset_file")]
 	public void load_preset_file (void* instance, string filename, bool smooth_transition);
 	[CCode (cname = "projectm_pcm_add_float")]

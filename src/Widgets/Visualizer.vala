@@ -14,6 +14,7 @@ public class BeatBox.Visualizer : GLArea {
 	string[] presets = {};
 	int64 last_preset = 0;
 	uint tick_id = 0;
+	bool rendered = false;
 
 	public Visualizer() {
 		set_auto_render(false);
@@ -28,10 +29,19 @@ public class BeatBox.Visualizer : GLArea {
 	}
 
 	void on_realize() {
+		var error = get_error(); // GL context problems show up here, not as warnings of their own
+		if (error != null)
+			warning("Visualizer: no OpenGL context: %s", error.message);
 		make_current();
 		instance = ProjectM.create();
+		if (instance == null)
+			warning("Visualizer: projectM could not start");
 		ProjectM.set_window_size(instance, get_allocated_width(), get_allocated_height());
+		// the presets sample these pictures (noise, shapes); without them they draw noise
+		var textures = Path.build_filename(Environment.get_user_data_dir(), "beatbox", "projectm-textures");
+		ProjectM.set_texture_search_paths(instance, { textures }, 1);
 		presets = find_presets();
+		message("Visualizer: realized, %d presets", presets.length);
 		next_preset();
 	}
 
@@ -49,6 +59,10 @@ public class BeatBox.Visualizer : GLArea {
 	bool on_render(Gdk.GLContext context) {
 		if (instance != null)
 			ProjectM.opengl_render_frame(instance);
+		if (!rendered) {
+			rendered = true;
+			message("Visualizer: first frame drawn (%dx%d)", get_allocated_width(), get_allocated_height());
+		}
 		return true;
 	}
 
