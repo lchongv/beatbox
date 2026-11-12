@@ -47,15 +47,26 @@ public class BeatBox.CoverFlow : DrawingArea {
 		click_gesture.button = 0; // any button takes the focus
 		click_gesture.pressed.connect(on_pressed);
 
-		var h1 = grid.visible_changed.connect(refresh);
-		var h2 = App.covers.cover_changed.connect(() => { surfaces.remove_all(); queue_draw(); });
-		var h3 = App.playback.media_played.connect((m, old) => center_on(m));
-		destroy.connect(() => { // the fullscreen copy must not outlive its window
-			SignalHandler.disconnect(grid, h1);
-			SignalHandler.disconnect(App.covers, h2);
-			SignalHandler.disconnect(App.playback, h3);
+		grid.visible_changed.connect(refresh);
+		App.covers.cover_changed.connect(on_cover_changed);
+		App.playback.media_played.connect(on_media_played);
+		// the fullscreen copy must not outlive its window. Disconnect by method: a grid
+		// disposed first has already dropped its handlers, and that is not an error
+		destroy.connect(() => {
+			grid.visible_changed.disconnect(refresh);
+			App.covers.cover_changed.disconnect(on_cover_changed);
+			App.playback.media_played.disconnect(on_media_played);
 		});
 		refresh();
+	}
+
+	void on_cover_changed(string album_artist, string album) {
+		surfaces.remove_all();
+		queue_draw();
+	}
+
+	void on_media_played(Media m, Media? old) {
+		center_on(m);
 	}
 
 	/** Reload the albums from the grid (same order and search filter) */
