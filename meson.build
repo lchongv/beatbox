@@ -1,4 +1,4 @@
-project('beatbox', 'vala', 'c', version: '1.2.13')
+project('beatbox', 'vala', 'c', version: '1.2.14')
 
 gnome = import('gnome')
 i18n = import('i18n')

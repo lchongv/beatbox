@@ -52,7 +52,6 @@ public class BeatBox.SetLibraryFolderConfirmation : Window {
 		
 		// set the size based on saved gconf settings
 		//this.window_position = WindowPosition.CENTER;
-		this.type_hint = Gdk.WindowTypeHint.DIALOG;
 		this.set_modal(true);
 		this.set_transient_for(App.window);
 		this.destroy_with_parent = true;
@@ -64,7 +63,8 @@ public class BeatBox.SetLibraryFolderConfirmation : Window {
 		padding = new Box(Orientation.HORIZONTAL, 10);
 		
 		// initialize controls
-		Image warning = new Image.from_icon_name("dialog-warning", Gtk.IconSize.DIALOG);
+		Image warning = new Image.from_icon_name("dialog-warning");
+		warning.pixel_size = 48;
 		Label title = new Label("");
 		Label info = new Label("");
 		savePlaylists = new Button.with_label(_("Export Playlists"));
@@ -77,72 +77,72 @@ public class BeatBox.SetLibraryFolderConfirmation : Window {
 		title.xalign = 0.0f;
 		title.set_markup("<span weight=\"bold\" size=\"larger\">%s</span>".printf(_("Set %s Folder?").printf(lib.name)));
 		info.xalign = 0.0f;
-		info.set_line_wrap(true);
+		info.wrap = true;
 		info.set_markup(_("Are you sure you want to set the %s folder to %s? This will reset your %s library.").printf("<b>" + lib.name + "</b>", "<b>" + Markup.escape_text(folder.get_path()) + "</b>", lib.name));
 		
 		/* set up controls layout */
 		Box information = new Box(Orientation.HORIZONTAL, 0);
 		Box information_text = new Box(Orientation.VERTICAL, 0);
 		warning.margin_start = warning.margin_end = 10;
-		information.add(warning);
+		information.append(warning);
 		title.margin_top = title.margin_bottom = 10;
-		information_text.add(title);
-		information_text.add(info);
+		information_text.append(title);
+		information_text.append(info);
 		information_text.hexpand = true;
 		information_text.margin_start = information_text.margin_end = 10;
-		information.add(information_text);
+		information.append(information_text);
 		
 		// save playlist hbox
 		Box playlistBox = new Box(Orientation.HORIZONTAL, 6);
 		savePlaylists.hexpand = true;
-		playlistBox.add(savePlaylists);
-		playlistBox.add(is_working);
-		playlistBox.add(is_finished);
+		playlistBox.append(savePlaylists);
+		playlistBox.append(is_working);
+		playlistBox.append(is_finished);
 		
-		var bottomButtons = new ButtonBox(Orientation.HORIZONTAL);
-		bottomButtons.set_layout(ButtonBoxStyle.END);
-		bottomButtons.add(playlistBox);
-		bottomButtons.add(cancel);
-		bottomButtons.add(ok);
+		var bottomButtons = new Box(Orientation.HORIZONTAL, 6);
+		playlistBox.hexpand = true;
+		bottomButtons.append(playlistBox);
+		bottomButtons.append(cancel);
+		bottomButtons.append(ok);
 		bottomButtons.set_spacing(6);
 		
-		((Gtk.ButtonBox)bottomButtons).set_child_secondary(playlistBox, true);
-		
-		content.add(information);
+		content.append(information);
 		bottomButtons.margin_top = bottomButtons.margin_bottom = 10;
-		content.add(bottomButtons);
+		content.append(bottomButtons);
 		
 		content.hexpand = true;
 		content.margin_start = content.margin_end = 10;
-		padding.add(content);
+		padding.append(content);
 		
 		savePlaylists.set_sensitive(App.library.media_count() > 0 && App.playlists.playlist_count() > 0);
 		
-		savePlaylists.clicked.connect(savePlaylistsClicked);
+		savePlaylists.clicked.connect( () => savePlaylistsClicked.begin () );
 		cancel.clicked.connect(cancel_clicked);
 		ok.clicked.connect(ok_clicked);
 		
-		add(padding);
-		show_all();
+		set_child(padding);
+		present();
 		
-		is_working.hide();
+		is_working.visible = false;
 	}
 	
-	public void savePlaylistsClicked() {
+	public async void savePlaylistsClicked() {
 		string folder = "";
 		var file_chooser = new FileChooserDialog (_("Choose Music Folder"), this,
 								  FileChooserAction.SELECT_FOLDER,
 								  _("_Cancel"), ResponseType.CANCEL,
 								  _("_Open"), ResponseType.ACCEPT);
-		if (file_chooser.run () == ResponseType.ACCEPT) {
-			folder = file_chooser.get_filename();
+		if ((yield UI.run_dialog (file_chooser)) == ResponseType.ACCEPT) {
+			var chosen = file_chooser.get_file();
+			if (chosen != null && chosen.get_path() != null)
+				folder = chosen.get_path();
 		}
 		
 		file_chooser.destroy ();
 		
 		if(folder != "") {
-			is_working.show();
-			is_finished.hide();
+			is_working.visible = true;
+			is_finished.visible = false;
 			
 			// foreach playlist in App.library.playlists(), save to (p.name).m3u
 			var success = true;
@@ -154,13 +154,13 @@ public class BeatBox.SetLibraryFolderConfirmation : Window {
 				}
 			}
 			
-			is_working.hide();
-			is_finished.show();
+			is_working.visible = false;
+			is_finished.visible = true;
 			
-			var process_completed_icon = App.icons.PROCESS_COMPLETED.render (IconSize.MENU);
-			var process_error_icon = App.icons.PROCESS_ERROR.render (IconSize.MENU);
+			var process_completed_icon = App.icons.PROCESS_COMPLETED.render (null);
+			var process_error_icon = App.icons.PROCESS_ERROR.render (null);
 			
-			is_finished.set_from_pixbuf(success ? process_completed_icon : process_error_icon);
+			UI.show_pixbuf (is_finished, success ? process_completed_icon : process_error_icon);
 		}
 	}
 	

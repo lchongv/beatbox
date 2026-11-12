@@ -4,14 +4,14 @@ using Gtk;
 public class BeatBox.FillTagsDialog : Dialog {
 	Gee.HashMap<Media, Media> filled = new Gee.HashMap<Media, Media> (); // song → copy with the tags filled in
 
-	public static void run_for (Gee.Collection<Media> medias) {
+	public static async void run_for (Gee.Collection<Media> medias) {
 		var dialog = new FillTagsDialog (medias);
 		if (dialog.filled.size == 0) {
 			dialog.destroy ();
 			App.window.doAlert (_("Nothing to fill in"), _("The file names don't add anything to these songs' tags."));
 			return;
 		}
-		if (dialog.run () == ResponseType.APPLY)
+		if ((yield UI.run_dialog (dialog)) == ResponseType.APPLY)
 			dialog.apply ();
 		dialog.destroy ();
 	}
@@ -54,21 +54,20 @@ public class BeatBox.FillTagsDialog : Dialog {
 			column.expand = i != 1 && i != 5;
 			view.append_column (column);
 		}
-		var scroll = new ScrolledWindow (null, null);
-		scroll.expand = true;
-		scroll.shadow_type = ShadowType.IN;
-		scroll.add (view);
+		var scroll = new ScrolledWindow ();
+		scroll.vexpand = true;
+		scroll.has_frame = true;
+		scroll.set_child (view);
 
 		var label = new Label (ngettext ("%d song gets the tags in bold. Tags already set are kept.",
 		                                 "%d songs get the tags in bold. Tags already set are kept.", filled.size).printf (filled.size));
-		label.xalign = 0;
+		label.xalign = 0.0f;
 		label.wrap = true;
 		var box = get_content_area ();
 		box.spacing = 8;
-		box.border_width = 8;
-		box.add (label);
-		box.add (AquaScroll.wrap (scroll));
-		box.show_all ();
+		box.margin_top = box.margin_bottom = box.margin_start = box.margin_end = 8;
+		box.append (label);
+		box.append (AquaScroll.wrap (scroll));
 
 		add_button (_("Cancel"), ResponseType.CANCEL);
 		add_button (_("Fill In"), ResponseType.APPLY).get_style_context ().add_class ("suggested-action");

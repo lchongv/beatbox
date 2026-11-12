@@ -53,7 +53,6 @@ public class BeatBox.NotImportedDialog : Window{
 		
 		// set the size based on saved gconf settings
 		//this.window_position = WindowPosition.CENTER;
-		this.type_hint = Gdk.WindowTypeHint.DIALOG;
 		this.set_modal(true);
 		this.set_transient_for(App.window);
 		this.destroy_with_parent = true;
@@ -65,11 +64,12 @@ public class BeatBox.NotImportedDialog : Window{
 		padding = new Box(Orientation.HORIZONTAL, 20);
 		
 		// initialize controls
-		Image warning = new Image.from_icon_name("dialog-error", Gtk.IconSize.DIALOG);
+		Image warning = new Image.from_icon_name("dialog-error");
+		warning.pixel_size = 48;
 		Label title = new Label("");
 		Label info = new Label(ngettext("BeatBox could not read it. It may be damaged or not be audio.", "BeatBox could not read them. They may be damaged or not be audio.", files.size));
 		trashAll = new CheckButton.with_label(_("Move all corrupted files to trash"));
-		filesScroll = new ScrolledWindow(null, null);
+		filesScroll = new ScrolledWindow();
 		filesView = new TreeView();
 		filesModel = new Gtk.ListStore(2, typeof(bool), typeof(string));
 		filesView.set_model(filesModel);
@@ -81,7 +81,7 @@ public class BeatBox.NotImportedDialog : Window{
 		string TITLE_TEXT = ngettext("Could not import %d file", "Could not import %d files", files.size).printf(files.size);
 		title.set_markup(("<span weight=\"bold\" size=\"larger\">%s</span>").printf(TITLE_TEXT));
 		info.xalign = 0.0f;
-		info.set_line_wrap(false);
+		info.wrap = false;
 		
 		/* add cellrenderers to columns and columns to treeview */
 		var toggle = new CellRendererToggle ();
@@ -112,7 +112,7 @@ public class BeatBox.NotImportedDialog : Window{
 			filesModel.set(item, 0, false, 1, file.replace(music_folder, ""));
 		}
 		
-		filesScroll.add(filesView);
+		filesScroll.set_child(filesView);
 		filesScroll.set_policy(PolicyType.AUTOMATIC, PolicyType.AUTOMATIC);
 		
 		moveToTrash.set_sensitive(false);
@@ -121,39 +121,39 @@ public class BeatBox.NotImportedDialog : Window{
 		Box information = new Box(Orientation.HORIZONTAL, 0);
 		Box information_text = new Box(Orientation.VERTICAL, 0);
 		warning.margin_start = warning.margin_end = 10;
-		information.add(warning);
+		information.append(warning);
 		title.margin_top = title.margin_bottom = 10;
-		information_text.add(title);
-		information_text.add(info);
+		information_text.append(title);
+		information_text.append(info);
 		information_text.hexpand = true;
 		information_text.margin_start = information_text.margin_end = 10;
-		information.add(information_text);
+		information.append(information_text);
 		
 		Box listBox = new Box(Orientation.VERTICAL, 0);
 		filesScroll.vexpand = true;
 		filesScroll.margin_top = filesScroll.margin_bottom = 5;
-		listBox.add(AquaScroll.wrap(filesScroll));
+		listBox.append(AquaScroll.wrap(filesScroll));
 		
 		Expander exp = new Expander(_("Select individual files to move to trash:"));
-		exp.add(listBox);
+		exp.set_child(listBox);
 		exp.expanded = false;
 		
-		var bottomButtons = new ButtonBox(Orientation.HORIZONTAL);
-		bottomButtons.set_layout(ButtonBoxStyle.END);
-		bottomButtons.add(moveToTrash);
-		bottomButtons.add(okButton);
+		var bottomButtons = new Box(Orientation.HORIZONTAL, 6);
+		bottomButtons.halign = Gtk.Align.END;
+		bottomButtons.append(moveToTrash);
+		bottomButtons.append(okButton);
 		bottomButtons.set_spacing(6);
 		
-		content.add(information);
-		content.add(wrap_alignment(trashAll, 5, 0, 0, 75));
+		content.append(information);
+		content.append(wrap_alignment(trashAll, 5, 0, 0, 75));
 		exp.vexpand = true;
-		content.add(wrap_alignment(exp, 0, 0, 0, 75));
+		content.append(wrap_alignment(exp, 0, 0, 0, 75));
 		bottomButtons.margin_top = bottomButtons.margin_bottom = 10;
-		content.add(bottomButtons);
+		content.append(bottomButtons);
 		
 		content.hexpand = true;
 		content.margin_start = content.margin_end = 10;
-		padding.add(content);
+		padding.append(content);
 		
 		moveToTrash.clicked.connect(moveToTrashClick);
 		trashAll.toggled.connect(trashAllToggled);
@@ -162,15 +162,15 @@ public class BeatBox.NotImportedDialog : Window{
 			if(exp.get_expanded()) {
 				resizable = true;
 				set_size_request(475, 180);
-				resize(475, 180);
+				set_default_size(475, 180);
 				resizable = false;
 			}
 			else
 				set_size_request(475, 350);
 		});
 		
-		add(padding);
-		show_all();
+		set_child(padding);
+		present();
 	}
 	
 	public static Gtk.Widget wrap_alignment (Gtk.Widget widget, int top, int right, int bottom, int left) {

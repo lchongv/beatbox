@@ -41,8 +41,6 @@ public class BeatBox.RemoveFilesDialog : Window {
 	public RemoveFilesDialog (Collection<Media> to_remove, TreeViewSetup.Hint media_type) {
 		this.set_title("BeatBox");
 		
-		this.window_position = WindowPosition.CENTER_ON_PARENT;
-		this.type_hint = Gdk.WindowTypeHint.DIALOG;
 		this.set_modal(true);
 		this.set_transient_for(App.window);
 		this.destroy_with_parent = true;
@@ -52,7 +50,8 @@ public class BeatBox.RemoveFilesDialog : Window {
 		padding = new Box(Orientation.HORIZONTAL, 20);
 		
 		// initialize controls
-		Image warning = new Image.from_icon_name("dialog-warning", Gtk.IconSize.DIALOG);
+		Image warning = new Image.from_icon_name("dialog-warning");
+		warning.pixel_size = 48;
 		Label title = new Label("");
 		Label info = new Label("");
 		trash_button = new Button.with_label(_("Move to Trash"));
@@ -95,7 +94,7 @@ public class BeatBox.RemoveFilesDialog : Window {
 		
 		// set info text
 		info.xalign = 0.0f;
-		info.set_line_wrap(true);
+		info.wrap = true;
 		info.label = ngettext("It will be removed from your library and from any device that syncs automatically with BeatBox.",
 		                      "They will be removed from your library and from any device that syncs automatically with BeatBox.", to_remove.size);
 		
@@ -111,28 +110,28 @@ public class BeatBox.RemoveFilesDialog : Window {
 		Box information = new Box(Orientation.HORIZONTAL, 0);
 		Box information_text = new Box(Orientation.VERTICAL, 0);
 		warning.margin_start = warning.margin_end = 10;
-		information.add(warning);
+		information.append(warning);
 		title.margin_top = title.margin_bottom = 10;
-		information_text.add(title);
-		information_text.add(info);
+		information_text.append(title);
+		information_text.append(info);
 		information_text.hexpand = true;
 		information_text.margin_start = information_text.margin_end = 10;
-		information.add(information_text);
+		information.append(information_text);
 		
-		var bottomButtons = new ButtonBox(Orientation.HORIZONTAL);
-		bottomButtons.set_layout(ButtonBoxStyle.END);
-		if(need_trash)	bottomButtons.add(trash_button);
-		bottomButtons.add(cancel_button);
-		bottomButtons.add(remove_button);
+		var bottomButtons = new Box(Orientation.HORIZONTAL, 6);
+		bottomButtons.halign = Gtk.Align.END;
+		if(need_trash)	bottomButtons.append(trash_button);
+		bottomButtons.append(cancel_button);
+		bottomButtons.append(remove_button);
 		bottomButtons.set_spacing(6);
 		
-		content.add(information);
+		content.append(information);
 		bottomButtons.margin_top = bottomButtons.margin_bottom = 10;
-		content.add(bottomButtons);
+		content.append(bottomButtons);
 		
 		content.hexpand = true;
 		content.margin_start = content.margin_end = 10;
-		padding.add(content);
+		padding.append(content);
 		
 		trash_button.clicked.connect ( () => {
 			remove_media (true);
@@ -148,7 +147,7 @@ public class BeatBox.RemoveFilesDialog : Window {
 			destroy ();
 		});
 		
-		add(padding);
-		show_all();
+		set_child(padding);
+		present();
 	}
 }

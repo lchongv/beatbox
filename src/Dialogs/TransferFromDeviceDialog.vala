@@ -55,7 +55,6 @@ public class BeatBox.TransferFromDeviceDialog : Window {
 		
 		// set the size based on saved gconf settings
 		//this.window_position = WindowPosition.CENTER;
-		this.type_hint = Gdk.WindowTypeHint.DIALOG;
 		this.set_modal(true);
 		this.set_transient_for(App.window);
 		this.destroy_with_parent = true;
@@ -67,11 +66,12 @@ public class BeatBox.TransferFromDeviceDialog : Window {
 		padding = new Box(Orientation.HORIZONTAL, 20);
 		
 		// initialize controls
-		Image warning = new Image.from_icon_name("dialog-question", Gtk.IconSize.DIALOG);
+		Image warning = new Image.from_icon_name("dialog-question");
+		warning.pixel_size = 48;
 		Label title = new Label(_("Import medias from") + " " + d.getDisplayName());
 		Label info = new Label(_("The following files were found on %s, but are not in your library. Check all files you would like to import.").printf(d.getDisplayName()));
 		transferAll = new CheckButton.with_label(_("Import all medias"));
-		mediasScroll = new ScrolledWindow(null, null);
+		mediasScroll = new ScrolledWindow();
 		mediasView = new TreeView();
 		mediasModel = new Gtk.ListStore(5, typeof(bool), typeof(Media), typeof(string), typeof(string), typeof(string));
 		mediasView.set_model(mediasModel);
@@ -88,7 +88,7 @@ public class BeatBox.TransferFromDeviceDialog : Window {
 		title.set_markup("<span weight=\"bold\" size=\"larger\">" + title_text + "</span>");
 		title.xalign = 0.0f;
 		info.xalign = 0.0f;
-		info.set_line_wrap(true);
+		info.wrap = true;
 		
 		/* add cellrenderers to columns and columns to treeview */
 		var toggle = new CellRendererToggle ();
@@ -148,7 +148,7 @@ public class BeatBox.TransferFromDeviceDialog : Window {
 			mediasModel.set(item, 0, false, 1, s, 2, s.title, 3, s.artist, 4, s.album);
 		}
 		
-		mediasScroll.add(mediasView);
+		mediasScroll.set_child(mediasView);
 		mediasScroll.set_policy(PolicyType.AUTOMATIC, PolicyType.AUTOMATIC);
 		
 		transfer.set_sensitive(false);
@@ -157,39 +157,39 @@ public class BeatBox.TransferFromDeviceDialog : Window {
 		Box information = new Box(Orientation.HORIZONTAL, 0);
 		Box information_text = new Box(Orientation.VERTICAL, 0);
 		warning.margin_start = warning.margin_end = 10;
-		information.add(warning);
+		information.append(warning);
 		title.margin_top = title.margin_bottom = 10;
-		information_text.add(title);
-		information_text.add(info);
+		information_text.append(title);
+		information_text.append(info);
 		information_text.hexpand = true;
 		information_text.margin_start = information_text.margin_end = 10;
-		information.add(information_text);
+		information.append(information_text);
 		
 		Box listBox = new Box(Orientation.VERTICAL, 0);
 		mediasScroll.vexpand = true;
 		mediasScroll.margin_top = mediasScroll.margin_bottom = 5;
-		listBox.add(AquaScroll.wrap(mediasScroll));
+		listBox.append(AquaScroll.wrap(mediasScroll));
 		
 		Expander exp = new Expander(_("Select individual medias to import:"));
-		exp.add(listBox);
+		exp.set_child(listBox);
 		exp.expanded = false;
 		
-		var bottomButtons = new ButtonBox(Orientation.HORIZONTAL);
-		bottomButtons.set_layout(ButtonBoxStyle.END);
-		bottomButtons.add(cancel);
-		bottomButtons.add(transfer);
+		var bottomButtons = new Box(Orientation.HORIZONTAL, 6);
+		bottomButtons.halign = Gtk.Align.END;
+		bottomButtons.append(cancel);
+		bottomButtons.append(transfer);
 		bottomButtons.set_spacing(6);
 		
-		content.add(information);
-		content.add(UI.wrap_alignment(transferAll, 5, 0, 0, 75));
+		content.append(information);
+		content.append(UI.wrap_alignment(transferAll, 5, 0, 0, 75));
 		exp.vexpand = true;
-		content.add(UI.wrap_alignment(exp, 0, 0, 0, 75));
+		content.append(UI.wrap_alignment(exp, 0, 0, 0, 75));
 		bottomButtons.margin_top = bottomButtons.margin_bottom = 10;
-		content.add(bottomButtons);
+		content.append(bottomButtons);
 		
 		content.hexpand = true;
 		content.margin_start = content.margin_end = 10;
-		padding.add(content);
+		padding.append(content);
 		
 		transfer.clicked.connect(transferClick);
 		transferAll.toggled.connect(transferAllToggled);
@@ -199,15 +199,15 @@ public class BeatBox.TransferFromDeviceDialog : Window {
 			if(exp.get_expanded()) {
 				resizable = true;
 				set_size_request(550, 180);
-				resize(475, 180);
+				set_default_size(475, 180);
 				resizable = false;
 			}
 			else
 				set_size_request(550, 500);
 		});
 		
-		add(padding);
-		show_all();
+		set_child(padding);
+		present();
 		
 		App.operations.operation_started.connect(operation_started);
 		App.operations.operation_finished.connect(operation_finished);

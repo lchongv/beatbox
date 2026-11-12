@@ -17,9 +17,9 @@ public class BeatBox.FindReplaceDialog : Dialog {
 	Gtk.ListStore preview;
 	Widget apply_button;
 
-	public static void run_for (Gee.Collection<Media> medias) {
+	public static async void run_for (Gee.Collection<Media> medias) {
 		var dialog = new FindReplaceDialog (medias);
-		while (dialog.run () == ResponseType.APPLY)
+		while ((yield UI.run_dialog (dialog)) == ResponseType.APPLY)
 			dialog.apply (); // stays open for the next replacement
 		dialog.destroy ();
 	}
@@ -56,14 +56,14 @@ public class BeatBox.FindReplaceDialog : Dialog {
 		Widget[] widgets = { field, find, replace };
 		for (int i = 0; i < 3; i++) {
 			var label = new Label (labels[i]);
-			label.xalign = 1;
+			label.xalign = 1.0f;
 			grid.attach (label, 0, i);
 			grid.attach (widgets[i], 1, i);
 		}
 		var checks = new Box (Orientation.HORIZONTAL, 12);
-		checks.add (case_sensitive);
-		checks.add (regex);
-		checks.add (whole_word);
+		checks.append (case_sensitive);
+		checks.append (regex);
+		checks.append (whole_word);
 		grid.attach (checks, 1, 3);
 
 		preview = new Gtk.ListStore (2, typeof (string), typeof (string));
@@ -76,22 +76,21 @@ public class BeatBox.FindReplaceDialog : Dialog {
 			column.expand = true;
 			view.append_column (column);
 		}
-		var scroll = new ScrolledWindow (null, null);
-		scroll.expand = true;
-		scroll.shadow_type = ShadowType.IN;
-		scroll.add (view);
+		var scroll = new ScrolledWindow ();
+		scroll.vexpand = true;
+		scroll.has_frame = true;
+		scroll.set_child (view);
 
 		summary = new Label ("");
-		summary.xalign = 0;
+		summary.xalign = 0.0f;
 		summary.wrap = true;
 
 		var box = get_content_area ();
 		box.spacing = 8;
-		box.border_width = 8;
-		box.add (grid);
-		box.add (summary);
-		box.add (AquaScroll.wrap (scroll));
-		box.show_all ();
+		box.margin_top = box.margin_bottom = box.margin_start = box.margin_end = 8;
+		box.append (grid);
+		box.append (summary);
+		box.append (AquaScroll.wrap (scroll));
 
 		add_button (_("Close"), ResponseType.CLOSE);
 		apply_button = add_button (_("Replace All"), ResponseType.APPLY);

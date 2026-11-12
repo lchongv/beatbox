@@ -62,7 +62,6 @@ public class BeatBox.FileNotFoundDialog : Window {
 		
 		// set the size based on saved gconf settings
 		//this.window_position = WindowPosition.CENTER;
-		this.type_hint = Gdk.WindowTypeHint.DIALOG;
 		this.set_modal(true);
 		this.set_transient_for(App.window);
 		this.destroy_with_parent = true;
@@ -74,7 +73,8 @@ public class BeatBox.FileNotFoundDialog : Window {
 		padding = new Box(Orientation.HORIZONTAL, 20);
 		
 		// initialize controls
-		Image warning = new Image.from_icon_name("dialog-error", Gtk.IconSize.DIALOG);
+		Image warning = new Image.from_icon_name("dialog-error");
+		warning.pixel_size = 48;
 		Label title = new Label("");
 		Label info = new Label("");
 		removeMedia = new Button.with_label(_("Remove from Library"));
@@ -86,7 +86,7 @@ public class BeatBox.FileNotFoundDialog : Window {
 		title.xalign = 0.0f;
 		title.set_markup("<span weight=\"bold\" size=\"larger\">%s</span>".printf(ngettext("Could not find the file", "Could not find the files", ids.size)));
 		info.xalign = 0.0f;
-		info.set_line_wrap(false);
+		info.wrap = false;
 		if(ids.size == 1)
 			info.set_markup(_("The file for %s by %s could not be found. What would you like to do?").printf("<b>" + Markup.escape_text(ids.get(0).title) + "</b>", "<b>" + Markup.escape_text(ids.get(0).artist) + "</b>"));
 		else
@@ -98,33 +98,33 @@ public class BeatBox.FileNotFoundDialog : Window {
 		Box information = new Box(Orientation.HORIZONTAL, 0);
 		Box information_text = new Box(Orientation.VERTICAL, 0);
 		warning.margin_start = warning.margin_end = 10;
-		information.add(warning);
+		information.append(warning);
 		title.margin_top = title.margin_bottom = 10;
-		information_text.add(title);
-		information_text.add(info);
+		information_text.append(title);
+		information_text.append(info);
 		information_text.hexpand = true;
 		information_text.margin_start = information_text.margin_end = 10;
-		information.add(information_text);
+		information.append(information_text);
 		
-		var bottomButtons = new ButtonBox(Orientation.HORIZONTAL);
-		bottomButtons.set_layout(ButtonBoxStyle.END);
-		bottomButtons.add(removeMedia);
-		bottomButtons.add(rescanLibrary);
-		if(ids.size == 1)	bottomButtons.add(locateMedia);
-		bottomButtons.add(doNothing);
+		var bottomButtons = new Box(Orientation.HORIZONTAL, 10);
+		bottomButtons.halign = Gtk.Align.END;
+		bottomButtons.append(removeMedia);
+		bottomButtons.append(rescanLibrary);
+		if(ids.size == 1)	bottomButtons.append(locateMedia);
+		bottomButtons.append(doNothing);
 		bottomButtons.set_spacing(10);
 		
-		content.add(information);
+		content.append(information);
 		bottomButtons.margin_top = bottomButtons.margin_bottom = 10;
-		content.add(bottomButtons);
+		content.append(bottomButtons);
 		
 		content.hexpand = true;
 		content.margin_start = content.margin_end = 10;
-		padding.add(content);
+		padding.append(content);
 		
 		removeMedia.clicked.connect(removeMediaClicked);
 		rescanLibrary.clicked.connect(rescanLibraryClicked);
-		locateMedia.clicked.connect(locateMediaClicked);
+		locateMedia.clicked.connect( () => locateMediaClicked.begin () );
 		doNothing.clicked.connect( () => { 
 			this.destroy(); 
 		});
@@ -133,8 +133,8 @@ public class BeatBox.FileNotFoundDialog : Window {
 		App.operations.operation_started.connect(operation_started);
 		App.operations.operation_finished.connect(operation_finished);
 		
-		add(padding);
-		show_all();
+		set_child(padding);
+		present();
 		
 		rescanLibrary.set_visible(m_type != MediaType.ITEM);
 	}
@@ -145,7 +145,7 @@ public class BeatBox.FileNotFoundDialog : Window {
 		this.destroy();
 	}
 	
-	void locateMediaClicked() {
+	async void locateMediaClicked() {
 		Media m = ids.get(0);
 		
 		string file = "";
@@ -156,19 +156,22 @@ public class BeatBox.FileNotFoundDialog : Window {
 		
 		// try and help user by setting a sane default folder
 		var invalid_file = File.new_for_uri(m.uri);
+		var invalid_parent = invalid_file.get_parent();
 		
-		if(invalid_file.get_parent().query_exists())
-			file_chooser.set_current_folder(invalid_file.get_parent().get_path());
-		else if(invalid_file.get_parent().get_parent().query_exists() && 
-		invalid_file.get_parent().get_parent().get_path().contains(App.settings.main.music_folder))
-			file_chooser.set_current_folder(invalid_file.get_parent().get_parent().get_path());
+		if(invalid_parent.query_exists())
+			try { file_chooser.set_current_folder(invalid_parent); } catch (Error e) { }
+		else if(invalid_parent.get_parent().query_exists() && 
+		invalid_parent.get_parent().get_path().contains(App.settings.main.music_folder))
+			try { file_chooser.set_current_folder(invalid_parent.get_parent()); } catch (Error e) { }
 		else if(File.new_for_path(App.settings.main.music_folder).query_exists())
-			file_chooser.set_current_folder(App.settings.main.music_folder);
+			try { file_chooser.set_current_folder(File.new_for_path(App.settings.main.music_folder)); } catch (Error e) { }
 		else
-			file_chooser.set_current_folder(Environment.get_home_dir());
+			try { file_chooser.set_current_folder(File.new_for_path(Environment.get_home_dir())); } catch (Error e) { }
 		
-		if (file_chooser.run () == ResponseType.ACCEPT) {
-			file = file_chooser.get_filename();
+		if ((yield UI.run_dialog (file_chooser)) == ResponseType.ACCEPT) {
+			var chosen = file_chooser.get_file();
+			if (chosen != null && chosen.get_path() != null)
+				file = chosen.get_path();
 		}
 		
 		file_chooser.destroy ();

@@ -46,7 +46,6 @@ public class BeatBox.InstallGstreamerPluginsDialog : Window {
 		
 		// set the size based on saved gconf settings
 		//this.window_position = WindowPosition.CENTER;
-		this.type_hint = Gdk.WindowTypeHint.DIALOG;
 		this.set_modal(true);
 		this.set_transient_for(App.window);
 		this.destroy_with_parent = true;
@@ -58,7 +57,8 @@ public class BeatBox.InstallGstreamerPluginsDialog : Window {
 		padding = new Box(Orientation.HORIZONTAL, 20);
 		
 		// initialize controls
-		Image warning = new Image.from_icon_name("dialog-error", Gtk.IconSize.DIALOG);
+		Image warning = new Image.from_icon_name("dialog-error");
+		warning.pixel_size = 48;
 		Label title = new Label("");
 		Label info = new Label("");
 		installPlugin = new Button.with_label(_("Install Plugin"));
@@ -68,40 +68,40 @@ public class BeatBox.InstallGstreamerPluginsDialog : Window {
 		title.xalign = 0.0f;
 		title.set_markup("<span weight=\"bold\" size=\"larger\">%s</span>".printf(_("Required GStreamer plugin not installed")));
 		info.xalign = 0.0f;
-		info.set_line_wrap(false);
+		info.wrap = false;
 		info.set_markup(_("The plugin for media type %s is not installed.\n What would you like to do?").printf("<b>" + detail + "</b>"));
 		
 		/* set up controls layout */
 		Box information = new Box(Orientation.HORIZONTAL, 0);
 		Box information_text = new Box(Orientation.VERTICAL, 0);
 		warning.margin_start = warning.margin_end = 10;
-		information.add(warning);
+		information.append(warning);
 		title.margin_top = title.margin_bottom = 10;
-		information_text.add(title);
-		information_text.add(info);
+		information_text.append(title);
+		information_text.append(info);
 		information_text.hexpand = true;
 		information_text.margin_start = information_text.margin_end = 10;
-		information.add(information_text);
+		information.append(information_text);
 		
-		var bottomButtons = new ButtonBox(Orientation.HORIZONTAL);
-		bottomButtons.set_layout(ButtonBoxStyle.END);
-		bottomButtons.add(installPlugin);
-		bottomButtons.add(doNothing);
+		var bottomButtons = new Box(Orientation.HORIZONTAL, 6);
+		bottomButtons.halign = Gtk.Align.END;
+		bottomButtons.append(installPlugin);
+		bottomButtons.append(doNothing);
 		bottomButtons.set_spacing(6);
 		
-		content.add(information);
+		content.append(information);
 		bottomButtons.margin_top = bottomButtons.margin_bottom = 10;
-		content.add(bottomButtons);
+		content.append(bottomButtons);
 		
 		content.hexpand = true;
 		content.margin_start = content.margin_end = 10;
-		padding.add(content);
+		padding.append(content);
 		
 		installPlugin.clicked.connect(installPluginClicked);
 		doNothing.clicked.connect( () => { this.destroy(); });
 		
-		add(padding);
-		show_all();
+		set_child(padding);
+		present();
 	}
 	
 	public static Gtk.Widget wrap_alignment (Gtk.Widget widget, int top, int right, int bottom, int left) {
@@ -118,7 +118,7 @@ public class BeatBox.InstallGstreamerPluginsDialog : Window {
 		var context = new Gst.PbUtils.InstallPluginsContext();
 		Gst.PbUtils.install_plugins_async({installer}, context, install_plugins_finished);
 		
-		this.hide();
+		this.visible = false;
 	}
 	
 	public void install_plugins_finished(Gst.PbUtils.InstallPluginsReturn result) {
