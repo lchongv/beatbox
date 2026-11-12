@@ -32,11 +32,11 @@ public class BeatBox.DuplicateList : GenericList {
 	public const string CHECKBOX_COLUMN_TITLE = "";
 	
 	//for media list right click
-	Gtk.Menu mediaMenuActionMenu;
-	Gtk.MenuItem mediaCheck;
-	Gtk.MenuItem mediaUncheck;
-	Gtk.MenuItem mediaFileBrowse;
-	Gtk.MenuItem mediaRemove;
+	PopMenu mediaMenuActionMenu;
+	PopMenuItem mediaCheck;
+	PopMenuItem mediaUncheck;
+	PopMenuItem mediaFileBrowse;
+	PopMenuItem mediaRemove;
 	
 	HashMap<Media, bool> checked;
 	
@@ -101,7 +101,7 @@ public class BeatBox.DuplicateList : GenericList {
 	}
 
 	public override void update_sensitivities() {
-		mediaMenuActionMenu.show_all();
+		// GTK4 shows the menu items as they are created; there is no show_all ()
 	}
 
 	public void buildUI() {
@@ -111,8 +111,8 @@ public class BeatBox.DuplicateList : GenericList {
         set_search_func(view_search_func);
         set_value_func(view_value_func);
         
-		button_press_event.connect(viewClick);
-		button_release_event.connect(viewClickRelease);
+		click_gesture.pressed.connect(view_click);
+		click_gesture.released.connect(view_click_release);
 
 		// column chooser menu (header right click)
 		add_column_toggle("#", _("#"));
@@ -132,100 +132,98 @@ public class BeatBox.DuplicateList : GenericList {
 		add_column_toggle("BPM", _("BPM"));
 
 		//media list right click menu
-		mediaMenuActionMenu = new Gtk.Menu();
-		mediaCheck = new Gtk.MenuItem.with_label(_("Check"));
-		mediaUncheck = new Gtk.MenuItem.with_label(_("Uncheck"));
-		mediaFileBrowse = new Gtk.MenuItem.with_label(_("Show in File Browser"));
-		mediaRemove = new Gtk.MenuItem.with_label(_("Remove Media"));
+		mediaMenuActionMenu = new PopMenu();
+		mediaCheck = new PopMenuItem.with_label(_("Check"));
+		mediaUncheck = new PopMenuItem.with_label(_("Uncheck"));
+		mediaFileBrowse = new PopMenuItem.with_label(_("Show in File Browser"));
+		mediaRemove = new PopMenuItem.with_label(_("Remove Media"));
 		mediaMenuActionMenu.append(mediaCheck);
 		mediaMenuActionMenu.append(mediaUncheck);
-		mediaMenuActionMenu.append(new SeparatorMenuItem());
+		mediaMenuActionMenu.append(new PopMenuSeparator());
 		mediaMenuActionMenu.append(mediaFileBrowse);
 		mediaMenuActionMenu.append(mediaRemove);
-		mediaCheck.activate.connect(mediaCheckClicked);
-		mediaUncheck.activate.connect(mediaUncheckClicked);
-		mediaFileBrowse.activate.connect(mediaFileBrowseClicked);
-		mediaRemove.activate.connect(mediaRemoveClicked);
+		mediaCheck.clicked.connect(mediaCheckClicked);
+		mediaUncheck.clicked.connect(mediaUncheckClicked);
+		mediaFileBrowse.clicked.connect(mediaFileBrowseClicked);
+		mediaRemove.clicked.connect(mediaRemoveClicked);
 		
 		update_sensitivities();
 	}
 	
-	/* button_press_event */
-	bool viewClick(Gdk.EventButton event) {
-		if(event.type == Gdk.EventType.BUTTON_PRESS && event.button == 3) { //right click
-			mediaMenuActionMenu.popup_at_pointer(null);
+	/* a press on a row: the menus, the checkbox column, and keeping the selection while several rows are dragged */
+	void view_click(int n_press, double x, double y) {
+		// a double click is no click for the menus or the selection
+		if(n_press != 1)
+			return;
+		uint button = click_gesture.get_current_button();
+		bool modified = (click_gesture.get_current_event_state() & (Gdk.ModifierType.SHIFT_MASK | Gdk.ModifierType.CONTROL_MASK)) != 0;
+
+		if(button == Gdk.BUTTON_SECONDARY) { //right click
+			// the menu acts on the clicked row: select it first, unless it is part of the selection
+			TreePath? clicked;
+			if(row_at(x, y, out clicked) && !get_selection().path_is_selected(clicked)) {
+				get_selection().unselect_all();
+				get_selection().select_path(clicked);
+			}
+
+			mediaMenuActionMenu.popup_at(this, x, y);
 
 			TreeSelection selected = get_selection();
 			selected.set_mode(SelectionMode.MULTIPLE);
 			if(selected.count_selected_rows() > 1)
-				return true;
-			else
-				return false;
+				click_gesture.set_state(Gtk.EventSequenceState.CLAIMED);
 		}
-		else if(event.type == Gdk.EventType.BUTTON_PRESS && event.button == 1) {
-			//TreeIter iter;
-			TreePath path;
-			TreeViewColumn column;
-			int cell_x;
-			int cell_y;
-
-			get_path_at_pos((int)event.x, (int)event.y, out path, out column, out cell_x, out cell_y);
-			
+		else if(button == 1) {
 			// Check/uncheck column
-			Media m = get_media_from_index(int.parse(path.to_string()));
-			if(column.sort_column_id == DuplicateColumn.CHECKBOX) {
-				bool cur_val = checked.get(m);
-				checked.set(m, !cur_val);
-				checked_changed();
+			TreePath? path;
+			if(row_at(x, y, out path)) {
+				int bin_x, bin_y;
+				convert_widget_to_bin_window_coords((int)x, (int)y, out bin_x, out bin_y);
+				TreeViewColumn? column;
+				int cell_x, cell_y;
+				if(get_path_at_pos(bin_x, bin_y, out path, out column, out cell_x, out cell_y) &&
+				   column != null && column.sort_column_id == DuplicateColumn.CHECKBOX) {
+					Media m = get_media_from_index(int.parse(path.to_string()));
+					bool cur_val = checked.get(m);
+					checked.set(m, !cur_val);
+					checked_changed();
+				}
 			}
-			
-			//if(!list_model.get_iter(out iter, path))
-			//	return false;
 
 			/* don't unselect everything if multiple selected until button release
 			 * for drag and drop reasons */
 			if(get_selection().count_selected_rows() > 1) {
-				if(get_selection().path_is_selected(path)) {
-					if(((event.state & Gdk.ModifierType.SHIFT_MASK) == Gdk.ModifierType.SHIFT_MASK)|
-						((event.state & Gdk.ModifierType.CONTROL_MASK) == Gdk.ModifierType.CONTROL_MASK)) {
-							get_selection().unselect_path(path);
-					}
-					return true;
-				}
-				else if(!(((event.state & Gdk.ModifierType.SHIFT_MASK) == Gdk.ModifierType.SHIFT_MASK)|
-				((event.state & Gdk.ModifierType.CONTROL_MASK) == Gdk.ModifierType.CONTROL_MASK))) {
-					return true;
-				}
-
-				return false;
+				TreePath? clicked;
+				row_at(x, y, out clicked);
+				bool on_selection = clicked != null && get_selection().path_is_selected(clicked);
+				if(on_selection && modified)
+					get_selection().unselect_path(clicked);
+				// a press on the selection, or a plain press away from it, is kept from the TreeView
+				if(on_selection || !modified)
+					click_gesture.set_state(Gtk.EventSequenceState.CLAIMED);
 			}
 		}
-
-		return false;
 	}
 
-	/* button_release_event */
-	private bool viewClickRelease(Gtk.Widget sender, Gdk.EventButton event) {
+	/* a release on a row: ends a drag, or selects only the row when nothing was dragged */
+	void view_click_release(int n_press, double x, double y) {
+		uint button = click_gesture.get_current_button();
+		bool modified = (click_gesture.get_current_event_state() & (Gdk.ModifierType.SHIFT_MASK | Gdk.ModifierType.CONTROL_MASK)) != 0;
+
 		/* if we were dragging, then set dragging to false */
-		if(dragging && event.button == 1) {
+		if(dragging && button == 1) {
 			dragging = false;
-			return true;
+			click_gesture.set_state(Gtk.EventSequenceState.CLAIMED);
 		}
-		else if(((event.state & Gdk.ModifierType.SHIFT_MASK) == Gdk.ModifierType.SHIFT_MASK) | ((event.state & Gdk.ModifierType.CONTROL_MASK) == Gdk.ModifierType.CONTROL_MASK)) {
-			return true;
+		else if(modified) {
+			click_gesture.set_state(Gtk.EventSequenceState.CLAIMED);
 		}
 		else {
-			TreePath path;
-			TreeViewColumn tvc;
-			int cell_x;
-			int cell_y;
-			int x = (int)event.x;
-			int y = (int)event.y;
-
-			if(!(get_path_at_pos(x, y, out path, out tvc, out cell_x, out cell_y))) return false;
+			TreePath? path;
+			if(!row_at(x, y, out path))
+				return;
 			get_selection().unselect_all();
 			get_selection().select_path(path);
-			return false;
 		}
 	}
 

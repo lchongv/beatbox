@@ -31,9 +31,9 @@ using Gtk;
 public class BeatBox.RadioList : GenericList {
 
 	//for media list right click
-	Gtk.Menu mediaMenuActionMenu;
-	Gtk.MenuItem mediaEditMedia;
-	Gtk.MenuItem mediaRemove;
+	PopMenu mediaMenuActionMenu;
+	PopMenuItem mediaEditMedia;
+	PopMenuItem mediaRemove;
 	RatingMenuItem mediaRateMedia;
 
 	/**
@@ -70,8 +70,8 @@ public class BeatBox.RadioList : GenericList {
         set_search_func(view_search_func);
         set_value_func(view_value_func);
 		
-		button_press_event.connect(viewClick);
-		button_release_event.connect(viewClickRelease);
+		click_gesture.pressed.connect(view_click);
+		click_gesture.released.connect(view_click_release);
 
 		// column chooser menu (header right click)
 		add_column_toggle("Station", _("Station"));
@@ -80,17 +80,17 @@ public class BeatBox.RadioList : GenericList {
 
 
 		//media list right click menu
-		mediaMenuActionMenu = new Gtk.Menu();
-		mediaEditMedia = new Gtk.MenuItem.with_label(_("Edit Station"));
-		mediaRemove = new Gtk.MenuItem.with_label(_("Remove Station"));
+		mediaMenuActionMenu = new PopMenu();
+		mediaEditMedia = new PopMenuItem.with_label(_("Edit Station"));
+		mediaRemove = new PopMenuItem.with_label(_("Remove Station"));
 		mediaRateMedia = new RatingMenuItem();
 		mediaMenuActionMenu.append(mediaEditMedia);
 		mediaMenuActionMenu.append(mediaRateMedia);
-		mediaMenuActionMenu.append(new SeparatorMenuItem());
+		mediaMenuActionMenu.append(new PopMenuSeparator());
 		mediaMenuActionMenu.append(mediaRemove);
-		mediaEditMedia.activate.connect(mediaMenuEditClicked);
-		mediaRemove.activate.connect(mediaRemoveClicked);
-		mediaRateMedia.activate.connect(mediaRateMediaClicked);
+		mediaEditMedia.clicked.connect(mediaMenuEditClicked);
+		mediaRemove.clicked.connect(mediaRemoveClicked);
+		mediaRateMedia.clicked.connect(mediaRateMediaClicked);
 
 		update_sensitivities();
 	}
@@ -120,10 +120,21 @@ public class BeatBox.RadioList : GenericList {
 		cellTitle.editable = false; */
 	}
 
-	/* button_press_event */
-	bool viewClick(Gdk.EventButton event) {
-		if(event.type == Gdk.EventType.BUTTON_PRESS && event.button == 3) { //right click
-			mediaMenuActionMenu.show_all();
+	/* a press on a row: the menus, and keeping the selection while several rows are dragged */
+	void view_click(int n_press, double x, double y) {
+		// a double click is no click for the menus or the selection
+		if(n_press != 1)
+			return;
+		uint button = click_gesture.get_current_button();
+		bool modified = (click_gesture.get_current_event_state() & (Gdk.ModifierType.SHIFT_MASK | Gdk.ModifierType.CONTROL_MASK)) != 0;
+
+		if(button == Gdk.BUTTON_SECONDARY) { //right click
+			// the menu acts on the clicked row: select it first, unless it is part of the selection
+			TreePath? clicked;
+			if(row_at(x, y, out clicked) && !get_selection().path_is_selected(clicked)) {
+				get_selection().unselect_all();
+				get_selection().select_path(clicked);
+			}
 
 			int set_rating = -1;
 			foreach(Media m in get_selected_medias()) {
@@ -148,71 +159,48 @@ public class BeatBox.RadioList : GenericList {
 			}
 			mediaEditMedia.label = _("Edit %s").printf(type.to_string((int)get_selected_medias().length()));
 			
-			mediaMenuActionMenu.popup_at_pointer(null);
+			mediaMenuActionMenu.popup_at(this, x, y);
 
 			TreeSelection selected = get_selection();
 			selected.set_mode(SelectionMode.MULTIPLE);
 			if(selected.count_selected_rows() > 1)
-				return true;
-			else
-				return false;
+				click_gesture.set_state(Gtk.EventSequenceState.CLAIMED);
 		}
-		else if(event.type == Gdk.EventType.BUTTON_PRESS && event.button == 1) {
-			//TreeIter iter;
-			TreePath path;
-			TreeViewColumn column;
-			int cell_x;
-			int cell_y;
-
-			get_path_at_pos((int)event.x, (int)event.y, out path, out column, out cell_x, out cell_y);
-
-			//if(!list_model.get_iter(out iter, path))
-			//	return false;
-
+		else if(button == 1) {
 			/* don't unselect everything if multiple selected until button release
 			 * for drag and drop reasons */
 			if(get_selection().count_selected_rows() > 1) {
-				if(get_selection().path_is_selected(path)) {
-					if(((event.state & Gdk.ModifierType.SHIFT_MASK) == Gdk.ModifierType.SHIFT_MASK)|
-						((event.state & Gdk.ModifierType.CONTROL_MASK) == Gdk.ModifierType.CONTROL_MASK)) {
-							get_selection().unselect_path(path);
-					}
-					return true;
-				}
-				else if(!(((event.state & Gdk.ModifierType.SHIFT_MASK) == Gdk.ModifierType.SHIFT_MASK)|
-				((event.state & Gdk.ModifierType.CONTROL_MASK) == Gdk.ModifierType.CONTROL_MASK))) {
-					return true;
-				}
-
-				return false;
+				TreePath? path;
+				row_at(x, y, out path);
+				bool on_selection = path != null && get_selection().path_is_selected(path);
+				if(on_selection && modified)
+					get_selection().unselect_path(path);
+				// a press on the selection, or a plain press away from it, is kept from the TreeView
+				if(on_selection || !modified)
+					click_gesture.set_state(Gtk.EventSequenceState.CLAIMED);
 			}
 		}
-
-		return false;
 	}
 
-	/* button_release_event */
-	private bool viewClickRelease(Gtk.Widget sender, Gdk.EventButton event) {
+	/* a release on a row: ends a drag, or selects only the row when nothing was dragged */
+	void view_click_release(int n_press, double x, double y) {
+		uint button = click_gesture.get_current_button();
+		bool modified = (click_gesture.get_current_event_state() & (Gdk.ModifierType.SHIFT_MASK | Gdk.ModifierType.CONTROL_MASK)) != 0;
+
 		/* if we were dragging, then set dragging to false */
-		if(dragging && event.button == 1) {
+		if(dragging && button == 1) {
 			dragging = false;
-			return true;
+			click_gesture.set_state(Gtk.EventSequenceState.CLAIMED);
 		}
-		else if(((event.state & Gdk.ModifierType.SHIFT_MASK) == Gdk.ModifierType.SHIFT_MASK) | ((event.state & Gdk.ModifierType.CONTROL_MASK) == Gdk.ModifierType.CONTROL_MASK)) {
-			return true;
+		else if(modified) {
+			click_gesture.set_state(Gtk.EventSequenceState.CLAIMED);
 		}
 		else {
-			TreePath path;
-			TreeViewColumn tvc;
-			int cell_x;
-			int cell_y;
-			int x = (int)event.x;
-			int y = (int)event.y;
-
-			if(!(get_path_at_pos(x, y, out path, out tvc, out cell_x, out cell_y))) return false;
+			TreePath? path;
+			if(!row_at(x, y, out path))
+				return;
 			get_selection().unselect_all();
 			get_selection().select_path(path);
-			return false;
 		}
 	}
 
