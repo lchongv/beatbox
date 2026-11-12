@@ -2,7 +2,7 @@
  * Cover grid where clicking a cover unfolds the album INLINE, as a full-width
  * band under its row that pushes the rows below down.
  *
- * The covers are painted by hand on a Gtk.Layout (hundreds of albums, no
+ * The covers are painted by hand on a Gtk.Fixed (hundreds of albums, no
  * widget per cell); the only child widget is the detail band, moved into the
  * gap left under the open row. A triangle on top of the band points at the
  * open cover.
@@ -10,7 +10,7 @@
 
 using Gtk;
 
-public class BeatBox.AlbumWall : Layout {
+public class BeatBox.AlbumWall : Fixed {
 	const int COVER = Icons.ALBUM_VIEW_IMAGE_SIZE; // cached covers include their shadow
 	const int CELL_W = COVER + 16;
 	const int CELL_H = COVER + 44;                  // cover + two lines of text
@@ -45,19 +45,28 @@ public class BeatBox.AlbumWall : Layout {
 	/** Double click on a cover, or the band's play button */
 	public signal void album_activated (Album album);
 
-	// GTK3 controllers need a reference
+	// the widget keeps the controllers alive; the fields are for set_state and the cursor
 	GestureClick click_gesture;
 	EventControllerMotion motion_controller;
+
+	/** The vertical adjustment of the ScrolledWindow the wall sits in (Fixed has none of its own) */
+	Adjustment vadjustment {
+		get { return ((ScrolledWindow) get_ancestor (typeof (ScrolledWindow))).vadjustment; }
+	}
 
 	public AlbumWall (GenericGrid grid, SourceView wrapper) {
 		this.grid = grid;
 		this.wrapper = wrapper;
-		get_style_context ().add_class ("albumwall");
-		add_events (Gdk.EventMask.BUTTON_PRESS_MASK | Gdk.EventMask.POINTER_MOTION_MASK);
-		click_gesture = new GestureClick (this);
+		add_css_class ("albumwall");
+		click_gesture = new GestureClick ();
 		click_gesture.pressed.connect (on_pressed);
-		motion_controller = new EventControllerMotion (this);
+		add_controller (click_gesture);
+		motion_controller = new EventControllerMotion ();
 		motion_controller.motion.connect (on_motion);
+		add_controller (motion_controller);
+		var wheel = new EventControllerScroll (EventControllerScrollFlags.VERTICAL);
+		wheel.scroll.connect (on_wheel);
+		add_controller (wheel);
 
 		grid.visible_changed.connect (refresh);
 		App.covers.cover_changed.connect (() => queue_draw ());
@@ -105,8 +114,7 @@ public class BeatBox.AlbumWall : Layout {
 		return row_y (open_row) + CELL_H + GAP / 2;
 	}
 
-	public override void size_allocate (Allocation alloc) {
-		int width = alloc.width;
+	public override void size_allocate (int width, int height, int baseline) {
 		cols = int.max (1, (width - GAP) / (CELL_W + GAP));
 		step = int.max (GAP, (width - cols * CELL_W) / (cols + 1));
 
@@ -115,27 +123,27 @@ public class BeatBox.AlbumWall : Layout {
 			// The band takes the whole width; its height is whatever its content needs,
 			// times how far the revealer has unfolded it
 			set_detail_side (width);
-			int min_h, shown_h;
-			content.get_preferred_height_for_width (width, out min_h, out full_h);
+			int min_h, min_base, nat_base, shown_h, shown_nat;
+			content.measure (Orientation.VERTICAL, width, out min_h, out full_h, out min_base, out nat_base);
 			holder.set_size_request (width, full_h); // no-op (no relayout) when unchanged
-			detail.get_preferred_height_for_width (width, out shown_h, null);
+			detail.measure (Orientation.VERTICAL, width, out shown_h, out shown_nat, out min_base, out nat_base);
 			detail_h = shown_h + ARROW_H;
 			int y = band_y () + ARROW_H;
-			int old_x, old_y;
-			child_get (detail, "x", out old_x, "y", out old_y);
+			double old_x, old_y;
+			get_child_position (detail, out old_x, out old_y);
 			if (old_x != 0 || old_y != y)
 				move (detail, 0, y);
 		}
 
 		int rows = (albums.length + cols - 1) / cols;
-		int height = GAP + rows * (CELL_H + GAP) + ((detail != null) ? detail_h + GAP : 0);
-		height = int.max (height, alloc.height); // paint the background down to the bottom
-		uint old_w, old_h;
-		get_size (out old_w, out old_h);
-		if (old_w != width || old_h != height)
-			set_size (width, height);
+		int wall_h = GAP + rows * (CELL_H + GAP) + ((detail != null) ? detail_h + GAP : 0);
+		wall_h = int.max (wall_h, height); // paint the background down to the bottom
+		int old_w, old_h;
+		get_size_request (out old_w, out old_h);
+		if (old_w != width || old_h != wall_h)
+			set_size_request (width, wall_h);
 
-		base.size_allocate (alloc);
+		base.size_allocate (width, height, baseline);
 
 		if (scroll_to_detail && detail != null) {
 			scroll_to_detail = false;
@@ -173,22 +181,20 @@ public class BeatBox.AlbumWall : Layout {
 
 	/* ---------- painting ---------- */
 
-	public override bool draw (Cairo.Context cr) {
-		if (!Gtk.cairo_should_draw_window (cr, get_bin_window ()))
-			return base.draw (cr);
+	public override void snapshot (Gtk.Snapshot s) {
+		// the cairo area is only the visible part; the covers keep the coordinates of the whole wall
+		var r = Graphene.Rect ();
+		r.init (0, (float) vadjustment.value, get_width (), (float) vadjustment.page_size);
+		var cr = s.append_cairo (r);
 
-		// draw() gets widget coordinates; the covers and the band live in the scrolled bin window
-		cr.save ();
-		Gtk.cairo_transform_to_window (cr, this, get_bin_window ());
-
-		uint w, h;
-		get_size (out w, out h);
+		int w = get_width ();
+		int h = get_height ();
 		var ctx = get_style_context ();
 		ctx.render_background (cr, 0, 0, w, h);
 
 		double top = vadjustment.value;
-		double bottom = top + get_allocated_height ();
-		var fg = ctx.get_color (StateFlags.NORMAL);
+		double bottom = top + h;
+		var fg = ctx.get_color ();
 
 		for (int i = 0; i < albums.length; i++) {
 			int x, y;
@@ -199,7 +205,7 @@ public class BeatBox.AlbumWall : Layout {
 			if (i == open_index && detail.reveal_child) {
 				Gdk.RGBA accent;
 				if (!get_style_context ().lookup_color ("bb_accent", out accent))
-					accent = { 0.24, 0.43, 0.79, 1 };
+					accent = { 0.24f, 0.43f, 0.79f, 1 };
 				cr.set_source_rgba (accent.red, accent.green, accent.blue, 0.18);
 				rounded_rect (cr, x - 4, y - 4, CELL_W + 8, CELL_H + 8, 6);
 				cr.fill ();
@@ -216,9 +222,8 @@ public class BeatBox.AlbumWall : Layout {
 
 		if (detail != null)
 			draw_band (cr, w);
-		cr.restore (); // the children are drawn in widget coordinates
 
-		return base.draw (cr);
+		base.snapshot (s); // the children (the detail band) are drawn on top, in widget coordinates
 	}
 
 	void draw_text (Cairo.Context cr, string text, int x, int y, bool bold, Gdk.RGBA fg) {
@@ -236,7 +241,7 @@ public class BeatBox.AlbumWall : Layout {
 	}
 
 	/** White band with a triangle pointing at the open cover */
-	void draw_band (Cairo.Context cr, uint width) {
+	void draw_band (Cairo.Context cr, int width) {
 		int cx, cy;
 		cell_rect (open_index, out cx, out cy);
 		double tip = cx + CELL_W / 2.0;
@@ -256,7 +261,7 @@ public class BeatBox.AlbumWall : Layout {
 		if (!get_style_context ().lookup_color ("bb_detail_bg", out bg))
 			bg = { 1, 1, 1, 1 };
 		if (!get_style_context ().lookup_color ("bb_detail_border", out edge))
-			edge = { 0.74, 0.74, 0.74, 1 };
+			edge = { 0.74f, 0.74f, 0.74f, 1 };
 		Gdk.cairo_set_source_rgba (cr, bg);
 		cr.fill_preserve ();
 		Gdk.cairo_set_source_rgba (cr, edge);
@@ -285,16 +290,9 @@ public class BeatBox.AlbumWall : Layout {
 		return -1;
 	}
 
-	/** Where the current event happened in the scrolled area; false when it was over the band's widgets */
-	bool bin_coords (out double x, out double y) {
-		x = y = 0;
-		var ev = get_current_event ();
-		return ev != null && ev.get_window () == get_bin_window () && ev.get_coords (out x, out y);
-	}
-
-	void on_pressed (int n_press, double widget_x, double widget_y) {
-		double x, y;
-		if (!bin_coords (out x, out y))
+	void on_pressed (int n_press, double x, double y) {
+		// a press on the band's own widgets (play button, track list) belongs to them
+		if (pick (x, y, PickFlags.DEFAULT) != this)
 			return;
 		int i = index_at (x, y);
 		// every press opens or closes the band; the second one of a double click also plays the album
@@ -305,12 +303,6 @@ public class BeatBox.AlbumWall : Layout {
 		if (n_press == 2 && i >= 0)
 			album_activated (albums[i]);
 		click_gesture.set_state (EventSequenceState.CLAIMED);
-	}
-
-	/** Vertical step of a wheel event: a click (±1) or the delta of a smooth wheel; 0 for the rest */
-	static double wheel_dy (Gdk.EventScroll e) {
-		return (e.direction == Gdk.ScrollDirection.SMOOTH) ? e.delta_y
-		     : (e.direction == Gdk.ScrollDirection.UP) ? -1 : (e.direction == Gdk.ScrollDirection.DOWN) ? 1 : 0;
 	}
 
 	/** Moves adj by a wheel step (the one GtkRange takes); false when it can't move that way */
@@ -327,8 +319,7 @@ public class BeatBox.AlbumWall : Layout {
 
 	/** The band's track list takes the wheel while it can scroll, then the wall does. Done here, not by
 	 *  the list's ScrolledWindow: it takes the wheel even when it has nothing to scroll (Aqua or not). */
-	bool on_list_wheel (Gdk.EventScroll e) {
-		double dy = wheel_dy (e);
+	bool on_list_wheel (double dy) {
 		if (dy == 0)
 			return false;
 		if (!wheel_scroll (detail_list.vadjustment, dy))
@@ -337,19 +328,16 @@ public class BeatBox.AlbumWall : Layout {
 	}
 
 	/** A wall with nothing to scroll hands the wheel to the open band's track list.
-	 *  Not an EventControllerScroll: that one takes every wheel event, so the scrolled window
-	 *  above never got it. Returning false lets the event go on to that window. */
-	public override bool scroll_event (Gdk.EventScroll e) {
-		double dy = wheel_dy (e);
+	 *  Only looks at the wheel: returning false lets the event go on to the scrolled window above. */
+	bool on_wheel (double dx, double dy) {
 		if (dy == 0 || detail_list == null || vadjustment.upper > vadjustment.page_size)
-			return base.scroll_event (e);
+			return false;
 		return wheel_scroll (detail_list.vadjustment, dy);
 	}
 
-	void on_motion (double widget_x, double widget_y) {
-		double x, y;
-		if (bin_coords (out x, out y))
-			get_bin_window ().set_cursor ((index_at (x, y) >= 0) ? new Gdk.Cursor.for_display (get_display (), Gdk.CursorType.HAND2) : null);
+	void on_motion (double x, double y) {
+		bool over_cover = pick (x, y, PickFlags.DEFAULT) == this && index_at (x, y) >= 0;
+		set_cursor_from_name (over_cover ? "pointer" : null);
 	}
 
 	/* ---------- the detail band ---------- */
@@ -369,7 +357,7 @@ public class BeatBox.AlbumWall : Layout {
 			return;
 		}
 		if (detail != null)
-			detail.destroy ();
+			remove (detail);
 		detail = null;
 		holder = content = null;
 		detail_list = null;
@@ -390,14 +378,13 @@ public class BeatBox.AlbumWall : Layout {
 		content = build_detail (open_album);
 		var box = new Box (Orientation.VERTICAL, 0);
 		content.vexpand = true;
-		box.add (content);
+		box.append (content);
 		holder = box;
 		detail = new Revealer ();
 		detail.transition_type = RevealerTransitionType.SLIDE_DOWN;
 		detail.transition_duration = unfolded ? 0 : ANIMATION_MS;
-		detail.add (holder);
+		detail.set_child (holder);
 		put (detail, 0, 0);
-		detail.show_all ();
 		detail.reveal_child = true;
 		scroll_to_detail = true;
 		queue_resize ();
@@ -422,7 +409,7 @@ public class BeatBox.AlbumWall : Layout {
 			return;
 		}
 		var scaled = detail_source.scale_simple (side, side, Gdk.InterpType.BILINEAR);
-		detail_cover.pixbuf = App.covers.add_shadow_to_album_art (scaled, false);
+		UI.show_pixbuf (detail_cover, App.covers.add_shadow_to_album_art (scaled, false));
 		detail_cover.show ();
 		detail_left.set_size_request (int.max (side, DETAIL_TEXT_W) + 20, -1);
 	}
@@ -446,14 +433,14 @@ public class BeatBox.AlbumWall : Layout {
 		detail_source = detail_source ?? App.covers.get_album_art_from_key (album.get_album_artist (), album.get_album ())
 		                              ?? App.covers.DEFAULT_COVER_SHADOW;
 		var cover = new Image ();
-		cover.no_show_all = true;
+		cover.visible = false; // shown by set_detail_side, once it knows the side
 		detail_cover = cover;
 		detail_side = -1;
 
 		var title = new Label (album.get_album ());
-		title.get_style_context ().add_class ("album-detail-title");
+		title.add_css_class ("album-detail-title");
 		var artist = new Label (album.get_album_artist ());
-		artist.get_style_context ().add_class ("album-detail-artist");
+		artist.add_css_class ("album-detail-artist");
 		string info = ngettext ("%d song", "%d songs", medias.size).printf (medias.size)
 		              + ", " + ngettext ("%d minute", "%d minutes", seconds / 60).printf ((int)(seconds / 60));
 		if (first != null && first.year > 0)
@@ -461,28 +448,30 @@ public class BeatBox.AlbumWall : Layout {
 		if (first != null && first.genre != "")
 			info += " · " + first.genre;
 		var details = new Label (info);
-		details.get_style_context ().add_class ("dim-label");
+		details.add_css_class ("dim-label");
 		foreach (var l in new Label[] { title, artist, details }) {
 			l.wrap = true;
 			l.max_width_chars = 24;
 			l.justify = Justification.CENTER;
 		}
-		var play = new Button.with_label (_("Play"));
-		play.image = new Image.from_icon_name ("media-playback-start-symbolic", IconSize.MENU);
-		play.always_show_image = true;
+		var play_box = new Box (Orientation.HORIZONTAL, 6);
+		play_box.append (new Image.from_icon_name ("media-playback-start-symbolic"));
+		play_box.append (new Label (_("Play")));
+		var play = new Button ();
+		play.child = play_box;
 		play.halign = Align.CENTER;
 		play.clicked.connect (() => album_activated (album));
 
 		var left = new Box (Orientation.VERTICAL, 4);
 		left.valign = Align.START;
 		detail_left = left;
-		left.add(cover);
+		left.append (cover);
 		title.margin_top = title.margin_bottom = 2;
-		left.add (title);
-		left.add(artist);
-		left.add(details);
+		left.append (title);
+		left.append (artist);
+		left.append (details);
 		play.margin_top = play.margin_bottom = 8;
-		left.add (play);
+		left.append (play);
 
 		// Same track list as the popup window
 		var tvs = new TreeViewSetup (MusicColumn.ARTIST, SortType.ASCENDING, TreeViewSetup.Hint.ALBUM_LIST);
@@ -493,21 +482,26 @@ public class BeatBox.AlbumWall : Layout {
 		foreach (var m in medias)
 			table.set ((int)table.size (), m);
 		list.set_table (table);
-		var list_scroll = new ScrolledWindow (null, null);
+		var list_scroll = new ScrolledWindow ();
 		list_scroll.set_policy (PolicyType.AUTOMATIC, PolicyType.AUTOMATIC); // shrinks when the cover is big
 		list_scroll.propagate_natural_height = true;
 		list_scroll.max_content_height = 440;
 		list_scroll.valign = Align.FILL; // as tall as the band: the cover column may be taller than 440
-		list_scroll.add (list);
+		list_scroll.set_child (list);
 		detail_list = list_scroll;
-		list_scroll.scroll_event.connect (on_list_wheel);
+		var list_wheel = new EventControllerScroll (EventControllerScrollFlags.VERTICAL);
+		list_wheel.scroll.connect ((dx, dy) => on_list_wheel (dy));
+		list_scroll.add_controller (list_wheel);
 
+		// the band's padding (border_width in GTK3) goes to its children as margins
 		var band = new Box (Orientation.HORIZONTAL, 18);
-		band.get_style_context ().add_class ("album-detail");
-		band.border_width = 16;
-		band.add(left);
+		band.add_css_class ("album-detail");
+		left.margin_top = left.margin_bottom = left.margin_start = 16;
+		band.append (left);
 		list_scroll.hexpand = true;
-		band.add (AquaScroll.wrap (list_scroll));
+		var list_wrap = AquaScroll.wrap (list_scroll);
+		list_wrap.margin_top = list_wrap.margin_bottom = list_wrap.margin_end = 16;
+		band.append (list_wrap);
 		return band;
 	}
 }
