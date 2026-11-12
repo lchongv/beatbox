@@ -48,7 +48,7 @@ public class BeatBox.ModeButton : Gtk.Box {
 				item.active = true; // a click on the active button keeps it active
 		});
 		items.add (item);
-		append (item);
+		base.append (item); // without base this calls itself forever
 	}
 
 	void set_active (int index) {

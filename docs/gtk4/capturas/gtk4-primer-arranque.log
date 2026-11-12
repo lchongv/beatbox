@@ -1,0 +1,170 @@
+MESA-EGL: warning: DRI3 error: Could not get DRI3 device
+MESA-EGL: warning: Ensure your X server supports DRI3 to get accelerated rendering
+
+(net.launchpad.beatbox:4027176): Gtk-WARNING **: 20:28:37.919: Use GtkSettings:gtk-interface-color-scheme instead
+
+(net.launchpad.beatbox:4027176): Gtk-WARNING **: 20:28:38.730: Theme parser error: <data>:3:22-35: Not a valid image
+
+(net.launchpad.beatbox:4027176): Gtk-WARNING **: 20:28:38.730: Theme parser error: <data>:8:13-38: No property named "-unico-outer-stroke-style"
+
+(net.launchpad.beatbox:4027176): Gtk-WARNING **: 20:28:38.730: Theme parser error: <data>:26:22-35: Not a valid image
+
+(net.launchpad.beatbox:4027176): Gtk-WARNING **: 20:28:38.730: Theme parser error: <data>:34:22-35: Not a valid image
+
+(net.launchpad.beatbox:4027176): Gtk-WARNING **: 20:28:38.730: Theme parser error: <data>:44:22-35: Not a valid image
+
+(net.launchpad.beatbox:4027176): Gtk-WARNING **: 20:28:38.732: Theme parser error: <data>:3:22-35: Not a valid image
+
+(net.launchpad.beatbox:4027176): Gtk-WARNING **: 20:28:38.733: Theme parser error: <data>:11:22-35: Not a valid image
+
+(net.launchpad.beatbox:4027176): Gtk-WARNING **: 20:28:38.733: Theme parser error: <data>:21:22-35: Not a valid image
+
+(net.launchpad.beatbox:4027176): Gtk-WARNING **: 20:28:38.796: Theme parser error: <data>:3:4-29: No property named "-unico-inner-stroke-width"
+
+(net.launchpad.beatbox:4027176): Gtk-WARNING **: 20:28:38.796: Theme parser error: <data>:5:22-35: Not a valid image
+
+(net.launchpad.beatbox:4027176): Gtk-WARNING **: 20:28:38.796: Theme parser error: <data>:11:13-35: No property named "-unico-border-gradient"
+
+(net.launchpad.beatbox:4027176): Gtk-WARNING **: 20:28:38.796: Theme parser error: <data>:17:13-41: No property named "-unico-outer-stroke-gradient"
+
+(net.launchpad.beatbox:4027176): Gtk-WARNING **: 20:28:38.796: Theme parser error: <data>:26:13-38: No property named "-unico-outer-stroke-width"
+
+(net.launchpad.beatbox:4027176): Gtk-WARNING **: 20:28:38.797: Theme parser error: <data>:31:4-29: No property named "-unico-outer-stroke-width"
+
+(net.launchpad.beatbox:4027176): Gtk-WARNING **: 20:28:38.797: Theme parser error: <data>:36:4-29: No property named "-unico-outer-stroke-width"
+
+(net.launchpad.beatbox:4027176): Gtk-WARNING **: 20:28:38.797: Theme parser error: <data>:41:4-29: No property named "-unico-outer-stroke-width"
+
+(net.launchpad.beatbox:4027176): Gtk-WARNING **: 20:28:38.797: Theme parser error: <data>:45:22-35: Not a valid image
+
+(net.launchpad.beatbox:4027176): Gtk-WARNING **: 20:28:38.797: Theme parser error: <data>:53:22-35: Not a valid image
+
+(net.launchpad.beatbox:4027176): Gtk-WARNING **: 20:28:38.797: Theme parser error: <data>:61:22-35: Not a valid image
+
+(net.launchpad.beatbox:4027176): Gtk-WARNING **: 20:28:38.839: Theme parser error: <data>:3:4-29: No property named "-unico-inner-stroke-width"
+
+(net.launchpad.beatbox:4027176): Gtk-WARNING **: 20:28:38.839: Theme parser error: <data>:5:22-35: Not a valid image
+
+(net.launchpad.beatbox:4027176): Gtk-WARNING **: 20:28:38.839: Theme parser error: <data>:11:13-35: No property named "-unico-border-gradient"
+
+(net.launchpad.beatbox:4027176): Gtk-WARNING **: 20:28:38.839: Theme parser error: <data>:17:13-41: No property named "-unico-outer-stroke-gradient"
+
+(net.launchpad.beatbox:4027176): Gtk-WARNING **: 20:28:38.839: Theme parser error: <data>:26:13-38: No property named "-unico-outer-stroke-width"
+
+(net.launchpad.beatbox:4027176): Gtk-WARNING **: 20:28:38.839: Theme parser error: <data>:31:4-29: No property named "-unico-outer-stroke-width"
+
+(net.launchpad.beatbox:4027176): Gtk-WARNING **: 20:28:38.840: Theme parser error: <data>:36:4-29: No property named "-unico-outer-stroke-width"
+
+(net.launchpad.beatbox:4027176): Gtk-WARNING **: 20:28:38.840: Theme parser error: <data>:41:4-29: No property named "-unico-outer-stroke-width"
+
+(net.launchpad.beatbox:4027176): Gtk-WARNING **: 20:28:38.840: Theme parser error: <data>:45:22-35: Not a valid image
+
+(net.launchpad.beatbox:4027176): Gtk-WARNING **: 20:28:38.840: Theme parser error: <data>:53:22-35: Not a valid image
+
+(net.launchpad.beatbox:4027176): Gtk-WARNING **: 20:28:38.840: Theme parser error: <data>:61:22-35: Not a valid image
+
+(net.launchpad.beatbox:4027176): Gtk-WARNING **: 20:28:38.844: Theme parser error: <data>:3:22-35: Not a valid image
+
+(net.launchpad.beatbox:4027176): Gtk-WARNING **: 20:28:38.844: Theme parser error: <data>:11:22-35: Not a valid image
+
+(net.launchpad.beatbox:4027176): Gtk-WARNING **: 20:28:38.844: Theme parser error: <data>:21:22-35: Not a valid image
+
+(net.launchpad.beatbox:4027176): Gtk-WARNING **: 20:28:38.846: Theme parser error: <data>:3:4-29: No property named "-unico-inner-stroke-width"
+
+(net.launchpad.beatbox:4027176): Gtk-WARNING **: 20:28:38.846: Theme parser error: <data>:5:22-35: Not a valid image
+
+(net.launchpad.beatbox:4027176): Gtk-WARNING **: 20:28:38.846: Theme parser error: <data>:11:13-35: No property named "-unico-border-gradient"
+
+(net.launchpad.beatbox:4027176): Gtk-WARNING **: 20:28:38.846: Theme parser error: <data>:17:13-41: No property named "-unico-outer-stroke-gradient"
+
+(net.launchpad.beatbox:4027176): Gtk-WARNING **: 20:28:38.846: Theme parser error: <data>:26:13-38: No property named "-unico-outer-stroke-width"
+
+(net.launchpad.beatbox:4027176): Gtk-WARNING **: 20:28:38.846: Theme parser error: <data>:31:4-29: No property named "-unico-outer-stroke-width"
+
+(net.launchpad.beatbox:4027176): Gtk-WARNING **: 20:28:38.846: Theme parser error: <data>:36:4-29: No property named "-unico-outer-stroke-width"
+
+(net.launchpad.beatbox:4027176): Gtk-WARNING **: 20:28:38.846: Theme parser error: <data>:41:4-29: No property named "-unico-outer-stroke-width"
+
+(net.launchpad.beatbox:4027176): Gtk-WARNING **: 20:28:38.846: Theme parser error: <data>:45:22-35: Not a valid image
+
+(net.launchpad.beatbox:4027176): Gtk-WARNING **: 20:28:38.847: Theme parser error: <data>:53:22-35: Not a valid image
+
+(net.launchpad.beatbox:4027176): Gtk-WARNING **: 20:28:38.847: Theme parser error: <data>:61:22-35: Not a valid image
+
+(net.launchpad.beatbox:4027176): Gtk-WARNING **: 20:28:38.876: Theme parser error: <data>:3:4-29: No property named "-unico-inner-stroke-width"
+
+(net.launchpad.beatbox:4027176): Gtk-WARNING **: 20:28:38.876: Theme parser error: <data>:5:22-35: Not a valid image
+
+(net.launchpad.beatbox:4027176): Gtk-WARNING **: 20:28:38.876: Theme parser error: <data>:11:13-35: No property named "-unico-border-gradient"
+
+(net.launchpad.beatbox:4027176): Gtk-WARNING **: 20:28:38.876: Theme parser error: <data>:17:13-41: No property named "-unico-outer-stroke-gradient"
+
+(net.launchpad.beatbox:4027176): Gtk-WARNING **: 20:28:38.876: Theme parser error: <data>:26:13-38: No property named "-unico-outer-stroke-width"
+
+(net.launchpad.beatbox:4027176): Gtk-WARNING **: 20:28:38.876: Theme parser error: <data>:31:4-29: No property named "-unico-outer-stroke-width"
+
+(net.launchpad.beatbox:4027176): Gtk-WARNING **: 20:28:38.876: Theme parser error: <data>:36:4-29: No property named "-unico-outer-stroke-width"
+
+(net.launchpad.beatbox:4027176): Gtk-WARNING **: 20:28:38.876: Theme parser error: <data>:41:4-29: No property named "-unico-outer-stroke-width"
+
+(net.launchpad.beatbox:4027176): Gtk-WARNING **: 20:28:38.877: Theme parser error: <data>:45:22-35: Not a valid image
+
+(net.launchpad.beatbox:4027176): Gtk-WARNING **: 20:28:38.877: Theme parser error: <data>:53:22-35: Not a valid image
+
+(net.launchpad.beatbox:4027176): Gtk-WARNING **: 20:28:38.877: Theme parser error: <data>:61:22-35: Not a valid image
+
+(net.launchpad.beatbox:4027176): Gtk-WARNING **: 20:28:39.299: Trying to measure BeatBoxLibraryWindow 0x5604235eac60 for height of 465, but it needs at least 572
+
+(net.launchpad.beatbox:4027176): Gtk-WARNING **: 20:28:39.356: Trying to measure BeatBoxLibraryWindow 0x5604235eac60 for height of 465, but it needs at least 572
+
+(net.launchpad.beatbox:4027176): Gtk-WARNING **: 20:28:39.358: Trying to measure BeatBoxLibraryWindow 0x5604235eac60 for height of 465, but it needs at least 572
+
+(net.launchpad.beatbox:4027176): Gtk-WARNING **: 20:28:39.383: Trying to measure BeatBoxLibraryWindow 0x5604235eac60 for height of 465, but it needs at least 572
+
+(net.launchpad.beatbox:4027176): Gtk-WARNING **: 20:28:39.392: Trying to measure GtkGrid 0x560426470f60 for height of 82, but it needs at least 141
+
+(net.launchpad.beatbox:4027176): Gtk-WARNING **: 20:28:39.393: Trying to measure BeatBoxLibraryWindow 0x5604235eac60 for height of 465, but it needs at least 572
+
+(net.launchpad.beatbox:4027176): Gtk-WARNING **: 20:28:43.520: Trying to measure BeatBoxLibraryWindow 0x5604235eac60 for height of 465, but it needs at least 572
+
+(net.launchpad.beatbox:4027176): Gtk-WARNING **: 20:28:43.528: Trying to measure BeatBoxLibraryWindow 0x5604235eac60 for height of 465, but it needs at least 572
+
+(net.launchpad.beatbox:4027176): Gtk-WARNING **: 20:28:43.529: Trying to measure BeatBoxLibraryWindow 0x5604235eac60 for height of 465, but it needs at least 572
+
+(net.launchpad.beatbox:4027176): Gtk-WARNING **: 20:28:43.535: Trying to measure BeatBoxLibraryWindow 0x5604235eac60 for height of 465, but it needs at least 572
+
+(net.launchpad.beatbox:4027176): Gtk-WARNING **: 20:28:44.112: Trying to measure BeatBoxLibraryWindow 0x5604235eac60 for height of 465, but it needs at least 572
+
+(net.launchpad.beatbox:4027176): Gtk-CRITICAL **: 20:28:44.219: Unable to register the application: GDBus.Error:org.freedesktop.DBus.Error.NameHasNoOwner: Could not activate remote peer 'org.a11y.atspi.Registry': unit failed
+
+(net.launchpad.beatbox:4027176): Gtk-WARNING **: 20:28:44.222: Trying to measure BeatBoxLibraryWindow 0x5604235eac60 for height of 465, but it needs at least 572
+
+(net.launchpad.beatbox:4027176): Gtk-WARNING **: 20:28:44.253: Trying to measure BeatBoxLibraryWindow 0x5604235eac60 for height of 465, but it needs at least 572
+
+(net.launchpad.beatbox:4027176): Gtk-WARNING **: 20:28:44.295: Trying to measure BeatBoxLibraryWindow 0x5604235eac60 for height of 465, but it needs at least 572
+
+(net.launchpad.beatbox:4027176): Gtk-WARNING **: 20:28:44.296: Trying to measure BeatBoxLibraryWindow 0x5604235eac60 for height of 465, but it needs at least 572
+
+(net.launchpad.beatbox:4027176): Gtk-WARNING **: 20:28:44.299: Trying to measure BeatBoxLibraryWindow 0x5604235eac60 for height of 465, but it needs at least 572
+
+(net.launchpad.beatbox:4027176): Gtk-WARNING **: 20:28:49.237: Trying to measure BeatBoxLibraryWindow 0x5604235eac60 for height of 465, but it needs at least 572
+
+(net.launchpad.beatbox:4027176): Gtk-WARNING **: 20:28:49.238: Trying to measure BeatBoxLibraryWindow 0x5604235eac60 for height of 465, but it needs at least 572
+
+(net.launchpad.beatbox:4027176): Gtk-WARNING **: 20:28:49.239: Trying to measure BeatBoxLibraryWindow 0x5604235eac60 for height of 465, but it needs at least 572
+
+(net.launchpad.beatbox:4027176): Gtk-WARNING **: 20:28:49.249: Trying to measure BeatBoxLibraryWindow 0x5604235eac60 for height of 465, but it needs at least 572
+
+(net.launchpad.beatbox:4027176): Gtk-WARNING **: 20:28:49.253: Trying to measure BeatBoxLibraryWindow 0x5604235eac60 for height of 465, but it needs at least 572
+
+(net.launchpad.beatbox:4027176): Gtk-WARNING **: 20:28:49.255: Trying to measure BeatBoxLibraryWindow 0x5604235eac60 for height of 465, but it needs at least 572
+[94m[INFO 20:28:38.638659][0m Info.vala:83: Loading info from database...
+[94m[INFO 20:28:38.642294][0m SongLibrary.vala:77: Loading songs...
+[94m[INFO 20:28:38.642709][0m PodcastLibrary.vala:73: Loading podcasts...
+[94m[INFO 20:28:38.643174][0m StationLibrary.vala:58: Loading stations...
+[94m[INFO 20:28:38.645539][0m PlaylistManager.vala:42: Loading playlists from database...
+Could not grab media player keys: GDBus.Error:org.freedesktop.DBus.Error.ServiceUnknown: The name org.gnome.SettingsDaemon was not provided by any .service files
+[94m[INFO 20:28:38.724424][0m LibraryWindow.vala:226: Building user interface
+[94m[INFO 20:28:38.954250][0m OperationDisplay.vala:58: Found that app is already doing ops. Showing...
+[94m[INFO 20:28:39.234290][0m Launcher.vala:67: Registered the launcher for /home/lchongv/Proyectos/beatbox-master/build-gtk4/beatbox
+[94m[INFO 20:28:44.080434][0m CoverManager.vala:314: Album art cached in memory.

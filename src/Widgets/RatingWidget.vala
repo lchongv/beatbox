@@ -352,10 +352,12 @@ public class BeatBox.RatingMenuItem : BeatBox.PopMenuItem {
         add_controller (press_gesture);
 
         // Force the NORMAL state flag
+        // GTK 4 always reports the text direction (DIR_LTR/DIR_RTL) as a state flag: it is
+        // left alone, otherwise clearing it re-emits state_flags_changed forever
         this.state_flags_changed.connect ( () => {
-            var current_flags = this.get_state_flags ();
-            if (current_flags != Gtk.StateFlags.NORMAL)
-                unset_state_flags (current_flags);
+            var extra = this.get_state_flags () & ~(Gtk.StateFlags.DIR_LTR | Gtk.StateFlags.DIR_RTL);
+            if (extra != Gtk.StateFlags.NORMAL)
+                unset_state_flags (extra);
         });
     }
 
