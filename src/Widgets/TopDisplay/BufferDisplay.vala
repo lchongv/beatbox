@@ -37,11 +37,15 @@ public class BeatBox.BufferDisplay : BeatBox.Display, Box {
 	public BufferDisplay() {
 		buffering_status = new Marquee();
 		buffering_bar = new ProgressBar();
-		
-		
-		this.set_orientation(Orientation.VERTICAL);
-		add(buffering_status);
-		add(buffering_bar);
+
+		var center_box = new Box(Orientation.VERTICAL, 6);
+		center_box.add(buffering_status);
+		center_box.add(buffering_bar);
+
+		this.set_orientation(Orientation.HORIZONTAL);
+		center_box.hexpand = true;
+		center_box.valign = Align.CENTER; // same layout as the operation display
+		add(center_box);
 		
 		App.playback.buffer_percent_update.connect(player_buffering_update);
 		App.playback.media_played.connect(media_played);
@@ -56,8 +60,11 @@ public class BeatBox.BufferDisplay : BeatBox.Display, Box {
 			if(percent >= 0 && percent < 100) {
 				var name = String.ellipsize(App.playback.current_media.title, 53);
 				
+				// connecting: no progress known yet, so a barber pole (see theme.css) until the first percent
+				if(percent > 0) buffering_bar.get_style_context().remove_class("live");
+				else buffering_bar.get_style_context().add_class("live");
 				buffering_bar.set_fraction((double)((double)percent / (double)100));
-				
+
 				if(name != null) {
 					buffering_status.set_markup(_("Buffering %s...").printf("<b>" + Markup.escape_text(name) + "</b>"));
 				}
