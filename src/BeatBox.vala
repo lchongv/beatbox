@@ -34,7 +34,7 @@ public static int main (string[] args) {
 	Environment.set_prgname ("net.launchpad.beatbox");
 	var context = new OptionContext ("- BeatBox help page.");
 	//context.add_main_entries (Beatbox.get_option_group (), "beatbox");
-	context.add_group (Gtk.get_option_group (true));
+	// GTK4 has no GOption group: its own command line options are no longer parsed here
 	context.add_group (Gst.init_get_option_group ());
 
 	try {
@@ -44,7 +44,7 @@ public static int main (string[] args) {
 		warning ("Error parsing arguments: %s", err.message);
 	}
 
-	Gtk.init(ref args);
+	Gtk.init();
 
 	try {
 		Gst.init_check (ref args);
@@ -157,14 +157,14 @@ public class BeatBox.App : Gtk.Application {
 					 ".lcd scale slider { min-width: %dpx; min-height: %dpx; margin: %dpx %dpx %dpx;" +
 					 " background-image: url(\"resource:///net/launchpad/beatbox/nyan.svg\"); background-size: 200%% 100%%; background-position: 0 0; }" +
 					 ".lcd scale.nyan-b slider { background-position: 100%% 0; }")
-					.printf (7 * k, 3 * k, 23 * k, 13 * k, -2 * k, -(23 * k - 8) / 2, -4 * k)); // the trail leaves the body's middle
+					.printf (7 * k, 3 * k, 23 * k, 13 * k, -2 * k, -(23 * k - 8) / 2, -4 * k).data); // the trail leaves the body's middle
 				return;
 			}
 			marker_css.load_from_data (
 				(".lcd scale trough, .lcd scale highlight { min-height: %dpx; }" +
 				 ".lcd scale slider { min-width: %dpx; min-height: %dpx; margin: %dpx %dpx;" +
 				 " background-image: url(\"resource:///net/launchpad/beatbox/%s.svg\"); }")
-				.printf (track, size, size, -(size - track + 2) / 2, -(size - 8) / 2, shape));
+				.printf (track, size, size, -(size - track + 2) / 2, -(size - 8) / 2, shape).data);
 		} catch (Error err) {
 			warning ("Could not restyle the position bar: %s", err.message);
 		}
@@ -222,10 +222,10 @@ public class BeatBox.App : Gtk.Application {
 		Logger.initialize (); // the [INFO hh:mm:ss] log format
 		
 		Skins.apply (settings.main.skin); // base look at APPLICATION + 1, optional skin at + 2
-		Gtk.StyleContext.add_provider_for_screen (Gdk.Screen.get_default (), marker_css, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION + 3);
+		Gtk.StyleContext.add_provider_for_display (Gdk.Display.get_default (), marker_css,Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION + 3);
 		apply_lcd_style ();
 		
-		Gtk.IconTheme.get_default ().add_resource_path ("/net/launchpad/beatbox/icons");
+		Gtk.IconTheme.get_for_display (Gdk.Display.get_default ()).add_resource_path ("/net/launchpad/beatbox/icons");
 		icons = new Icons();
 		database = new DataBaseManager(settings.main.library);
 		operations = new OperationsManager();

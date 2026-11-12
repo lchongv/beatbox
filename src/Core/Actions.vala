@@ -112,11 +112,11 @@ public class BeatBox.Actions : BeatBox.ActionsInterface {
 	}
 	
 	private void import_playlist_activate() {
-		import_playlist_or_station("Playlist");
+		import_playlist_or_station.begin("Playlist");
 	}
 	
 	private void import_station_activate() {
-		import_playlist_or_station("Station");
+		import_playlist_or_station.begin("Station");
 	}
 	
 	private void add_podcast_feed_activate() {
@@ -129,14 +129,17 @@ public class BeatBox.Actions : BeatBox.ActionsInterface {
 	}
 	
 	public override void show_set_library_folder_dialog(Library library) {
+		choose_library_folder.begin(library);
+	}
+
+	async void choose_library_folder(Library library) {
 		File? folder = null;
 		var file_chooser = new Gtk.FileChooserDialog (_("Choose %s Folder").printf(library.name), App.window,
 								  Gtk.FileChooserAction.SELECT_FOLDER,
 								  _("_Cancel"), Gtk.ResponseType.CANCEL,
 								  _("_Open"), Gtk.ResponseType.ACCEPT);
-		file_chooser.set_local_only(true);
-		if (file_chooser.run () == Gtk.ResponseType.ACCEPT) {
-			folder = File.new_for_path(file_chooser.get_filename());
+		if ((yield UI.run_dialog (file_chooser)) == Gtk.ResponseType.ACCEPT) {
+			folder = File.new_for_path(file_chooser.get_file().get_path());
 		}
 		file_chooser.destroy ();
 		
@@ -147,16 +150,21 @@ public class BeatBox.Actions : BeatBox.ActionsInterface {
 	}
 	
 	public override void show_import_folders_dialog(Library library) {
+		choose_import_folders.begin(library);
+	}
+
+	async void choose_import_folders(Library library) {
 		GLib.SList<File> folders = new GLib.SList<File>();
 		var file_chooser = new Gtk.FileChooserDialog (_("Import %s").printf(library.name), App.window,
 								  Gtk.FileChooserAction.SELECT_FOLDER,
 								  _("_Cancel"), Gtk.ResponseType.CANCEL,
 								  _("_Open"), Gtk.ResponseType.ACCEPT);
-		file_chooser.set_local_only(true);
 		file_chooser.set_select_multiple(true); // allow user to select multiple folders
 
-		if (file_chooser.run () == Gtk.ResponseType.ACCEPT) {
-			folders = file_chooser.get_files();
+		if ((yield UI.run_dialog (file_chooser)) == Gtk.ResponseType.ACCEPT) {
+			var selected = file_chooser.get_files();
+			for (uint i = 0; i < selected.get_n_items(); i++)
+				folders.append((File) selected.get_item(i));
 		}
 		file_chooser.destroy ();
 		
@@ -197,7 +205,7 @@ public class BeatBox.Actions : BeatBox.ActionsInterface {
 		}
 		
 		eq = new EqualizerWindow();
-		eq.show_all();
+		eq.present();
 	}
 	
 	public override void destroy_equalizer() {
@@ -284,7 +292,7 @@ public class BeatBox.Actions : BeatBox.ActionsInterface {
 		refresh_podcasts.set_enabled(true);
 	}
 	
-	private void import_playlist_or_station(string to_import) {
+	private async void import_playlist_or_station(string to_import) {
 		string file = "";
 		string name = "";
 		var file_chooser = new Gtk.FileChooserDialog (_("Import %s").printf(to_import), App.window,
@@ -303,8 +311,8 @@ public class BeatBox.Actions : BeatBox.ActionsInterface {
 		pls_filter.set_filter_name("Shoutcast Playlist Version 2.0 (*.pls)");
 		file_chooser.add_filter(pls_filter);
 		
-		if (file_chooser.run () == Gtk.ResponseType.ACCEPT) {
-			file = file_chooser.get_filename();
+		if ((yield UI.run_dialog (file_chooser)) == Gtk.ResponseType.ACCEPT) {
+			file = file_chooser.get_file().get_path();
 			name = file.slice(file.last_index_of("/", 0) + 1, file.last_index_of(".", 0));
 		}
 		

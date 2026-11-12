@@ -13,7 +13,7 @@ public class BeatBox.LibrarySwitcher : Object {
 		switch_action.activate.connect ((parameter) => switch_to (parameter.get_string ()));
 		App.actions.group.add_action (switch_action);
 		var create = new SimpleAction ("new-library", null);
-		create.activate.connect (() => new_library ());
+		create.activate.connect (() => new_library.begin ());
 		App.actions.group.add_action (create);
 		fill_menu ();
 	}
@@ -74,13 +74,14 @@ public class BeatBox.LibrarySwitcher : Object {
 		fill_menu ();
 	}
 
-	void new_library () {
+	async void new_library () {
 		var dialog = new Dialog.with_buttons (_("New Library"), (Gtk.Window) App.window,
 		                                      DialogFlags.MODAL | DialogFlags.DESTROY_WITH_PARENT,
 		                                      _("Cancel"), ResponseType.CANCEL, _("Create"), ResponseType.OK);
 		var name = new Entry () { activates_default = true, placeholder_text = _("External Disk") };
-		var folder = new FileChooserButton (_("Music Folder"), FileChooserAction.SELECT_FOLDER);
-		var grid = new Grid () { row_spacing = 8, column_spacing = 8, margin = 12 };
+		string? music = null; // the folder picked with the button, which shows its name
+		var folder = new Button.with_label (_("(None)"));
+		var grid = new Grid () { row_spacing = 8, column_spacing = 8, margin_top = 12, margin_bottom = 12, margin_start = 12, margin_end = 12 };
 		grid.attach (new Label (_("Name:")) { xalign = 1 }, 0, 0);
 		grid.attach (name, 1, 0);
 		grid.attach (new Label (_("Music folder:")) { xalign = 1 }, 0, 1);
@@ -88,18 +89,34 @@ public class BeatBox.LibrarySwitcher : Object {
 		var hint = new Label (_("BeatBox restarts with the new library and imports the folder."));
 		hint.get_style_context ().add_class ("dim-label");
 		grid.attach (hint, 0, 2, 2, 1);
-		dialog.get_content_area ().add (grid);
+		dialog.get_content_area ().append (grid);
 		dialog.set_default_response (ResponseType.OK);
 		var ok = dialog.get_widget_for_response (ResponseType.OK);
 		ok.sensitive = false;
-		name.changed.connect (() => { ok.sensitive = name.text.strip () != "" && folder.get_filename () != null; });
-		folder.selection_changed.connect (() => { ok.sensitive = name.text.strip () != "" && folder.get_filename () != null; });
-		dialog.show_all ();
-		bool create = dialog.run () == ResponseType.OK;
+		name.changed.connect (() => { ok.sensitive = name.text.strip () != "" && music != null; });
+		folder.clicked.connect (() => choose_music_folder.begin (dialog, (obj, res) => {
+			string? picked = choose_music_folder.end (res);
+			if (picked == null)
+				return;
+			music = picked;
+			folder.label = GLib.Path.get_basename (picked);
+			ok.sensitive = name.text.strip () != "";
+		}));
+		bool create = (yield UI.run_dialog (dialog)) == ResponseType.OK;
 		string library_name = name.text.strip ();
-		string? music = folder.get_filename ();
 		dialog.destroy ();
 		if (create && music != null)
 			switch_to (Libraries.create (library_name, music));
+	}
+
+	/** Asks for the music folder of a new library: the path chosen, or null */
+	async string? choose_music_folder (Gtk.Window parent) {
+		var chooser = new FileChooserDialog (_("Music Folder"), parent, FileChooserAction.SELECT_FOLDER,
+		                                     _("_Cancel"), ResponseType.CANCEL, _("_Open"), ResponseType.ACCEPT);
+		string? path = null;
+		if ((yield UI.run_dialog (chooser)) == ResponseType.ACCEPT)
+			path = chooser.get_file ().get_path ();
+		chooser.destroy ();
+		return path;
 	}
 }

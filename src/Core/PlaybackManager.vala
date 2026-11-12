@@ -696,7 +696,7 @@ public class BeatBox.PlaybackManager : GLib.Object, BeatBox.PlaybackInterface {
 				App.library.update_media(m, false, false, true);
 			}
 			
-			if(!App.window.has_toplevel_focus) {
+			if(!App.window.is_active) {
 				App.window.show_notification(m.title, m.artist + "\n" + m.album, App.covers.get_album_art_from_media(m));
 			}
 		}
