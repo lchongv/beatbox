@@ -98,7 +98,7 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 	
 	// GTK3 controllers need a reference
 	EventControllerKey key_controller;
-	GestureMultiPress lcd_cover_gesture;
+	GestureClick lcd_cover_gesture;
 	
 	public StatusBar statusBar { get; private set; }
 	
@@ -341,7 +341,7 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		});
 		// a click (released without dragging) enlarges it. The press stops here (after the
 		// drag source saw it): in the title bar it would otherwise start moving the window too
-		lcd_cover_gesture = new GestureMultiPress(lcdCoverBox);
+		lcd_cover_gesture = new GestureClick(lcdCoverBox);
 		lcd_cover_gesture.button = 0;
 		lcd_cover_gesture.pressed.connect(() => lcd_cover_gesture.set_state(EventSequenceState.CLAIMED));
 		lcd_cover_gesture.released.connect(() => {

@@ -1,4 +1,4 @@
-project('beatbox', 'vala', 'c', version: '1.2.9')
+project('beatbox', 'vala', 'c', version: '1.2.10')
 
 gnome = import('gnome')
 i18n = import('i18n')
@@ -43,8 +43,7 @@ deps = [
   dependency('glib-2.0'),
   dependency('gio-2.0'),
   dependency('gio-unix-2.0'),
-  dependency('gtk+-3.0'),
-  dependency('gdk-x11-3.0'),
+  dependency('gtk4', version: '>= 4.6'),
   dependency('gee-0.8'),
   dependency('gstreamer-1.0'),
   dependency('gstreamer-pbutils-1.0'),
@@ -62,6 +61,7 @@ deps = [
 ]
 
 core_sources = files(
+  'core/Gtk3Shim.vala',
   'core/SQLHeavy.vala',
   'core/Libraries.vala',
   'core/Settings.vala',
@@ -160,7 +160,7 @@ core = shared_library('beatbox-core', core_sources, config_vala,
 core_dep = declare_dependency(link_with: core, dependencies: deps, include_directories: include_directories('.'))
 
 # What a plugin built outside this tree needs: valac --pkg beatbox-core (docs/plugins.md)
-core_packages = ['gio-2.0', 'gio-unix-2.0', 'gtk+-3.0', 'gdk-x11-3.0', 'gee-0.8', 'gstreamer-1.0',
+core_packages = ['gio-2.0', 'gio-unix-2.0', 'gtk4', 'gee-0.8', 'gstreamer-1.0',
   'gstreamer-pbutils-1.0', 'gstreamer-video-1.0', 'gstreamer-tag-1.0', 'taglib_c', 'libxml-2.0',
   'libnotify', 'libsoup-3.0', 'json-glib-1.0', 'sqlite3']
 if gpod_dep.found()

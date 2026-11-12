@@ -231,7 +231,7 @@ public abstract class BeatBox.SourceView : Box, View {
 					paned.position = alloc.height / 2;
 			});
 			// a press on the divider (presses inside the panes stay with them)
-			var divider_press = new GestureMultiPress(paned);
+			var divider_press = new GestureClick(paned);
 			divider_press.button = 0;
 			divider_press.pressed.connect(() => { user_moved = true; });
 			paned.set_data("press-gesture", divider_press); // GTK3 controllers need a reference

@@ -31,8 +31,8 @@ public class BeatBox.TimeScale : Box {
 	private Label left_time;
 	private Label right_time;
 	private Scale scale;
-	private GestureMultiPress click_gesture; // GTK3 controllers need a reference
-	private GestureMultiPress right_click_gesture;
+	private GestureClick click_gesture; // GTK3 controllers need a reference
+	private GestureClick right_click_gesture;
 	private EventBox right_box;
 	private uint nyan_id = 0;
 	private bool live = false;
@@ -89,14 +89,14 @@ public class BeatBox.TimeScale : Box {
 		right_box.add(right_time);
 		right_box.tooltip_text = _("Click to switch between the time left and the total time");
 		add(right_box);
-		right_click_gesture = new GestureMultiPress(right_box);
+		right_click_gesture = new GestureClick(right_box);
 		right_click_gesture.released.connect(() => {
 			App.settings.main.lcd_total_time = !App.settings.main.lcd_total_time;
 			value_changed();
 		});
 		
 		// pressing and releasing jump there (instead of the scale's own handling, dragging included)
-		click_gesture = new GestureMultiPress(scale);
+		click_gesture = new GestureClick(scale);
 		click_gesture.button = 0;
 		click_gesture.propagation_phase = PropagationPhase.CAPTURE;
 		click_gesture.pressed.connect((n_press, x, y) => {

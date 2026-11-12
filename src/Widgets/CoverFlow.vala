@@ -43,7 +43,7 @@ public class BeatBox.CoverFlow : DrawingArea {
 		scroll_controller.scroll.connect(on_scroll);
 		key_controller = new Gtk.EventControllerKey(this);
 		key_controller.key_pressed.connect(on_key_pressed);
-		click_gesture = new Gtk.GestureMultiPress(this);
+		click_gesture = new Gtk.GestureClick(this);
 		click_gesture.button = 0; // any button takes the focus
 		click_gesture.pressed.connect(on_pressed);
 
@@ -392,7 +392,7 @@ public class BeatBox.CoverFlow : DrawingArea {
 
 	Gtk.EventControllerScroll scroll_controller;
 	Gtk.EventControllerKey key_controller;
-	Gtk.GestureMultiPress click_gesture;
+	Gtk.GestureClick click_gesture;
 	double scroll_accum = 0;
 	
 	// wheel clicks arrive as deltas of ±1, touchpads as fractions

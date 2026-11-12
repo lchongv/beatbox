@@ -46,7 +46,7 @@ public class BeatBox.AlbumWall : Layout {
 	public signal void album_activated (Album album);
 
 	// GTK3 controllers need a reference
-	GestureMultiPress click_gesture;
+	GestureClick click_gesture;
 	EventControllerMotion motion_controller;
 
 	public AlbumWall (GenericGrid grid, SourceView wrapper) {
@@ -54,7 +54,7 @@ public class BeatBox.AlbumWall : Layout {
 		this.wrapper = wrapper;
 		get_style_context ().add_class ("albumwall");
 		add_events (Gdk.EventMask.BUTTON_PRESS_MASK | Gdk.EventMask.POINTER_MOTION_MASK);
-		click_gesture = new GestureMultiPress (this);
+		click_gesture = new GestureClick (this);
 		click_gesture.pressed.connect (on_pressed);
 		motion_controller = new EventControllerMotion (this);
 		motion_controller.motion.connect (on_motion);

@@ -53,7 +53,7 @@ public class BeatBox.EqualizerWindow : Gtk.Window {
 	private string new_preset_name;
 
 	public EqualizerWindow () {
-		scale_list = new List<VScale>();
+		scale_list = new List<Scale>();
 		label_list = new List<Label>();
 		target_levels = new Gee.ArrayList<int>();
 

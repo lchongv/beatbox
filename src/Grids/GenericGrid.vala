@@ -70,7 +70,7 @@ public abstract class BeatBox.GenericGrid : FastGrid {
 	protected bool dragging;
 
 	// GTK3 controllers need a reference
-	Gtk.GestureMultiPress click_gesture;
+	Gtk.GestureClick click_gesture;
 	Gtk.EventControllerMotion motion_controller;
 	double pointer_x = -1; // where the pointer is, in widget coordinates
 	double pointer_y = -1;
@@ -124,7 +124,7 @@ public abstract class BeatBox.GenericGrid : FastGrid {
 		});
 
 		// CAPTURE: GtkIconView handles the clicks itself and passes none on
-		click_gesture = new Gtk.GestureMultiPress (this);
+		click_gesture = new Gtk.GestureClick (this);
 		click_gesture.propagation_phase = Gtk.PropagationPhase.CAPTURE;
 		click_gesture.released.connect (on_released);
 

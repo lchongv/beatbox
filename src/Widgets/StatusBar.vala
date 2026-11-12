@@ -101,7 +101,7 @@ public class BeatBox.StatusBar : Gtk.ActionBar {
         
         repeat_chooser.option_changed.connect(repeat_chooser_option_changed);
         shuffle_chooser.option_changed.connect(shuffle_chooser_option_changed);
-        var eq_press = new GestureMultiPress(eq_eventbox);
+        var eq_press = new GestureClick(eq_eventbox);
         eq_press.button = 0;
         eq_press.pressed.connect(show_eq_button_clicked);
         eq_eventbox.set_data("press-gesture", eq_press); // GTK3 controllers need a reference

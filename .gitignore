@@ -4,3 +4,4 @@ build-flatpak/
 repo/
 appimage-work/
 *.AppImage
+build-gtk4/

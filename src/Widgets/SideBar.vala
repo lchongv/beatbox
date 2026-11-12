@@ -47,7 +47,7 @@ public enum BeatBox.SideBarColumn {
 public class BeatBox.SideBar : Gtk.TreeView {
 	public TreeStore tree;
 	public TreeModelFilter filter;
-	Gtk.GestureMultiPress side_bar_click; // GTK3 controllers need a reference
+	Gtk.GestureClick side_bar_click; // GTK3 controllers need a reference
 	
 	SideBarRenderer side_renderer;
 	
@@ -85,7 +85,7 @@ public class BeatBox.SideBar : Gtk.TreeView {
 		
 		this.get_selection().changed.connect(selectionChange);
 		// CAPTURE: before the tree view handles the press (selection)
-		side_bar_click = new Gtk.GestureMultiPress(this);
+		side_bar_click = new Gtk.GestureClick(this);
 		side_bar_click.propagation_phase = Gtk.PropagationPhase.CAPTURE;
 		side_bar_click.pressed.connect(sideBarClick);
 		

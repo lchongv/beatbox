@@ -33,7 +33,7 @@ public class BeatBox.SimpleOptionChooser : EventBox {
 	GLib.Menu menu = new GLib.Menu(); // right click: one radio item per option
 	SimpleAction option = new SimpleAction.stateful("option", VariantType.INT32, new Variant.int32(0));
 	Gtk.Popover? popover = null;
-	Gtk.GestureMultiPress press_gesture; // GTK3 controllers need a reference
+	Gtk.GestureClick press_gesture; // GTK3 controllers need a reference
 	public LinkedList<Gtk.Image> images;
 
 	int clicked_index;
@@ -61,7 +61,7 @@ public class BeatBox.SimpleOptionChooser : EventBox {
 		actions.add_action(option);
 		insert_action_group("chooser", actions);
 
-		press_gesture = new Gtk.GestureMultiPress(this);
+		press_gesture = new Gtk.GestureClick(this);
 		press_gesture.button = 0;
 		press_gesture.pressed.connect(buttonPress);
 	}

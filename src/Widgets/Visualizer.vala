@@ -64,7 +64,7 @@ public class BeatBox.Visualizer : DrawingArea {
 
 	bool auto_change = true; // the effects change by themselves (menu)
 	Gtk.Menu? menu = null;
-	GestureMultiPress press;
+	GestureClick press;
 
 	// the classic effects
 	void* classic = null;
@@ -74,7 +74,7 @@ public class BeatBox.Visualizer : DrawingArea {
 
 	public Visualizer() {
 		add_events(Gdk.EventMask.BUTTON_PRESS_MASK);
-		press = new GestureMultiPress(this);
+		press = new GestureClick(this);
 		press.button = 0;
 		press.pressed.connect(on_pressed);
 		map.connect(start);

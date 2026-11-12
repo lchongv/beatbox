@@ -43,7 +43,7 @@ public abstract class BeatBox.GenericList : FastList {
 	
 	uint scroll_back_id; // the pending return to the playing song after a scroll
 	protected bool scrolled_recently;
-	Gtk.GestureMultiPress click_gesture; // GTK3 controllers need a reference
+	Gtk.GestureClick click_gesture; // GTK3 controllers need a reference
 	protected bool dragging;
 	
 	protected CellDataFunctionHelper cellHelper;
@@ -97,7 +97,7 @@ public abstract class BeatBox.GenericList : FastList {
 		drag_data_get.connect(on_drag_data_get);
 		drag_end.connect(on_drag_end);
 		// any press, before the list handles it
-		click_gesture = new Gtk.GestureMultiPress(this);
+		click_gesture = new Gtk.GestureClick(this);
 		click_gesture.button = 0;
 		click_gesture.propagation_phase = Gtk.PropagationPhase.CAPTURE;
 		click_gesture.pressed.connect(() => { scrolled_recently = true; });
@@ -249,7 +249,7 @@ public abstract class BeatBox.GenericList : FastList {
 			}
 			
 			// CAPTURE: before the header button turns the press into a click (sorting)
-			var header_click = new Gtk.GestureMultiPress(get_column(index).get_button());
+			var header_click = new Gtk.GestureClick(get_column(index).get_button());
 			header_click.button = 0;
 			header_click.propagation_phase = Gtk.PropagationPhase.CAPTURE;
 			header_click.pressed.connect(view_header_click);
@@ -282,7 +282,7 @@ public abstract class BeatBox.GenericList : FastList {
 		columnChooserMenu.append(label, "columns." + action.name);
 	}
 	
-	protected void view_header_click(Gtk.GestureMultiPress gesture, int n_press, double x, double y) {
+	protected void view_header_click(Gtk.GestureClick gesture, int n_press, double x, double y) {
 		uint button = gesture.get_current_button();
 		if(button == 3) {
 			UI.popup_menu_model(gesture.get_widget(), columnChooserMenu, x, y);

@@ -53,7 +53,7 @@ public class BeatBox.SideTreeView : BeatBox.SideBar {
 	
 	GLib.Menu libraryMenu;
 	GLib.Menu playlistMenu;
-	Gtk.GestureMultiPress side_list_click; // GTK3 controllers need a reference
+	Gtk.GestureClick side_list_click; // GTK3 controllers need a reference
 	
 	public SideTreeView() {
 		view_to_iter = new HashMap<View, TreeIter?>();
@@ -74,7 +74,7 @@ public class BeatBox.SideTreeView : BeatBox.SideBar {
 		playlistMenu.append_item(App.actions.model_item(App.actions.import_playlist));
 		
 		// CAPTURE: before the tree view handles the press (selection)
-		side_list_click = new Gtk.GestureMultiPress(this);
+		side_list_click = new Gtk.GestureClick(this);
 		side_list_click.button = 0;
 		side_list_click.propagation_phase = Gtk.PropagationPhase.CAPTURE;
 		side_list_click.pressed.connect(sideListClick);

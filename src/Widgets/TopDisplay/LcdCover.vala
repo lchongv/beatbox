@@ -149,7 +149,7 @@ public class BeatBox.LcdCover : Image {
 		var scroll = new Gtk.EventControllerScroll (win, Gtk.EventControllerScrollFlags.VERTICAL);
 		scroll.scroll.connect ((dx, dy) => { set_zoom (dy < 0 ? zoom * 1.15 : zoom / 1.15); });
 		win.set_data ("scroll-controller", scroll); // GTK3 controllers need a reference
-		var double_click = new Gtk.GestureMultiPress (win);
+		var double_click = new Gtk.GestureClick (win);
 		double_click.button = 0;
 		double_click.pressed.connect ((n_press) => {
 			if (n_press == 2)

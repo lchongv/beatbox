@@ -59,7 +59,7 @@ public class BeatBox.RatingWidget : Gtk.EventBox {
 
     // GTK3 controllers need a reference
     private Gtk.EventControllerMotion motion_controller;
-    private Gtk.GestureMultiPress press_gesture;
+    private Gtk.GestureClick press_gesture;
 
     /**
      * It's not necessary to set a context. In most cases it should be 'null'.
@@ -97,7 +97,7 @@ public class BeatBox.RatingWidget : Gtk.EventBox {
             motion_controller = new Gtk.EventControllerMotion (this);
             motion_controller.motion.connect ((x, y) => hover (x));
             motion_controller.leave.connect (end_hover);
-            press_gesture = new Gtk.GestureMultiPress (this);
+            press_gesture = new Gtk.GestureClick (this);
             press_gesture.button = 0;
             press_gesture.pressed.connect (() => {
                 press ();
@@ -336,7 +336,7 @@ public class BeatBox.RatingMenuItem : Gtk.MenuItem {
     protected RatingWidget rating;
     // GTK3 controllers need a reference
     Gtk.EventControllerMotion motion_controller;
-    Gtk.GestureMultiPress press_gesture;
+    Gtk.GestureClick press_gesture;
 
     public int rating_value {
         get {
@@ -354,7 +354,7 @@ public class BeatBox.RatingMenuItem : Gtk.MenuItem {
         motion_controller = new Gtk.EventControllerMotion (this);
         motion_controller.motion.connect (hover_at);
         motion_controller.leave.connect (() => rating.end_hover ());
-        press_gesture = new Gtk.GestureMultiPress (this);
+        press_gesture = new Gtk.GestureClick (this);
         press_gesture.button = 0;
         press_gesture.pressed.connect ((n_press, x, y) => {
             hover_at (x, y);
