@@ -12,8 +12,10 @@
 
 using Gtk;
 
-public class BeatBox.TrackReport : ScrolledWindow {
+public class BeatBox.TrackReport : Box {
 	Box content;
+	// GTK 4 does not let a class derive from ScrolledWindow: this is the scrolling part, inside the box
+	ScrolledWindow scroll;
 	uint request = 0; // drops reports of songs no longer playing
 
 	/* What the file says, read on a worker thread: plain data, the widgets are made on the main loop
@@ -32,12 +34,16 @@ public class BeatBox.TrackReport : ScrolledWindow {
 	}
 
 	public TrackReport () {
-		hscrollbar_policy = PolicyType.NEVER;
-		get_style_context ().add_class ("track-report");
+		Object (orientation: Orientation.VERTICAL, spacing: 0);
+		scroll = new ScrolledWindow ();
+		scroll.hexpand = scroll.vexpand = true;
+		scroll.hscrollbar_policy = PolicyType.NEVER;
+		scroll.add_css_class ("track-report");
 		content = new Box (Orientation.VERTICAL, 4);
 		content.margin_top = content.margin_bottom = 10;
 		content.margin_start = content.margin_end = 10;
-		set_child (content);
+		scroll.set_child (content);
+		append (scroll);
 
 		App.playback.media_played.connect ((m, old) => refresh ());
 		App.playback.playback_stopped.connect ((m) => refresh ());

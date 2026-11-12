@@ -77,10 +77,10 @@ public class BeatBox.AlbumGrid : GenericGrid {
 		debug("drag begin\n");
 
 		string icon_name;
-		if(get_selected_items().length() == 1) {
+		if(view.get_selected_items().length() == 1) {
 			icon_name = "audio-x-generic";
 		}
-		else if(get_selected_items().length() > 1) {
+		else if(view.get_selected_items().length() > 1) {
 			icon_name = "folder-music";
 		}
 		else {
@@ -93,7 +93,7 @@ public class BeatBox.AlbumGrid : GenericGrid {
 	protected override string[] get_drag_uris() {
 		string[] uris = {};
 
-		foreach(TreePath path in get_selected_items()) {
+		foreach(TreePath path in view.get_selected_items()) {
 			Album a = (Album)get_object_from_index(int.parse(path.to_string()));
 			foreach(var m in a.get_medias_sorted())
 				uris += (m.uri);

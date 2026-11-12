@@ -400,7 +400,7 @@ public class BeatBox.RatingMenuItem : BeatBox.PopMenuItem {
     }
 }
 
-public class BeatBox.CellRendererRating : Gtk.CellRendererPixbuf {
+public class BeatBox.CellRendererRating : Gtk.CellRenderer {
 
     /** Only emmited when the rating changes by clicking over the cellrenderer **/
     public signal void rating_changed (int new_rating, Gtk.Widget widget, string path,
@@ -422,10 +422,41 @@ public class BeatBox.CellRendererRating : Gtk.CellRendererPixbuf {
         rating = new RatingWidget (false, icon_size);
         this.pixbuf = rating.get_canvas ();
 
-        xalign = 0.0f; // left-aligned
+        set_alignment (0.0f, 0.5f); // left-aligned
 
         // Make this cell renderer activatable. This allows receiving click (activate) events.
         this.mode = Gtk.CellRendererMode.ACTIVATABLE;
+    }
+
+    /** The image the cell draws (what CellRendererPixbuf took as its pixbuf property). GTK 4 does not let
+     * a class derive from CellRendererPixbuf, so the drawing is here. */
+    public Gdk.Pixbuf? pixbuf { get; set; }
+
+    public override void get_preferred_width (Gtk.Widget widget, out int minimum_size, out int natural_size) {
+        int xpad, ypad;
+        get_padding (out xpad, out ypad);
+        minimum_size = natural_size = (pixbuf != null ? pixbuf.width : 0) + 2 * xpad;
+    }
+
+    public override void get_preferred_height (Gtk.Widget widget, out int minimum_size, out int natural_size) {
+        int xpad, ypad;
+        get_padding (out xpad, out ypad);
+        minimum_size = natural_size = (pixbuf != null ? pixbuf.height : 0) + 2 * ypad;
+    }
+
+    public override void snapshot (Gtk.Snapshot snapshot, Gtk.Widget widget, Gdk.Rectangle background_area,
+                                   Gdk.Rectangle cell_area, Gtk.CellRendererState flags) {
+        if (pixbuf == null)
+            return;
+        float xalign, yalign;
+        int xpad, ypad;
+        get_alignment (out xalign, out yalign);
+        get_padding (out xpad, out ypad);
+        int x = cell_area.x + xpad + (int) ((cell_area.width - pixbuf.width - 2 * xpad) * xalign);
+        int y = cell_area.y + ypad + (int) ((cell_area.height - pixbuf.height - 2 * ypad) * yalign);
+        var bounds = Graphene.Rect ();
+        bounds.init (x, y, pixbuf.width, pixbuf.height);
+        snapshot.append_texture (Gdk.Texture.for_pixbuf (pixbuf), bounds);
     }
 
     /** Common Rating API functions **/

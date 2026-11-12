@@ -33,6 +33,6 @@ public interface BeatBox.MediaEditorInterface : GLib.Object {
 	public abstract void change_media(Media m);
 	
 	public abstract Collection<FieldEditor> get_fields();
-	public abstract Viewport get_metadata_view(Collection<Media> originals);
-	public abstract HashMap<string, Viewport> get_extra_views();
+	public abstract Widget get_metadata_view(Collection<Media> originals);
+	public abstract HashMap<string, Widget> get_extra_views();
 }

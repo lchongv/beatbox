@@ -8,10 +8,13 @@
 
 using Gtk;
 
-public class BeatBox.LcdCover : Image {
+public class BeatBox.LcdCover : Box {
 	delegate bool ZoomFunc (double zoom);
 
 	const int CORNER = 7;  // inner radius of the LCD's rounded border
+
+	// GTK 4 does not let a class derive from Image: the picture is a child of this box
+	Image image = new Image ();
 
 	Gdk.Pixbuf? source = null;  // the cover, unscaled
 	int side = 0;               // current size of the rendered square
@@ -19,6 +22,9 @@ public class BeatBox.LcdCover : Image {
 	string picture_uri = "";    // the file picture was read from (or is being read from)
 
 	public LcdCover () {
+		Object (orientation: Orientation.HORIZONTAL, spacing: 0);
+		image.vexpand = true;
+		append (image);
 		visible = false;
 		valign = Align.FILL;  // the stylesheet pulls it over the LCD's padding (see .lcd-cover)
 		get_style_context ().add_class ("lcd-cover");
@@ -212,7 +218,7 @@ public class BeatBox.LcdCover : Image {
 		cr.clip ();
 		Gdk.cairo_set_source_pixbuf (cr, scaled, (side - w) / 2, (side - h) / 2);
 		cr.paint ();
-		UI.show_pixbuf (this, Gdk.pixbuf_get_from_surface (surface, 0, 0, side, side));
+		UI.show_pixbuf (image, Gdk.pixbuf_get_from_surface (surface, 0, 0, side, side));
 	}
 
 	public override void size_allocate (int width, int height, int baseline) {

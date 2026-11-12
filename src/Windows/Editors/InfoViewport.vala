@@ -27,7 +27,7 @@
 
 using Gtk;
 
-public class BeatBox.InfoViewport : Viewport {
+public class BeatBox.InfoViewport : Box {
 	Media media;
 	
 	Box left; // Contains labels
@@ -46,6 +46,7 @@ public class BeatBox.InfoViewport : Viewport {
 	Label samplerate;
 	
 	public InfoViewport(Media m) {
+		Object (orientation: Orientation.VERTICAL, spacing: 0);
 		left = new Box(Orientation.VERTICAL, 0);
 		right = new Box(Orientation.VERTICAL, 0);
 		content = new Box(Orientation.HORIZONTAL, 0);
@@ -135,7 +136,7 @@ public class BeatBox.InfoViewport : Viewport {
 		right.hexpand = true;
 		content.append (UI.wrap_alignment(right, 0, 10, 10, 4));
 		
-		set_child(content);
+		append(content);
 		
 		set_media(m);
 		

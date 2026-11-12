@@ -28,7 +28,10 @@
 using Gtk;
 
 [GIR (visible = false)] // internal, not for plugins
-public class BeatBox.FastGrid : IconView {
+public class BeatBox.FastGrid : Box {
+	// GTK 4 does not let a class derive from IconView: the icon view is a child of this box
+	protected IconView view;
+
 	protected const int PIXBUF_COLUMN = 0;
 	protected const int MARKUP_COLUMN = 1;
 	protected const int TOOLTIP_COLUMN = 2;
@@ -51,15 +54,19 @@ public class BeatBox.FastGrid : IconView {
 	public signal void visible_changed();
 	
 	public FastGrid (GLib.Object default_value) {
+		Object (orientation: Orientation.VERTICAL, spacing: 0);
 		table = new HashTable<int, GLib.Object>(null, null);
 		showing = new HashTable<int, GLib.Object>(null, null);
 		fm = new FastGridModel(default_value);
-		
+
 		last_search = "";
-		
-		margin = 12;
-		item_width = IconsInterface.ALBUM_VIEW_IMAGE_SIZE;
-		
+
+		view = new IconView();
+		view.hexpand = view.vexpand = true;
+		view.margin_top = view.margin_bottom = view.margin_start = view.margin_end = 12;
+		view.item_width = IconsInterface.ALBUM_VIEW_IMAGE_SIZE;
+		append(view);
+
 		// Pack the cells by hand: with set_pixbuf_column()/set_markup_column()
 		// GTK3 reserves twice item_width per item, leaving huge gaps.
 		var pix_cell = new CellRendererPixbuf();
@@ -69,14 +76,14 @@ public class BeatBox.FastGrid : IconView {
 		text_cell.yalign = 0.0f;
 		text_cell.wrap_mode = Pango.WrapMode.WORD_CHAR;
 		text_cell.wrap_width = IconsInterface.ALBUM_VIEW_IMAGE_SIZE;
-		pack_start(pix_cell, false);
-		add_attribute(pix_cell, "pixbuf", PIXBUF_COLUMN);
-		pack_start(text_cell, false);
-		add_attribute(text_cell, "markup", MARKUP_COLUMN);
-		set_tooltip_column(TOOLTIP_COLUMN);
-		
+		view.pack_start(pix_cell, false);
+		view.add_attribute(pix_cell, "pixbuf", PIXBUF_COLUMN);
+		view.pack_start(text_cell, false);
+		view.add_attribute(text_cell, "markup", MARKUP_COLUMN);
+		view.set_tooltip_column(TOOLTIP_COLUMN);
+
 		set_table(table);
-		set_model(fm);
+		view.set_model(fm);
 	}
 	
 	/** Should not be manipulated by client */
@@ -100,7 +107,7 @@ public class BeatBox.FastGrid : IconView {
 	protected GLib.List<Object> get_selected_objects() {
 		var rv = new GLib.List<Object>();
 		
-		foreach(TreePath path in get_selected_items()) {
+		foreach(TreePath path in view.get_selected_items()) {
 			Object o = get_object_from_index(int.parse(path.to_string()));
 			rv.append(o);
 		}
@@ -176,9 +183,9 @@ public class BeatBox.FastGrid : IconView {
 		// ponytail: always rebuild the whole model. The old incremental
 		// append/remove path left GtkIconView with stale rows (albums went
 		// missing); a full rebuild is cheap for the number of albums a grid shows.
-		set_model(null);
+		view.set_model(null);
 		fm.set_table(showing);
-		set_model(fm);
+		view.set_model(fm);
 		visible_changed();
 	}
 	

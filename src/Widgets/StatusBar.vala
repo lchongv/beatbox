@@ -27,8 +27,10 @@
 
 using Gtk;
 
-public class BeatBox.StatusBar : Gtk.ActionBar {
+public class BeatBox.StatusBar : Gtk.Box {
     Label status_label = new Label ("");
+    // GTK 4 does not let a class derive from ActionBar: the bar is the child of this box
+    Gtk.ActionBar bar = new Gtk.ActionBar ();
 
     public uint total_items {get; private set; default = 0;}
     public uint64 total_size {get; private set; default = 0;}
@@ -68,7 +70,9 @@ public class BeatBox.StatusBar : Gtk.ActionBar {
     }
 
     public StatusBar () {
-		set_center_widget (status_label);
+		Object (orientation: Gtk.Orientation.VERTICAL, spacing: 0);
+		append (bar);
+		bar.set_center_widget (status_label);
 		repeat_chooser = new SimpleOptionChooser();
 		repeat_chooser.first_step = 1; // the left click cycle: Off, Song, then the last album/artist/all
 		shuffle_chooser = new SimpleOptionChooser();
@@ -113,7 +117,7 @@ public class BeatBox.StatusBar : Gtk.ActionBar {
     }
 
     public void insert_widget (Widget w, bool left) {
-        if (left) pack_start (w); else pack_end (w);
+        if (left) bar.pack_start (w); else bar.pack_end (w);
     }
 
     public void set_files_size (uint64 total_size) {

@@ -31,7 +31,7 @@ public class BeatBox.Statistics : Object, Plugin {
 		if (window != null)
 			window.destroy (); // counted again: plays may have changed
 		window = new StatsWindow (host.window, host.library.song_library.medias ());
-		window.destroy.connect (() => window = null);
+		window.close_request.connect (() => { window = null; return false; });
 		window.present ();
 	}
 }
@@ -126,7 +126,7 @@ class BeatBox.StatsWindow : Gtk.Window {
 			var fg = ctx.get_color ();
 			Gdk.RGBA accent;
 			if (!ctx.lookup_color ("bb_accent", out accent) && !ctx.lookup_color ("theme_selected_bg_color", out accent))
-				accent = { 0.24, 0.43, 0.79, 1 };
+				accent = Gdk.RGBA () { red = 0.24f, green = 0.43f, blue = 0.79f, alpha = 1.0f };
 			if (rows.size == 0) {
 				text (cr, area, _("No plays yet"), 0, 0, width, fg, 0.6);
 				return;

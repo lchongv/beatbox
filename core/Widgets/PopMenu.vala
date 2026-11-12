@@ -116,9 +116,11 @@ public class BeatBox.PopMenuCheck : BeatBox.PopMenuItem {
 	}
 }
 
-// A separator between the items of a PopMenu (replaces SeparatorMenuItem)
-public class BeatBox.PopMenuSeparator : Gtk.Separator {
+// A separator between the items of a PopMenu (replaces SeparatorMenuItem). GTK 4 does not let
+// a class derive from Gtk.Separator, so this is a column holding one.
+public class BeatBox.PopMenuSeparator : Gtk.Box {
 	public PopMenuSeparator () {
-		Object (orientation: Gtk.Orientation.HORIZONTAL);
+		Object (orientation: Gtk.Orientation.VERTICAL, spacing: 0);
+		append (new Gtk.Separator (Gtk.Orientation.HORIZONTAL));
 	}
 }

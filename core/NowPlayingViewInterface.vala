@@ -27,7 +27,7 @@
 
 using Gtk;
 
-public interface BeatBox.NowPlayingViewInterface : Gtk.Notebook {
+public interface BeatBox.NowPlayingViewInterface : Gtk.Widget {
 	public abstract void add_section(MediaType media_key, Widget section);
 	public abstract void remove_section(MediaType media_key, Widget section);
 	

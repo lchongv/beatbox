@@ -27,7 +27,7 @@
 
 using Gtk;
 
-public class BeatBox.AdvancedSearchBox : Gtk.SearchEntry {
+public class BeatBox.AdvancedSearchBox : Gtk.Entry {
 	PopMenu search_suggester;
 	Gtk.EventControllerKey suggester_keys; // GTK3 controllers need a reference
 	bool listen_for_change;
@@ -38,6 +38,11 @@ public class BeatBox.AdvancedSearchBox : Gtk.SearchEntry {
 	
 	public AdvancedSearchBox() {
 		placeholder_text = _("Search...");
+		// what GTK 3's search entry drew: a lens, and a clear button while there is text (GTK 4 leaves it to the entry)
+		set_icon_from_icon_name (Gtk.EntryIconPosition.PRIMARY, "system-search-symbolic");
+		set_icon_from_icon_name (Gtk.EntryIconPosition.SECONDARY, "edit-clear-symbolic");
+		icon_press.connect ((entry, pos) => { if (pos == Gtk.EntryIconPosition.SECONDARY) set_text (""); });
+		changed.connect (() => set_icon_from_icon_name (Gtk.EntryIconPosition.SECONDARY, get_text () == "" ? null : "edit-clear-symbolic"));
 		
 		search_suggester = new PopMenu();
 		search_suggester.set_size_request (Icons.ALBUM_VIEW_IMAGE_SIZE, -1);

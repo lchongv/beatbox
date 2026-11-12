@@ -91,11 +91,11 @@ public abstract class BeatBox.GenericGrid : FastGrid {
 		
 		add_css_class ("albumgrid");
 		
-		item_width = ITEM_WIDTH;
-		item_padding = ITEM_PADDING;
-		columns = -1; // let GtkIconView fit as many columns as the width allows
-		set_column_spacing (MIN_SPACING);
-		set_row_spacing (MIN_SPACING);
+		view.item_width = ITEM_WIDTH;
+		view.item_padding = ITEM_PADDING;
+		view.columns = -1; // let GtkIconView fit as many columns as the width allows
+		view.set_column_spacing (MIN_SPACING);
+		view.set_row_spacing (MIN_SPACING);
 
 		// drag source: the URIs of the selected items, one per line (empty selection: no drag)
 		drag_source = new Gtk.DragSource ();
@@ -125,9 +125,9 @@ public abstract class BeatBox.GenericGrid : FastGrid {
 		});
 		motion_controller.leave.connect (() => pointer_x = pointer_y = -1);
 		// (the scrolled window around it brings its own adjustment)
-		notify["vadjustment"].connect (() => {
-			if (vadjustment != null)
-				vadjustment.value_changed.connect (set_pointer);
+		view.notify["vadjustment"].connect (() => {
+			if (view.vadjustment != null)
+				view.vadjustment.value_changed.connect (set_pointer);
 		});
 
 		// CAPTURE: GtkIconView handles the clicks itself and passes none on
@@ -195,7 +195,7 @@ public abstract class BeatBox.GenericGrid : FastGrid {
 		TreePath? path;
 		CellRenderer cell;
 
-		this.get_item_at_pos ((int) widget_x, (int) widget_y, out path, out cell);
+		view.get_item_at_pos ((int) widget_x, (int) widget_y, out path, out cell);
 
 		if (path != null)
 			item_activated_handler (get_selected_objects().nth_data (0));
@@ -209,7 +209,7 @@ public abstract class BeatBox.GenericGrid : FastGrid {
 		TreePath? path;
 		CellRenderer cell;
 
-		this.get_item_at_pos ((int) pointer_x, (int) pointer_y, out path, out cell);
+		view.get_item_at_pos ((int) pointer_x, (int) pointer_y, out path, out cell);
 
 		if (path == null) // blank area
 			set_cursor_from_name (null);

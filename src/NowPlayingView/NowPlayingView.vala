@@ -28,24 +28,29 @@
 using Gtk;
 using Gee;
 
-public class BeatBox.NowPlayingView : Notebook, NowPlayingViewInterface {
+public class BeatBox.NowPlayingView : Box, NowPlayingViewInterface {
 	bool video_is_enabled;
 	DrawingArea video_area;
+	// GTK 4 does not let a class derive from Notebook: the pages are in this one, which shows no tabs
+	Notebook pages = new Notebook();
 	HashMap<MediaType, NowPlayingPage> types_to_pages;
 	
 	NowPlayingPage dashboard;
 	
 	public NowPlayingView() {
+		Object (orientation: Orientation.VERTICAL, spacing: 0);
+		pages.hexpand = pages.vexpand = true;
+		append(pages);
 		types_to_pages = new HashMap<MediaType, NowPlayingPage>();
 		
-		show_tabs = false;
-		show_border = false;
+		pages.show_tabs = false;
+		pages.show_border = false;
 		
 		// Add a dashboard page which is shown when no media is playing
 		dashboard = new NowPlayingPage();
 		video_area = new DrawingArea();
-		append_page(dashboard);
-		append_page(video_area);
+		pages.append_page(dashboard);
+		pages.append_page(video_area);
 		
 		
 		add_section(MediaType.SONG, new SongSummarySection());
@@ -101,7 +106,7 @@ public class BeatBox.NowPlayingView : Notebook, NowPlayingViewInterface {
 			return;
 		}
 		
-		append_page(page);
+		pages.append_page(page);
 		types_to_pages.set(media_key, page);
 		
 		update_current_page();
@@ -129,13 +134,13 @@ public class BeatBox.NowPlayingView : Notebook, NowPlayingViewInterface {
 		Media m = App.playback.current_media;
 		
 		if(video_is_enabled) {
-			set_current_page(page_num(video_area));
+			pages.set_current_page(pages.page_num(video_area));
 		}
 		else if(m != null && types_to_pages.get(m.media_type) != null) {
-			set_current_page(page_num(types_to_pages.get(m.media_type)));
+			pages.set_current_page(pages.page_num(types_to_pages.get(m.media_type)));
 		}
 		else if(m == null && dashboard.section_count() > 0) {
-			set_current_page(page_num(dashboard));
+			pages.set_current_page(pages.page_num(dashboard));
 		}
 	}
 }	

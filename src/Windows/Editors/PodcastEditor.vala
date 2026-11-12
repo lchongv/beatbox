@@ -43,7 +43,7 @@ public class BeatBox.PodcastEditor : Object, MediaEditorInterface {
 		return fields.values;
 	}
 	
-	public Viewport get_metadata_view(Collection<Media> originals) {
+	public Widget get_metadata_view(Collection<Media> originals) {
 		Viewport rv = new Viewport(null, null);
 		Media sum = originals.to_array()[0].copy();
 		
@@ -110,8 +110,8 @@ public class BeatBox.PodcastEditor : Object, MediaEditorInterface {
 		return rv;
 	}
 	
-	public HashMap<string, Viewport> get_extra_views() {
-		var rv = new HashMap<string, Viewport>();
+	public HashMap<string, Widget> get_extra_views() {
+		var rv = new HashMap<string, Widget>();
 		
 		//rv.set(_("Podcast stuff"), new Viewport(null, null));
 		

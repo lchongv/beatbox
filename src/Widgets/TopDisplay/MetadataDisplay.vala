@@ -204,25 +204,34 @@ public class BeatBox.MetadataDisplay : BeatBox.Display, Box {
 }
 
 /* A line of the LCD where each new text slides up and pushes the previous one out */
-class BeatBox.LcdLine : Stack {
+class BeatBox.LcdLine : Box {
+	// GTK 4 does not let a class derive from Stack: the stack is a child of this box
+	private Stack stack = new Stack();
 	private Marquee[] labels = { new Marquee(), new Marquee() };
+
+	// milliseconds the slide takes (the stack's own property)
+	public int transition_duration {
+		set { stack.transition_duration = (uint) value; }
+	}
 	private bool shows_b = false;
 	
 	public LcdLine() {
-		vhomogeneous = true;
+		Object (orientation: Orientation.VERTICAL, spacing: 0);
+		stack.vhomogeneous = true;
+		append (stack);
 		foreach(var l in labels) {
 			l.show();
 		}
-		add_named(labels[0], "a");
-		add_named(labels[1], "b");
+		stack.add_named(labels[0], "a");
+		stack.add_named(labels[1], "b");
 		visible = false;
 	}
 	
 	public void show_text(string text, bool animate) {
 		var next = shows_b ? labels[0] : labels[1];
 		next.label = text;
-		transition_type = animate ? StackTransitionType.SLIDE_UP : StackTransitionType.NONE;
+		stack.transition_type = animate ? StackTransitionType.SLIDE_UP : StackTransitionType.NONE;
 		shows_b = !shows_b;
-		visible_child_name = shows_b ? "b" : "a";
+		stack.visible_child_name = shows_b ? "b" : "a";
 	}
 }

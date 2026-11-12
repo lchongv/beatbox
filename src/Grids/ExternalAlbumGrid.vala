@@ -38,7 +38,7 @@ public class BeatBox.ExternalAlbumGrid : FastGrid {
 		set_value_func(val_func);
 		set_search_func(grid_search_func);
 		
-		item_activated.connect(item_activated_signal);
+		view.item_activated.connect(item_activated_signal);
 	}
 	
 	public void item_activated_signal(TreePath path) {

@@ -28,7 +28,7 @@
 using Gtk;
 using Gee;
 
-public class BeatBox.StyledContentBox : ScrolledWindow {
+public class BeatBox.StyledContentBox : Box {
 	static CssProvider style_provider;
 	private const string WIDGET_STYLESHEET = """
         .NowPlayingPage {
@@ -91,8 +91,11 @@ public class BeatBox.StyledContentBox : ScrolledWindow {
 		""";
 	
 	Box ebox;
+	// GTK 4 does not let a class derive from ScrolledWindow: this is the scrolling part, inside the box
+	protected ScrolledWindow scroll;
 	
 	public StyledContentBox() {
+		Object (orientation: Orientation.VERTICAL, spacing: 0);
 		ebox = new Box(Orientation.VERTICAL, 0);
 		Viewport vp = new Viewport(null, null);
 		
@@ -102,7 +105,9 @@ public class BeatBox.StyledContentBox : ScrolledWindow {
 			style_provider.load_from_data (WIDGET_STYLESHEET.data);
 		}
 		
-		set_policy(PolicyType.AUTOMATIC, PolicyType.AUTOMATIC);
+		scroll = new ScrolledWindow ();
+		scroll.set_policy(PolicyType.AUTOMATIC, PolicyType.AUTOMATIC);
+		scroll.hexpand = scroll.vexpand = true;
 		
 		vp.get_style_context().add_class("NowPlayingPage");
 		vp.get_style_context().add_provider(style_provider, STYLE_PROVIDER_PRIORITY_APPLICATION);
@@ -110,7 +115,8 @@ public class BeatBox.StyledContentBox : ScrolledWindow {
 		ebox.get_style_context().add_provider(style_provider, STYLE_PROVIDER_PRIORITY_APPLICATION);
 		
 		vp.set_child(ebox);
-		set_child(vp);
+		scroll.set_child(vp);
+		append(scroll);
 	}
 	
 	public void set_content(Widget w) {

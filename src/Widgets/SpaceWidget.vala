@@ -152,10 +152,10 @@ public class BeatBox.SpaceWidget : StyledContentBox {
 
     public SpaceWidget (uint64 size) {
         // Wrapper properties
-        this.has_frame = false;
-        this.min_content_width = MIN_WIDTH;
-        this.min_content_height = MIN_HEIGHT;
-        this.set_policy(PolicyType.AUTOMATIC, PolicyType.NEVER);
+        scroll.has_frame = false;
+        scroll.min_content_width = MIN_WIDTH;
+        scroll.min_content_height = MIN_HEIGHT;
+        scroll.set_policy(PolicyType.AUTOMATIC, PolicyType.NEVER);
 
         style_provider = new CssProvider();
 

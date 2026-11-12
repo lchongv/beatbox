@@ -92,7 +92,7 @@ public class BeatBox.SongEditor : GLib.Object, MediaEditorInterface {
 		return box;
 	}
 	
-	public Viewport get_metadata_view(Collection<Media> originals) {
+	public Widget get_metadata_view(Collection<Media> originals) {
 		fields = new HashMap<string, FieldEditor>();
 		targets = originals;
 		single = originals.size == 1;
@@ -191,8 +191,8 @@ public class BeatBox.SongEditor : GLib.Object, MediaEditorInterface {
 		return wrap(box);
 	}
 	
-	public HashMap<string, Viewport> get_extra_views() {
-		var rv = new HashMap<string, Viewport>();
+	public HashMap<string, Widget> get_extra_views() {
+		var rv = new HashMap<string, Widget>();
 		
 		var comments = page_box();
 		((FieldEditorImpl)fields.get("Comment")).set_label_width(0);
@@ -245,7 +245,7 @@ public class BeatBox.SongEditor : GLib.Object, MediaEditorInterface {
 		return l;
 	}
 	
-	Viewport get_summary_page() {
+	Widget get_summary_page() {
 		var m = current_media;
 		var box = page_box(10);
 		
@@ -405,7 +405,7 @@ public class BeatBox.SongEditor : GLib.Object, MediaEditorInterface {
 		}
 	}
 	
-	Viewport get_pictures_page() {
+	Widget get_pictures_page() {
 		picturesBox = page_box(12);
 		var reading = new Label(_("Reading the file…"));
 		reading.add_css_class("dim-label");
@@ -448,7 +448,7 @@ public class BeatBox.SongEditor : GLib.Object, MediaEditorInterface {
 		return buttons;
 	}
 	
-	Viewport get_artwork_page() {
+	Widget get_artwork_page() {
 		var box = page_box(10);
 		artwork = new Image();
 		artwork_size = 240;
@@ -613,7 +613,7 @@ public class BeatBox.SongEditor : GLib.Object, MediaEditorInterface {
 	
 	/* ===== Lyrics ===== */
 	
-	Viewport get_lyrics_page() {
+	Widget get_lyrics_page() {
 		var box = page_box(8);
 		
 		lyricsText = new TextView();

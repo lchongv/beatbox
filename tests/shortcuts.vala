@@ -11,7 +11,7 @@ void main () {
 	assert (BeatBox.Shortcuts.activate (Gdk.Key.N, Gdk.ModifierType.CONTROL_MASK) && nexted == 1); // case-insensitive
 	assert (!BeatBox.Shortcuts.activate (Gdk.Key.n, 0));                  // modifiers must match
 	assert (!BeatBox.Shortcuts.activate (Gdk.Key.space, Gdk.ModifierType.CONTROL_MASK));
-	assert (BeatBox.Shortcuts.activate (Gdk.Key.space, Gdk.ModifierType.MOD2_MASK)); // NumLock doesn't count
+	assert (BeatBox.Shortcuts.activate (Gdk.Key.space, Gdk.ModifierType.LOCK_MASK)); // the lock keys don't count
 
 	var taken = BeatBox.Shortcuts.set_accel (next, "space");                // taken from "play"
 	assert (taken == play && play.accel == "" && next.accel == "space");

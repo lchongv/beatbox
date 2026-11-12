@@ -30,7 +30,7 @@ etapa 2 con el andamio; `tools/gtk4-check.sh` tarda ~2 s.
 | T27 ventana principal | H | [x] | | 5 | video_area_xid devuelve 0 (Streamer.vala lo usa: T42); keep-above perdido en mini; tamaño con barra de título (track_size); clic en carátula del LCD sin reclamar; divisor de TrackReport diferido. Revisión GUI: semáforo, atajos con foco en campo, arrastre de archivos, WindowHandle |
 | T28 núcleo de la aplicación | H | [x] | | 0 | opciones de GTK (--display) ya no se parsean; «(None)» del selector de bibliotecas es texto nuevo sin traducir; LibrarySwitcher.new_library es async |
 | T29 código C | H | [x] | | 0 | comentarios nuevos en español, como el resto de ese archivo |
-| T30 cierre de compilación | H | [ ] | | | |
+| T30 cierre de compilación | H (orquestador) | [x] | | 0 | valac 0 errores; ninja termina (beatbox, plugins y pruebas). Antes del cierre: 4 clases que heredaban de tipos opacos de GTK 4 (ScrolledWindow, IconView, Separator, Notebook, Image, Viewport, ActionBar, SearchEntry, CellRendererPixbuf, Stack) pasan a composición |
 | T31 pruebas y primer arranque | H | [ ] | | | |
 | T40 avisos y widgets ocultos | H | [ ] | | | |
 | T41 CSS y apariencias | H | [ ] | | | |

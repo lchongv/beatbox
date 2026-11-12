@@ -28,8 +28,10 @@
 using Gtk;
 using Gee;
 
-public class BeatBox.NowPlayingPage : ScrolledWindow {
+public class BeatBox.NowPlayingPage : Box {
 	Box contents;
+	// GTK 4 does not let a class derive from ScrolledWindow: this is the scrolling part, inside the box
+	ScrolledWindow scroll;
 	
 	static CssProvider style_provider;
 	private const string WIDGET_STYLESHEET = """
@@ -95,6 +97,9 @@ public class BeatBox.NowPlayingPage : ScrolledWindow {
 	private static int SECTION_PADDING = 18;
 	
 	public NowPlayingPage() {
+		Object (orientation: Orientation.VERTICAL, spacing: 0);
+		scroll = new ScrolledWindow ();
+		scroll.hexpand = scroll.vexpand = true;
 		contents = new Box(Orientation.VERTICAL, 0);
 
 		// Apply styling
@@ -103,13 +108,14 @@ public class BeatBox.NowPlayingPage : ScrolledWindow {
 			style_provider.load_from_data (WIDGET_STYLESHEET.data);
 		}
 
-		set_policy(PolicyType.AUTOMATIC, PolicyType.AUTOMATIC);
+		scroll.set_policy(PolicyType.AUTOMATIC, PolicyType.AUTOMATIC);
 
 		// The box takes the styling the old Viewport and EventBox had
 		contents.add_css_class("NowPlayingPage");
 		contents.get_style_context().add_provider(style_provider, STYLE_PROVIDER_PRIORITY_APPLICATION);
 
-		set_child(contents);
+		scroll.set_child(contents);
+		append(scroll);
 	}
 
 	public void add_section(Widget w) {

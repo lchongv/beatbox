@@ -1,4 +1,4 @@
-project('beatbox', 'vala', 'c', version: '1.2.29')
+project('beatbox', 'vala', 'c', version: '1.2.30')
 
 gnome = import('gnome')
 i18n = import('i18n')
@@ -61,7 +61,6 @@ deps = [
 ]
 
 core_sources = files(
-  'core/Gtk3Shim.vala',
   'core/SQLHeavy.vala',
   'core/Libraries.vala',
   'core/Settings.vala',

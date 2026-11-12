@@ -220,7 +220,7 @@ public abstract class BeatBox.SourceView : Box, View {
 			cover_flow = new CoverFlow(album_view);
 			cover_flow.album_selected.connect(scroll_list_to_album);
 			cover_flow.album_activated.connect(play_album);
-			var paned = new MiddlePaned();
+			var paned = new Paned(Orientation.VERTICAL);
 			paned.start_child = cover_flow;
 			paned.resize_start_child = false;
 			paned.shrink_start_child = false;
@@ -229,10 +229,21 @@ public abstract class BeatBox.SourceView : Box, View {
 			paned.shrink_end_child = false;
 			// the divider keeps half the height until it is pressed
 			// (in GTK4 presses inside the panes also reach this controller)
+			bool divider_moved = false;
 			var divider_press = new GestureClick();
 			divider_press.button = 0;
-			divider_press.pressed.connect(() => { paned.centered = false; });
+			divider_press.pressed.connect(() => { divider_moved = true; });
 			paned.add_controller(divider_press);
+			// GTK 4 has no size_allocate to override on a paned: each frame, re-center it when its height changed
+			int last_height = 0;
+			paned.add_tick_callback((widget, clock) => {
+				int height = widget.get_height();
+				if (!divider_moved && height > 1 && height != last_height) {
+					last_height = height;
+					paned.position = height / 2;
+				}
+				return Source.CONTINUE;
+			});
 			list_page = paned;
 			cover_flow.visible = false;
 		}
@@ -896,20 +907,5 @@ public abstract class BeatBox.SourceView : Box, View {
 	
 	public void reset_view() {
 		
-	}
-}
-
-// A vertical paned that keeps its divider in the middle until the user drags it
-private class BeatBox.MiddlePaned : Paned {
-	public bool centered = true;
-
-	public MiddlePaned () {
-		Object (orientation: Orientation.VERTICAL);
-	}
-
-	public override void size_allocate (int width, int height, int baseline) {
-		base.size_allocate (width, height, baseline);
-		if (centered && height > 1)
-			position = height / 2;
 	}
 }
