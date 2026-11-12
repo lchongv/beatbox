@@ -46,8 +46,10 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 	public NowPlayingViewInterface now_playing { get; protected set; }
 	public ListSetupInterface setups { get; protected set; }
 	
+	// GTK4-PENDIENTE: the X11 window id where GStreamer drew the video (Streamer.vala asks for it) has no GTK4
+	// equivalent and NowPlayingView no longer has one: 0 until the video output is ported
 	public ulong video_area_xid {
-		get { return ((NowPlayingView)now_playing).video_area_xid; }
+		get { return 0; }
 	}
 	
 	public bool dragging_from_music { get; set; }
@@ -59,8 +61,9 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 	
 	// Main containers
 	Box verticalBox;
-	ToolItem viewSelectorBin;
-	ToolItem searchFieldBin;
+	Widget viewSelectorBin;
+	Widget searchFieldBin;
+	int appmenu_size = 0; // the round menu button's size (see resize_appmenu)
 	bool mini = false; // mini player: only the toolbar (controls and LCD) is left
 	bool maximized_before_mini = false;
 	Gtk.Widget? title_widget = null;
@@ -86,11 +89,12 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 	LinkedList<Media> file_not_found_pileup;
 	
 	// The top bar
-	Toolbar topControls;
-	ToolButton previousButton;
-	ToolButton playButton;
+	Box topControls;
+	EventControllerKey key_bubble;
+	Button previousButton;
+	Button playButton;
 	Image playIcon;
-	ToolButton nextButton;
+	Button nextButton;
 	ModeButton viewSelector;
 	Scale volumeScale;
 	bool songInfoShown; // the now playing view in place of the lists (Ctrl+I)
@@ -144,7 +148,7 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		// accessible to re-show through mpris clients (soundmenu). In the case
 		// that there isn't, the player will reshow when user tries to open
 		// it (app-uniqueness).
-		this.delete_event.connect(on_delete);
+		this.close_request.connect(on_delete);
 
 		dragging_from_music = false;
 
@@ -173,19 +177,37 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		App.playlists.playlist_changed.connect(playlist_changed);
 		App.playlists.playlist_removed.connect(playlist_removed);
 
-		this.destroy.connect (on_quit);
-		this.size_allocate.connect (() => {
-			if (!(window_maximized || window_fullscreen || mini)) {
-				get_size (out last_width, out last_height);
-				// get_size leaves the title bar out, and it grows once a song shows in the
-				// LCD: count that growth so set_default_size gives back the same window
-				// (it used to lose 11 px of height every session)
-				if (title_widget != null && startup_titlebar_height > 0)
-					last_height += title_widget.get_allocated_height () - startup_titlebar_height;
-			}
-		});
+		// GTK4: the window is not destroyed on quit by signal; the application's shutdown does it
+		bb_app.shutdown.connect (on_quit);
+		this.notify["default-width"].connect (track_size);
+		this.notify["default-height"].connect (track_size);
 
 		object_to_view = new HashMap<Object, View>();
+	}
+
+	/* The round menu button: 80 % of the LCD's height */
+	void resize_appmenu (Gtk.Widget lcd, Gtk.Image icon, Gtk.MenuButton button) {
+		int size = (int)(lcd.get_height() * 0.8);
+		if (size == appmenu_size || size < 16)
+			return;
+		appmenu_size = size;
+		Idle.add (() => {
+			UI.show_pixbuf (icon, app_menu_icon (size - 2)); // minus the 1px border
+			button.set_size_request (size, size);
+			return false;
+		});
+	}
+
+	/* The size to save and restore: the window's default size, kept up to date by the window itself.
+	 * GTK4-PENDIENTE: default_height counts the title bar here, so the growth correction below (GTK3's
+	 * get_size left the title bar out) may now add it twice. Check in the GUI. */
+	void track_size (GLib.ParamSpec pspec) {
+		if (!(window_maximized || window_fullscreen || mini)) {
+			last_width = default_width;
+			last_height = default_height;
+			if (title_widget != null && startup_titlebar_height > 0)
+				last_height += title_widget.get_height () - startup_titlebar_height;
+		}
 	}
 
 	/* The app icon on the menu button: the round version (beatbox-round.svg), drawn to
@@ -209,8 +231,9 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
         setup_widgets ();
         register_shortcuts ();
         
-        // The title bar's height when set_default_size is applied (see size_allocate)
-        title_widget.get_preferred_height (null, out startup_titlebar_height);
+        // The title bar's height when set_default_size is applied (see track_size)
+        int title_min_h = 0, title_min_b = 0, title_nat_b = 0;
+        title_widget.measure (Gtk.Orientation.VERTICAL, -1, out title_min_h, out startup_titlebar_height, out title_min_b, out title_nat_b);
         
         // We have all the widgets, so show to user even though most views aren't built yet
         this.show();
@@ -253,7 +276,6 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 
         this.height_request = 440;
         this.width_request = 750;
-        this.window_position = Gtk.WindowPosition.CENTER;
 
         // set the size based on saved settings
         this.set_default_size (App.settings.saved_state.window_width, App.settings.saved_state.window_height);
@@ -264,27 +286,42 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		}
 
         this.set_title ("BeatBox");
-        // several sizes, for window lists that take the icon from the window itself (X11)
-        var icons = new GLib.List<Gdk.Pixbuf> ();
-        foreach (int px in new int[] { 16, 32, 48, 64, 128 })
-            icons.append (App.icons.BEATBOX.render (null, null, px));
-        this.set_icon_list (icons);
+        // the app icon: a name in the icon theme (BeatBox.vala adds the resources to it)
+        Gtk.Window.set_default_icon_name ("beatbox");
 
-        // set up drag dest stuff
-        Gtk.drag_dest_set (this, DestDefaults.ALL, {}, Gdk.DragAction.MOVE);
-        Gtk.drag_dest_add_uri_targets (this);
-        this.drag_data_received.connect (dragReceived);
-		
+        // files dropped on the window are added to the library
+        var dest = new Gtk.DropTarget (GLib.Type.INVALID, Gdk.DragAction.COPY);
+        dest.set_gtypes ({ typeof (string), typeof (Gdk.FileList) });
+        dest.drop.connect ((value, x, y) => {
+            string[] uris = {};
+            if (value.holds (typeof (Gdk.FileList))) {
+                foreach (File f in ((Gdk.FileList) value.get_object ()).get_files ())
+                    uris += f.get_uri ();
+            }
+            else
+                uris = value.get_string ().split ("\n");
+            dragReceived (uris);
+            return true;
+        });
+        dest.motion.connect ((x, y) => Gdk.DragAction.COPY);
+        ((Gtk.Widget) this).add_controller (dest);
+
         debug ("done with main window");
-        
+
         // keys reach keyPressed before the focused widget, as with the window's own key handler
-        key_controller = new EventControllerKey (this);
+        key_controller = new EventControllerKey ();
         key_controller.propagation_phase = PropagationPhase.CAPTURE;
         key_controller.key_pressed.connect (keyPressed);
-        this.set_focus.connect(focused_widget_changed);
-        this.window_state_event.connect(window_state_changed);
+        ((Gtk.Widget) this).add_controller (key_controller);
+        // the keys a focused text field left alone come here (bubble phase): see keyBubbled
+        key_bubble = new EventControllerKey ();
+        key_bubble.key_pressed.connect (keyBubbled);
+        ((Gtk.Widget) this).add_controller (key_bubble);
+        this.notify["focus-widget"].connect ((pspec) => focused_widget_changed (get_focus ()));
+        this.notify["maximized"].connect (window_state_changed);
+        this.notify["fullscreened"].connect (window_state_changed);
     }
-    
+
     private inline void setup_widgets() {
 		/* Initialize all components */
 		all_views = new Notebook();
@@ -296,14 +333,18 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		sideBox = new Box(Orientation.VERTICAL, 0);
 
 		sideTree = new SideTreeView();
-		sideTreeScroll = new ScrolledWindow(null, null);
+		sideTreeScroll = new ScrolledWindow();
 		settingsMenu = new GLib.Menu();
-		topControls = new Toolbar();
+		topControls = new Box(Orientation.HORIZONTAL, 0);
+		topControls.add_css_class("toolbar");
 		// own images: an icon_name would get the toolbar's icon size, too small for these buttons
-		previousButton = new ToolButton(new Image.from_icon_name("media-skip-backward-symbolic", IconSize.BUTTON), null);
-		playIcon = new Image.from_icon_name("media-playback-start-symbolic", IconSize.BUTTON);
-		playButton = new ToolButton(playIcon, null);
-		nextButton = new ToolButton(new Image.from_icon_name("media-skip-forward-symbolic", IconSize.BUTTON), null);
+		previousButton = new Button();
+		previousButton.child = new Image.from_icon_name("media-skip-backward-symbolic");
+		playIcon = new Image.from_icon_name("media-playback-start-symbolic");
+		playButton = new Button();
+		playButton.child = playIcon;
+		nextButton = new Button();
+		nextButton.child = new Image.from_icon_name("media-skip-forward-symbolic");
 		top_display = new TopDisplay();
 		viewSelector = new ModeButton();
 		searchField = new AdvancedSearchBox();
@@ -312,60 +353,60 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		infoBar = new InfoBar();
 		file_not_found_pileup = new LinkedList<Media>();
 		statusBar = new StatusBar();
-		
+
 		notification = new Notify.Notification ("", null, null);
-		
+
 		/* Toolbar with media controls, search, app menu, etc. */
-		ToolItem top_displayBin = new ToolItem();
-		viewSelectorBin = new ToolItem();
-		searchFieldBin = new ToolItem();
-		
 		// The LCD is always visible; the app name fills it when idle
 		var lcd = new Box(Orientation.HORIZONTAL, 0);
-		lcd.get_style_context().add_class("lcd");
+		lcd.add_css_class("lcd");
 		var lcdCover = new LcdCover();
-		var lcdCoverBox = new EventBox(); // an Image gets no clicks of its own
-		lcdCoverBox.add(lcdCover);
-		lcdCoverBox.tooltip_text = _("Click to enlarge; drag to copy it into another application or folder");
-		Gtk.drag_source_set(lcdCoverBox, Gdk.ModifierType.BUTTON1_MASK, {}, Gdk.DragAction.COPY);
-		Gtk.drag_source_add_uri_targets(lcdCoverBox);
-		lcdCoverBox.drag_begin.connect((context) => {
+		lcdCover.tooltip_text = _("Click to enlarge; drag to copy it into another application or folder");
+		// dragging the cover gives its file to other applications (as text/uri-list)
+		var cover_drag = new Gtk.DragSource();
+		cover_drag.actions = Gdk.DragAction.COPY;
+		cover_drag.prepare.connect((x, y) => {
+			var path = lcdCover.file_for_drag();
+			if (path == null)
+				return null;
+			var uri = File.new_for_path(path).get_uri() + "\r\n";
+			return new Gdk.ContentProvider.for_bytes("text/uri-list", new Bytes(uri.data));
+		});
+		cover_drag.drag_begin.connect((drag) => {
 			var icon = lcdCover.drag_icon();
 			if (icon != null)
-				Gtk.drag_set_icon_pixbuf(context, icon, icon.width / 2, icon.height / 2);
+				cover_drag.set_icon(Gdk.Texture.for_pixbuf(icon), icon.width / 2, icon.height / 2);
 		});
-		lcdCoverBox.drag_data_get.connect((context, data, info, time) => {
-			var path = lcdCover.file_for_drag();
-			if (path != null)
-				data.set_uris({ File.new_for_path(path).get_uri() });
-		});
-		// a click (released without dragging) enlarges it. The press stops here (after the
-		// drag source saw it): in the title bar it would otherwise start moving the window too
-		lcd_cover_gesture = new GestureClick(lcdCoverBox);
+		lcdCover.add_controller(cover_drag);
+		// a click (released without dragging) enlarges it
+		// GTK4-PENDIENTE: GTK3 claimed the press here, so the title bar would not move the window; GTK4 would
+		// cancel the drag source if the click claimed it. Not claimed for now: check in the GUI that dragging
+		// the cover does not also enlarge it or move the window.
+		lcd_cover_gesture = new GestureClick();
 		lcd_cover_gesture.button = 0;
-		lcd_cover_gesture.pressed.connect(() => lcd_cover_gesture.set_state(EventSequenceState.CLAIMED));
 		lcd_cover_gesture.released.connect(() => {
 			if (lcd_cover_gesture.get_current_button() == 1)
 				lcdCover.show_full_size(this);
 		});
-		lcd.add(lcdCoverBox); // thumbnail at the left edge (optional)
+		lcdCover.add_controller(lcd_cover_gesture);
+		lcd.append(lcdCover); // thumbnail at the left edge (optional)
 		var lcd_logo = new Label("BeatBox");
-		lcd_logo.get_style_context().add_class("lcd-logo");
+		lcd_logo.add_css_class("lcd-logo");
 		lcd_logo.hexpand = true;
-		lcd.add(lcd_logo);
+		lcd.append(lcd_logo);
 		top_display.hexpand = true;
-		lcd.add(top_display);
+		lcd.append(top_display);
 		top_display.notify["visible"].connect(() => { lcd_logo.visible = !top_display.visible; });
-		top_displayBin.add(lcd);
-		top_displayBin.set_expand(true);
-		top_displayBin.margin_start = 12;
-		
-		viewSelector.append(App.icons.VIEW_DETAILS.render_image (IconSize.MENU));
-		viewSelector.append(App.icons.VIEW_ICONS.render_image (IconSize.MENU));
+		// (the LCD used to be a ToolItem with this margin: it now sits in the toolbar itself)
+		lcd.hexpand = true;
+		lcd.margin_start = 12;
+
+		viewSelector.append(App.icons.VIEW_DETAILS.render_image (Gtk.IconSize.NORMAL));
+		viewSelector.append(App.icons.VIEW_ICONS.render_image (Gtk.IconSize.NORMAL));
 		viewSelector.append(new Image.from_resource ("/net/launchpad/beatbox/icons/16x16/actions/view-coverflow-symbolic.svg"));
 		viewSelector.valign = Gtk.Align.CENTER;
 		viewSelector.selected = App.settings.saved_state.view_mode;
-		
+
 		// the volume slider sits under the view switcher
 		volumeScale = new Scale.with_range(Orientation.HORIZONTAL, 0, 1, 0.05);
 		volumeScale.draw_value = false;
@@ -377,17 +418,17 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		});
 		var viewBox = new Box(Orientation.VERTICAL, 0);
 		viewBox.valign = Gtk.Align.CENTER;
-		viewBox.add(viewSelector);
-		viewBox.add(volumeScale);
+		viewBox.append(viewSelector);
+		viewBox.append(volumeScale);
 
+		viewSelectorBin = viewBox;
 		viewSelectorBin.margin_start = 12;
-		viewSelectorBin.add(viewBox);
-		
-		searchFieldBin.add(searchField);
+
+		searchFieldBin = searchField;
 		searchField.valign = Gtk.Align.CENTER; // half the height of the LCD, not the whole toolbar
-		searchFieldBin.margin_start = 12;
-		searchFieldBin.margin_end = 6;
-		
+		searchField.margin_start = 12;
+		searchField.margin_end = 6;
+
 		var mini_player = new SimpleAction("mini_player", null);
 		mini_player.activate.connect(toggle_mini);
 		App.actions.group.add_action(mini_player);
@@ -396,22 +437,22 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		settingsMenu.append_item(App.actions.model_item(App.actions.show_equalizer));
 		settingsMenu.append_item(App.actions.model_item(App.actions.show_preferences));
 		settingsMenu.append_item(App.actions.model_item(App.actions.exit));
-		
+
 		topControls.set_vexpand (false);
 		topControls.set_hexpand (true);
-		
-		topControls.insert(previousButton, -1);
-		topControls.insert(playButton, -1);
-		topControls.insert(nextButton, -1);
-		topControls.insert(viewSelectorBin, -1);
+
+		topControls.append(previousButton);
+		topControls.append(playButton);
+		topControls.append(nextButton);
+		topControls.append(viewSelectorBin);
 		// the visualizer's button, bottom left with the shuffle and repeat; the visualizer takes the lists' place while it is on
 		var visualizer = new Visualizer();
-		visualizer.no_show_all = true;
+		visualizer.visible = false; // hidden until its button turns it on
 		var visualizerButton = new ToggleButton();
-		var visualizerIcon = App.icons.VISUALIZER.render_image(IconSize.MENU);
+		var visualizerIcon = App.icons.VISUALIZER.render_image(Gtk.IconSize.NORMAL);
 		StatusBar.follow_text_color(visualizerIcon); // dark on the bar, like the other icons there
-		visualizerButton.image = visualizerIcon;
-		visualizerButton.relief = ReliefStyle.NONE;
+		visualizerButton.child = visualizerIcon;
+		visualizerButton.has_frame = false;
 		visualizerButton.focus_on_click = false;
 		visualizerButton.tooltip_text = _("Visualizer");
 		visualizerButton.toggled.connect(() => {
@@ -420,141 +461,130 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		});
 		statusBar.insert_widget(visualizerButton, true);
 		// the "i" (now playing) toggle is gone: redundant; Ctrl+I still opens that view
-		topControls.insert(top_displayBin, -1);
-		topControls.insert(searchFieldBin, -1);
+		topControls.append(lcd);
+		topControls.append(searchFieldBin);
 		var appmenu_button = new Gtk.MenuButton ();
-		var appmenu_icon = new Gtk.Image.from_pixbuf (app_menu_icon (38));
-		appmenu_button.image = appmenu_icon;
-		appmenu_button.get_style_context ().add_class ("round-menu");
+		var appmenu_icon = new Gtk.Image ();
+		UI.show_pixbuf (appmenu_icon, app_menu_icon (38));
+		appmenu_button.child = appmenu_icon;
+		appmenu_button.add_css_class ("round-menu");
 		appmenu_button.set_size_request (40, 40);
-		// the round button is 80 % of the LCD's height
-		int appmenu_size = 0;
-		lcd.size_allocate.connect ((alloc) => {
-			int size = (int)(alloc.height * 0.8);
-			if (size == appmenu_size || size < 16)
-				return;
-			appmenu_size = size;
-			Idle.add (() => {
-				appmenu_icon.pixbuf = app_menu_icon (size - 2); // minus the 1px border
-				appmenu_button.set_size_request (size, size);
-				return false;
-			});
-		});
+		// the round button is 80 % of the LCD's height. GTK4-PENDIENTE: a Box has no size-allocate signal, so this
+		// is worked out when the LCD maps and when the top display shows or hides, not on every resize
+		lcd.map.connect (() => { Idle.add (() => { resize_appmenu (lcd, appmenu_icon, appmenu_button); return false; }); });
+		top_display.notify["visible"].connect (() => resize_appmenu (lcd, appmenu_icon, appmenu_button));
 		// a skin picked in Preferences may want the other shape (after Skins.apply has run)
 		App.settings.main.notify["skin"].connect (() => Idle.add (() => {
-			appmenu_icon.pixbuf = app_menu_icon ((appmenu_size > 0 ? appmenu_size : 40) - 2);
+			UI.show_pixbuf (appmenu_icon, app_menu_icon ((appmenu_size > 0 ? appmenu_size : 40) - 2));
 			return false;
 		}));
 		appmenu_button.valign = appmenu_button.halign = Gtk.Align.CENTER;
 		appmenu_button.menu_model = settingsMenu;
-		var appmenu = new Gtk.ToolItem ();
-		appmenu.add (appmenu_button);
-		topControls.insert(appmenu, -1);
-		
+		topControls.append(appmenu_button);
+
 		// Info bar to give notices about file not found errors
 		infoBar.set_message_type(Gtk.MessageType.ERROR);
-		var action_hbox = new Box(Orientation.HORIZONTAL, 0);
-		((Gtk.Container)infoBar.get_action_area()).add(action_hbox);
-		var resolve_button = new Button.with_label(_("Resolve"));
-		action_hbox.add(resolve_button);
-		
-		resolve_button.clicked.connect( () => { info_bar_response(Gtk.ResponseType.YES); });
-		
+		infoBar.add_button(_("Resolve"), Gtk.ResponseType.YES);
+		infoBar.response.connect(info_bar_response);
+
 		infoBarLabel.set_justify(Justification.LEFT);
 		infoBarLabel.set_single_line_mode(true);
 		infoBarLabel.ellipsize = Pango.EllipsizeMode.END;
-		
-		((Gtk.Container)infoBar.get_content_area()).add(infoBarLabel);
-		
+
+		infoBar.add_child(infoBarLabel);
+
 		// Side tree
-		sideTreeScroll = new ScrolledWindow(null, null);
 		sideTreeScroll.set_policy (PolicyType.AUTOMATIC, PolicyType.AUTOMATIC);
-		sideTreeScroll.get_style_context().add_class("sidebar-scroll");
-		sideTreeScroll.add(sideTree);
+		sideTreeScroll.add_css_class("sidebar-scroll");
+		sideTreeScroll.set_child(sideTree);
 		sideTreeScroll.vexpand = true;
-		sideBox.add(AquaScroll.wrap(sideTreeScroll));
-		
+		sideBox.append(AquaScroll.wrap(sideTreeScroll));
+
 		// Hide notebook tabs and border
 		mainViews.show_tabs = false;
 		mainViews.show_border = false;
-		
+
 		all_views.show_tabs = false;
 		all_views.show_border = false;
-		
+
 		// Add the final boxes to the window
 		all_views.append_page(mainViews);
 		all_views.append_page(now_playing);
-		
-		contentBox.add(infoBar);
+
+		contentBox.append(infoBar);
 		all_views.vexpand = true;
-		contentBox.add(all_views);
+		contentBox.append(all_views);
 		visualizer.vexpand = true;
-		contentBox.add(visualizer);
-		
+		contentBox.append(visualizer);
+
 		sourcesToMedias.position = App.settings.saved_state.sidebar_width;
-		sourcesToMedias.pack1(sideBox, false, true);
+		sourcesToMedias.start_child = sideBox;
+		sourcesToMedias.resize_start_child = false;
+		sourcesToMedias.shrink_start_child = true;
 		report = new TrackReport();
-		report.no_show_all = true;
+		report.visible = false;
 		contentToReport = new Gtk.Paned(Orientation.HORIZONTAL);
-		contentToReport.pack1(contentBox, true, false);
-		contentToReport.pack2(report, false, false);
-		sourcesToMedias.pack2(contentToReport, true, true);
+		contentToReport.start_child = contentBox;
+		contentToReport.resize_start_child = true;
+		contentToReport.shrink_start_child = false;
+		contentToReport.end_child = report;
+		contentToReport.resize_end_child = false;
+		contentToReport.shrink_end_child = false;
+		sourcesToMedias.end_child = contentToReport;
+		sourcesToMedias.resize_end_child = true;
+		sourcesToMedias.shrink_end_child = true;
 		// the report keeps the width it was left at: dragging the divider saves it, resizing the window does not change it
 		contentToReport.notify["position"].connect(() => {
-			if(report.visible && !placing_report && contentToReport.get_allocated_width() > 1)
-				App.settings.saved_state.more_width = contentToReport.get_allocated_width() - contentToReport.position;
+			if(report.visible && !placing_report && contentToReport.get_width() > 1)
+				App.settings.saved_state.more_width = contentToReport.get_width() - contentToReport.position;
 		});
-		contentToReport.size_allocate.connect((a) => {
-			if(!report.visible || a.width <= 1 || a.width == report_split_width)
-				return;
-			report_split_width = a.width;
-			placing_report = true;
-			contentToReport.position = int.max(200, a.width - int.max(App.settings.saved_state.more_width, 200));
-			placing_report = false;
-		});
-		
+		// GTK4-PENDIENTE: Gtk.Paned has no size-allocate signal (GTK3 placed the divider on every allocation);
+		// here it is re-placed when the window width changes, once laid out. Check in the GUI.
+		this.notify["default-width"].connect(() => { Idle.add(() => { place_report_width(); return false; }); });
+
 		reportButton = new ToggleButton();
-		var info_image = App.icons.INFO.render_image(IconSize.MENU);
+		var info_image = App.icons.INFO.render_image(Gtk.IconSize.NORMAL);
 		StatusBar.follow_text_color(info_image); // dark on the bar, like the other icons there
-		reportButton.image = info_image;
-		reportButton.relief = ReliefStyle.NONE;
+		reportButton.child = info_image;
+		reportButton.has_frame = false;
 		reportButton.focus_on_click = false;
 		reportButton.tooltip_text = _("Information about the song playing (Ctrl+Shift+I)");
 		reportButton.toggled.connect(() => show_report(reportButton.active));
 		statusBar.insert_widget(reportButton, false);
-		
+
 		// The toolbar is the window's title bar: no separate system title bar,
 		// traffic lights in the top-left corner, above the transport buttons
 		var titlebar = new Overlay();
-		titlebar.add(topControls);
+		titlebar.child = topControls;
 		titlebar.add_overlay(create_traffic_lights());
-		set_titlebar(titlebar);
+		// the title bar is the zone that drags the window (its buttons keep their clicks)
+		var titlebar_handle = new Gtk.WindowHandle();
+		titlebar_handle.child = titlebar;
+		set_titlebar(titlebar_handle);
 		title_widget = titlebar;
 		sourcesToMedias.vexpand = true;
-		verticalBox.add(sourcesToMedias);
-		verticalBox.add(statusBar);
-		this.add(verticalBox);
-		
+		verticalBox.append(sourcesToMedias);
+		verticalBox.append(statusBar);
+		this.child = verticalBox;
+
 		// Set theming
-		topControls.get_style_context().add_class(STYLE_CLASS_PRIMARY_TOOLBAR);
-		topControls.get_style_context().add_class("app-header");
-		get_style_context().add_class("beatbox");
-		previousButton.get_style_context().add_class("transport-button");
-		playButton.get_style_context().add_class("transport-button");
-		playButton.get_style_context().add_class("play");
-		nextButton.get_style_context().add_class("transport-button");
+		topControls.add_css_class("primary-toolbar");
+		topControls.add_css_class("app-header");
+		add_css_class("beatbox");
+		previousButton.add_css_class("transport-button");
+		playButton.add_css_class("transport-button");
+		playButton.add_css_class("play");
+		nextButton.add_css_class("transport-button");
 		// Keep the toolbar from stretching them: square size => perfect circle
-		foreach (var item in new ToolButton[] { previousButton, playButton, nextButton }) {
-			var button = item.get_child ();
-			int size = (item == playButton) ? 72 : 44;
+		foreach (var button in new Button[] { previousButton, playButton, nextButton }) {
+			int size = (button == playButton) ? 72 : 44;
 			button.set_size_request (size, size);
-			((Image)item.icon_widget).pixel_size = size * 2 / 5;
-			item.set_homogeneous (false); // else previous and next are as wide as play: big gaps
+			((Image)button.child).pixel_size = size * 2 / 5;
 			button.valign = button.halign = Align.CENTER;
 			button.margin_top = 12; // room for the traffic lights above
 		}
-		searchField.get_style_context().add_class("search-bar");
-		statusBar.get_style_context().add_class("app-statusbar");
+		searchField.add_css_class("search-bar");
+		statusBar.add_css_class("app-statusbar");
 
 		/* Top toolbar events */
 		previousButton.clicked.connect(previousClicked);
@@ -562,14 +592,13 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		nextButton.clicked.connect(nextClicked);
 		viewSelector.mode_changed.connect(view_selection_changed);
 		searchField.changed.connect(search_field_changed);
-		
-		show_all();
+
 		reportButton.active = App.settings.saved_state.more_visible;
 		lcd_logo.visible = !top_display.visible;
 		infoBar.hide();
 		update_sensitivities();
 	}
-	
+
 	Widget create_traffic_lights() {
 		var box = new Box(Orientation.HORIZONTAL, 8);
 		box.halign = Align.START;
@@ -580,34 +609,35 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		string[] tips = { _("Close"), _("Minimize"), _("Maximize (Alt: mini player)") };
 		for (int i = 0; i < 3; i++) {
 			var button = new Button();
-			button.get_style_context().add_class("traffic-light");
-			button.get_style_context().add_class(names[i]);
+			button.add_css_class("traffic-light");
+			button.add_css_class(names[i]);
 			button.tooltip_text = tips[i];
-			button.can_focus = false;
+			button.focusable = false;
 			button.valign = Align.CENTER;
-			box.add(button);
+			box.append(button);
+			// the Alt state is read at the press: the click itself comes at the release
+			bool alt_pressed = false;
+			var alt_state = new GestureClick();
+			alt_state.pressed.connect((n, x, y) => {
+				alt_pressed = (alt_state.get_current_event_state() & Gdk.ModifierType.ALT_MASK) != 0;
+			});
+			button.add_controller(alt_state);
 			int which = i;
 			button.clicked.connect(() => {
 				if (which == 0) close();
-				else if (which == 1) iconify();
-				else if (mini || (get_current_event_state_mods() & Gdk.ModifierType.MOD1_MASK) != 0) toggle_mini(); // Alt+green, as in old players
+				else if (which == 1) minimize();
+				else if (mini || alt_pressed) toggle_mini(); // Alt+green, as in old players
 				else if (window_maximized) unmaximize();
 				else maximize();
 			});
 		}
 		var name = new Label("BeatBox " + Build.VERSION); // the merged title bar has no title of its own
-		name.get_style_context().add_class("app-name");
+		name.add_css_class("app-name");
 		name.margin_start = 4;
-		box.add(name);
+		box.append(name);
 		return box;
 	}
-	
-	static Gdk.ModifierType get_current_event_state_mods() {
-		Gdk.ModifierType state;
-		Gtk.get_current_event_state(out state);
-		return state;
-	}
-	
+
 	/** Shrinks the window to its toolbar, and back to the saved size */
 	public void toggle_mini() {
 		mini = !mini;
@@ -618,24 +648,23 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 			maximized_before_mini = window_maximized;
 			if (window_maximized)
 				unmaximize();
-			resize(1, 1); // the toolbar's natural size
+			set_default_size (1, 1); // the toolbar's natural size
 		} else {
 			// last_width is only 0 when BeatBox started in mini mode. last_height counts
-			// the title bar as it was at startup; resize() counts it as it is now
-			int growth = startup_titlebar_height > 0 ? title_widget.get_allocated_height() - startup_titlebar_height : 0;
-			resize(last_width > 0 ? last_width : App.settings.saved_state.window_width,
+			// the title bar as it was at startup; set_default_size counts it as it is now
+			int growth = startup_titlebar_height > 0 ? title_widget.get_height() - startup_titlebar_height : 0;
+			set_default_size(last_width > 0 ? last_width : App.settings.saved_state.window_width,
 			       (last_height > 0 ? last_height : App.settings.saved_state.window_height) - growth);
 			if (maximized_before_mini)
 				maximize();
 		}
 		apply_keep_above();
 	}
-	
-	/** On Wayland GTK can't do it: there the compositor's window menu offers "Always on Top" */
+
+	/** GTK4 cannot keep a window above the others (Wayland never could): the window menu of the compositor offers "Always on Top" */
 	public void apply_keep_above() {
-		set_keep_above(mini && App.settings.main.mini_keep_above);
 	}
-	
+
 	public void setup_playback() {
 		sideTree.reset_view();
 		
@@ -729,8 +758,7 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		
 		// We need to set this view as the current page before even attempting to call
 		// the set_as_current_view() method.
-		view.show_all();
-		mainViews.set_current_page (view_index);
+				mainViews.set_current_page (view_index);
 		view.set_as_current_view();
 		sideTree.select_view(view);
 		
@@ -802,14 +830,26 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		if(show) {
 			report.set_size_request(200, -1);
 			report.show();
-			report_split_width = 0; // placed at the next allocation, from the saved width
+			report_split_width = 0; // placed once laid out, from the saved width
+			Idle.add(() => { place_report_width(); return false; });
 		}
 		else
 			report.hide();
 		if(reportButton.active != show)
 			reportButton.active = show;
 	}
-	
+
+	/** Moves the report's divider so the report keeps the width it was left at */
+	void place_report_width() {
+		int width = contentToReport.get_width();
+		if(!report.visible || width <= 1 || width == report_split_width)
+			return;
+		report_split_width = width;
+		placing_report = true;
+		contentToReport.position = int.max(200, width - int.max(App.settings.saved_state.more_width, 200));
+		placing_report = false;
+	}
+
 	public void add_statusbar_widget(Widget w, bool left_side) {
 		statusBar.insert_widget(w, left_side);
 	}
@@ -869,7 +909,7 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 				if(pixbuf != null)
 					notification.set_image_from_pixbuf(pixbuf);
 				else
-					notification.set_image_from_pixbuf(App.icons.BEATBOX.render (Gtk.IconSize.DIALOG));
+					notification.set_image_from_pixbuf(App.icons.BEATBOX.render (null, null, 48));
 				
 				notification.show();
 				notification.set_timeout (Notify.EXPIRES_DEFAULT);
@@ -906,26 +946,37 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 	}
 	
 	bool keyPressed(uint keyval, uint keycode, Gdk.ModifierType state) {
-		// the event itself, for propagate_key_event (GTK3's key_controller.forward only reaches controllers)
-		var event = (Gdk.EventKey) get_current_event();
 		var focus = get_focus();
-		
+
 		// Escape in the search box goes back to the list
-		if(event.keyval == Gdk.Key.Escape && searchField.has_focus && focusAfterSearch != null) {
+		if(keyval == Gdk.Key.Escape && searchField.has_focus && focusAfterSearch != null) {
 			focusAfterSearch.grab_focus();
 			return true;
 		}
-		
+
 		// a text field gets the key first: there Space types a space, Ctrl+Left moves by word...
-		if(focus is Gtk.Editable && propagate_key_event(event))
+		// (the keys it leaves go on to keyBubbled)
+		if(focus is Gtk.Editable)
+			return false;
+
+		return handle_key(keyval, state);
+	}
+
+	// the keys that a text field did not use: the window's shortcuts get them there
+	bool keyBubbled(uint keyval, uint keycode, Gdk.ModifierType state) {
+		return get_focus() is Gtk.Editable && handle_key(keyval, state);
+	}
+
+	bool handle_key(uint keyval, Gdk.ModifierType state) {
+		var focus = get_focus();
+
+		if(Shortcuts.activate(keyval, state))
 			return true;
-		
-		if(Shortcuts.activate(event.keyval, event.state))
-			return true;
-		
+
 		// typing a letter or a digit anywhere starts a search
-		var mods = event.state & Gtk.accelerator_get_default_mod_mask();
-		if(mods == 0 && Regex.match_simple("^[a-zA-Z0-9]$", event.str) && searchField.sensitive && !(focus is Gtk.Entry))
+		var mods = state & Gtk.accelerator_get_default_mod_mask();
+		var typed = ((unichar) Gdk.keyval_to_unicode(keyval)).to_string();
+		if(mods == 0 && Regex.match_simple("^[a-zA-Z0-9]$", typed) && searchField.sensitive && !(focus is Gtk.Entry))
 			searchField.grab_focus(); // the key itself then goes on to it
 
 		return false;
@@ -1007,7 +1058,7 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 
 		update_sensitivities();
 		
-		show_notification(_("Import Complete"), _("BeatBox has imported your %s library.").printf(library.name.down()), App.icons.BEATBOX.render (Gtk.IconSize.DIALOG));
+		show_notification(_("Import Complete"), _("BeatBox has imported your %s library.").printf(library.name.down()), App.icons.BEATBOX.render (null, null, 48));
 	}
 
 	void medias_removed(Collection<Media> removed) {
@@ -1098,10 +1149,10 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 	}
 
 	public void media_not_found(Media m) {
-		m.unique_status_image = App.icons.PROCESS_ERROR.render(Gtk.IconSize.MENU, ((SourceView)sideTree.getWidget(sideTree.library_music_iter)).list_view.get_style_context());
+		m.unique_status_image = App.icons.PROCESS_ERROR.render(Gtk.IconSize.NORMAL, ((SourceView)sideTree.getWidget(sideTree.library_music_iter)).list_view.get_style_context());
 		file_not_found_pileup.add(m);
 		infoBarLabel.set_markup(_("%s media files could not be found.").printf("<b>" + file_not_found_pileup.size.to_string() + "</b>"));
-		infoBar.show_all();
+		infoBar.visible = true;
 	}
 	
 	public void media_found(Media m) {
@@ -1115,15 +1166,15 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		return (View)mainViews.get_nth_page (mainViews.get_current_page());
 	}
 
-	void dragReceived(Gdk.DragContext context, int x, int y, Gtk.SelectionData data, uint info, uint timestamp) {
+	void dragReceived(string[] uris) {
 		if(dragging_from_music)
 			return;
 
 		var files_dragged = new LinkedList<File>();
-		foreach (string uri in data.get_uris ()) {
+		foreach (string uri in uris) {
 			files_dragged.add(File.new_for_uri(uri));
 		}
-		
+
 		warning("TODO: Fixme. How to know?");
 		App.library.song_library.add_files(files_dragged, false);
 	}
@@ -1136,10 +1187,11 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		dialog.secondary_text = message;
 		dialog.secondary_use_markup = true;
 
-		dialog.run();
-		dialog.destroy();
+		// GTK4 has no dialog.run (): the alert stays modal, and the callers do not wait for it anyway
+		dialog.response.connect((id) => dialog.destroy());
+		dialog.present();
 	}
-	
+
 	void info_bar_response(int response_id) {
 		if(response_id == Gtk.ResponseType.YES) {
 			FileNotFoundDialog fnfd = new FileNotFoundDialog(file_not_found_pileup);
@@ -1164,15 +1216,10 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		show_song_info(true);
 	}
 	
-	bool window_state_changed(Gdk.EventWindowState event) {
-		if((event.changed_mask & (Gdk.WindowState.MAXIMIZED | Gdk.WindowState.FULLSCREEN)) == 0)
-			return false;
-		
-		window_maximized = ((event.new_window_state & (Gdk.WindowState.MAXIMIZED | Gdk.WindowState.FULLSCREEN)) != 0);
-			
-		return false;
+	void window_state_changed(GLib.ParamSpec pspec) {
+		window_maximized = is_maximized() || fullscreened;
 	}
-	
+
 	public void set_search_string(string search) {
 		searchField.set_text(search);
 	}
@@ -1199,7 +1246,8 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 	
 	void on_quit() {
 		// Stop listening to window state changes
-		this.window_state_event.disconnect(window_state_changed);
+		this.notify["maximized"].disconnect(window_state_changed);
+		this.notify["fullscreened"].disconnect(window_state_changed);
 		if(App.playback.media_active) {
 			App.settings.main.last_media_position = (int)((double)App.playback.get_position()/1000000000);
 			App.playback.current_media.resume_pos = (int)((double)App.playback.get_position()/1000000000);

@@ -27,7 +27,7 @@ etapa 2 con el andamio; `tools/gtk4-check.sh` tarda ~2 s.
 | T24 widgets dibujados | H | [~] | | | |
 | T25 barra lateral | H | [~] | | | |
 | T26 «Reproduciendo» | H | [x] | | 0 | video_area_xid borrado: LibraryWindow.vala:50 (T27) y Streamer.vala 269/338/424/517/519 (T14) lo leían: decidir 0 o quitarlo (T42); EventBox de letras y resumen pasa al widget que envolvía, sin GestureClick |
-| T27 ventana principal | H | [~] | | | |
+| T27 ventana principal | H | [x] | | 5 | video_area_xid devuelve 0 (Streamer.vala lo usa: T42); keep-above perdido en mini; tamaño con barra de título (track_size); clic en carátula del LCD sin reclamar; divisor de TrackReport diferido. Revisión GUI: semáforo, atajos con foco en campo, arrastre de archivos, WindowHandle |
 | T28 núcleo de la aplicación | H | [~] | | | |
 | T29 código C | H | [x] | | 0 | comentarios nuevos en español, como el resto de ese archivo |
 | T30 cierre de compilación | H | [ ] | | | |
