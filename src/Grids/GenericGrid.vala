@@ -46,7 +46,7 @@ public abstract class BeatBox.GenericGrid : FastGrid {
 				// when it loses the focus to the main window, it stays in front
 				_popup_list_view.notify["is-active"].connect ( () => {
 					if (!_popup_list_view.is_active && popup_list.visible && App.window.has_focus) {
-						popup_list.show_all ();
+						popup_list.show_list ();
 						popup_list.present ();
 					}
 				});
@@ -72,6 +72,7 @@ public abstract class BeatBox.GenericGrid : FastGrid {
 	// GTK3 controllers need a reference
 	Gtk.GestureClick click_gesture;
 	Gtk.EventControllerMotion motion_controller;
+	protected Gtk.DragSource drag_source;
 	double pointer_x = -1; // where the pointer is, in widget coordinates
 	double pointer_y = -1;
 	
@@ -88,7 +89,7 @@ public abstract class BeatBox.GenericGrid : FastGrid {
         set_parent_wrapper (parent_wrapper);
 		this.tvs = tvs;
 		
-		get_style_context ().add_class ("albumgrid");
+		add_css_class ("albumgrid");
 		
 		item_width = ITEM_WIDTH;
 		item_padding = ITEM_PADDING;
@@ -96,11 +97,17 @@ public abstract class BeatBox.GenericGrid : FastGrid {
 		set_column_spacing (MIN_SPACING);
 		set_row_spacing (MIN_SPACING);
 
-		// drag source
-		TargetEntry te = { "text/uri-list", TargetFlags.SAME_APP, 0};
-		drag_source_set(this, Gdk.ModifierType.BUTTON1_MASK, { te }, Gdk.DragAction.COPY);
-		//enable_model_drag_source(Gdk.ModifierType.BUTTON1_MASK, {te}, Gdk.DragAction.COPY);
-		
+		// drag source: the URIs of the selected items, one per line (empty selection: no drag)
+		drag_source = new Gtk.DragSource ();
+		drag_source.actions = Gdk.DragAction.COPY;
+		drag_source.prepare.connect ((x, y) => {
+			string[] uris = get_drag_uris ();
+			if (uris.length == 0)
+				return null;
+			return new Gdk.ContentProvider.for_value (string.joinv ("\n", uris));
+		});
+		add_controller (drag_source);
+
 		//row_activated.connect(row_activated_signal);
 		//rows_reordered.connect(updateTreeViewSetup);
 		App.playback.current_cleared.connect(current_cleared);
@@ -108,9 +115,9 @@ public abstract class BeatBox.GenericGrid : FastGrid {
 		//App.library.medias_updated.connect(medias_updated);
 
 
-		this.add_events (Gdk.EventMask.POINTER_MOTION_MASK);
 		// the pointer's shape follows the item under it, when it moves and when the view scrolls
-		motion_controller = new Gtk.EventControllerMotion (this);
+		motion_controller = new Gtk.EventControllerMotion ();
+		add_controller (motion_controller);
 		motion_controller.motion.connect ((x, y) => {
 			pointer_x = x;
 			pointer_y = y;
@@ -124,7 +131,8 @@ public abstract class BeatBox.GenericGrid : FastGrid {
 		});
 
 		// CAPTURE: GtkIconView handles the clicks itself and passes none on
-		click_gesture = new Gtk.GestureClick (this);
+		click_gesture = new Gtk.GestureClick ();
+		add_controller (click_gesture);
 		click_gesture.propagation_phase = Gtk.PropagationPhase.CAPTURE;
 		click_gesture.released.connect (on_released);
 
@@ -179,13 +187,15 @@ public abstract class BeatBox.GenericGrid : FastGrid {
 
     public abstract void item_activated_handler (Object? selected);
 
+	/** The URIs of the selected items, dragged out of the view */
+	protected abstract string[] get_drag_uris ();
+
 	private void on_released (int n_press, double widget_x, double widget_y) {
-		int x, y;
-		convert_widget_to_bin_window_coords ((int) widget_x, (int) widget_y, out x, out y);
+		// GTK4 IconView has no bin window: its coordinates are the widget's own
 		TreePath? path;
 		CellRenderer cell;
 
-		this.get_item_at_pos (x, y, out path, out cell);
+		this.get_item_at_pos ((int) widget_x, (int) widget_y, out path, out cell);
 
 		if (path != null)
 			item_activated_handler (get_selected_objects().nth_data (0));
@@ -194,19 +204,17 @@ public abstract class BeatBox.GenericGrid : FastGrid {
 	}
 
 	private void set_pointer () {
-		if (pointer_x < 0 || get_window () == null)
+		if (pointer_x < 0)
 			return;
-		int x, y;
-		convert_widget_to_bin_window_coords ((int) pointer_x, (int) pointer_y, out x, out y);
 		TreePath? path;
 		CellRenderer cell;
 
-		this.get_item_at_pos (x, y, out path, out cell);
+		this.get_item_at_pos ((int) pointer_x, (int) pointer_y, out path, out cell);
 
 		if (path == null) // blank area
-			this.get_window ().set_cursor (null);
+			set_cursor_from_name (null);
 		else
-			this.get_window ().set_cursor (new Gdk.Cursor.from_name (get_display (), "pointer"));
+			set_cursor_from_name ("pointer");
 	}
 
 

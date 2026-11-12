@@ -37,9 +37,8 @@ public class BeatBox.AlbumGrid : GenericGrid {
 		set_value_func(val_func);
 		set_search_func(grid_search_func);
 
-		drag_begin.connect(on_drag_begin);
-		drag_data_get.connect(on_drag_data_get);
-		drag_end.connect(on_drag_end);
+		drag_source.drag_begin.connect(on_drag_begin);
+		drag_source.drag_end.connect(on_drag_end);
 		
         default_art = App.covers.DEFAULT_COVER_SHADOW;
 	}
@@ -61,7 +60,7 @@ public class BeatBox.AlbumGrid : GenericGrid {
 	        var alb = selected as Album;
 	        return_if_fail (alb != null);
 	        this.popup_list.set_items(alb);
-	        this.popup_list.show_all();
+	        this.popup_list.show_list();
         } else {
             this.popup_list.hide ();
         }
@@ -72,26 +71,27 @@ public class BeatBox.AlbumGrid : GenericGrid {
 	 * be dragged to a playlist in the sidebar. No support for reordering
 	 * is implemented yet.
 	***************************************************************/
-	void on_drag_begin(Gtk.Widget sender, Gdk.DragContext context) {
+	void on_drag_begin(Gdk.Drag drag) {
 		dragging = true;
 		App.window.dragging_from_music = true;
 		debug("drag begin\n");
 
-		Gdk.drag_abort(context, Gtk.get_current_event_time());
-
+		string icon_name;
 		if(get_selected_items().length() == 1) {
-			drag_source_set_icon_name(this, "audio-x-generic");
+			icon_name = "audio-x-generic";
 		}
 		else if(get_selected_items().length() > 1) {
-			drag_source_set_icon_name(this, "folder-music");
+			icon_name = "folder-music";
 		}
 		else {
 			return;
 		}
+		var icon = Gtk.IconTheme.get_for_display (get_display ()).lookup_icon (icon_name, null, 32, 1, Gtk.TextDirection.NONE, 0);
+		drag_source.set_icon (icon, 0, 0);
 	}
-	
-	void on_drag_data_get(Gdk.DragContext context, Gtk.SelectionData selection_data, uint info, uint time_) {
-		string[] uris = null;
+
+	protected override string[] get_drag_uris() {
+		string[] uris = {};
 
 		foreach(TreePath path in get_selected_items()) {
 			Album a = (Album)get_object_from_index(int.parse(path.to_string()));
@@ -99,23 +99,16 @@ public class BeatBox.AlbumGrid : GenericGrid {
 				uris += (m.uri);
 		}
 
-		if (uris != null)
-			selection_data.set_uris(uris);
+		return uris;
 	}
-	
-	void on_drag_end(Gtk.Widget sender, Gdk.DragContext context) {
+
+	void on_drag_end(Gdk.Drag drag, bool delete_data) {
 		dragging = false;
 		App.window.dragging_from_music = false;
 
 		debug("drag end\n");
 
-		//unset_rows_drag_dest();
-		Gtk.drag_dest_set(this,
-						  Gtk.DestDefaults.ALL,
-						  {},
-						  Gdk.DragAction.COPY|
-						  Gdk.DragAction.MOVE
-						  );
+		// no drop reset needed: a grid is only a drag source, GTK4 keeps no drop target on it
 	}
 	
 	/** **************************************************

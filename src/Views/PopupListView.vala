@@ -48,34 +48,21 @@ public class BeatBox.PopupListView : Gtk.Window {
 		set_size_request (MIN_SIZE, MIN_SIZE);
 		set_default_size (MIN_SIZE, MIN_SIZE);
 
-        // Make the window squared
-        this.size_allocate.connect ( (alloc) => {
-    		int width = alloc.width;
-    		int height = alloc.height;
-
-            int size = (width > height) ? width : height;
-
-    		set_size_request (size, size);
-        });
-
 		set_transient_for (App.window);
 		destroy_with_parent = true;
-		set_skip_taskbar_hint (true);
 		set_resizable(false);
-
-		window_position = Gtk.WindowPosition.CENTER_ON_PARENT;
 
 		// window stuff
 		set_decorated(false);
 
 		// close button
 		var close = new Gtk.Button ();
-        get_style_context ().add_class ("album-list-view");
-		close.get_style_context().add_class("close-button");
-		close.set_image (App.icons.render_image ("window-close-symbolic", Gtk.IconSize.MENU));
+        add_css_class ("album-list-view");
+		close.add_css_class("close-button");
+		close.child = App.icons.render_image ("window-close-symbolic", Gtk.IconSize.NORMAL);
 		close.hexpand = close.vexpand = false;
 		close.halign = Gtk.Align.START;
-		close.set_relief(Gtk.ReliefStyle.NONE);
+		close.has_frame = false;
 		close.clicked.connect( () =>  { this.hide(); });
 		// album artist/album labels
 		album_label = new Label ("");
@@ -87,8 +74,8 @@ public class BeatBox.PopupListView : Gtk.Window {
 		album_label.ellipsize = Pango.EllipsizeMode.END;
 		artist_label.ellipsize = Pango.EllipsizeMode.END;
 
-		album_label.set_line_wrap (false);
-		artist_label.set_line_wrap (false);
+		album_label.wrap = false;
+		artist_label.wrap = false;
 		
 		album_label.set_max_width_chars (30);
 		artist_label.set_max_width_chars (30);
@@ -100,12 +87,12 @@ public class BeatBox.PopupListView : Gtk.Window {
 		var tvs = new TreeViewSetup(MusicColumn.ARTIST, SortType.ASCENDING, TreeViewSetup.Hint.ALBUM_LIST);
 		list = new MusicList(tvs);
 		list.set_sort_column_id(tvs.sort_column_id, tvs.sort_direction);
-        var list_scrolled = new Gtk.ScrolledWindow (null, null);
+        var list_scrolled = new Gtk.ScrolledWindow ();
         list_scrolled.set_policy (Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC);
-        list_scrolled.add (list);
+        list_scrolled.set_child (list);
 
 		// Rating widget
-		rating = new BeatBox.RatingWidget (true, IconSize.MENU, true);
+		rating = new BeatBox.RatingWidget (true, Gtk.IconSize.NORMAL, true);
 		// customize rating
 		rating.set_star_spacing (16);
 		rating.margin_top = rating.margin_bottom = 16;
@@ -113,15 +100,15 @@ public class BeatBox.PopupListView : Gtk.Window {
 		// Add everything
 		var vbox = new Box(Orientation.VERTICAL, 0);
 
-		vbox.add(close);
+		vbox.append(close);
 
-		vbox.add(album_label);
-		vbox.add(artist_label);
+		vbox.append(album_label);
+		vbox.append(artist_label);
 		list_scrolled.vexpand = true;
-		vbox.add (AquaScroll.wrap (list_scrolled));
-		vbox.add(rating);
+		vbox.append (AquaScroll.wrap (list_scrolled));
+		vbox.append(rating);
 
-		add(vbox);
+		set_child(vbox);
 
 		rating.rating_changed.connect(rating_changed);
         App.library.medias_updated.connect (update_album_rating);
@@ -249,33 +236,21 @@ public class BeatBox.PopupListView : Gtk.Window {
 		App.library.update_medias (updated, false, true, true);
 	}
 
-	public override void show_all () {
-
-		// find window's location
-		int x, y;
-		Gtk.Allocation alloc;
-		App.window.get_position (out x, out y);
-		view_wrapper.get_allocation (out alloc);
-
-		// move down to icon view's allocation
-		x += App.window.get_sidebar_width();
-		y += alloc.y;
-
-		int window_width = 0;
-		int window_height = 0;
-		
-		get_size (out window_width, out window_height);
-
-		// center it on this icon view
-		x += (alloc.width - window_width) / 2;
-		y += (alloc.height - window_height) / 2 + 60;
-
-		bool was_visible = visible;
-		base.show_all ();
-
-		if (!was_visible)
-			move (x, y);
-
+	/**
+	 * Shows the window (GTK3 show_all). It used to be centered over the album wall;
+	 * GTK4 does not let an application place its windows, so the window manager decides.
+	 */
+	public void show_list () {
+		// GTK4-PENDIENTE: centering over the album wall needs move/get_position, which GTK4 lacks
 		present ();
+	}
+
+	/** Keeps the window square (GTK3 connected to size_allocate) */
+	public override void size_allocate (int width, int height, int baseline) {
+		base.size_allocate (width, height, baseline);
+
+		int size = (width > height) ? width : height;
+
+		set_size_request (size, size);
 	}
 }
