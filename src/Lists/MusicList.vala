@@ -31,23 +31,24 @@ using Gtk;
 public class BeatBox.MusicList : GenericList {
 
 	//for media list right click
-	Gtk.Menu mediaMenuActionMenu;
-	Gtk.MenuItem mediaEditMedia;
-	Gtk.MenuItem mediaFileBrowse;
-	Gtk.MenuItem mediaMenuQueue;
-	Gtk.MenuItem mediaMenuPlayNext;
-	Gtk.MenuItem queueMoveUp;
-	Gtk.MenuItem queueMoveDown;
-	Gtk.MenuItem queueClear;
-	Gtk.MenuItem saveArtInFiles;
-	Gtk.MenuItem fillTags;
-	Gtk.MenuItem findReplace;
-	Gtk.MenuItem mediaMenuNewPlaylist;
-	Gtk.MenuItem mediaMenuAddToPlaylist; // make menu on fly
+	PopMenu mediaMenuActionMenu;
+	PopMenuItem mediaEditMedia;
+	PopMenuItem mediaFileBrowse;
+	PopMenuItem mediaMenuQueue;
+	PopMenuItem mediaMenuPlayNext;
+	PopMenuItem queueMoveUp;
+	PopMenuItem queueMoveDown;
+	PopMenuItem queueClear;
+	PopMenuItem saveArtInFiles;
+	PopMenuItem fillTags;
+	PopMenuItem findReplace;
+	PopMenuItem mediaMenuNewPlaylist;
+	PopMenuItem mediaMenuAddToPlaylist; // opens the playlists menu, made on each right click
+	PopMenu addToPlaylistMenu;
 	RatingMenuItem mediaRateMedia;
-	Gtk.MenuItem mediaRemove;
-	Gtk.MenuItem importToLibrary;
-	Gtk.MenuItem mediaScrollToCurrent;
+	PopMenuItem mediaRemove;
+	PopMenuItem importToLibrary;
+	PopMenuItem mediaScrollToCurrent;
 
 	/**
 	 * for sort_id use 0+ for normal, -1 for auto, -2 for none
@@ -84,7 +85,6 @@ public class BeatBox.MusicList : GenericList {
 	}
 
 	public override void update_sensitivities() {
-		mediaMenuActionMenu.show_all();
 		bool in_queue = get_hint() == TreeViewSetup.Hint.QUEUE;
 		// files on a device or a CD aren't BeatBox's to change
 		saveArtInFiles.visible = CoverEmbedder.available() && get_hint() != TreeViewSetup.Hint.DEVICE_AUDIO && get_hint() != TreeViewSetup.Hint.CDROM;
@@ -149,8 +149,8 @@ public class BeatBox.MusicList : GenericList {
         set_search_func(view_search_func);
         set_value_func(view_value_func);
         
-		button_press_event.connect(viewClick);
-		button_release_event.connect(viewClickRelease);
+		click_gesture.pressed.connect(view_click);
+		click_gesture.released.connect(view_click_release);
 
 		// column chooser menu (header right click)
 		if(get_hint() == TreeViewSetup.Hint.MUSIC && column_titled("#") != null)
@@ -173,22 +173,22 @@ public class BeatBox.MusicList : GenericList {
 		add_column_toggle("BPM", _("BPM"));
 
 		//media list right click menu
-		mediaMenuActionMenu = new Gtk.Menu();
-		mediaEditMedia = new Gtk.MenuItem.with_label(_("Edit Song Info"));
-		mediaFileBrowse = new Gtk.MenuItem.with_label(_("Show in File Browser"));
-		mediaMenuQueue = new Gtk.MenuItem.with_label(_("Add to Queue"));
-		mediaMenuPlayNext = new Gtk.MenuItem.with_label(_("Play Next"));
-		queueMoveUp = new Gtk.MenuItem.with_label(_("Move Up"));
-		queueMoveDown = new Gtk.MenuItem.with_label(_("Move Down"));
-		queueClear = new Gtk.MenuItem.with_label(_("Clear Queue"));
-		saveArtInFiles = new Gtk.MenuItem.with_label(_("Save Album Art into the Files"));
-		fillTags = new Gtk.MenuItem.with_label(_("Fill In Tags from File Names…"));
-		findReplace = new Gtk.MenuItem.with_label(_("Find and Replace in Tags…"));
-		mediaMenuNewPlaylist = new Gtk.MenuItem.with_label(_("New Playlist"));
-		mediaMenuAddToPlaylist = new Gtk.MenuItem.with_label(_("Add to Playlist"));
-		mediaRemove = new Gtk.MenuItem.with_label(_("Remove Song"));
-		importToLibrary = new Gtk.MenuItem.with_label(_("Import to Library"));
-		mediaScrollToCurrent = new Gtk.MenuItem.with_label(_("Scroll to Current Song"));
+		mediaMenuActionMenu = new PopMenu();
+		mediaEditMedia = new PopMenuItem.with_label(_("Edit Song Info"));
+		mediaFileBrowse = new PopMenuItem.with_label(_("Show in File Browser"));
+		mediaMenuQueue = new PopMenuItem.with_label(_("Add to Queue"));
+		mediaMenuPlayNext = new PopMenuItem.with_label(_("Play Next"));
+		queueMoveUp = new PopMenuItem.with_label(_("Move Up"));
+		queueMoveDown = new PopMenuItem.with_label(_("Move Down"));
+		queueClear = new PopMenuItem.with_label(_("Clear Queue"));
+		saveArtInFiles = new PopMenuItem.with_label(_("Save Album Art into the Files"));
+		fillTags = new PopMenuItem.with_label(_("Fill In Tags from File Names…"));
+		findReplace = new PopMenuItem.with_label(_("Find and Replace in Tags…"));
+		mediaMenuNewPlaylist = new PopMenuItem.with_label(_("New Playlist"));
+		mediaMenuAddToPlaylist = new PopMenuItem.with_label(_("Add to Playlist"));
+		mediaRemove = new PopMenuItem.with_label(_("Remove Song"));
+		importToLibrary = new PopMenuItem.with_label(_("Import to Library"));
+		mediaScrollToCurrent = new PopMenuItem.with_label(_("Scroll to Current Song"));
 		mediaRateMedia = new RatingMenuItem();
 		mediaMenuActionMenu.append(mediaEditMedia);
 		mediaMenuActionMenu.append(mediaFileBrowse);
@@ -196,7 +196,7 @@ public class BeatBox.MusicList : GenericList {
 		mediaMenuActionMenu.append(fillTags);
 		mediaMenuActionMenu.append(findReplace);
 		mediaMenuActionMenu.append(mediaRateMedia);
-		mediaMenuActionMenu.append(new SeparatorMenuItem());
+		mediaMenuActionMenu.append(new PopMenuSeparator());
 		mediaMenuActionMenu.append(mediaMenuQueue);
 		mediaMenuActionMenu.append(mediaMenuPlayNext);
 		mediaMenuActionMenu.append(queueMoveUp);
@@ -204,33 +204,35 @@ public class BeatBox.MusicList : GenericList {
 		mediaMenuActionMenu.append(mediaMenuNewPlaylist);
 		mediaMenuActionMenu.append(mediaMenuAddToPlaylist);
 		if(tvs.get_hint() != TreeViewSetup.Hint.DEVICE_AUDIO && tvs.get_hint() != TreeViewSetup.Hint.SMART_PLAYLIST) {
-			mediaMenuActionMenu.append(new SeparatorMenuItem());
+			mediaMenuActionMenu.append(new PopMenuSeparator());
 		}
 		mediaMenuActionMenu.append(mediaRemove);
 		mediaMenuActionMenu.append(queueClear);
 		mediaMenuActionMenu.append(importToLibrary);
 		if(tvs.get_hint() != TreeViewSetup.Hint.CDROM) {
-			mediaMenuActionMenu.append(new SeparatorMenuItem());
+			mediaMenuActionMenu.append(new PopMenuSeparator());
 			mediaMenuActionMenu.append(mediaScrollToCurrent);
 		}
-		mediaEditMedia.activate.connect(mediaMenuEditClicked);
-		mediaFileBrowse.activate.connect(mediaFileBrowseClicked);
-		mediaMenuQueue.activate.connect(mediaMenuQueueClicked);
+		mediaEditMedia.clicked.connect(mediaMenuEditClicked);
+		mediaFileBrowse.clicked.connect(mediaFileBrowseClicked);
+		mediaMenuQueue.clicked.connect(mediaMenuQueueClicked);
 		if(tvs.get_hint() == TreeViewSetup.Hint.QUEUE)
 			enable_queue_reordering();
-		mediaMenuPlayNext.activate.connect(() => { App.playback.insert_in_queue(selected_list(), 0); });
-		queueMoveUp.activate.connect(() => move_selected_in_queue(-1));
-		queueMoveDown.activate.connect(() => move_selected_in_queue(1));
-		queueClear.activate.connect(() => App.playback.clear_queue());
-		saveArtInFiles.activate.connect(save_art_in_files);
-		fillTags.activate.connect(() => FillTagsDialog.run_for(selected_list()));
-		findReplace.activate.connect(() => FindReplaceDialog.run_for(selected_list()));
-		mediaMenuNewPlaylist.activate.connect(mediaMenuNewPlaylistClicked);
-		mediaRemove.activate.connect(mediaRemoveClicked);
-		importToLibrary.activate.connect(importToLibraryClicked);
-		mediaRateMedia.activate.connect(mediaRateMediaClicked);
-		mediaScrollToCurrent.activate.connect(mediaScrollToCurrentRequested);
-		row_activated.connect(row_activated_signal_event);
+		mediaMenuPlayNext.clicked.connect(() => { App.playback.insert_in_queue(selected_list(), 0); });
+		queueMoveUp.clicked.connect(() => move_selected_in_queue(-1));
+		queueMoveDown.clicked.connect(() => move_selected_in_queue(1));
+		queueClear.clicked.connect(() => App.playback.clear_queue());
+		saveArtInFiles.clicked.connect(save_art_in_files);
+		fillTags.clicked.connect(() => FillTagsDialog.run_for(selected_list()));
+		findReplace.clicked.connect(() => FindReplaceDialog.run_for(selected_list()));
+		mediaMenuNewPlaylist.clicked.connect(mediaMenuNewPlaylistClicked);
+		mediaMenuAddToPlaylist.keep_open = true; // the playlists open beside the menu
+		mediaMenuAddToPlaylist.clicked.connect(() => addToPlaylistMenu.popup_under(mediaMenuAddToPlaylist));
+		mediaRemove.clicked.connect(mediaRemoveClicked);
+		importToLibrary.clicked.connect(importToLibraryClicked);
+		mediaRateMedia.clicked.connect(mediaRateMediaClicked);
+		mediaScrollToCurrent.clicked.connect(mediaScrollToCurrentRequested);
+		row_activated.connect((path, column) => row_activated_signal_event(path, column));
 		
 		set_headers_visible(tvs.get_hint() != TreeViewSetup.Hint.ALBUM_LIST &&
 							tvs.get_hint() != TreeViewSetup.Hint.NOW_PLAYING);
@@ -290,26 +292,32 @@ public class BeatBox.MusicList : GenericList {
 		}
 	}*/
 
-	/* button_press_event */
-	bool viewClick(Gdk.EventButton event) {
-		if(event.type == Gdk.EventType.BUTTON_PRESS && event.button == 3) { //right click
+	/* a press on a row: the menus, and keeping the selection while several rows are dragged */
+	void view_click(int n_press, double x, double y) {
+		// a double click is no click for the menus or the selection
+		if(n_press != 1)
+			return;
+		uint button = click_gesture.get_current_button();
+		bool modified = (click_gesture.get_current_event_state() & (Gdk.ModifierType.SHIFT_MASK | Gdk.ModifierType.CONTROL_MASK)) != 0;
+
+		if(button == Gdk.BUTTON_SECONDARY) { //right click
 			// the menu acts on the clicked row: select it first, unless it is part of the selection
 			TreePath? clicked;
-			if(get_path_at_pos((int)event.x, (int)event.y, out clicked, null, null, null) && !get_selection().path_is_selected(clicked)) {
+			if(row_at(x, y, out clicked) && !get_selection().path_is_selected(clicked)) {
 				get_selection().unselect_all();
 				get_selection().select_path(clicked);
 			}
 			
 			/* create add to playlist menu */
-			Gtk.Menu addToPlaylistMenu = new Gtk.Menu();
+			addToPlaylistMenu = new PopMenu();
 			foreach(BasePlaylist p in App.playlists.playlists()) {
 				if(p is StaticPlaylist) {
 					StaticPlaylist static_p = (StaticPlaylist)p;
 					
-					Gtk.MenuItem playlist = new Gtk.MenuItem.with_label(p.name);
+					PopMenuItem playlist = new PopMenuItem.with_label(p.name);
 					addToPlaylistMenu.append(playlist);
 
-					playlist.activate.connect( () => {
+					playlist.clicked.connect( () => {
 						var to_add = new LinkedList<Media>();
 						
 						foreach(Media m in get_selected_medias()) {
@@ -317,12 +325,10 @@ public class BeatBox.MusicList : GenericList {
 						}
 						static_p.add_medias(to_add);
 						App.playlists.update_playlist(p);
+						mediaMenuActionMenu.popdown();
 					});
 				}
 			}
-
-			addToPlaylistMenu.show_all();
-			mediaMenuAddToPlaylist.submenu = addToPlaylistMenu;
 
 			if(App.playlists.playlists().size == 0)
 				mediaMenuAddToPlaylist.set_sensitive(false);
@@ -373,71 +379,48 @@ public class BeatBox.MusicList : GenericList {
 			}
 			mediaEditMedia.label = _("Edit %s").printf(type.to_string(total_count));
 
-			mediaMenuActionMenu.popup_at_pointer(null);
+			mediaMenuActionMenu.popup_at(this, x, y);
 
 			TreeSelection selected = get_selection();
 			selected.set_mode(SelectionMode.MULTIPLE);
 			if(selected.count_selected_rows() > 1)
-				return true;
-			else
-				return false;
+				click_gesture.set_state(Gtk.EventSequenceState.CLAIMED);
 		}
-		else if(event.type == Gdk.EventType.BUTTON_PRESS && event.button == 1) {
-			//TreeIter iter;
-			TreePath path;
-			TreeViewColumn column;
-			int cell_x;
-			int cell_y;
-
-			get_path_at_pos((int)event.x, (int)event.y, out path, out column, out cell_x, out cell_y);
-
-			//if(!list_model.get_iter(out iter, path))
-			//	return false;
-
+		else if(button == 1) {
 			/* don't unselect everything if multiple selected until button release
 			 * for drag and drop reasons */
 			if(get_selection().count_selected_rows() > 1) {
-				if(get_selection().path_is_selected(path)) {
-					if(((event.state & Gdk.ModifierType.SHIFT_MASK) == Gdk.ModifierType.SHIFT_MASK)|
-						((event.state & Gdk.ModifierType.CONTROL_MASK) == Gdk.ModifierType.CONTROL_MASK)) {
-							get_selection().unselect_path(path);
-					}
-					return true;
-				}
-				else if(!(((event.state & Gdk.ModifierType.SHIFT_MASK) == Gdk.ModifierType.SHIFT_MASK)|
-				((event.state & Gdk.ModifierType.CONTROL_MASK) == Gdk.ModifierType.CONTROL_MASK))) {
-					return true;
-				}
-
-				return false;
+				TreePath? path;
+				row_at(x, y, out path);
+				bool on_selection = path != null && get_selection().path_is_selected(path);
+				if(on_selection && modified)
+					get_selection().unselect_path(path);
+				// a press on the selection, or a plain press away from it, is kept from the TreeView
+				if(on_selection || !modified)
+					click_gesture.set_state(Gtk.EventSequenceState.CLAIMED);
 			}
 		}
-
-		return false;
 	}
 
-	/* button_release_event */
-	private bool viewClickRelease(Gtk.Widget sender, Gdk.EventButton event) {
+	/* a release on a row: ends a drag, or selects only the row when nothing was dragged */
+	void view_click_release(int n_press, double x, double y) {
+		uint button = click_gesture.get_current_button();
+		bool modified = (click_gesture.get_current_event_state() & (Gdk.ModifierType.SHIFT_MASK | Gdk.ModifierType.CONTROL_MASK)) != 0;
+
 		/* if we were dragging, then set dragging to false */
-		if(dragging && event.button == 1) {
+		if(dragging && button == 1) {
 			dragging = false;
-			return true;
+			click_gesture.set_state(Gtk.EventSequenceState.CLAIMED);
 		}
-		else if(((event.state & Gdk.ModifierType.SHIFT_MASK) == Gdk.ModifierType.SHIFT_MASK) | ((event.state & Gdk.ModifierType.CONTROL_MASK) == Gdk.ModifierType.CONTROL_MASK)) {
-			return true;
+		else if(modified) {
+			click_gesture.set_state(Gtk.EventSequenceState.CLAIMED);
 		}
 		else {
-			TreePath path;
-			TreeViewColumn tvc;
-			int cell_x;
-			int cell_y;
-			int x = (int)event.x;
-			int y = (int)event.y;
-
-			if(!(get_path_at_pos(x, y, out path, out tvc, out cell_x, out cell_y))) return false;
+			TreePath? path;
+			if(!row_at(x, y, out path))
+				return;
 			get_selection().unselect_all();
 			get_selection().select_path(path);
-			return false;
 		}
 	}
 	
@@ -546,11 +529,12 @@ public class BeatBox.MusicList : GenericList {
 	/* In the queue, rows dragged within the list (or from another list) are
 	 * dropped at the pointer's position. */
 	void enable_queue_reordering() {
-		TargetEntry te = { "text/uri-list", TargetFlags.SAME_APP, 0 };
-		Gtk.drag_dest_set(this, DestDefaults.ALL, { te }, Gdk.DragAction.COPY | Gdk.DragAction.MOVE);
-		drag_motion.connect(queue_drag_motion);
-		drag_leave.connect(() => { set_drag_dest_row(null, TreeViewDropPosition.BEFORE); });
-		drag_data_received.connect(queue_drag_received);
+		var dest = new Gtk.DropTarget(GLib.Type.INVALID, Gdk.DragAction.COPY | Gdk.DragAction.MOVE);
+		dest.set_gtypes({ typeof(string), typeof(Gdk.FileList) });
+		dest.motion.connect(queue_drag_motion);
+		dest.leave.connect(() => { set_drag_dest_row(null, TreeViewDropPosition.BEFORE); });
+		dest.drop.connect(queue_drag_received);
+		add_controller(dest);
 	}
 	
 	int queue_drop_index(int x, int y, out TreePath? path, out TreeViewDropPosition pos) {
@@ -562,24 +546,28 @@ public class BeatBox.MusicList : GenericList {
 		return path.get_indices()[0] + (after ? 1 : 0);
 	}
 	
-	bool queue_drag_motion(Gdk.DragContext context, int x, int y, uint time) {
+	Gdk.DragAction queue_drag_motion(double x, double y) {
 		TreePath? path;
 		TreeViewDropPosition pos;
-		queue_drop_index(x, y, out path, out pos);
+		queue_drop_index((int)x, (int)y, out path, out pos);
 		set_drag_dest_row(path, pos);
-		// TreeView's own handler would clear the row: our model isn't a TreeDragDest
-		Signal.stop_emission_by_name(this, "drag-motion");
-		return true;
+		return Gdk.DragAction.COPY;
 	}
 	
-	void queue_drag_received(Gdk.DragContext context, int x, int y, Gtk.SelectionData data, uint info, uint time) {
-		Signal.stop_emission_by_name(this, "drag-data-received");
+	bool queue_drag_received(GLib.Value value, double x, double y) {
 		TreePath? path;
 		TreeViewDropPosition pos;
-		int index = queue_drop_index(x, y, out path, out pos);
+		int index = queue_drop_index((int)x, (int)y, out path, out pos);
 		set_drag_dest_row(null, TreeViewDropPosition.BEFORE);
+		string[] uris = {};
+		if(value.holds(typeof(Gdk.FileList))) {
+			foreach(unowned File f in ((Gdk.FileList)value.get_boxed()).get_files())
+				uris += f.get_uri();
+		}
+		else
+			uris = value.get_string().split("\n");
 		var medias = new Gee.ArrayList<Media>();
-		foreach(string uri in data.get_uris()) {
+		foreach(string uri in uris) {
 			var m = App.library.media_from_file(uri);
 			if(m != null)
 				medias.add(m);
@@ -588,6 +576,7 @@ public class BeatBox.MusicList : GenericList {
 			App.playback.insert_in_queue(medias, index);
 			select_medias(medias);
 		}
+		return true;
 	}
 	
 	void mediaRemoveClicked() {

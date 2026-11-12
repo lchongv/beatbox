@@ -20,9 +20,9 @@ etapa 2 con el andamio; `tools/gtk4-check.sh` tarda ~2 s.
 | T14 sueltos | D | [~] | | | |
 | T15 widgets simples | D | [~] | | | |
 | T16 vistas de origen | D | [~] | | | |
-| T20 listas (base y música) | H | [~] | | | |
+| T20 listas (base y música) | H | [x] | | 0 | arrastre de varias filas sin probar (riesgo 3, revisión manual); «Añadir a lista» abre el submenú al pulsar, no al pasar el ratón; DropTarget de la cola sin confirmar en 4.6 |
 | T21 otras listas | D | [ ] | | | |
-| T22 rejillas y lista emergente | H | [ ] | | | |
+| T22 rejillas y lista emergente | H | [~] | | | |
 | T23 muro de álbumes | H | [x] | | 0 | pulsar en el relleno vacío de la banda ya no la cierra (antes sí): revisión manual; SourceView.vala lo cubre T16 (wall_scroll.set_child) |
 | T24 widgets dibujados | H | [~] | | | |
 | T25 barra lateral | H | [ ] | | | |

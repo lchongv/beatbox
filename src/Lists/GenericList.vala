@@ -43,7 +43,8 @@ public abstract class BeatBox.GenericList : FastList {
 	
 	uint scroll_back_id; // the pending return to the playing song after a scroll
 	protected bool scrolled_recently;
-	Gtk.GestureClick click_gesture; // GTK3 controllers need a reference
+	protected Gtk.GestureClick click_gesture; // the press on the rows: see MusicList.view_click
+	protected Gtk.DragSource drag_source; // drags the selected rows to the sidebar
 	protected bool dragging;
 	
 	protected CellDataFunctionHelper cellHelper;
@@ -74,8 +75,8 @@ public abstract class BeatBox.GenericList : FastList {
 		if(tvs.get_hint() == TreeViewSetup.Hint.DUPLICATES)
 			icon_column = DuplicateColumn.ICON;
 		
-		var starred = BeatBox.App.icons.STARRED.render (IconSize.MENU, null);
-		var not_starred = BeatBox.App.icons.NOT_STARRED.render (IconSize.MENU, null);
+		var starred = BeatBox.App.icons.STARRED.render (IconSize.NORMAL, null);
+		var not_starred = BeatBox.App.icons.NOT_STARRED.render (IconSize.NORMAL, null);
 		
 		cellHelper = new CellDataFunctionHelper(this, _is_mixed, icon_column, starred, not_starred);
 		
@@ -84,24 +85,28 @@ public abstract class BeatBox.GenericList : FastList {
 		saved_locally_icon = new GLib.ThemedIcon.with_default_fallbacks ("document-save");
 		new_podcast_icon = App.icons.NEW_PODCAST.get_gicon ();
 		
-		// drag source
-		TargetEntry te = { "text/uri-list", TargetFlags.SAME_APP, 0};
-		drag_source_set(this, Gdk.ModifierType.BUTTON1_MASK, { te }, Gdk.DragAction.COPY);
+		// drag source: the selected rows, as "uri1\nuri2"
+		drag_source = new Gtk.DragSource();
+		drag_source.actions = Gdk.DragAction.COPY;
+		drag_source.prepare.connect(on_drag_prepare);
+		drag_source.drag_begin.connect(on_drag_begin);
+		drag_source.drag_end.connect(on_drag_end);
+		add_controller(drag_source);
 		
 		// allow selecting multiple rows
 		get_selection().set_mode(SelectionMode.MULTIPLE);
 		
 		insert_action_group("columns", columnActions);
 		
-		drag_begin.connect(on_drag_begin);
-		drag_data_get.connect(on_drag_data_get);
-		drag_end.connect(on_drag_end);
 		// any press, before the list handles it
-		click_gesture = new Gtk.GestureClick(this);
+		click_gesture = new Gtk.GestureClick();
 		click_gesture.button = 0;
 		click_gesture.propagation_phase = Gtk.PropagationPhase.CAPTURE;
 		click_gesture.pressed.connect(() => { scrolled_recently = true; });
-		row_activated.connect(row_activated_signal);
+		add_controller(click_gesture);
+		// a drag of several selected rows keeps the press that the list claims (MusicList.view_click)
+		drag_source.group(click_gesture);
+		row_activated.connect((path, column) => row_activated_signal(path, column));
 		rows_reordered.connect(updateTreeViewSetup);
 		App.playback.current_cleared.connect(current_cleared);
 		App.playback.media_played.connect(media_played);
@@ -249,11 +254,11 @@ public abstract class BeatBox.GenericList : FastList {
 			}
 			
 			// CAPTURE: before the header button turns the press into a click (sorting)
-			var header_click = new Gtk.GestureClick(get_column(index).get_button());
+			var header_click = new Gtk.GestureClick();
 			header_click.button = 0;
 			header_click.propagation_phase = Gtk.PropagationPhase.CAPTURE;
 			header_click.pressed.connect(view_header_click);
-			get_column(index).get_button().set_data("click-gesture", header_click); // GTK3 controllers need a reference
+			get_column(index).get_button().add_controller(header_click);
 			get_column(index).notify["width"].connect(updateTreeViewSetup);
 
 			++index;
@@ -462,7 +467,7 @@ public abstract class BeatBox.GenericList : FastList {
 		
 		// If there is only 1 media and it's location is invalid, prompt for user to find it
 		if(to_edit.size == 1 && !GLib.File.new_for_uri(m.uri).query_exists() && !String.is_empty(m.uri) && m.uri.has_prefix(music_folder_uri)) {
-			m.unique_status_image = App.icons.PROCESS_ERROR.render(IconSize.MENU, get_style_context());
+			m.unique_status_image = App.icons.PROCESS_ERROR.render(IconSize.NORMAL, get_style_context());
 			FileNotFoundDialog fnfd = new FileNotFoundDialog(to_edit);
 			fnfd.present();
 		}
@@ -560,47 +565,56 @@ public abstract class BeatBox.GenericList : FastList {
 		return is_current_list;
 	}
 	
-	/** **********************************************************
+	/** The row under (x, y), in the coordinates of this widget (header included) */
+	protected bool row_at(double x, double y, out Gtk.TreePath? path) {
+		int bin_x, bin_y;
+		convert_widget_to_bin_window_coords((int)x, (int)y, out bin_x, out bin_y);
+		TreeViewColumn? column;
+		int cell_x, cell_y;
+		return get_path_at_pos(bin_x, bin_y, out path, out column, out cell_x, out cell_y);
+	}
+
+	/** **************************************************
 	 * Drag and drop support. GenericView is a source for uris and can
 	 * be dragged to a playlist in the sidebar; the queue's list also takes
 	 * drops to reorder (MusicList.enable_queue_reordering).
 	***************************************************************/
-	void on_drag_begin(Gtk.Widget sender, Gdk.DragContext context) {
-		dragging = true;
-		App.window.dragging_from_music = true;
-		debug("drag begin\n");
-
-		Gdk.drag_abort(context, Gtk.get_current_event_time());
-
-		if(get_selection().count_selected_rows() == 1) {
-			drag_source_set_icon_name(this, "audio-x-generic");
-		}
-		else if(get_selection().count_selected_rows() > 1) {
-			drag_source_set_icon_name(this, "folder-music");
-		}
-		else {
-			return;
-		}
-	}
-	
-	void on_drag_data_get(Gdk.DragContext context, Gtk.SelectionData selection_data, uint info, uint time_) {
-		string[] uris = null;
+	Gdk.ContentProvider? on_drag_prepare(double x, double y) {
+		string[] uris = {};
 
 		foreach(Media m in get_selected_medias()) {
 			uris += (m.uri);
 		}
 
-		if (uris != null)
-			selection_data.set_uris(uris);
+		if(uris.length == 0)
+			return null;
+		return new Gdk.ContentProvider.for_value(string.joinv("\n", uris));
 	}
-	
-	void on_drag_end(Gtk.Widget sender, Gdk.DragContext context) {
+
+	void on_drag_begin(Gdk.Drag drag) {
+		dragging = true;
+		App.window.dragging_from_music = true;
+		debug("drag begin\n");
+
+		string? icon_name = null;
+		if(get_selection().count_selected_rows() == 1)
+			icon_name = "audio-x-generic";
+		else if(get_selection().count_selected_rows() > 1)
+			icon_name = "folder-music";
+
+		if(icon_name != null) {
+			var icon = Gtk.IconTheme.get_for_display(get_display()).lookup_icon(icon_name, null, 32, 1, Gtk.TextDirection.NONE, 0);
+			drag_source.set_icon(icon, 0, 0);
+		}
+	}
+
+	void on_drag_end(Gdk.Drag drag, bool delete_data) {
 		dragging = false;
 		App.window.dragging_from_music = false;
 
 		debug("drag end\n");
 	}
-	
+
 	/** **************************************************
 	 * View search. All lists use same search algorithm 
 	 * *************************************************/
@@ -641,3 +655,5 @@ public abstract class BeatBox.GenericList : FastList {
 		return (a > b) ? 1 : -1;
 	}
 }
+
+// GTK4: multi-row drag is unverified without a display; see docs/gtk4/ESTADO.md
