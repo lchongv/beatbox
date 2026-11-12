@@ -25,7 +25,7 @@ etapa 2 con el andamio; `tools/gtk4-check.sh` tarda ~2 s.
 | T22 rejillas y lista emergente | H | [x] | | 1 | la lista emergente ya no se centra sobre el muro (GTK4 no coloca ventanas): PopupListView.vala show_list() |
 | T23 muro de álbumes | H | [x] | | 0 | pulsar en el relleno vacío de la banda ya no la cierra (antes sí): revisión manual; SourceView.vala lo cubre T16 (wall_scroll.set_child) |
 | T24 widgets dibujados | H | [~] | | | |
-| T25 barra lateral | H | [~] | | | |
+| T25 barra lateral | H | [x] | | 0 | arrastre a listas: solo texto (ya no acepta archivos de fuera); flecha de expansión con render_arrow; color de selección con theme_selected_fg_color; posible doble resaltado al arrastrar: revisión manual |
 | T26 «Reproduciendo» | H | [x] | | 0 | video_area_xid borrado: LibraryWindow.vala:50 (T27) y Streamer.vala 269/338/424/517/519 (T14) lo leían: decidir 0 o quitarlo (T42); EventBox de letras y resumen pasa al widget que envolvía, sin GestureClick |
 | T27 ventana principal | H | [x] | | 5 | video_area_xid devuelve 0 (Streamer.vala lo usa: T42); keep-above perdido en mini; tamaño con barra de título (track_size); clic en carátula del LCD sin reclamar; divisor de TrackReport diferido. Revisión GUI: semáforo, atajos con foco en campo, arrastre de archivos, WindowHandle |
 | T28 núcleo de la aplicación | H | [~] | | | |

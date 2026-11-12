@@ -59,7 +59,7 @@ public class BeatBox.SideTreeView : BeatBox.SideBar {
 		view_to_iter = new HashMap<View, TreeIter?>();
 
 		// Setup theming
-		get_style_context().add_class (STYLE_CLASS_SIDEBAR);
+		add_css_class ("sidebar");
 		
 		buildUI();
 	}
@@ -74,11 +74,12 @@ public class BeatBox.SideTreeView : BeatBox.SideBar {
 		playlistMenu.append_item(App.actions.model_item(App.actions.import_playlist));
 		
 		// CAPTURE: before the tree view handles the press (selection)
-		side_list_click = new Gtk.GestureClick(this);
+		side_list_click = new Gtk.GestureClick();
 		side_list_click.button = 0;
 		side_list_click.propagation_phase = Gtk.PropagationPhase.CAPTURE;
 		side_list_click.pressed.connect(sideListClick);
-		this.row_activated.connect(sideListDoubleClick);
+		this.add_controller(side_list_click);
+		this.row_activated.connect((path, column) => sideListDoubleClick(path, column));
 		this.true_selection_change.connect(side_list_selection_change);
 		this.true_drag_received.connect(true_drag_received_signal);
 		
@@ -363,12 +364,12 @@ public class BeatBox.SideTreeView : BeatBox.SideBar {
 		App.window.set_active_view ((View)w);
 	}
 	
-	void true_drag_received_signal(TreeIter iter, Gtk.SelectionData data) {
+	void true_drag_received_signal(TreeIter iter, string[] uris) {
 		Widget w = getWidget(convertToChild(iter));
 		View view = (View)w;
-		
+
 		if(view.can_receive_drop()) {
-			view.drag_received(data);
+			view.drag_received(uris);
 		}
 	}
 }

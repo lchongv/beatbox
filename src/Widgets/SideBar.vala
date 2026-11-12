@@ -58,7 +58,7 @@ public class BeatBox.SideBar : Gtk.TreeView {
 	
 	public signal void clickable_clicked(TreeIter iter);
 	public signal void true_selection_change(TreeIter selected);
-	public signal void true_drag_received(TreeIter iter, Gtk.SelectionData data);
+	public signal void true_drag_received(TreeIter iter, string[] uris);
 	
 	public SideBar() {
 		tree = new TreeStore(9, typeof(GLib.Object), typeof(Widget), typeof(bool), 
@@ -85,25 +85,19 @@ public class BeatBox.SideBar : Gtk.TreeView {
 		
 		this.get_selection().changed.connect(selectionChange);
 		// CAPTURE: before the tree view handles the press (selection)
-		side_bar_click = new Gtk.GestureClick(this);
+		side_bar_click = new Gtk.GestureClick();
 		side_bar_click.propagation_phase = Gtk.PropagationPhase.CAPTURE;
 		side_bar_click.pressed.connect(sideBarClick);
-		
-		// drag and drop
-		//var entry = Gtk.TargetEntry("text/uri", 0, 0);
-		
-		//TargetEntry te1 = { "text/uri-list", 0, 0 };
-		TargetEntry te1 = { "text/uri-list", TargetFlags.SAME_APP, 0 };
-		//drag_source_set(this, Gdk.ModifierType.BUTTON1_MASK, { te1 }, Gdk.DragAction.COPY);
-		Gtk.drag_dest_set(this, DestDefaults.ALL, { te1 }, Gdk.DragAction.COPY);
-		//drag_dest_add_uri_targets(this);
-		//enable_model_drag_dest({te1}, Gdk.DragAction.COPY);
-				
-		drag_motion.connect(drag_motion_signal);
-		drag_leave.connect(drag_leave_signal);
-		//drag_drop.connect(drag_drop_signal);
-		drag_data_received.connect(drag_received);
-		
+		this.add_controller(side_bar_click);
+
+		// drag and drop: only strings, i.e. the "\n" joined uris of the rows dragged inside
+		// BeatBox. Files from outside are not accepted (as the old SAME_APP target)
+		var dest = new Gtk.DropTarget(typeof(string), Gdk.DragAction.COPY);
+		dest.motion.connect(drag_motion_signal);
+		dest.leave.connect(drag_leave_signal);
+		dest.drop.connect(drag_received);
+		this.add_controller(dest);
+
 	}
 	
 	// For the sidebar
@@ -443,52 +437,48 @@ public class BeatBox.SideBar : Gtk.TreeView {
 		return rv;
 	}
 	
-	bool drag_motion_signal(Gdk.DragContext context, int x, int y, uint time) {
+	Gdk.DragAction drag_motion_signal(double x, double y) {
 		TreeIter iter;
 		TreePath? path;
 		TreeViewDropPosition pos;
-		
-		if(get_dest_row_at_pos (x, y, out path, out pos)) {
-			if(!filter.get_iter(out iter, path))
-				return false;
-		
+		TreePath? target = null; // row the tree view marks as the drop position
+
+		highlight_iter = null;
+		if(get_dest_row_at_pos ((int) x, (int) y, out path, out pos) && filter.get_iter(out iter, path)) {
 			bool droppable;
 			filter.get(iter, SideBarColumn.COLUMN_DROPPABLE, out droppable);
 			if(droppable) {
-				pos = TreeViewDropPosition.INTO_OR_BEFORE;
 				highlight_iter = iter;
+				target = path;
 			}
 			else { // test if it's parent is droppable, and if so make that the highlight
 				TreeIter parent;
 				bool parent_droppable = false;
-				
+
 				if(filter.iter_parent(out parent, iter)) {
 					filter.get(parent, SideBarColumn.COLUMN_DROPPABLE, out parent_droppable);
 				}
-				
-				if(parent_droppable)
+
+				if(parent_droppable) {
 					highlight_iter = parent;
-				else
-					highlight_iter = null;
+					target = filter.get_path(parent);
+				}
 			}
 		}
-		else {
-			highlight_iter = null;
-		}
-		
+
+		set_drag_dest_row(target, TreeViewDropPosition.INTO_OR_BEFORE);
 		queue_draw();
-		
-		return false;
+
+		return (highlight_iter != null) ? Gdk.DragAction.COPY : 0;
 	}
-	
-	void drag_leave_signal(Gdk.DragContext context, uint time) {
+
+	void drag_leave_signal() {
 		highlight_iter = null;
+		set_drag_dest_row(null, TreeViewDropPosition.INTO_OR_BEFORE);
 		queue_draw();
 	}
-	
-	void drag_received(Gdk.DragContext context, int x, int y, Gtk.SelectionData data, uint info, uint timestamp) {
-		// the model isn't a TreeDragDest: TreeView's own handler must not run
-		Signal.stop_emission_by_name(this, "drag-data-received");
+
+	bool drag_received(GLib.Value value, double x, double y) {
 		bool success = false;
 		TreeIter? iter;
 		TreePath? path;
@@ -496,38 +486,40 @@ public class BeatBox.SideBar : Gtk.TreeView {
 		int cell_x;
 		int cell_y;
 		string text;
-		
+		string[] uris = value.get_string().split("\n");
+
 		// Get the path and iter from x,y and make sure this is a droppable path.
-		if(get_path_at_pos(x, y, out path, out column, out cell_x, out cell_y)) {
+		if(get_path_at_pos((int) x, (int) y, out path, out column, out cell_x, out cell_y)) {
 			if(filter.get_iter(out iter, path)) {
 				bool droppable;
 				filter.get(iter, SideBarColumn.COLUMN_DROPPABLE, out droppable, SideBarColumn.COLUMN_TEXT, out text);
 				if(droppable) {
 					message("Drag dropped on hovered item %s\n", text);
 					success = true;
-					true_drag_received(iter, data);
+					true_drag_received(iter, uris);
 				}
 				else { // if parent is droppable, put drop on that
 					TreeIter parent;
 					bool parent_droppable = false;
-					
+
 					if(filter.iter_parent(out parent, iter)) {
 						filter.get(parent, SideBarColumn.COLUMN_DROPPABLE, out parent_droppable, SideBarColumn.COLUMN_TEXT, out text);
 					}
-					
+
 					if(parent_droppable) {
 						message("Drag dropped on hovered item's parent %s\n", text);
 						success = true;
-						true_drag_received(parent, data);
+						true_drag_received(parent, uris);
 					}
 				}
 			}
 		}
-		
+
 		highlight_iter = null;
+		set_drag_dest_row(null, TreeViewDropPosition.INTO_OR_BEFORE);
 		queue_draw();
-		
-		Gtk.drag_finish (context, success, false, timestamp);
+
+		return success;
 	}
 	
 }// END CLASS

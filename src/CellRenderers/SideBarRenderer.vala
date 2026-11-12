@@ -69,19 +69,26 @@ public class BeatBox.SideBarRenderer : CellRenderer {
 		return "#%02x%02x%02x".printf((int)(c.red * 255), (int)(c.green * 255), (int)(c.blue * 255));
 	}
 	
-	public override void get_size(Widget widget, Rectangle? cell_area, out int x_offset, out int y_offset, out int width, out int height) {
-		x_offset = 0;
-		y_offset = 0;
-		width = 1; // GTK3 ignores the height of a renderer that reports no width
-		int dumby;
-		widget.create_pango_layout("Test").get_pixel_size(out dumby, out height);
-		height += 6; // 3 px extra on each side for the text
+	public override void get_preferred_width(Widget widget, out int minimum_size, out int natural_size) {
+		minimum_size = 1; // GTK3 ignores the height of a renderer that reports no width
+		natural_size = 1;
 	}
-	
-	public override void render(Cairo.Context context, Widget widget, Rectangle background_area, Rectangle cell_area, CellRendererState flags) {
-		Gdk.cairo_rectangle (context, background_area);
+
+	public override void get_preferred_height(Widget widget, out int minimum_size, out int natural_size) {
+		int dumby;
+		widget.create_pango_layout("Test").get_pixel_size(out dumby, out minimum_size);
+		minimum_size += 6; // 3 px extra on each side for the text
+		natural_size = minimum_size;
+	}
+
+	public override void snapshot(Gtk.Snapshot s, Widget widget, Gdk.Rectangle background_area, Gdk.Rectangle cell_area, CellRendererState flags) {
+		// the cairo node covers the background, as the old clip did
+		var r = Graphene.Rect();
+		r.init(background_area.x, background_area.y, background_area.width, background_area.height);
+		var context = s.append_cairo(r);
+		context.rectangle(background_area.x, background_area.y, background_area.width, background_area.height);
 		context.clip();
-		
+
 		StateFlags state;
 		RGBA rgba;
 		Pango.Layout layout; // for text to draw
@@ -91,17 +98,23 @@ public class BeatBox.SideBarRenderer : CellRenderer {
 		int depth;
 		Pixbuf clickable;
 		bool rtl; // right to left
-		
+
 		model.get(iter, SideBarColumn.COLUMN_PIXBUF, out pix, SideBarColumn.COLUMN_TEXT, out text, SideBarColumn.COLUMN_CLICKABLE, out clickable);
 		TreePath path = model.get_path(iter);
 		depth = path.get_depth();
 		layout = widget.create_pango_layout(text);
 		children = model.iter_n_children(iter);
-		
+
 		int flag = flags & Gtk.CellRendererState.SELECTED;
 		state = (flag != 0 && depth != 1) ? StateFlags.SELECTED : StateFlags.NORMAL;
-		
-		rgba = widget.get_style_context().get_color (state);
+
+		// GTK4 colors take no state argument: the selected text color is looked up by name
+		rgba = widget.get_style_context().get_color();
+		if(state == StateFlags.SELECTED) {
+			RGBA selected;
+			if(widget.get_style_context().lookup_color("theme_selected_fg_color", out selected))
+				rgba = selected;
+		}
 		rtl = widget.get_direction() == Gtk.TextDirection.RTL;
 		
 		// Draw a blank space for each level of indent
@@ -154,17 +167,14 @@ public class BeatBox.SideBarRenderer : CellRenderer {
 							background_area.width, background_area.height);
 		}
 		
-		// Draw the expander
+		// Draw the expander. GTK4 contexts have no set_state, so the expanded
+		// state is drawn by the arrow's angle (south when expanded, east when collapsed)
 		if(depth == 1 && children > 0) {
 			int far_right = cell_area.x + cell_area.width;
-			
-			if(expanded)
-				widget.get_style_context().set_state(StateFlags.ACTIVE);
-			else
-				widget.get_style_context().set_state(StateFlags.NORMAL);
-			
-			widget.get_style_context().render_expander(context, rtl ? cell_area.x : far_right - EXPANDER_SIZE,
-		                                           cell_area.y + 8 / 2, 8.0, 8.0);
+			double angle = expanded ? Math.PI : Math.PI / 2.0;
+
+			widget.get_style_context().render_arrow(context, angle, rtl ? cell_area.x : far_right - EXPANDER_SIZE,
+		                                           cell_area.y + 8 / 2, 8.0);
 		}
 		                         
 		                         
