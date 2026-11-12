@@ -34,8 +34,8 @@ public class BeatBox.SpectrumDisplay : BeatBox.Display, Box {
 	public SpectrumDisplay() {
 		area = new DrawingArea();
 		area.hexpand = area.vexpand = true;
-		add(area);
-		area.draw.connect(draw_bars);
+		append(area);
+		area.set_draw_func(draw_bars);
 		area.map.connect(() => App.playback.want_spectrum(true));
 		area.unmap.connect(() => App.playback.want_spectrum(false));
 
@@ -54,11 +54,11 @@ public class BeatBox.SpectrumDisplay : BeatBox.Display, Box {
 	}
 
 	int bars_per_side() {
-		return ((area.get_allocated_width() - MIDDLE_GAP) / 2 + BAR_GAP) / (BAR + BAR_GAP);
+		return ((area.get_width() - MIDDLE_GAP) / 2 + BAR_GAP) / (BAR + BAR_GAP);
 	}
 
 	int rows() {
-		return (area.get_allocated_height() + SEGMENT_GAP) / (SEGMENT + SEGMENT_GAP);
+		return (area.get_height() + SEGMENT_GAP) / (SEGMENT + SEGMENT_GAP);
 	}
 
 	void clear() {
@@ -95,11 +95,11 @@ public class BeatBox.SpectrumDisplay : BeatBox.Display, Box {
 			area.queue_draw();
 	}
 
-	bool draw_bars(Cairo.Context cr) {
+	void draw_bars(Gtk.DrawingArea a, Cairo.Context cr, int width, int height) {
 		int n = bars_per_side(), rows = rows();
-		int middle = area.get_allocated_width() / 2;
-		int bottom = (area.get_allocated_height() + rows * (SEGMENT + SEGMENT_GAP) - SEGMENT_GAP) / 2;
-		var color = get_style_context().get_color(get_state_flags()); // the LCD's text
+		int middle = width / 2;
+		int bottom = (height + rows * (SEGMENT + SEGMENT_GAP) - SEGMENT_GAP) / 2;
+		var color = get_style_context().get_color(); // the LCD's text
 
 		// the unlit segments, the lit ones and the top lit one of each bar (the darkest), one fill each
 		double[] alphas = { 0.09, 0.7, 1.0 };
@@ -116,7 +116,6 @@ public class BeatBox.SpectrumDisplay : BeatBox.Display, Box {
 			cr.set_source_rgba(color.red, color.green, color.blue, color.alpha * alphas[kind]);
 			cr.fill();
 		}
-		return false;
 	}
 
 	public bool is_cancellable() {

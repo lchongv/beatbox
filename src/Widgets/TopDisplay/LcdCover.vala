@@ -19,7 +19,7 @@ public class BeatBox.LcdCover : Image {
 	string picture_uri = "";    // the file picture was read from (or is being read from)
 
 	public LcdCover () {
-		no_show_all = true;
+		visible = false;
 		valign = Align.FILL;  // the stylesheet pulls it over the LCD's padding (see .lcd-cover)
 		get_style_context ().add_class ("lcd-cover");
 
@@ -126,7 +126,7 @@ public class BeatBox.LcdCover : Image {
 	/** A picture at full size in a borderless window: drag it anywhere, wheel or +/- zooms,
 	 *  0 goes back to the first size, double-click or Esc closes it */
 	public static void show_picture (Gtk.Window parent, Gdk.Pixbuf source, string title) {
-		var area = parent.get_display ().get_monitor_at_window (parent.get_window ()).get_workarea ();
+		var area = parent.get_display ().get_monitor_at_surface (parent.get_surface ()).get_geometry ();
 		int max = (int)(int.min (area.width, area.height) * 0.8);
 		double fit = double.min (1.0, double.min ((double)max / source.width, (double)max / source.height));
 		double zoom = fit;
@@ -135,30 +135,32 @@ public class BeatBox.LcdCover : Image {
 		var win = new Gtk.Window ();
 		win.decorated = false;
 		win.transient_for = parent;
-		win.window_position = WindowPosition.CENTER_ON_PARENT;
 		win.title = title;
-		win.add (image);
+		win.set_child (image);
 		// ponytail: rescales the whole pixbuf on each step; fine up to the 2.5x cap
 		ZoomFunc set_zoom = (z) => {
 			zoom = z.clamp (0.1, 2.5);
-			image.pixbuf = src.scale_simple (int.max (1, (int)(src.width * zoom)), int.max (1, (int)(src.height * zoom)), Gdk.InterpType.BILINEAR);
-			win.resize (1, 1); // shrink with the image
+			UI.show_pixbuf (image, src.scale_simple (int.max (1, (int)(src.width * zoom)), int.max (1, (int)(src.height * zoom)), Gdk.InterpType.BILINEAR));
+			win.set_default_size (1, 1); // shrink with the image; GTK4-PENDIENTE: GTK4 may not shrink a window that grew, revisar en la GUI
 			return true;
 		};
 		set_zoom (fit);
-		var scroll = new Gtk.EventControllerScroll (win, Gtk.EventControllerScrollFlags.VERTICAL);
-		scroll.scroll.connect ((dx, dy) => { set_zoom (dy < 0 ? zoom * 1.15 : zoom / 1.15); });
-		win.set_data ("scroll-controller", scroll); // GTK3 controllers need a reference
-		var double_click = new Gtk.GestureClick (win);
+		var scroll = new Gtk.EventControllerScroll (Gtk.EventControllerScrollFlags.VERTICAL);
+		scroll.scroll.connect ((dx, dy) => { set_zoom (dy < 0 ? zoom * 1.15 : zoom / 1.15); return true; });
+		((Gtk.Widget) win).add_controller (scroll); // Window.add_controller () is the shortcut one
+		win.set_data<Gtk.EventControllerScroll> ("scroll-controller", scroll); // the window keeps a reference to it
+		var double_click = new Gtk.GestureClick ();
 		double_click.button = 0;
+		((Gtk.Widget) win).add_controller (double_click); // Window.add_controller () is the shortcut one
 		double_click.pressed.connect ((n_press) => {
 			if (n_press == 2)
 				win.destroy ();
 		});
-		win.set_data ("click-gesture", double_click);
+		win.set_data<Gtk.GestureClick> ("click-gesture", double_click);
 		UI.make_window_draggable (win); // drags move it
-		var keys = new Gtk.EventControllerKey (win);
-		win.set_data ("key-controller", keys);
+		var keys = new Gtk.EventControllerKey ();
+		((Gtk.Widget) win).add_controller (keys); // Window.add_controller () is the shortcut one
+		win.set_data<Gtk.EventControllerKey> ("key-controller", keys);
 		keys.key_pressed.connect ((keyval, keycode, state) => {
 			if (keyval == Gdk.Key.Escape)
 				win.destroy ();
@@ -170,7 +172,6 @@ public class BeatBox.LcdCover : Image {
 				set_zoom (fit);
 			return false;
 		});
-		win.show_all ();
 		win.present (); // a new window is not focused by itself: Esc needs the focus
 	}
 
@@ -180,13 +181,15 @@ public class BeatBox.LcdCover : Image {
 	}
 
 	int side_for_now () {
-		int h = get_allocated_height ();
+		int h = get_height ();
 		return (h > 16) ? h : 54;  // until the first allocation
 	}
 
 	// the square is as wide as it is tall: the box gives the width asked here, so the logo is not cut
-	public override void get_preferred_width (out int minimum_width, out int natural_width) {
-		minimum_width = natural_width = side_for_now ();
+	public override void measure (Gtk.Orientation orientation, int for_size, out int minimum, out int natural, out int minimum_baseline, out int natural_baseline) {
+		base.measure (orientation, for_size, out minimum, out natural, out minimum_baseline, out natural_baseline);
+		if (orientation == Gtk.Orientation.HORIZONTAL)
+			minimum = natural = side_for_now ();
 	}
 
 	/** Scale the cover to fit a square of the given side (a logo may not be square), rounding its left corners */
@@ -209,13 +212,13 @@ public class BeatBox.LcdCover : Image {
 		cr.clip ();
 		Gdk.cairo_set_source_pixbuf (cr, scaled, (side - w) / 2, (side - h) / 2);
 		cr.paint ();
-		set_from_pixbuf (Gdk.pixbuf_get_from_surface (surface, 0, 0, side, side));
+		UI.show_pixbuf (this, Gdk.pixbuf_get_from_surface (surface, 0, 0, side, side));
 	}
 
-	public override void size_allocate (Allocation a) {
-		base.size_allocate (a);
-		if (source != null && a.height > 16 && a.height != side) {
-			int h = a.height;
+	public override void size_allocate (int width, int height, int baseline) {
+		base.size_allocate (width, height, baseline);
+		if (source != null && height > 16 && height != side) {
+			int h = height;
 			Idle.add (() => { render (h); return Source.REMOVE; }); // resizing inside an allocation would loop
 		}
 	}

@@ -63,7 +63,7 @@ public class BeatBox.Visualizer : DrawingArea {
 	const string[] THEME_NAMES = { N_("Amber"), N_("Ocean"), N_("Neon"), N_("Forest"), N_("Rainbow"), N_("Sunset") };
 
 	bool auto_change = true; // the effects change by themselves (menu)
-	Gtk.Menu? menu = null;
+	PopMenu? menu = null;
 	GestureClick press;
 
 	// the classic effects
@@ -73,10 +73,11 @@ public class BeatBox.Visualizer : DrawingArea {
 	int64 last_spectrum = 0;
 
 	public Visualizer() {
-		add_events(Gdk.EventMask.BUTTON_PRESS_MASK);
-		press = new GestureClick(this);
+		set_draw_func(on_draw);
+		press = new GestureClick();
 		press.button = 0;
 		press.pressed.connect(on_pressed);
+		add_controller(press);
 		map.connect(start);
 		unmap.connect(stop);
 		App.playback.spectrum_update.connect(on_spectrum);
@@ -108,11 +109,10 @@ public class BeatBox.Visualizer : DrawingArea {
 #endif
 	}
 
-	public override bool draw(Cairo.Context cr) {
-		int width = get_allocated_width(), height = get_allocated_height();
+	void on_draw(Gtk.DrawingArea area, Cairo.Context cr, int width, int height) {
 		if (classic != null) {
 			classic_draw(classic, cr, width, height);
-			return true;
+			return;
 		}
 #if HAVE_PROJECTM
 		if (frame != null) {
@@ -120,12 +120,11 @@ public class BeatBox.Visualizer : DrawingArea {
 			cr.scale((double) width / frame.get_width(), -(double) height / frame.get_height());
 			cr.set_source_surface(frame, 0, 0);
 			cr.paint();
-			return true;
+			return;
 		}
 #endif
 		cr.set_source_rgb(0, 0, 0);
 		cr.paint();
-		return true;
 	}
 
 	/* ---- Classic effects ---- */
@@ -196,7 +195,7 @@ public class BeatBox.Visualizer : DrawingArea {
 		if (button == Gdk.BUTTON_PRIMARY && n_press == 2)
 			next_effect();
 		else if (button == Gdk.BUTTON_SECONDARY)
-			show_menu();
+			show_menu(x, y);
 	}
 
 	void next_effect() {
@@ -208,31 +207,30 @@ public class BeatBox.Visualizer : DrawingArea {
 #endif
 	}
 
-	void show_menu() {
-		menu = new Gtk.Menu();
-		menu.attach_to_widget(this, null);
-		var current = new Gtk.MenuItem.with_label(current_effect_name());
+	void show_menu(double x, double y) {
+		menu = new PopMenu();
+		var current = new PopMenuItem.with_label(current_effect_name());
 		current.sensitive = false;
 		var current_label = (Label) current.get_child();
 		current_label.ellipsize = Pango.EllipsizeMode.END;
 		current_label.max_width_chars = 48;
 		menu.append(current);
-		menu.append(new SeparatorMenuItem());
-		var next = new Gtk.MenuItem.with_label(_("Next Effect"));
-		next.activate.connect(next_effect);
+		menu.append(new PopMenuSeparator());
+		var next = new PopMenuItem.with_label(_("Next Effect"));
+		next.clicked.connect(next_effect);
 		menu.append(next);
 #if HAVE_PROJECTM
 		if (instance != null) {
-			var previous = new Gtk.MenuItem.with_label(_("Previous Effect"));
+			var previous = new PopMenuItem.with_label(_("Previous Effect"));
 			previous.sensitive = history.size > 0;
-			previous.activate.connect(() => {
+			previous.clicked.connect(() => {
 				going_back = true;
 				wanted_preset = history.remove_at(history.size - 1);
 			});
 			menu.append(previous);
 		}
 #endif
-		var change = new CheckMenuItem.with_label(_("Change Effects by Themselves"));
+		var change = new PopMenuCheck.with_label(_("Change Effects by Themselves"));
 		change.active = auto_change;
 		change.toggled.connect(() => {
 			auto_change = change.active;
@@ -243,15 +241,14 @@ public class BeatBox.Visualizer : DrawingArea {
 #endif
 		});
 		menu.append(change);
-		menu.append(new SeparatorMenuItem());
+		menu.append(new PopMenuSeparator());
 		if (classic != null)
 			add_classic_items(menu);
 #if HAVE_PROJECTM
 		else if (instance != null)
 			add_preset_items(menu, presets_root());
 #endif
-		menu.show_all();
-		menu.popup_at_pointer(null);
+		menu.popup_at(this, x, y);
 	}
 
 	string current_effect_name() {
@@ -265,35 +262,46 @@ public class BeatBox.Visualizer : DrawingArea {
 	}
 
 	// the styles, then the palettes in a submenu
-	void add_classic_items(Gtk.Menu menu) {
-		unowned SList<RadioMenuItem>? styles = null;
+	void add_classic_items(PopMenu menu) {
+		// a radio group: the items are unchecked by hand when one is chosen
+		var styles = new Gee.ArrayList<PopMenuCheck>();
 		for (int i = 0; i < STYLE_NAMES.length; i++) {
-			var item = new RadioMenuItem.with_label(styles, _(STYLE_NAMES[i]));
-			styles = item.get_group();
+			var item = new PopMenuCheck.with_label(_(STYLE_NAMES[i]), true);
+			styles.add(item);
 			item.active = i == classic_get_style(classic);
 			int style = i;
 			item.toggled.connect(() => {
-				if (item.active)
+				if (item.active) {
 					classic_set_style(classic, style);
+					foreach (var other in styles)
+						if (other != item)
+							other.active = false;
+				}
 			});
 			menu.append(item);
 		}
-		var colors = new Gtk.Menu();
-		unowned SList<RadioMenuItem>? themes = null;
+		var colors = new PopMenu();
+		var themes = new Gee.ArrayList<PopMenuCheck>();
 		for (int i = 0; i < THEME_NAMES.length; i++) {
-			var item = new RadioMenuItem.with_label(themes, _(THEME_NAMES[i]));
-			themes = item.get_group();
+			var item = new PopMenuCheck.with_label(_(THEME_NAMES[i]), true);
+			themes.add(item);
 			item.active = i == classic_get_theme(classic);
 			int theme = i;
 			item.toggled.connect(() => {
-				if (item.active)
+				if (item.active) {
 					classic_set_theme(classic, theme);
+					foreach (var other in themes)
+						if (other != item)
+							other.active = false;
+				}
 			});
 			colors.append(item);
 		}
-		var colors_item = new Gtk.MenuItem.with_label(_("Colors"));
-		colors_item.submenu = colors;
-		menu.append(new SeparatorMenuItem());
+		// the palettes open beside the item, and the menu stays open meanwhile
+		var colors_item = new PopMenuItem.with_label(_("Colors"));
+		colors_item.keep_open = true;
+		colors_item.clicked.connect(() => colors.popup_at(colors_item, colors_item.get_width(), 0)); // GTK4-PENDIENTE: se abre al clicar (GTK3 al pasar el raton) y al elegir solo se cierra el submenu, porque PopMenu cierra solo su menu mas cercano
+		menu.append(new PopMenuSeparator());
 		menu.append(colors_item);
 	}
 
@@ -371,7 +379,7 @@ public class BeatBox.Visualizer : DrawingArea {
 
 	// the frame follows the view's size, up to MAX_WIDTH; a new size is a new pbuffer
 	bool fit_frame() {
-		int width = int.max(1, get_allocated_width()), height = int.max(1, get_allocated_height());
+		int width = int.max(1, get_width()), height = int.max(1, get_height());
 		if (width > MAX_WIDTH) {
 			height = int.max(1, height * MAX_WIDTH / width);
 			width = MAX_WIDTH;
@@ -471,30 +479,32 @@ public class BeatBox.Visualizer : DrawingArea {
 		files = milks.to_array();
 	}
 
-	// a folder's subfolders (filled when first pointed at: some hold hundreds) and presets
-	void add_preset_items(Gtk.Menu menu, string dir) {
+	// a folder's subfolders (filled when first opened: some hold hundreds) and presets
+	void add_preset_items(PopMenu menu, string dir) {
 		string[] folders, files;
 		list_folder(dir, out folders, out files);
 		foreach (var folder in folders) {
-			var item = new Gtk.MenuItem.with_label(folder);
-			var submenu = new Gtk.Menu();
-			item.submenu = submenu;
+			var item = new PopMenuItem.with_label(folder);
+			item.keep_open = true; // the folder opens beside it; the menu stays open meanwhile
+			var submenu = new PopMenu();
 			string path = Path.build_filename(dir, folder);
-			item.select.connect(() => {
-				if (submenu.get_children() == null) {
+			bool filled = false;
+			item.clicked.connect(() => {
+				if (!filled) {
+					filled = true;
 					add_preset_items(submenu, path);
-					submenu.show_all();
 				}
+				submenu.popup_at(item, item.get_width(), 0); // GTK4-PENDIENTE: como el submenu de colores (se abre al clicar, y al elegir cierra solo el submenu)
 			});
 			menu.append(item);
 		}
 		foreach (var file in files) {
-			var item = new Gtk.MenuItem.with_label(file.replace(".milk", ""));
+			var item = new PopMenuItem.with_label(file.replace(".milk", ""));
 			var label = (Label) item.get_child(); // some names are a sentence long: they differ at the end
 			label.ellipsize = Pango.EllipsizeMode.MIDDLE;
 			label.max_width_chars = 60;
 			string path = Path.build_filename(dir, file);
-			item.activate.connect(() => { wanted_preset = path; });
+			item.clicked.connect(() => { wanted_preset = path; });
 			menu.append(item);
 		}
 	}

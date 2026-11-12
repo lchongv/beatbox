@@ -1,5 +1,5 @@
 /*
- * Cover Flow drawn with Cairo (GTK3, no OpenGL).
+ * Cover Flow drawn with Cairo (GTK4, no OpenGL).
  *
  * Side covers are faked into perspective by painting them as thin vertical
  * strips whose height shrinks towards the far edge. Each cover is
@@ -35,17 +35,19 @@ public class BeatBox.CoverFlow : DrawingArea {
 		this.grid = grid;
 		can_focus = true;
 		set_size_request(-1, 200);
-		add_events(Gdk.EventMask.BUTTON_PRESS_MASK | Gdk.EventMask.SCROLL_MASK
-		           | Gdk.EventMask.SMOOTH_SCROLL_MASK | Gdk.EventMask.KEY_PRESS_MASK);
 		get_style_context().add_class("coverflow");
-		// event controllers, as in GTK4 (GTK3 needs a reference kept)
-		scroll_controller = new Gtk.EventControllerScroll(this, Gtk.EventControllerScrollFlags.BOTH_AXES);
+		set_draw_func(on_draw);
+		// event controllers, as in GTK4 (they need a reference kept)
+		scroll_controller = new Gtk.EventControllerScroll(Gtk.EventControllerScrollFlags.BOTH_AXES);
 		scroll_controller.scroll.connect(on_scroll);
-		key_controller = new Gtk.EventControllerKey(this);
+		add_controller(scroll_controller);
+		key_controller = new Gtk.EventControllerKey();
 		key_controller.key_pressed.connect(on_key_pressed);
-		click_gesture = new Gtk.GestureClick(this);
+		add_controller(key_controller);
+		click_gesture = new Gtk.GestureClick();
 		click_gesture.button = 0; // any button takes the focus
 		click_gesture.pressed.connect(on_pressed);
+		add_controller(click_gesture);
 
 		grid.visible_changed.connect(refresh);
 		App.covers.cover_changed.connect(on_cover_changed);
@@ -135,10 +137,10 @@ public class BeatBox.CoverFlow : DrawingArea {
 		flow.album_activated.connect((a) => album_activated(a));
 		var win = new Gtk.Window();
 		win.get_style_context().add_class("coverflow");
-		win.add(flow);
+		win.set_child(flow);
 		flow.fs_window = win;
-		win.destroy.connect(() => { fs_window = null; });
-		win.show_all();
+		((Gtk.Widget) win).destroy.connect(() => { fs_window = null; }); // Window.destroy () hides the signal
+		win.present();
 		win.fullscreen();
 		flow.grab_focus();
 	}
@@ -272,9 +274,7 @@ public class BeatBox.CoverFlow : DrawingArea {
 		}
 	}
 
-	public override bool draw(Cairo.Context cr) {
-		int width = get_allocated_width();
-		int height = get_allocated_height();
+	void on_draw(Gtk.DrawingArea area, Cairo.Context cr, int width, int height) {
 
 		// black stage with a subtle glow
 		var bg = new Cairo.Pattern.linear(0, 0, 0, height);
@@ -285,11 +285,11 @@ public class BeatBox.CoverFlow : DrawingArea {
 		cr.paint();
 
 		if (albums.length == 0)
-			return true;
+			return;
 
 		int size = cover_size(width, height);
 		if (size < 16)
-			return true;
+			return;
 		double floor_y = height * 0.04 + size;
 		double center = width / 2.0;
 		double side_w = size * SIDE_SIZE * SIDE_SCALE;
@@ -350,7 +350,7 @@ public class BeatBox.CoverFlow : DrawingArea {
 		cr.set_source_rgba(1, 1, 1, 0.5);
 		cr.move_to(width - 30, 6);
 		Pango.cairo_show_layout(cr, icon);
-		return true;
+		return;
 	}
 
 	/** Cover edge in pixels: as big as the stage allows */
@@ -360,8 +360,8 @@ public class BeatBox.CoverFlow : DrawingArea {
 	
 	/** Which album is under x (center cover first, then the side ones) */
 	int index_at(double x) {
-		int width = get_allocated_width();
-		int height = get_allocated_height();
+		int width = get_width();
+		int height = get_height();
 		int size = cover_size(width, height);
 		double center = width / 2.0;
 		if ((x - center).abs() <= size / 2.0)
@@ -377,7 +377,7 @@ public class BeatBox.CoverFlow : DrawingArea {
 		grab_focus();
 		if (click_gesture.get_current_button() != 1 || albums.length == 0)
 			return;
-		if (x > get_allocated_width() - 36 && y < 36) {
+		if (x > get_width() - 36 && y < 36) {
 			toggle_fullscreen();
 			click_gesture.set_state(Gtk.EventSequenceState.CLAIMED);
 			return;
@@ -396,12 +396,13 @@ public class BeatBox.CoverFlow : DrawingArea {
 	double scroll_accum = 0;
 	
 	// wheel clicks arrive as deltas of ±1, touchpads as fractions
-	void on_scroll(double dx, double dy) {
+	bool on_scroll(double dx, double dy) {
 		scroll_accum += (dx.abs() > dy.abs()) ? dx : dy;
 		if (scroll_accum.abs() >= 1) {
 			go_to(target + (int)scroll_accum);
 			scroll_accum -= (int)scroll_accum;
 		}
+		return true;
 	}
 
 	bool on_key_pressed(uint keyval, uint keycode, Gdk.ModifierType state) {

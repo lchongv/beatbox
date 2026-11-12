@@ -31,9 +31,8 @@ public class BeatBox.TimeScale : Box {
 	private Label left_time;
 	private Label right_time;
 	private Scale scale;
-	private GestureClick click_gesture; // GTK3 controllers need a reference
+	private GestureClick click_gesture; // controllers need a reference
 	private GestureClick right_click_gesture;
-	private EventBox right_box;
 	private uint nyan_id = 0;
 	private bool live = false;
 	
@@ -55,11 +54,7 @@ public class BeatBox.TimeScale : Box {
 	public TimeScale() {
 		var style_provider = new CssProvider();
 
-        try  {
-            style_provider.load_from_data (WIDGET_STYLESHEET, -1);
-        } catch (Error e) {
-            warning("Couldn't load style provider.\n");
-        }
+		style_provider.load_from_data (WIDGET_STYLESHEET.data);
 		
 		left_time = new Label("0:00");
 		right_time = new Label("0:00");
@@ -81,22 +76,22 @@ public class BeatBox.TimeScale : Box {
 		scale.set_draw_value(false);
 		
 		set_orientation(Orientation.HORIZONTAL);
-		add(left_time);
+		append(left_time);
 		scale.hexpand = true;
-		add(scale);
+		append(scale);
 		// clicking the right time switches between the time left and the song's length
-		right_box = new EventBox();
-		right_box.add(right_time);
-		right_box.tooltip_text = _("Click to switch between the time left and the total time");
-		add(right_box);
-		right_click_gesture = new GestureClick(right_box);
+		right_time.tooltip_text = _("Click to switch between the time left and the total time");
+		append(right_time);
+		right_click_gesture = new GestureClick();
+		right_time.add_controller(right_click_gesture);
 		right_click_gesture.released.connect(() => {
 			App.settings.main.lcd_total_time = !App.settings.main.lcd_total_time;
 			value_changed();
 		});
 		
 		// pressing and releasing jump there (instead of the scale's own handling, dragging included)
-		click_gesture = new GestureClick(scale);
+		click_gesture = new GestureClick();
+		scale.add_controller(click_gesture);
 		click_gesture.button = 0;
 		click_gesture.propagation_phase = PropagationPhase.CAPTURE;
 		click_gesture.pressed.connect((n_press, x, y) => {
@@ -139,7 +134,7 @@ public class BeatBox.TimeScale : Box {
 	/** A radio station has no position: no times, a barber pole (see theme.css) and the marker in its middle */
 	public void set_live(bool live) {
 		this.live = live;
-		left_time.visible = right_box.visible = !live;
+		left_time.visible = right_time.visible = !live;
 		if(live) {
 			scale.get_style_context().add_class("live");
 			set_scale_range(0, 2);
@@ -169,7 +164,7 @@ public class BeatBox.TimeScale : Box {
 		if(live)
 			return;
 		int point_x = (int)x;
-		double mediatime = ((double)point_x / (double)scale.get_allocated_width()) * scale.get_adjustment().upper;
+		double mediatime = ((double)point_x / (double)scale.get_width()) * scale.get_adjustment().upper;
 		
 		change_value(ScrollType.NONE, mediatime);
 	}

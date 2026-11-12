@@ -48,18 +48,18 @@ public class BeatBox.MetadataDisplay : BeatBox.Display, Box {
 		station_label = new Marquee();
         time_scale = new TimeScale();
 		
-		station_label.set_no_show_all(true);
+		station_label.visible = false;
         
 		second_line = new LcdLine();
 		third_line = new LcdLine();
 		third_line.get_style_context().add_class("lcd-lyrics"); // skins may make it smaller
 		
         this.set_orientation(Orientation.VERTICAL);
-        add(label);
-        add(second_line);
-        add(third_line);
-        add(station_label);
-        add(time_scale);
+        append(label);
+        append(second_line);
+        append(third_line);
+        append(station_label);
+        append(time_scale);
         
         App.library.medias_updated.connect(medias_updated);
 		App.playback.media_played.connect(media_played);
@@ -72,8 +72,6 @@ public class BeatBox.MetadataDisplay : BeatBox.Display, Box {
 		App.playback.current_position_update.connect(position_update);
 		apply_transition();
 		
-		show_all();
-		set_no_show_all(true);
 	}
 	
 	void medias_updated(Gee.Collection<Media> ids) {
@@ -136,7 +134,6 @@ public class BeatBox.MetadataDisplay : BeatBox.Display, Box {
 			}
 			
 			label.margin_top = 2;
-			time_scale.show_all();
 			time_scale.set_live(!m.can_seek);
 			if(!m.can_seek) {
 				station_label.show();
@@ -218,7 +215,7 @@ class BeatBox.LcdLine : Stack {
 		}
 		add_named(labels[0], "a");
 		add_named(labels[1], "b");
-		set_no_show_all(true);
+		visible = false;
 	}
 	
 	public void show_text(string text, bool animate) {

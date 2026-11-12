@@ -22,23 +22,30 @@ public class BeatBox.Marquee : ScrolledWindow {
 	public Marquee() {
 		set_policy(PolicyType.EXTERNAL, PolicyType.NEVER);
 		propagate_natural_height = true;
-		shadow_type = ShadowType.NONE;
-		
+		has_frame = false;
+
 		box.halign = Align.CENTER; // centered while it fits
-		box.add(first);
-		box.add(second);
-		add(box);
+		box.append(first);
+		box.append(second);
+		set_child(box);
 		first.show();
 		box.show();
-		second.set_no_show_all(true);
-		
-		size_allocate.connect(check_overflow);
+		second.visible = false; // shown only while the text overflows
 	}
-	
+
+	public override void size_allocate(int width, int height, int baseline) {
+		base.size_allocate(width, height, baseline);
+		check_overflow();
+	}
+
+	int natural_width() {
+		int min, natural, min_base, natural_base;
+		first.measure(Orientation.HORIZONTAL, -1, out min, out natural, out min_base, out natural_base);
+		return natural;
+	}
+
 	void check_overflow() {
-		int natural;
-		first.get_preferred_width(null, out natural);
-		bool overflow = natural > get_allocated_width();
+		bool overflow = natural_width() > get_width();
 		second.set_visible(overflow);
 		if(overflow && tick_id == 0) {
 			last_time = 0;
@@ -75,8 +82,7 @@ public class BeatBox.Marquee : ScrolledWindow {
 		double dt = last_time == 0 ? 0 : (now - last_time) / 1000000.0;
 		last_time = now;
 		
-		int natural;
-		first.get_preferred_width(null, out natural);
+		int natural = natural_width();
 		if(wait > 0) {
 			wait -= dt;
 			return Source.CONTINUE;

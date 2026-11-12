@@ -40,13 +40,13 @@ public class BeatBox.OperationDisplay : BeatBox.Display, Box {
 		
 		
 		var left_box = new Box(Orientation.VERTICAL, 6);
-		left_box.add(operation_status);
-		left_box.add(operation_bar);
+		left_box.append(operation_status);
+		left_box.append(operation_bar);
 		
 		this.set_orientation(Orientation.HORIZONTAL);
 		left_box.hexpand = true;
 		left_box.valign = Align.CENTER; // the text and the bar sit in the middle of the LCD
-		add(left_box);
+		append(left_box);
 		
 		App.operations.operation_started.connect(operation_started);
 		App.operations.operation_progress_updated.connect(operation_progress_updated);

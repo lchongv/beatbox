@@ -53,19 +53,19 @@ public class BeatBox.TopDisplay : Box, BeatBox.TopDisplayInterface {
         view_container.show_tabs = false;
 		view_container.show_border = false;
 		
-		switch_button.set_image(App.icons.GO_NEXT.render_image(IconSize.MENU));
-		switch_button.set_relief(Gtk.ReliefStyle.NONE);
+		switch_button.child = App.icons.GO_NEXT.render_image(IconSize.NORMAL);
+		switch_button.has_frame = false;
 		switch_button.focus_on_click = false; // no focus ring left in the LCD (Tab still reaches it)
 		
-		cancel_button.set_image(App.icons.PROCESS_STOP.render_image (IconSize.MENU));
-		cancel_button.set_relief(Gtk.ReliefStyle.NONE);
-		cancel_button.set_no_show_all(true);
+		cancel_button.child = App.icons.PROCESS_STOP.render_image (IconSize.NORMAL);
+		cancel_button.has_frame = false;
+		cancel_button.visible = false;
 		
 		this.set_orientation(Orientation.HORIZONTAL);
-		this.add(switch_button);
+		this.append(switch_button);
 		view_container.hexpand = true;
-		this.add(view_container);
-		this.add(cancel_button);
+		this.append(view_container);
+		this.append(cancel_button);
 		
 		meta_display = new MetadataDisplay();
 		spectrum_display = new SpectrumDisplay();
@@ -80,9 +80,7 @@ public class BeatBox.TopDisplay : Box, BeatBox.TopDisplayInterface {
 		switch_button.clicked.connect(switch_clicked);
 		cancel_button.clicked.connect(cancel_clicked);
 		
-		view_container.show_all();
-		switch_button.show_all();
-		set_no_show_all(true);
+		visible = false;
 	}
 	
 	public int add_display(Display display) {
@@ -155,7 +153,6 @@ public class BeatBox.TopDisplay : Box, BeatBox.TopDisplayInterface {
 		current_display_key = key;
 		
 		Display d = displays.get(key);
-		d.show_all();
 		view_container.set_current_page(view_container.page_num(d));
 		cancel_button.set_visible(d.is_cancellable());
 	}

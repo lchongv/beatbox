@@ -34,12 +34,12 @@
  *              Victor Eduardo <victoreduardm@gmail.com>
  */
 
-public class BeatBox.RatingWidget : Gtk.EventBox {
+public class BeatBox.RatingWidget : Gtk.DrawingArea {
 
     public signal void rating_changed (int new_rating);
 
     private bool symbolic = false;
-    private Gtk.IconSize size = Gtk.IconSize.MENU;
+    private Gtk.IconSize size = Gtk.IconSize.NORMAL;
     private Gtk.StyleContext? context = null;
 
     private int rating = 0;
@@ -57,7 +57,7 @@ public class BeatBox.RatingWidget : Gtk.EventBox {
     private Gdk.Pixbuf not_starred;
     private Gdk.Pixbuf starred;
 
-    // GTK3 controllers need a reference
+    // controllers need a reference
     private Gtk.EventControllerMotion motion_controller;
     private Gtk.GestureClick press_gesture;
 
@@ -74,37 +74,37 @@ public class BeatBox.RatingWidget : Gtk.EventBox {
         else
             this.context = get_style_context ();
 
-        this.context.changed.connect (render_stars);
+        this.is_menu_item = this.context.has_class ("menuitem");
 
-        this.is_menu_item = this.context.has_class (Gtk.STYLE_CLASS_MENUITEM);
-
-        set_transparent (true);
         render_stars ();
 
-        // this handles size allocation and connects the draw signal as well
+        set_draw_func (on_draw);
         set_star_spacing (3);
 
         // force a redraw...
         redraw ();
 
-        add_events(Gdk.EventMask.BUTTON_PRESS_MASK
-                  | Gdk.EventMask.BUTTON_RELEASE_MASK
-                  | Gdk.EventMask.POINTER_MOTION_MASK
-                  | Gdk.EventMask.LEAVE_NOTIFY_MASK);
-
         // in a menu the item gets the events and passes them on (RatingMenuItem)
         if (!is_menu_item) {
-            motion_controller = new Gtk.EventControllerMotion (this);
+            motion_controller = new Gtk.EventControllerMotion ();
             motion_controller.motion.connect ((x, y) => hover (x));
             motion_controller.leave.connect (end_hover);
-            press_gesture = new Gtk.GestureClick (this);
+            add_controller (motion_controller);
+            press_gesture = new Gtk.GestureClick ();
             press_gesture.button = 0;
             press_gesture.pressed.connect (() => {
                 press ();
                 press_gesture.set_state (Gtk.EventSequenceState.CLAIMED);
             });
+            add_controller (press_gesture);
         }
         state_flags_changed.connect (render_stars);
+    }
+
+    // a theme change repaints the stars (GTK4 has no "changed" signal on StyleContext)
+    public override void css_changed (Gtk.CssStyleChange change) {
+        base.css_changed (change);
+        render_stars ();
     }
 
     private void render_stars () {
@@ -129,9 +129,7 @@ public class BeatBox.RatingWidget : Gtk.EventBox {
     }
 
     public void set_transparent (bool val) {
-        // Make the eventbox transparent
-        this.set_above_child (val);
-        this.set_visible_window (!val);
+        // A DrawingArea has no window of its own (the EventBox did): nothing to do
     }
 
     public void set_star_spacing (int spacing) {
@@ -139,8 +137,6 @@ public class BeatBox.RatingWidget : Gtk.EventBox {
             warning ("Spacing values must be equal or greater than 0");
             return;
         }
-
-        draw.disconnect (on_expose_event);
 
         this.spacing = spacing;
 
@@ -153,8 +149,6 @@ public class BeatBox.RatingWidget : Gtk.EventBox {
 
         // Generate canvas pixbuf
         _canvas = new Gdk.Pixbuf (Gdk.Colorspace.RGB, true, 8, width_request, height_request);
-
-        draw.connect (on_expose_event);
 
         redraw ();
     }
@@ -251,21 +245,16 @@ public class BeatBox.RatingWidget : Gtk.EventBox {
         queue_draw();
     }
 
-    /** @override on_expose_event to paint our own custom widget **/
-     bool on_expose_event (Cairo.Context cairo) {
-        Gtk.Allocation al;
-        get_allocation(out al);
-
+    /** the draw function paints our own custom widget **/
+    void on_draw (Gtk.DrawingArea area, Cairo.Context cairo, int width, int height) {
         if(centered) {
-            Gdk.cairo_set_source_pixbuf (cairo, _canvas, (al.width - width_request) / 2, (al.height - height_request) / 2);
+            Gdk.cairo_set_source_pixbuf (cairo, _canvas, (width - width_request) / 2, (height - height_request) / 2);
         }
         else {
-            Gdk.cairo_set_source_pixbuf (cairo, _canvas, 0,  (al.height - height_request) / 2);
+            Gdk.cairo_set_source_pixbuf (cairo, _canvas, 0,  (height - height_request) / 2);
         }
 
         cairo.paint();
-
-        return true;
     }
 
 
@@ -301,11 +290,8 @@ public class BeatBox.RatingWidget : Gtk.EventBox {
     internal int get_new_rating (double x) {
         int x_offset = 0;
 
-        if (centered) {
-            Gtk.Allocation al;
-            get_allocation(out al);
-            x_offset = (al.width - width_request) / 2;
-        }
+        if (centered)
+            x_offset = (get_width () - width_request) / 2;
 
         if (is_menu_item) // Workaround. Move the offset one star to the left for menuitems.
             x_offset += (item_width + spacing);
@@ -331,10 +317,10 @@ public class BeatBox.RatingWidget : Gtk.EventBox {
 }
 
 
-public class BeatBox.RatingMenuItem : Gtk.MenuItem {
+public class BeatBox.RatingMenuItem : BeatBox.PopMenuItem {
 
     protected RatingWidget rating;
-    // GTK3 controllers need a reference
+    // controllers need a reference
     Gtk.EventControllerMotion motion_controller;
     Gtk.GestureClick press_gesture;
 
@@ -348,18 +334,22 @@ public class BeatBox.RatingMenuItem : Gtk.MenuItem {
     }
 
     public RatingMenuItem () {
-        rating = new RatingWidget (false, Gtk.IconSize.MENU, false, get_style_context ());
-        add (rating);
+        keep_open = false;
 
-        motion_controller = new Gtk.EventControllerMotion (this);
+        rating = new RatingWidget (false, Gtk.IconSize.NORMAL, false, get_style_context ());
+        set_child (rating);
+
+        motion_controller = new Gtk.EventControllerMotion ();
         motion_controller.motion.connect (hover_at);
         motion_controller.leave.connect (() => rating.end_hover ());
-        press_gesture = new Gtk.GestureClick (this);
+        add_controller (motion_controller);
+        press_gesture = new Gtk.GestureClick ();
         press_gesture.button = 0;
         press_gesture.pressed.connect ((n_press, x, y) => {
             hover_at (x, y);
             rating.press ();
         });
+        add_controller (press_gesture);
 
         // Force the NORMAL state flag
         this.state_flags_changed.connect ( () => {
@@ -404,7 +394,7 @@ public class BeatBox.RatingMenuItem : Gtk.MenuItem {
     // The item's own window covers the stars: it gets the events and passes them
     // on, in the stars' coordinates. The release then activates the item as usual.
     void hover_at (double x, double y) {
-        int star_x, star_y;
+        double star_x, star_y;
         translate_coordinates (rating, (int) x, (int) y, out star_x, out star_y);
         rating.hover (star_x);
     }
@@ -428,7 +418,7 @@ public class BeatBox.CellRendererRating : Gtk.CellRendererPixbuf {
      */
     protected RatingWidget? rating = null;
 
-    public CellRendererRating (Gtk.IconSize icon_size = Gtk.IconSize.MENU) {
+    public CellRendererRating (Gtk.IconSize icon_size = Gtk.IconSize.NORMAL) {
         rating = new RatingWidget (false, icon_size);
         this.pixbuf = rating.get_canvas ();
 
@@ -442,8 +432,9 @@ public class BeatBox.CellRendererRating : Gtk.CellRendererPixbuf {
 
     public void set_star_spacing (int spacing) {
         rating.set_star_spacing (spacing);
-        this.pixbuf = rating.get_canvas ();
-        this.width = this.pixbuf.width;
+        var canvas = rating.get_canvas ();
+        this.pixbuf = canvas;
+        this.width = canvas.width;
     }
 
     public int get_star_spacing () {
@@ -461,8 +452,9 @@ public class BeatBox.CellRendererRating : Gtk.CellRendererPixbuf {
 
     public void set_n_stars (int n_stars) {
         rating.set_n_stars (n_stars);
-        this.pixbuf = rating.get_canvas ();
-        this.width = this.pixbuf.width;
+        var canvas = rating.get_canvas ();
+        this.pixbuf = canvas;
+        this.width = canvas.width;
     }
 
     public int get_n_stars () {
@@ -474,8 +466,17 @@ public class BeatBox.CellRendererRating : Gtk.CellRendererPixbuf {
                                       Gdk.Rectangle background_area, Gdk.Rectangle cell_area,
                                       Gtk.CellRendererState flags)
     {
+        // the event is in surface coordinates: bring them to the widget's, where cell_area is
+        double event_x, event_y;
+        event.get_position (out event_x, out event_y);
+        var native = widget.get_native () as Gtk.Widget;
+        if (native == null)
+            return false;
+        Graphene.Point in_widget;
+        native.compute_point (widget, Graphene.Point () { x = (float) event_x, y = (float) event_y }, out in_widget);
+
         int old_rating = get_rating ();
-        int new_rating = rating.get_new_rating (event.button.x - (double) cell_area.x);
+        int new_rating = rating.get_new_rating (in_widget.x - (double) cell_area.x);
 
         /* If the user clicks again over the same star, decrease the rating
          * (i.e. "unset" the star)

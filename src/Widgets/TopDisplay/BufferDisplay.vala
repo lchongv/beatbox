@@ -39,13 +39,13 @@ public class BeatBox.BufferDisplay : BeatBox.Display, Box {
 		buffering_bar = new ProgressBar();
 
 		var center_box = new Box(Orientation.VERTICAL, 6);
-		center_box.add(buffering_status);
-		center_box.add(buffering_bar);
+		center_box.append(buffering_status);
+		center_box.append(buffering_bar);
 
 		this.set_orientation(Orientation.HORIZONTAL);
 		center_box.hexpand = true;
 		center_box.valign = Align.CENTER; // same layout as the operation display
-		add(center_box);
+		append(center_box);
 		
 		App.playback.buffer_percent_update.connect(player_buffering_update);
 		App.playback.media_played.connect(media_played);
