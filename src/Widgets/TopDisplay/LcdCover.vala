@@ -179,9 +179,10 @@ public class BeatBox.LcdCover : Image {
 		return StationLogos.get_default ().lookup (station) ?? StationLogos.generic (256);
 	}
 
+	// the square must fit the width too: a narrower allocation would cut the logo on the right
 	int side_for_now () {
-		int h = get_allocated_height ();
-		return (h > 16) ? h : 54;  // until the first allocation
+		int h = get_allocated_height (), w = get_allocated_width ();
+		return (h > 16 && w > 16) ? int.min (h, w) : 54;  // until the first allocation
 	}
 
 	/** Scale the cover to fit a square of the given side (a logo may not be square), rounding its left corners */
@@ -209,9 +210,9 @@ public class BeatBox.LcdCover : Image {
 
 	public override void size_allocate (Allocation a) {
 		base.size_allocate (a);
-		if (source != null && a.height > 16 && a.height != side) {
-			int h = a.height;
-			Idle.add (() => { render (h); return Source.REMOVE; }); // resizing inside an allocation would loop
+		int s = int.min (a.height, a.width);
+		if (source != null && s > 16 && s != side) {
+			Idle.add (() => { render (s); return Source.REMOVE; }); // resizing inside an allocation would loop
 		}
 	}
 }
