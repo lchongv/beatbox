@@ -13,6 +13,7 @@ public class BeatBox.Marquee : ScrolledWindow {
 	private double offset = 0;
 	private double wait = PAUSE;
 	private int64 last_time = 0;
+	private uint tick_id = 0; // only while the text doesn't fit: a tick callback keeps the frame clock running
 	
 	public string label {
 		set { first.label = value; second.label = value; restart(); }
@@ -31,7 +32,26 @@ public class BeatBox.Marquee : ScrolledWindow {
 		box.show();
 		second.set_no_show_all(true);
 		
-		add_tick_callback(tick);
+		size_allocate.connect(check_overflow);
+	}
+	
+	void check_overflow() {
+		int natural;
+		first.get_preferred_width(null, out natural);
+		bool overflow = natural > get_allocated_width();
+		second.set_visible(overflow);
+		if(overflow && tick_id == 0) {
+			last_time = 0;
+			tick_id = add_tick_callback(tick);
+		}
+		else if(!overflow && tick_id != 0)
+			stop();
+	}
+	
+	void stop() {
+		remove_tick_callback(tick_id);
+		tick_id = 0;
+		restart();
 	}
 	
 	public void set_markup(string markup) {
@@ -47,6 +67,7 @@ public class BeatBox.Marquee : ScrolledWindow {
 		offset = 0;
 		wait = PAUSE;
 		hadjustment.value = 0;
+		if(get_realized()) check_overflow(); // the new text may fit, or not
 	}
 	
 	bool tick(Widget w, Gdk.FrameClock clock) {
@@ -56,13 +77,6 @@ public class BeatBox.Marquee : ScrolledWindow {
 		
 		int natural;
 		first.get_preferred_width(null, out natural);
-		bool overflow = natural > get_allocated_width();
-		second.set_visible(overflow);
-		if(!overflow) {
-			if(offset != 0) restart();
-			return Source.CONTINUE;
-		}
-		
 		if(wait > 0) {
 			wait -= dt;
 			return Source.CONTINUE;
