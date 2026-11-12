@@ -1,4 +1,4 @@
-project('beatbox', 'vala', 'c', version: '1.2.3')
+project('beatbox', 'vala', 'c', version: '1.2.4')
 
 gnome = import('gnome')
 i18n = import('i18n')
@@ -32,6 +32,8 @@ valac = meson.get_compiler('vala')
 # iPod sync needs libgpod (meson setup -Dipod=disabled builds without it)
 gpod_dep = dependency('libgpod-1.0', required: get_option('ipod'))
 gpod_vala_args = gpod_dep.found() ? ['-D', 'HAVE_GPOD'] : []
+# The visualizer (src/Widgets/Visualizer.vala) is optional: without libprojectM 4 there is no button for it
+projectm_dep = dependency('projectM-4', required: false)
 taglib_dep = dependency('taglib_c')
 deps = [
   dependency('glib-2.0'),
@@ -321,7 +323,12 @@ skin_resources = gnome.compile_resources('beatbox-skins', 'skins/skins.gresource
 # Writing album art and the full set of tags into files needs TagLib 2.0's C property API
 embed_cover_sources = []
 app_vala_args = gpod_vala_args
-app_deps = [core_dep]
+app_deps = [core_dep, dependency('gstreamer-app-1.0')] # the pipeline's sample branch (appsink)
+if projectm_dep.found()
+  app_vala_args += ['-D', 'HAVE_PROJECTM', '--pkg', 'projectM-4']
+  app_deps += projectm_dep
+  app_sources += files('src/Widgets/Visualizer.vala')
+endif
 if python_plugins
   app_vala_args += ['-D', 'HAVE_PEAS']
   app_deps += peas_dep

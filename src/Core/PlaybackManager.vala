@@ -87,6 +87,7 @@ public class BeatBox.PlaybackManager : GLib.Object, BeatBox.PlaybackInterface {
 		player.current_position_update.connect(internal_current_position_update);
 		player.video_enabled.connect( () => { video_enabled(); } );
 		player.spectrum_update.connect( (magnitudes) => { spectrum_update(magnitudes); } );
+		player.pcm_update.connect( (samples) => { pcm_ready(samples); } );
 	}
 	
 	/** The song BeatBox was closed on: nothing is loaded at startup, and Play alone goes on with it */
@@ -162,6 +163,10 @@ public class BeatBox.PlaybackManager : GLib.Object, BeatBox.PlaybackInterface {
 	
 	public void want_spectrum(bool wanted) {
 		player.want_spectrum(wanted);
+	}
+
+	public void want_pcm(bool wanted) {
+		player.want_pcm(wanted);
 	}
 	
 	/**************** Video ******************************/

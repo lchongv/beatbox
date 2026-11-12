@@ -61,6 +61,7 @@ public interface BeatBox.PlaybackInterface : GLib.Object {
 	public signal void current_position_update(int64 position);
 	public signal void video_enabled();
 	public signal void spectrum_update(float[] magnitudes); // dB of 0 Hz – rate/2 in equal bands, while wanted
+	public signal void pcm_ready(float[] samples); // stereo F32 samples for the visualizer, while wanted
 	
 	// Shuffle and Repeat
 	public abstract void set_shuffle_mode(ShuffleMode mode);
@@ -118,4 +119,5 @@ public interface BeatBox.PlaybackInterface : GLib.Object {
 	public abstract void setEqualizerGain(int index, int val);
 	public abstract void apply_effects(); // preamp, compressor, reverb and crossfeed (Settings equalizer)
 	public abstract void want_spectrum(bool wanted); // spectrum_update runs only while some view wants it
+	public abstract void want_pcm(bool wanted); // pcm_ready runs only while the visualizer is on screen
 }

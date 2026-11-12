@@ -49,6 +49,10 @@ public class BeatBox.Pipeline : GLib.Object {
 	public Video video;
 	Pad? spectrum_in = null;  // the spectrum branch's way in
 	ulong spectrum_drop = 0;  // the probe dropping its buffers while the LCD doesn't show it
+	Pad? pcm_in = null;       // the visualizer branch's way in
+	ulong pcm_drop = 0;       // the probe dropping its buffers while the visualizer isn't on screen
+	/** The sound's samples for the visualizer: stereo, F32, interleaved; each call on the streaming thread */
+	public signal void pcm_ready(float[] samples);
 	
 	public dynamic Gst.Bus bus;
 	//Pad teepad;
@@ -147,8 +151,36 @@ public class BeatBox.Pipeline : GLib.Object {
 				(info.get_query().type.get_flags() & QueryTypeFlags.SERIALIZED) != 0 ? PadProbeReturn.HANDLED : PadProbeReturn.OK);
 			want_spectrum(false);
 		}
-		
-		playbin.set("audio-sink", audiobin); 
+
+		/* The samples for the visualizer on a branch of its own, like the spectrum's: dropped
+		 * before they are read while no visualizer is on screen */
+		dynamic Element pcmqueue = ElementFactory.make("queue", null);
+		dynamic Element pcmconvert = ElementFactory.make("audioconvert", null);
+		dynamic Element pcmresample = ElementFactory.make("audioresample", null);
+		dynamic Element pcmcaps = ElementFactory.make("capsfilter", null);
+		var pcmsink = ElementFactory.make("appsink", null) as Gst.App.Sink;
+		if (pcmsink != null) {
+			pcmqueue.max_size_time = 3 * Gst.SECOND;
+			pcmqueue.max_size_buffers = 0;
+			pcmqueue.max_size_bytes = 0;
+			pcmqueue.leaky = 2;
+			pcmcaps.caps = Gst.Caps.from_string("audio/x-raw,format=F32LE,layout=interleaved,channels=2");
+			pcmsink.sync = true;
+			pcmsink.async = false;
+			pcmsink.emit_signals = true;
+			pcmsink.max_buffers = 8;
+			pcmsink.drop = true;
+			pcmsink.new_sample.connect(on_pcm_sample);
+			((Gst.Bin)audiobin).add_many(pcmqueue, pcmconvert, pcmresample, pcmcaps, pcmsink);
+			pcmqueue.link_many(pcmconvert, pcmresample, pcmcaps, pcmsink);
+			pcm_in = pcmqueue.get_static_pad("sink");
+			audiotee.request_pad_simple("src_%u").link(pcm_in);
+			pcm_in.add_probe(PadProbeType.QUERY_DOWNSTREAM, (pad, info) =>
+				(info.get_query().type.get_flags() & QueryTypeFlags.SERIALIZED) != 0 ? PadProbeReturn.HANDLED : PadProbeReturn.OK);
+			want_pcm(false);
+		}
+
+		playbin.set("audio-sink", audiobin);
 		bus = playbin.get_bus();
 		
 		// Link the first tee pad to the primary audio sink queue
@@ -279,7 +311,37 @@ public class BeatBox.Pipeline : GLib.Object {
 		else
 			spectrum_drop = spectrum_in.add_probe(PadProbeType.BUFFER, (pad, info) => PadProbeReturn.DROP);
 	}
-	
+
+	/** The visualizer's samples are read only while it is on screen */
+	public void want_pcm(bool wanted) {
+		if(pcm_in == null || wanted == (pcm_drop == 0))
+			return;
+		if(wanted) {
+			pcm_in.remove_probe(pcm_drop);
+			pcm_drop = 0;
+		}
+		else
+			pcm_drop = pcm_in.add_probe(PadProbeType.BUFFER, (pad, info) => PadProbeReturn.DROP);
+	}
+
+	// streaming thread: copies the samples out of the buffer, which the sink then lets go
+	Gst.FlowReturn on_pcm_sample(Gst.App.Sink sink) {
+		var sample = sink.pull_sample();
+		var buffer = (sample != null) ? sample.get_buffer() : null;
+		if (buffer == null)
+			return Gst.FlowReturn.OK;
+		Gst.MapInfo info;
+		if (!buffer.map(out info, Gst.MapFlags.READ))
+			return Gst.FlowReturn.OK;
+		float* data = (float*) info.data;
+		float[] samples = new float[info.size / sizeof(float)];
+		for (int i = 0; i < samples.length; i++)
+			samples[i] = data[i];
+		buffer.unmap(info);
+		pcm_ready(samples);
+		return Gst.FlowReturn.OK;
+	}
+
 	public int videoStreamCount() {
 		return playbin.n_video;
 	}

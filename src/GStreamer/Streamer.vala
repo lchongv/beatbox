@@ -58,8 +58,10 @@ public class BeatBox.Streamer : GLib.Object {
 	public signal void media_not_found();
 	public signal void video_enabled();
 	public signal void spectrum_update(float[] magnitudes);
-	
+	public signal void pcm_update(float[] samples); // the visualizer's, from the pipeline in line only
+
 	bool spectrum_wanted = false;
+	bool pcm_wanted = false;
 	
 	public Streamer() {
 		pipe = new BeatBox.Pipeline();
@@ -112,6 +114,7 @@ public class BeatBox.Streamer : GLib.Object {
 	}
 	
 	void listen_to(Pipeline p) {
+		p.pcm_ready.connect((samples) => { if (p == pipe) pcm_update(samples); }); // not the one fading out
 		p.bus.enable_sync_message_emission();
 		p.bus_watch = p.bus.add_watch(GLib.Priority.DEFAULT, busCallback);
 		p.bus.sync_message.connect(sync_message);
@@ -157,6 +160,7 @@ public class BeatBox.Streamer : GLib.Object {
 		listen_to(pipe);
 		pipe.copy_equalizer_from(fade_out);
 		want_spectrum(spectrum_wanted);
+		want_pcm(pcm_wanted);
 		pipe.playbin.volume = 0.0;
 		pipe.playbin.uri = next.uri.replace("#", "%23");
 		pipe.playbin.set_state(State.PLAYING);
@@ -304,6 +308,12 @@ public class BeatBox.Streamer : GLib.Object {
 	public void want_spectrum(bool wanted) {
 		spectrum_wanted = wanted;
 		pipe.want_spectrum(wanted);
+	}
+
+	/** The visualizer's samples are copied only while it is on screen */
+	public void want_pcm(bool wanted) {
+		pcm_wanted = wanted;
+		pipe.want_pcm(wanted);
 	}
 	
 	public void setEqualizerGain(int index, int val) {
