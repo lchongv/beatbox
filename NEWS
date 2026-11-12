@@ -4,6 +4,18 @@ BeatBox — what changed, newest first
 Packages for each version: https://github.com/lchongv/beatbox/releases
 
 
+1.2 (11 November 2026)
+----------------------
+
+- Cover Flow animates faster and shows bigger covers; F or F11 shows it
+  fullscreen.
+- The play count is written into the song files as FMPS_PLAYCOUNT, so the
+  other players see it, and an import reads the count another player wrote.
+- The LCD's long texts scroll only while they don't fit.
+- Connecting to a stream shows a barber pole in the LCD, centred like the job
+  view.
+
+
 1.1 (31 October 2026)
 ---------------------
 
