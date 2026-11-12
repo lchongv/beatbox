@@ -15,8 +15,8 @@ etapa 2 con el andamio; `tools/gtk4-check.sh` tarda ~2 s.
 | T02 resto de core | H | [x] | | 0 | a verificar en T31: rayas de FastList (se pintan antes que el fondo), rueda de StyledBox.set_widget (mismo comportamiento que antes: sin handler) |
 | T10 diálogos | D | [x] | | 0 | |
 | T11 preferencias | H (orquestador) | [x] | | 0 | carpetas: botón + diálogo (como T28); acerca de dice «Ported to GTK 4» (texto visible cambiado); editor de skins usa close_request; Lastfm: el spinner queda oculto (como en GTK3) |
-| T12 ventanas | D | [~] | | | |
-| T13 editores | D | [~] | | | |
+| T12 ventanas | H (orquestador) | [x] | b7d057c | 0 | DirectoryDialog.add_station_by_url es async (3 llamadores con .begin); SkinEditor: al cerrar pregunta con diálogo asíncrono; feedback del quitar duplicados a la izquierda con relleno (no set_child_secondary) |
+| T13 editores | H (orquestador) | [x] | | 0 | SongEditor: carátulas por UI.show_pixbuf, identificar y selector de carátula async o por señal; SmartPlaylistEditor: EventBox sustituido por caja con controlador de rueda en captura; MediaEditor: pestañas medidas con measure |
 | T14 sueltos | D | [x] | | 0 | export_playlist_to_file es async: SourceViews la llama sin yield (T16 debe usar .begin) |
 | T15 widgets simples | D | [x] | | 1 | StatusBar: el icono se tiñe solo al crearse (no sigue a un cambio de skin): StatusBar.vala:66 |
 | T16 vistas de origen | D | [x] | | 0 | arrastre de la lista de reproducción sin probar; MiddlePaned centra el divisor a mano |

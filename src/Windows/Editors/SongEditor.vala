@@ -76,8 +76,7 @@ public class BeatBox.SongEditor : GLib.Object, MediaEditorInterface {
 	
 	static Viewport wrap(Widget content) {
 		var rv = new Viewport(null, null);
-		rv.shadow_type = ShadowType.NONE;
-		rv.add(content);
+		rv.set_child (content);
 		return rv;
 	}
 	
@@ -88,7 +87,7 @@ public class BeatBox.SongEditor : GLib.Object, MediaEditorInterface {
 			var field = (FieldEditorImpl)fields.get(names[i]);
 			if(i < label_widths.length)
 				field.set_label_width(label_widths[i]);
-			box.add(field);
+			box.append (field);
 		}
 		return box;
 	}
@@ -181,14 +180,14 @@ public class BeatBox.SongEditor : GLib.Object, MediaEditorInterface {
 		
 		var box = page_box(6);
 		foreach(var name in new string[] { "Title", "Artist", "Album Artist", "Album", "Composer", "Genre" })
-			box.add(fields.get(name));
-		box.add(row({ "Year", "BPM" }, { 130, 0 }));
+			box.append (fields.get(name));
+		box.append (row({ "Year", "BPM" }, { 130, 0 }));
 		((FieldEditorImpl)fields.get("BPM")).set_label_width(-1); // as wide as its text
-		box.add(row({ "Track", "Tracks" }, { 130, -1 }));
-		box.add(row({ "Disc", "Discs" }, { 130, -1 }));
-		box.add(fields.get("Grouping"));
-		box.add(fields.get("Rating"));
-		box.add(fields.get("Compilation"));
+		box.append (row({ "Track", "Tracks" }, { 130, -1 }));
+		box.append (row({ "Disc", "Discs" }, { 130, -1 }));
+		box.append (fields.get("Grouping"));
+		box.append (fields.get("Rating"));
+		box.append (fields.get("Compilation"));
 		return wrap(box);
 	}
 	
@@ -198,30 +197,30 @@ public class BeatBox.SongEditor : GLib.Object, MediaEditorInterface {
 		var comments = page_box();
 		((FieldEditorImpl)fields.get("Comment")).set_label_width(0);
 		fields.get("Comment").vexpand = true;
-		comments.add(fields.get("Comment"));
+		comments.append (fields.get("Comment"));
 		rv.set(_("Comments"), wrap(comments));
 		
 		var sorting = page_box();
 		foreach(var name in new string[] { "Sort Title", "Sort Artist", "Sort Album Artist", "Sort Album", "Sort Composer" }) {
 			((FieldEditorImpl)fields.get(name)).set_label_width(200);
-			sorting.add(fields.get(name));
+			sorting.append (fields.get(name));
 		}
 		rv.set(_("Sorting"), wrap(sorting));
 		
 		var options = page_box(10);
 		((FieldEditorImpl)fields.get("Volume")).set_label_width(200);
-		options.add(fields.get("Volume"));
+		options.append (fields.get("Volume"));
 		foreach(var name in new string[] { "Remember Position", "Skip Shuffle" }) {
 			((FieldEditorImpl)fields.get(name)).set_label_width(200);
-			options.add(fields.get(name));
+			options.append (fields.get(name));
 		}
 		var hint = new Label(_("The volume adjustment raises or lowers this song next to the others: +100 % doubles it, −100 % silences it."));
 		hint.wrap = true;
 		hint.max_width_chars = 60;
 		hint.xalign = 0;
 		hint.margin_top = 8;
-		hint.get_style_context().add_class("ti-meta");
-		options.add(hint);
+		hint.add_css_class("ti-meta");
+		options.append (hint);
 		rv.set(_("Options"), wrap(options));
 		
 		if(single) {
@@ -256,38 +255,38 @@ public class BeatBox.SongEditor : GLib.Object, MediaEditorInterface {
 		artwork = new Image();
 		artwork_size = 120;
 		var frame = new Frame(null);
-		frame.get_style_context().add_class("album-cell-frame");
+		frame.add_css_class("album-cell-frame");
 		frame.halign = Align.START;
-		frame.add(artwork);
-		art.add(frame);
-		art.add(cover_buttons(true));
+		frame.set_child (artwork);
+		art.append (frame);
+		art.append (cover_buttons(true));
 		artworkStatus = new Label("");
 		artworkStatus.xalign = 0;
 		artworkStatus.wrap = true;
 		artworkStatus.max_width_chars = 40;
-		artworkStatus.get_style_context().add_class("ti-meta");
-		art.add(artworkStatus);
-		top.add(art);
+		artworkStatus.add_css_class("ti-meta");
+		art.append (artworkStatus);
+		top.append (art);
 		
 		var titles = new Box(Orientation.VERTICAL, 3);
 		titles.valign = Align.START;
 		titles.hexpand = true;
 		var title = new Label(m.length > 0 ? "%s (%s)".printf(m.title, TimeUtils.pretty_time_mins(m.length)) : m.title);
-		title.get_style_context().add_class("ti-summary-title");
+		title.add_css_class("ti-summary-title");
 		var artist = new Label(m.artist);
 		var album = new Label(m.album);
-		album.get_style_context().add_class("dim-label");
+		album.add_css_class("dim-label");
 		foreach(var l in new Label[] { title, artist, album }) {
 			l.xalign = 0;
 			l.wrap = true;
 			l.max_width_chars = 60;
 			l.selectable = true;
 			l.can_focus = false;
-			titles.add(l);
+			titles.append (l);
 		}
-		top.add(titles);
-		box.add(top);
-		box.add(new Separator(Orientation.HORIZONTAL));
+		top.append (titles);
+		box.append (top);
+		box.append (new Separator(Orientation.HORIZONTAL));
 		
 		var file = File.new_for_uri(m.uri);
 		string size = m.file_size > 0 ? format_size(m.file_size) : "—", modified = "—";
@@ -322,11 +321,11 @@ public class BeatBox.SongEditor : GLib.Object, MediaEditorInterface {
 		};
 		for(int i = 0; i < rows.length; i += 2, r++) {
 			((Label)rows[i]).xalign = 1;
-			rows[i].get_style_context().add_class("ti-sum-key");
+			rows[i].add_css_class("ti-sum-key");
 			grid.attach(rows[i], 0, r);
 			grid.attach(rows[i + 1], 1, r);
 		}
-		box.add(grid);
+		box.append (grid);
 		
 		var where = new Label(file.get_path() ?? m.uri);
 		where.xalign = 0;
@@ -334,22 +333,22 @@ public class BeatBox.SongEditor : GLib.Object, MediaEditorInterface {
 		where.wrap_mode = Pango.WrapMode.CHAR;
 		where.selectable = true;
 		where.can_focus = false;
-		where.get_style_context().add_class("ti-uri");
-		box.add(where);
+		where.add_css_class("ti-uri");
+		box.append (where);
 		
 		// "Identify": fills the name, artist and album from the song's sound (AcoustID)
 		identifyButton = new Button.with_label(_("Identify…"));
-		identifyButton.get_style_context().add_class("ti-cover-btn");
+		identifyButton.add_css_class("ti-cover-btn");
 		identifyButton.tooltip_text = AcoustId.available() ? _("Look the song up by its sound on AcoustID")
 		                                                   : _("Needs fpcalc, from Chromaprint (the chromaprint or libchromaprint-tools package)");
 		identifyButton.sensitive = AcoustId.available() && file.get_path() != null;
-		identifyButton.clicked.connect(identify);
+		identifyButton.clicked.connect(() => identify.begin());
 		identifyStatus = new Label("");
-		identifyStatus.get_style_context().add_class("ti-meta");
+		identifyStatus.add_css_class("ti-meta");
 		var id_row = new Box(Orientation.HORIZONTAL, 8);
-		id_row.add(identifyButton);
-		id_row.add(identifyStatus);
-		box.add(id_row);
+		id_row.append (identifyButton);
+		id_row.append (identifyStatus);
+		box.append (id_row);
 		
 		show_artwork();
 		return wrap(box);
@@ -365,7 +364,7 @@ public class BeatBox.SongEditor : GLib.Object, MediaEditorInterface {
 		new Thread<void*>("song-info", () => {
 			var facts = TrackReport.read_file(uri, 200);
 			Idle.add(() => {
-				if(formatValue.get_toplevel() is Gtk.Window) // the page is still there
+				if(UI.window_of (formatValue) is Gtk.Window) // the page is still there
 					show_file_facts(facts);
 				return false;
 			});
@@ -380,44 +379,44 @@ public class BeatBox.SongEditor : GLib.Object, MediaEditorInterface {
 		if(bitrateValue.label == "…")
 			bitrateValue.label = facts.bitrate > 0 ? "%u kbps".printf(facts.bitrate) : "—";
 		
-		picturesBox.foreach((w) => w.destroy());
+		UI.clear(picturesBox);
 		if(facts.images.length == 0) {
 			var none = new Label(facts.error ?? _("This file has no pictures inside it."));
-			none.get_style_context().add_class("dim-label");
+			none.add_css_class("dim-label");
 			none.xalign = 0;
-			picturesBox.add(none);
+			picturesBox.append (none);
 		}
 		for(int i = 0; i < facts.images.length; i++) {
 			var row = new Box(Orientation.HORIZONTAL, 14);
 			var frame = new Frame(null);
-			frame.get_style_context().add_class("album-cell-frame");
+			frame.add_css_class("album-cell-frame");
 			frame.valign = Align.START;
-			frame.add(new Image.from_pixbuf(facts.images[i]));
-			row.add(frame);
+			var cover_image = new Image();
+			UI.show_pixbuf(cover_image, facts.images[i]);
+			frame.set_child (cover_image);
+			row.append (frame);
 			var text = new Label(facts.image_texts[i]);
 			text.xalign = 0;
 			text.valign = Align.START;
 			text.selectable = true;
 			text.can_focus = false;
-			row.add(text);
-			picturesBox.add(row);
+			row.append (text);
+			picturesBox.append (row);
 		}
-		picturesBox.show_all();
 	}
 	
 	Viewport get_pictures_page() {
 		picturesBox = page_box(12);
 		var reading = new Label(_("Reading the file…"));
-		reading.get_style_context().add_class("dim-label");
+		reading.add_css_class("dim-label");
 		reading.xalign = 0;
-		picturesBox.add(reading);
-		var scroll = new ScrolledWindow(null, null);
+		picturesBox.append (reading);
+		var scroll = new ScrolledWindow ();
 		scroll.hscrollbar_policy = PolicyType.NEVER;
-		scroll.add(picturesBox);
+		scroll.set_child(picturesBox);
 		scroll.vexpand = true;
 		var rv = new Viewport(null, null);
-		rv.shadow_type = ShadowType.NONE;
-		rv.add(AquaScroll.wrap(scroll));
+		rv.set_child (AquaScroll.wrap(scroll));
 		return rv;
 	}
 	
@@ -434,8 +433,8 @@ public class BeatBox.SongEditor : GLib.Object, MediaEditorInterface {
 		var buttons = new Box(Orientation.HORIZONTAL, 4);
 		foreach(var b in new Button[] { choose, download, embed }) {
 			if(small)
-				b.get_style_context().add_class("ti-cover-btn");
-			buttons.add(b);
+				b.add_css_class("ti-cover-btn");
+			buttons.append (b);
 		}
 		choose.clicked.connect(choose_artwork);
 		download.clicked.connect(download_artwork);
@@ -454,18 +453,18 @@ public class BeatBox.SongEditor : GLib.Object, MediaEditorInterface {
 		artwork = new Image();
 		artwork_size = 240;
 		var frame = new Frame(null);
-		frame.get_style_context().add_class("album-cell-frame");
+		frame.add_css_class("album-cell-frame");
 		frame.halign = Align.CENTER;
-		frame.add(artwork);
-		box.add(frame);
+		frame.set_child (artwork);
+		box.append (frame);
 		var buttons = cover_buttons(false);
 		buttons.halign = Align.CENTER;
-		box.add(buttons);
+		box.append (buttons);
 		artworkStatus = new Label("");
 		artworkStatus.wrap = true;
 		artworkStatus.max_width_chars = 50;
-		artworkStatus.get_style_context().add_class("ti-meta");
-		box.add(artworkStatus);
+		artworkStatus.add_css_class("ti-meta");
+		box.append (artworkStatus);
 		show_artwork();
 		artworkStatus.label = _("Changes here apply to the albums of all the selected songs.");
 		return wrap(box);
@@ -482,7 +481,7 @@ public class BeatBox.SongEditor : GLib.Object, MediaEditorInterface {
 			var framed = App.covers.get_album_art_from_media(current_media) ?? App.covers.DEFAULT_COVER_SHADOW;
 			pix = framed.scale_simple(artwork_size, artwork_size, Gdk.InterpType.BILINEAR);
 		}
-		artwork.pixbuf = pix;
+		UI.show_pixbuf(artwork, pix);
 	}
 	
 	/** The cover of every album among the songs being edited becomes pix */
@@ -499,17 +498,21 @@ public class BeatBox.SongEditor : GLib.Object, MediaEditorInterface {
 	}
 	
 	void choose_artwork() {
-		var chooser = new FileChooserNative(_("Choose Image"), (Gtk.Window)artwork.get_toplevel(), FileChooserAction.OPEN, _("Open"), _("Cancel"));
+		var chooser = new FileChooserNative(_("Choose Image"), (Gtk.Window)UI.window_of (artwork), FileChooserAction.OPEN, _("Open"), _("Cancel"));
 		var filter = new FileFilter();
 		filter.add_pixbuf_formats();
 		chooser.filter = filter;
-		if(chooser.run() == ResponseType.ACCEPT) {
+		// GTK 4's native chooser does not block: the answer comes by signal
+		chooser.response.connect((answer) => {
+			if(answer != ResponseType.ACCEPT)
+				return;
 			try {
-				set_artwork(new Gdk.Pixbuf.from_file(chooser.get_filename()));
+				set_artwork(new Gdk.Pixbuf.from_file(chooser.get_file().get_path()));
 			} catch(Error err) {
 				artworkStatus.label = _("Could not open the image: %s").printf(err.message);
 			}
-		}
+		});
+		chooser.show();
 	}
 	
 	void download_artwork() {
@@ -518,7 +521,7 @@ public class BeatBox.SongEditor : GLib.Object, MediaEditorInterface {
 		new Thread<void*>("cover-download", () => {
 			var pix = ((CoverManager)App.covers).download_cover(m.album_artist != "" ? m.album_artist : m.artist, m.album);
 			Idle.add(() => {
-				if(!(artwork.get_toplevel() is Gtk.Window))
+				if(!(UI.window_of (artwork) is Gtk.Window))
 					return false;
 				if(pix != null)
 					set_artwork(pix);
@@ -532,12 +535,12 @@ public class BeatBox.SongEditor : GLib.Object, MediaEditorInterface {
 	
 	/* ===== Identify ===== */
 	
-	void identify() {
+	async void identify() {
 		if(App.settings.lastfm.acoustid_key == "") {
-			var dialog = new MessageDialog((Gtk.Window)identifyButton.get_toplevel(), DialogFlags.MODAL, MessageType.INFO, ButtonsType.CLOSE,
+			var dialog = new MessageDialog((Gtk.Window)UI.window_of (identifyButton), DialogFlags.MODAL, MessageType.INFO, ButtonsType.CLOSE,
 			                               _("Identifying songs needs an AcoustID application key"));
 			dialog.secondary_text = _("Register a free application at acoustid.org/new-application and paste its key in Preferences › Last.fm.");
-			dialog.run();
+			yield UI.run_dialog(dialog);
 			dialog.destroy();
 			return;
 		}
@@ -552,21 +555,21 @@ public class BeatBox.SongEditor : GLib.Object, MediaEditorInterface {
 			Idle.add(() => {
 				identifyButton.sensitive = true;
 				identifyButton.label = _("Identify…");
-				if(identifyButton.get_toplevel() is Gtk.Window && identifyButton.get_toplevel().visible)
-					show_matches(matches, error);
+				if(UI.window_of (identifyButton) is Gtk.Window && UI.window_of (identifyButton).visible)
+					show_matches.begin(matches, error);
 				return false;
 			});
 			return null;
 		});
 	}
 	
-	void show_matches(Gee.List<AcoustId.Match> matches, string? error) {
-		var parent = (Gtk.Window)identifyButton.get_toplevel();
+	async void show_matches(Gee.List<AcoustId.Match> matches, string? error) {
+		var parent = (Gtk.Window)UI.window_of (identifyButton);
 		if(matches.size == 0) {
 			var dialog = new MessageDialog(parent, DialogFlags.MODAL, MessageType.INFO, ButtonsType.CLOSE,
 			                               error != null ? _("Identification failed") : _("No matches found"));
 			dialog.secondary_text = error ?? _("AcoustID doesn't know this recording.");
-			dialog.run();
+			yield UI.run_dialog(dialog);
 			dialog.destroy();
 			return;
 		}
@@ -584,19 +587,18 @@ public class BeatBox.SongEditor : GLib.Object, MediaEditorInterface {
 			view.insert_column_with_attributes(-1, titles[i], new CellRendererText() { ellipsize = Pango.EllipsizeMode.END, width_chars = i == 0 ? 6 : 18 }, "text", i);
 		view.get_selection().select_path(new TreePath.first());
 		view.row_activated.connect(() => dialog.response(ResponseType.OK));
-		var scroll = new ScrolledWindow(null, null);
+		var scroll = new ScrolledWindow ();
 		scroll.set_size_request(620, 260);
-		scroll.add(view);
+		scroll.set_child(view);
 		var label = new Label(_("Select a result to apply its title, artist and album to this song:"));
 		label.xalign = 0;
 		var box = dialog.get_content_area();
 		box.spacing = 8;
-		box.margin = 10;
-		box.add(label);
-		box.add(AquaScroll.wrap(scroll));
+		box.margin_top = box.margin_bottom = box.margin_start = box.margin_end = 10;
+		box.append(label);
+		box.append(AquaScroll.wrap(scroll));
 		dialog.set_default_response(ResponseType.OK);
-		dialog.show_all();
-		bool apply = dialog.run() == ResponseType.OK;
+		bool apply = (yield UI.run_dialog(dialog)) == ResponseType.OK;
 		var chosen = view.get_selection().get_selected_rows(null);
 		if(apply && chosen.length() > 0) {
 			var m = matches[chosen.data.get_indices()[0]];
@@ -619,12 +621,12 @@ public class BeatBox.SongEditor : GLib.Object, MediaEditorInterface {
 		lyricsText.top_margin = lyricsText.bottom_margin = 6;
 		lyricsText.left_margin = lyricsText.right_margin = 8;
 		lyricsText.get_buffer().text = current_media.lyrics;
-		var scroll = new ScrolledWindow(null, null);
-		scroll.shadow_type = ShadowType.IN;
+		var scroll = new ScrolledWindow ();
+		scroll.has_frame = true;
 		scroll.hscrollbar_policy = PolicyType.NEVER;
 		scroll.vexpand = true;
-		scroll.add(lyricsText);
-		box.add(AquaScroll.wrap(scroll));
+		scroll.set_child(lyricsText);
+		box.append (AquaScroll.wrap(scroll));
 		
 		var download = new Button.with_label(_("Download Lyrics"));
 		download.tooltip_text = _("Look the lyrics up on lrclib.net (they replace the ones here)");
@@ -632,11 +634,11 @@ public class BeatBox.SongEditor : GLib.Object, MediaEditorInterface {
 		lyricsStatus = new Label("");
 		lyricsStatus.ellipsize = Pango.EllipsizeMode.END;
 		lyricsStatus.xalign = 0;
-		lyricsStatus.get_style_context().add_class("ti-meta");
+		lyricsStatus.add_css_class("ti-meta");
 		var row = new Box(Orientation.HORIZONTAL, 8);
-		row.add(download);
-		row.add(lyricsStatus);
-		box.add(row);
+		row.append (download);
+		row.append (lyricsStatus);
+		box.append (row);
 		
 		fetch_lyrics(false);
 		return wrap(box);
@@ -719,7 +721,7 @@ public class BeatBox.SongEditor : GLib.Object, MediaEditorInterface {
 		new Thread<void*>("lyrics", () => {
 			string found = SyncedLyrics.fetch_plain(m);
 			Idle.add(() => {
-				if(request != lyrics_request || !(lyricsText.get_toplevel() is Gtk.Window))
+				if(request != lyrics_request || !(UI.window_of (lyricsText) is Gtk.Window))
 					return false;
 				if(found != "") {
 					lyricsText.get_buffer().text = found;

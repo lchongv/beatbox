@@ -438,7 +438,7 @@ public class BeatBox.SideBar : Gtk.TreeView {
 	}
 	
 	Gdk.DragAction drag_motion_signal(double x, double y) {
-		TreeIter iter;
+		TreeIter iter = TreeIter();
 		TreePath? path;
 		TreeViewDropPosition pos;
 		TreePath? target = null; // row the tree view marks as the drop position

@@ -62,7 +62,7 @@ public class BeatBox.FieldEditorImpl : Box, FieldEditor {
 		
 		edit_widget = spin_button;
 		spin_button.valign = Align.CENTER;
-		this.add(spin_button);
+		this.append(spin_button);
 	}
 	
 	/** A number on a slider, with "zero" marked under its middle */
@@ -84,7 +84,7 @@ public class BeatBox.FieldEditorImpl : Box, FieldEditor {
 		scale.value_changed.connect(() => { check.set_active((int)scale.get_value() != this.original.get_int()); });
 		
 		edit_widget = scale;
-		this.add(scale);
+		this.append(scale);
 	}
 	
 	public FieldEditorImpl.for_string(string field_name, string original) {
@@ -103,7 +103,7 @@ public class BeatBox.FieldEditorImpl : Box, FieldEditor {
 		
 		edit_widget = entry;
 		entry.hexpand = true;
-		this.add(entry);
+		this.append(entry);
 	}
 	
 	public FieldEditorImpl.for_long_string(string field_name, string original) {
@@ -122,17 +122,16 @@ public class BeatBox.FieldEditorImpl : Box, FieldEditor {
 		text_view.get_buffer().text = original;
 		text_view.buffer.changed.connect(text_view_changed);
 		
-		ScrolledWindow scroll = new ScrolledWindow(null, null);
+		ScrolledWindow scroll = new ScrolledWindow ();
 		Viewport viewport = new Viewport(null, null);
-		viewport.set_shadow_type(ShadowType.NONE);
-		scroll.shadow_type = ShadowType.IN;
+		scroll.has_frame = true;
 		scroll.set_policy(PolicyType.NEVER, PolicyType.AUTOMATIC);
-		viewport.add(text_view);
-		scroll.add(viewport);
+		viewport.set_child (text_view);
+		scroll.set_child(viewport);
 		
 		edit_widget = text_view;
 		scroll.vexpand = scroll.hexpand = true;
-		this.add(AquaScroll.wrap(scroll));
+		this.append(AquaScroll.wrap(scroll));
 	}
 	
 	public FieldEditorImpl.for_rating(string field_name, int original) {
@@ -144,14 +143,14 @@ public class BeatBox.FieldEditorImpl : Box, FieldEditor {
 		
 		check.set_active(original != 0);
 			
-		var rating_widget = new RatingWidget(false, IconSize.MENU, false, null);
+		var rating_widget = new RatingWidget(false, IconSize.NORMAL, false, null);
 		rating_widget.set_rating(original);
 		rating_widget.rating_changed.connect(rating_changed);
 		
 		edit_widget = rating_widget;
 		rating_widget.valign = Align.CENTER;
 		rating_widget.halign = Align.START;
-		this.add(rating_widget);
+		this.append(rating_widget);
 	}
 	
 	/** A yes/no option: the check box's own label says what it means */
@@ -167,7 +166,7 @@ public class BeatBox.FieldEditorImpl : Box, FieldEditor {
 		toggle.toggled.connect(() => { check.set_active(toggle.active != this.original.get_boolean()); });
 		
 		edit_widget = toggle;
-		this.add(toggle);
+		this.append(toggle);
 	}
 	
 	private FieldEditorImpl.basic(string field_name) {
@@ -185,16 +184,15 @@ public class BeatBox.FieldEditorImpl : Box, FieldEditor {
 		label.xalign = 1.0f;
 		label.valign = Align.CENTER;
 		label.width_request = 130;
-		label.get_style_context().add_class("ti-field-label");
+		label.add_css_class("ti-field-label");
 		
-		this.add(check);
-		this.add(label);
+		this.append(check);
+		this.append(label);
 	}
 	
 	/** Width of the label column (0: no label, the edit widget takes the row) */
 	public void set_label_width(int width) {
 		label.width_request = width;
-		label.no_show_all = width == 0;
 		label.visible = width != 0;
 	}
 	
@@ -204,7 +202,6 @@ public class BeatBox.FieldEditorImpl : Box, FieldEditor {
 	}
 	
 	public void set_check_visible(bool val) {
-		check.no_show_all = !val;
 		check.visible = val;
 	}
 	

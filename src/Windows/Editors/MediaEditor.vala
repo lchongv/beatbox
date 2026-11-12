@@ -50,8 +50,6 @@ public class BeatBox.MediaEditor : Window {
 		this.entire_media_list = entire_media_list;
 		this.current_medias = medias;
 		
-		window_position = WindowPosition.CENTER_ON_PARENT;
-		type_hint = Gdk.WindowTypeHint.DIALOG;
 		modal = true;
 		transient_for = App.window;
 		destroy_with_parent = true;
@@ -59,33 +57,33 @@ public class BeatBox.MediaEditor : Window {
 		get_style_context().add_class("song-info");
 		
 		var root = new Box(Orientation.VERTICAL, 10);
-		root.margin = 14;
+		root.margin_top = root.margin_bottom = root.margin_start = root.margin_end = 14;
 		
 		// the tabs float centred over the panel's top edge
 		pages = new Stack();
 		pages.transition_type = StackTransitionType.CROSSFADE;
 		pages.vexpand = true;
 		var panel = new Box(Orientation.VERTICAL, 0);
-		panel.get_style_context().add_class("tiger-panel");
+		panel.add_css_class("tiger-panel");
 		panel.margin_top = 13; // half the tabs' height
-		panel.add(pages);
+		panel.append (pages);
 		var tabs = new StackSwitcher();
 		tabs.stack = pages;
 		tabs.halign = Align.CENTER;
 		tabs.valign = Align.START;
-		tabs.get_style_context().add_class("tiger-tabs");
+		tabs.add_css_class("tiger-tabs");
 		this.tabs = tabs;
 		this.panel = panel;
 		var frame = new Overlay();
-		frame.add(panel);
+		frame.set_child(panel);
 		frame.add_overlay(tabs);
 		frame.vexpand = true;
-		root.add(frame);
+		root.append (frame);
 		
 		write_to_file = new CheckButton.with_label(_("Also write changes to the file"));
 		write_to_file.active = App.settings.main.write_metadata_to_file;
 		write_to_file.tooltip_text = _("Otherwise the changes stay in BeatBox's library and the tags in the files are left as they are (the same option as in Preferences)");
-		root.add(write_to_file);
+		root.append (write_to_file);
 		
 		var buttons = new Box(Orientation.HORIZONTAL, 8);
 		buttons.halign = Align.END;
@@ -98,11 +96,11 @@ public class BeatBox.MediaEditor : Window {
 		previous.sensitive = next.sensitive = entire_media_list.size > 1;
 		foreach(var b in new Button[] { previous, next, cancel, ok }) {
 			b.width_request = 96;
-			buttons.add(b);
+			buttons.append (b);
 		}
-		ok.can_default = true;
-		root.add(buttons);
-		add(root);
+
+		root.append (buttons);
+		set_child(root);
 		
 		previous.clicked.connect(() => move_by(-1));
 		next.clicked.connect(() => move_by(1));
@@ -111,9 +109,10 @@ public class BeatBox.MediaEditor : Window {
 			save();
 			destroy();
 		});
-		var keys = new EventControllerKey(this);
+		var keys = new EventControllerKey();
+		((Gtk.Widget) this).add_controller(keys);
 		keys.key_pressed.connect((keyval, keycode, state) => {
-			if((state & Gdk.ModifierType.MOD1_MASK) != 0 && previous.sensitive && (keyval == Gdk.Key.Left || keyval == Gdk.Key.Right)) {
+			if((state & Gdk.ModifierType.ALT_MASK) != 0 && previous.sensitive && (keyval == Gdk.Key.Left || keyval == Gdk.Key.Right)) {
 				move_by(keyval == Gdk.Key.Left ? -1 : 1);
 				return true;
 			}
@@ -123,16 +122,20 @@ public class BeatBox.MediaEditor : Window {
 			}
 			return false;
 		});
-		set_data("key-controller", keys); // GTK3 controllers need a reference
 		
 		build_pages(null);
-		show_all();
-		ok.grab_default();
+		present();
+		set_default_widget(ok);
 	}
 	
 	/** The editor's pages for current_medias, showing the one titled like the page that was shown */
 	void build_pages(string? shown) {
-		pages.foreach((w) => w.destroy());
+		// GTK4: a stack has no foreach: take its pages out one by one
+		for (var page_widget = pages.get_first_child(); page_widget != null; ) {
+			var next_page = page_widget.get_next_sibling();
+			pages.remove(page_widget);
+			page_widget = next_page;
+		}
 		
 		// Assume all medias are of same type
 		editor = current_medias.get(0).get_editor_widget();
@@ -153,7 +156,6 @@ public class BeatBox.MediaEditor : Window {
 			if(!views.has_key(name))
 				continue;
 			var page = views[name];
-			page.show_all();
 			pages.add_titled(page, name, name);
 		}
 		pages.visible_child_name = (shown != null && views.has_key(shown)) ? shown : (views.has_key(_("Summary")) ? _("Summary") : _("Info"));
@@ -162,9 +164,8 @@ public class BeatBox.MediaEditor : Window {
 			fe.set_check_visible(!single);
 		
 		// the overlay doesn't measure the tabs: the panel is made at least as wide as they are
-		int tabs_width;
-		tabs.show_all();
-		tabs.get_preferred_width(null, out tabs_width);
+		int tabs_min, tabs_width, tabs_min_base, tabs_nat_base;
+		tabs.measure(Orientation.HORIZONTAL, -1, out tabs_min, out tabs_width, out tabs_min_base, out tabs_nat_base);
 		panel.width_request = tabs_width + 40;
 		
 		title = single ? _("Song Info") : _("Info for %d Songs").printf(current_medias.size);
@@ -185,6 +186,5 @@ public class BeatBox.MediaEditor : Window {
 		current_medias = new LinkedList<Media>();
 		current_medias.add(m);
 		build_pages(pages.visible_child_name);
-		pages.show_all();
 	}
 }

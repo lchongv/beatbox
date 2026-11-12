@@ -33,6 +33,7 @@ public class BeatBox.ModeButton : Gtk.Box {
 					break;
 				}
 			}
+			return true; // the wheel is used here: it doesn't scroll what is around the buttons
 		});
 	}
 

@@ -43,7 +43,7 @@ public class BeatBox.SmartPlaylistEditor : Window {
 	ComboBoxText comboMatch;
 	
 	bool is_in_scroll;
-	EventBox no_scroll;
+	Box no_scroll;
 	Viewport scroll;
 	ScrolledWindow scrolled_window;
 	Widget scrolled_child; // scrolled_window with its Aqua bars, if any: it is what is shown or hidden
@@ -62,8 +62,6 @@ public class BeatBox.SmartPlaylistEditor : Window {
 		
 		this.title = _("Smart Playlist Editor");
 		
-		this.window_position = WindowPosition.CENTER;
-		this.type_hint = Gdk.WindowTypeHint.DIALOG;
 		this.set_modal(true);
 		this.set_transient_for(App.window);
 		this.destroy_with_parent = true;
@@ -97,9 +95,9 @@ public class BeatBox.SmartPlaylistEditor : Window {
 		comboMatch.insert_text(1, _("all"));
 		Label tOfTheFollowing = new Label(_("of the following:"));
 		
-		matchBox.add(tMatch);
-		matchBox.add(comboMatch);
-		matchBox.add(tOfTheFollowing);
+		matchBox.append (tMatch);
+		matchBox.append (comboMatch);
+		matchBox.append (tOfTheFollowing);
 		
 		if(sp.conditional == SmartPlaylist.Conditional.ANY)
 			comboMatch.set_active(0);
@@ -109,21 +107,25 @@ public class BeatBox.SmartPlaylistEditor : Window {
 		/* create rule list */
 		spQueries = new Gee.ArrayList<SmartPlaylistEditorQuery>();
 		vertQueries = new Box(Orientation.VERTICAL, 2);
-		no_scroll = new EventBox();
+		no_scroll = new Box(Orientation.VERTICAL, 0);
+		// the wheel over the rules must not move the combos in them: this takes it first (was the EventBox)
+		var wheel = new EventControllerScroll(EventControllerScrollFlags.BOTH_AXES);
+		wheel.propagation_phase = PropagationPhase.CAPTURE;
+		wheel.scroll.connect((dx, dy) => { return true; });
+		no_scroll.add_controller(wheel);
 		scroll = new Viewport(null, null);
-		scroll.set_border_width(0);
-		scrolled_window = new ScrolledWindow(null, null);
+		scrolled_window = new ScrolledWindow ();
 		scrolled_window.set_policy(PolicyType.NEVER, PolicyType.AUTOMATIC);
-		scrolled_window.set_size_request(-1, get_display().get_monitor_at_window(App.window.get_window()).get_geometry().height - BUFFER_SPACE);
-		scrolled_window.add(scroll);
+		scrolled_window.set_size_request(-1, get_display().get_monitor_at_surface(App.window.get_surface()).get_geometry().height - BUFFER_SPACE);
+		scrolled_window.set_child (scroll);
 		
 		// to start, put in no_scroll
-		no_scroll.add(vertQueries);
+		no_scroll.append(vertQueries);
 		
 		foreach(SmartQuery q in sp.queries) {
 			SmartPlaylistEditorQuery speq = new SmartPlaylistEditorQuery(q);
 			
-			vertQueries.add(speq);
+			vertQueries.append (speq);
 			spQueries.add(speq);
 			speq.removed.connect(speq_removed);
 		}
@@ -146,40 +148,39 @@ public class BeatBox.SmartPlaylistEditor : Window {
 		mediaLimit.set_value((double)sp.limit_amount);
 		
 		Box limiterBox = new Box(Orientation.HORIZONTAL, 2);
-		limiterBox.add(limitMedias);
-		limiterBox.add(mediaLimit);
-		limiterBox.add(limiterLabel);
+		limiterBox.append (limitMedias);
+		limiterBox.append (mediaLimit);
+		limiterBox.append (limiterLabel);
 		
 		/* add the Done button on bottom */
-		var bottomButtons = new ButtonBox(Orientation.HORIZONTAL);
-		bottomButtons.set_spacing (6);
-		bottomButtons.set_layout(ButtonBoxStyle.END);
+		var bottomButtons = new Box(Orientation.HORIZONTAL, 6);
+		bottomButtons.halign = Align.END;
 		save = new Button.with_label(_("Done"));
 		var cancel = new Button.with_label(_("Cancel"));
-		bottomButtons.add(cancel);
-		bottomButtons.add(save);
+		bottomButtons.append(cancel);
+		bottomButtons.append(save);
 		
 		/* put it all together */
-		content.add(UI.wrap_alignment(nameLabel, 10, 0, 0, 0));
-		content.add(UI.wrap_alignment(nameEntry, 0, 10, 0, 10));
-		content.add(rulesLabel);
-		content.add(UI.wrap_alignment(matchBox, 0, 10, 0, 10) );
-		content.add(UI.wrap_alignment(no_scroll, 0, 0, 0, 0));
+		content.append (UI.wrap_alignment(nameLabel, 10, 0, 0, 0));
+		content.append (UI.wrap_alignment(nameEntry, 0, 10, 0, 10));
+		content.append (rulesLabel);
+		content.append (UI.wrap_alignment(matchBox, 0, 10, 0, 10) );
+		content.append (UI.wrap_alignment(no_scroll, 0, 0, 0, 0));
 		scrolled_child = AquaScroll.wrap(scrolled_window);
-		content.add(UI.wrap_alignment(scrolled_child, 0, 0, 0, 0));
-		content.add(UI.wrap_alignment(addButton, 0, 0, 0, 0));
-		content.add(optionsLabel);
-		content.add(UI.wrap_alignment(limiterBox, 0, 10, 0, 10));
+		content.append (UI.wrap_alignment(scrolled_child, 0, 0, 0, 0));
+		content.append (UI.wrap_alignment(addButton, 0, 0, 0, 0));
+		content.append (optionsLabel);
+		content.append (UI.wrap_alignment(limiterBox, 0, 10, 0, 10));
 		bottomButtons.margin_top = bottomButtons.margin_bottom = 10;
-		content.add(bottomButtons);
+		content.append (bottomButtons);
 		
 		content.hexpand = true;
-		padding.add(content);
+		padding.append (content);
 		
-		scrolled_child.set_no_show_all(true);
+		scrolled_child.visible = false;
 		
-		add(UI.wrap_alignment(padding, 0, 10, 0, 10));
-		show_all();
+		set_child(UI.wrap_alignment(padding, 0, 10, 0, 10));
+		present();
 		
 		save.clicked.connect(saveClick);
 		cancel.clicked.connect( () => { destroy(); } );
@@ -209,7 +210,7 @@ public class BeatBox.SmartPlaylistEditor : Window {
 	void addRow() {
 		SmartPlaylistEditorQuery speq = new SmartPlaylistEditorQuery(new SmartQuery());
 		
-		vertQueries.add(speq);
+		vertQueries.append (speq);
 		spQueries.add(speq);
 		speq.removed.connect(speq_removed);
 		resize_gui();
@@ -235,21 +236,21 @@ public class BeatBox.SmartPlaylistEditor : Window {
 		Requisition natural_req = Requisition();
 		get_preferred_size(out min_req, out natural_req);
 		
-		resize(min_req.width, min_req.height);
+		set_default_size(min_req.width, min_req.height);
 		
 		// Determine if we should move to scroll/out of scroll
-		bool should_be_in_scroll = vertQueries.get_allocated_height() >= (get_display().get_monitor_at_window(App.window.get_window()).get_geometry().height - BUFFER_SPACE);
+		bool should_be_in_scroll = vertQueries.get_allocated_height() >= (get_display().get_monitor_at_surface(App.window.get_surface()).get_geometry().height - BUFFER_SPACE);
 		if(is_in_scroll && !should_be_in_scroll) {
-			scroll.remove(vertQueries);
+			scroll.set_child(null);
 			scrolled_child.hide();
-			no_scroll.add(vertQueries);
+			no_scroll.append(vertQueries);
 			no_scroll.show();
 			is_in_scroll = false;
 		}
 		else if(!is_in_scroll && should_be_in_scroll) {
 			no_scroll.remove(vertQueries);
 			no_scroll.hide();
-			scroll.add(vertQueries);
+			scroll.set_child (vertQueries);
 			scrolled_child.show();
 			scroll.show();
 			is_in_scroll = true;
@@ -367,9 +368,9 @@ public class BeatBox.SmartPlaylistEditorQuery : Box {
 			return false;
 		});
 		
-		entry.set_no_show_all(true);
-		media_option.set_no_show_all(true);
-		spinbutton.set_no_show_all(true);
+		entry.visible = false;
+		media_option.visible = false;
+		spinbutton.visible = false;
 		
 		comparator.set_size_request(160, -1);
 		entry.set_size_request(200, -1);
@@ -390,18 +391,17 @@ public class BeatBox.SmartPlaylistEditorQuery : Box {
 			spinbutton.show();
 		}
 		
-		add(field);
-		add(comparator);
+		append(field);
+		append(comparator);
 		entry.hexpand = true;
-		add(entry);
+		append(entry);
 		media_option.hexpand = true;
-		add(media_option);
+		append(media_option);
 		spinbutton.hexpand = true;
-		add(spinbutton);
-		add(units);
-		add(removeButton);
+		append(spinbutton);
+		append(units);
+		append(removeButton);
 		
-		show_all();
 		
 		removeButton.clicked.connect(removeClicked);
 		field.changed.connect(fieldChanged);

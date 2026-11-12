@@ -83,16 +83,16 @@ public class BeatBox.InfoViewport : Viewport {
 		bitrate_label.xalign = 0.0f;
 		samplerate_label.xalign = 0.0f;
 		
-		left.add(location_label);
-		left.add(file_size_label);
-		left.add(date_added_label);
-		left.add(last_played_label);
-		left.add(last_modified_label);
-		left.add(plays_label);
-		left.add(skips_label);
-		left.add(length_label);
-		left.add(bitrate_label);
-		left.add(samplerate_label);
+		left.append (location_label);
+		left.append (file_size_label);
+		left.append (date_added_label);
+		left.append (last_played_label);
+		left.append (last_modified_label);
+		left.append (plays_label);
+		left.append (skips_label);
+		left.append (length_label);
+		left.append (bitrate_label);
+		left.append (samplerate_label);
 		
 		location = new Label("");
 		file_size = new Label("");
@@ -105,16 +105,16 @@ public class BeatBox.InfoViewport : Viewport {
 		bitrate = new Label("");
 		samplerate = new Label("");
 		
-		right.add(location);
-		right.add(file_size);
-		right.add(date_added);
-		right.add(last_played);
-		right.add(last_modified);
-		right.add(plays);
-		right.add(skips);
-		right.add(length);
-		right.add(bitrate);
-		right.add(samplerate);
+		right.append (location);
+		right.append (file_size);
+		right.append (date_added);
+		right.append (last_played);
+		right.append (last_modified);
+		right.append (plays);
+		right.append (skips);
+		right.append (length);
+		right.append (bitrate);
+		right.append (samplerate);
 		
 		location.xalign = 0.0f;
 		file_size.xalign = 0.0f;
@@ -131,15 +131,14 @@ public class BeatBox.InfoViewport : Viewport {
 		location.ellipsize = Pango.EllipsizeMode.START;
 		location.has_tooltip = true;
 		
-		content.add(left);
+		content.append (left);
 		right.hexpand = true;
-		content.add(UI.wrap_alignment(right, 0, 10, 10, 4));
+		content.append (UI.wrap_alignment(right, 0, 10, 10, 4));
 		
-		add(content);
+		set_child(content);
 		
 		set_media(m);
 		
-		show_all();
 		hide();
 	}
 	
