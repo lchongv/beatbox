@@ -17,7 +17,7 @@ etapa 2 con el andamio; `tools/gtk4-check.sh` tarda ~2 s.
 | T11 preferencias | D | [~] | | | |
 | T12 ventanas | D | [~] | | | |
 | T13 editores | D | [~] | | | |
-| T14 sueltos | D | [~] | | | |
+| T14 sueltos | D | [x] | | 0 | export_playlist_to_file es async: SourceViews la llama sin yield (T16 debe usar .begin) |
 | T15 widgets simples | D | [~] | | | |
 | T16 vistas de origen | D | [~] | | | |
 | T20 listas (base y música) | H | [x] | | 0 | arrastre de varias filas sin probar (riesgo 3, revisión manual); «Añadir a lista» abre el submenú al pulsar, no al pasar el ratón; DropTarget de la cola sin confirmar en 4.6 |

@@ -288,7 +288,7 @@ public class BeatBox.CDRomDevice : GLib.Object, BeatBox.Device {
 		// update media in cdrom list to show as completed
 		warning("TODO: Fixme: Get rid of UI code from here.");
 		SourceView vw = (SourceView)App.window.get_view_from_object(this);
-		s.unique_status_image = App.icons.PROCESS_COMPLETED.render(Gtk.IconSize.MENU, vw.list_view.get_style_context());
+		s.unique_status_image = App.icons.PROCESS_COMPLETED.render(Gtk.IconSize.NORMAL, vw.list_view.get_style_context());
 		
 		if(GLib.File.new_for_uri(lib_copy.uri).query_exists()) {
 			try {
@@ -335,7 +335,7 @@ public class BeatBox.CDRomDevice : GLib.Object, BeatBox.Device {
 			
 			//FIXME: We already do this and more in the library_manager import_operation_finished. Use that
 			// and use the same text as here for CD imports
-			if(!App.window.has_toplevel_focus) {
+			if(!App.window.is_active) {
 				App.window.show_notification(_("Import Complete"), _("BeatBox has finished importing %d song(s) from Audio CD").printf(current_list_index + 1), null);
 			}
 		}

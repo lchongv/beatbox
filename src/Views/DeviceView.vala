@@ -65,11 +65,11 @@ public class BeatBox.DeviceView : Box, View {
 	
 	void buildUI() {
 		orientation = Orientation.VERTICAL;
-		add(UI.experimental_bar(_("syncing hasn't been tested with current devices. Back up your device before syncing.")));
+		append(UI.experimental_bar(_("syncing hasn't been tested with current devices. Back up your device before syncing.")));
 		
 		summary = new DeviceSummaryWidget(d);
 		summary.hexpand = true;
-		add(summary);
+		append(summary);
 		
 		deviceMenu = new GLib.Menu();
 		deviceMenu.append(_("Import from Device"), "view.import");
@@ -84,8 +84,6 @@ public class BeatBox.DeviceView : Box, View {
 		deviceActions.add_action(import);
 		deviceActions.add_action(sync);
 		deviceActions.add_action(unmount);
-		
-		show_all();
 	}
 	
 	public void showImportDialog() {
@@ -98,7 +96,7 @@ public class BeatBox.DeviceView : Box, View {
 			
 			if(not_found.size > 0) {
 				TransferFromDeviceDialog tfdd = new TransferFromDeviceDialog(d, not_found);
-				tfdd.show();
+				tfdd.present();
 			}
 			else {
 				App.window.doAlert(_("No External Songs"), _("There were no songs found on this device that are not in your library."));
@@ -121,15 +119,15 @@ public class BeatBox.DeviceView : Box, View {
 	
 	public Gdk.Pixbuf get_view_icon() {
 		if(d.getContentType() == "cdrom")
-			return App.icons.AUDIO_CD.render(IconSize.MENU, null);
+			return App.icons.AUDIO_CD.render(IconSize.NORMAL, null);
 		else if(d.getContentType() == "ipod-new")
-			return App.icons.render_icon ("phone", IconSize.MENU);
+			return App.icons.render_icon ("phone", IconSize.NORMAL);
 		else if(d.getContentType() == "ipod-old")
-			return App.icons.render_icon("multimedia-player", IconSize.MENU);
+			return App.icons.render_icon("multimedia-player", IconSize.NORMAL);
 		else if(d.getContentType() == "android")
-			return App.icons.render_icon("phone", IconSize.MENU);
+			return App.icons.render_icon("phone", IconSize.NORMAL);
 		else
-			return App.icons.render_icon("multimedia-player", IconSize.MENU);
+			return App.icons.render_icon("multimedia-player", IconSize.NORMAL);
 	}
 	
 	public string get_view_name() {
@@ -148,11 +146,11 @@ public class BeatBox.DeviceView : Box, View {
 		return !App.operations.doing_ops;
 	}
 	
-	public void drag_received(Gtk.SelectionData data) {
+	public void drag_received(string[] uris) {
 		message("Adding files to device from drag'n'drop\n");
 				
 		var to_add = new LinkedList<Media>();
-		foreach (string uri in data.get_uris ()) {
+		foreach (string uri in uris) {
 			File file = File.new_for_uri (uri);
 			if(file.query_file_type(FileQueryInfoFlags.NOFOLLOW_SYMLINKS) == FileType.REGULAR && file.is_native ()) {
 				Media m = App.library.media_from_file(uri);
@@ -171,7 +169,6 @@ public class BeatBox.DeviceView : Box, View {
 	}
 	
 	public void set_as_current_view () {
-		show_all();
 		summary.refreshLists();
 	}
 	
@@ -202,7 +199,7 @@ public class BeatBox.DeviceView : Box, View {
 		//songs_view.search_activated(search);
 	}
 	
-	public GLib.List<Gtk.MenuItem>? get_search_menu(string search) {
+	public GLib.List<PopMenuItem>? get_search_menu(string search) {
 		//App.window.set_active_view(songs_view);
 		//songs_view.search_activated(search);
 		

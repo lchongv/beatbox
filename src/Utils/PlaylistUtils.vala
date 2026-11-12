@@ -221,7 +221,7 @@ namespace BeatBox.PlaylistUtils {
 	 * @param main_window main window for the file chooser to know
 	 * @param default_folder The default folder to show the user to save the playlist
 	*/
-	public void export_playlist_to_file(StaticPlaylist p, Gtk.Window main_window, File? default_folder) {
+	public async void export_playlist_to_file(StaticPlaylist p, Gtk.Window main_window, File? default_folder) {
 		string file = "";
 		string name = "";
 		string extension = "";
@@ -242,24 +242,29 @@ namespace BeatBox.PlaylistUtils {
 		pls_filter.set_filter_name("Shoutcast Playlist Version 2.0 (*.pls)");
 		file_chooser.add_filter(pls_filter);
 		
-		file_chooser.do_overwrite_confirmation = true;
+		// GTK4: the file chooser asks for confirmation itself
 		file_chooser.set_current_name(p.name + ".m3u");
 		
-		// set original folder. if we don't, then file_chooser.get_filename() starts as null, which is bad for signal below.
-		if(default_folder != null && default_folder.query_exists())
-			file_chooser.set_current_folder(default_folder.get_path());
-		else
-			file_chooser.set_current_folder(Environment.get_home_dir());
+		// set original folder. if we don't, then file_chooser.get_file() starts as null, which is bad for signal below.
+		try {
+			if(default_folder != null && default_folder.query_exists())
+				file_chooser.set_current_folder(default_folder);
+			else
+				file_chooser.set_current_folder(File.new_for_path(Environment.get_home_dir()));
+		} catch (Error e) { }
 			
 		
 		// listen for filter change
 		file_chooser.notify["filter"].connect( () => {
-			if(file_chooser.get_filename() == null) // happens when no folder is chosen. need way to get textbox text, rather than filename
+			var current = file_chooser.get_file();
+			if(current == null) // happens when no folder is chosen. need way to get textbox text, rather than filename
 				return;
+			
+			string current_path = current.get_path() ?? "";
 			
 			if(file_chooser.filter == m3u_filter) {
 				debug("changed to m3u\n");
-				var new_file = file_chooser.get_filename().replace(".pls", ".m3u");
+				var new_file = current_path.replace(".pls", ".m3u");
 				
 				if(new_file.slice(new_file.last_index_of(".", 0), new_file.length).length == 0) {
 					new_file += ".m3u";
@@ -269,7 +274,7 @@ namespace BeatBox.PlaylistUtils {
 			}
 			else {
 				debug("changed to pls\n");
-				var new_file = file_chooser.get_filename().replace(".m3u", ".pls");
+				var new_file = current_path.replace(".m3u", ".pls");
 				
 				if(new_file.slice(new_file.last_index_of(".", 0), new_file.length).length == 0) {
 					new_file += ".pls";
@@ -279,8 +284,10 @@ namespace BeatBox.PlaylistUtils {
 			}
 		});
 		
-		if (file_chooser.run () == Gtk.ResponseType.ACCEPT) {
-			file = file_chooser.get_filename();
+		if ((yield UI.run_dialog (file_chooser)) == Gtk.ResponseType.ACCEPT) {
+			var chosen = file_chooser.get_file();
+			if (chosen != null)
+				file = chosen.get_path() ?? "";
 			extension = file.slice(file.last_index_of(".", 0), file.length);
 			
 			if(extension.length == 0 || extension[0] != '.') {

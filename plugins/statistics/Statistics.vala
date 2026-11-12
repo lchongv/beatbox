@@ -32,7 +32,7 @@ public class BeatBox.Statistics : Object, Plugin {
 			window.destroy (); // counted again: plays may have changed
 		window = new StatsWindow (host.window, host.library.song_library.medias ());
 		window.destroy.connect (() => window = null);
-		window.show_all ();
+		window.present ();
 	}
 }
 
@@ -74,21 +74,21 @@ class BeatBox.StatsWindow : Gtk.Window {
 		}
 
 		var box = new Box (Orientation.VERTICAL, 6);
-		box.border_width = 16;
+		box.margin_top = box.margin_bottom = box.margin_start = box.margin_end = 16;
 		var total = new Label (plays == 0 ? _("Nothing has been played yet.")
 			: ngettext ("%u play of %u song", "%u plays of %u songs", plays).printf (plays, played_songs)
 			  + " · " + _("%s of listening").printf (duration (seconds)));
-		total.xalign = 0;
+		total.xalign = 0.0f;
 		total.wrap = true;
-		box.add (total);
-		box.add (section (_("Most Played Artists"), top (artists)));
-		box.add (section (_("Most Played Albums"), top (albums)));
-		box.add (section (_("Most Played Genres"), top (genres)));
+		box.append (total);
+		box.append (section (_("Most Played Artists"), top (artists)));
+		box.append (section (_("Most Played Albums"), top (albums)));
+		box.append (section (_("Most Played Genres"), top (genres)));
 
-		var scroll = new ScrolledWindow (null, null);
+		var scroll = new ScrolledWindow ();
 		scroll.hscrollbar_policy = PolicyType.NEVER;
-		scroll.add (box);
-		add (scroll);
+		scroll.set_child (box);
+		set_child (scroll);
 	}
 
 	static void count (Gee.HashMap<string, uint> counts, string key, uint plays) {
@@ -117,20 +117,19 @@ class BeatBox.StatsWindow : Gtk.Window {
 	Widget section (string heading, Gee.List<Row> rows) {
 		var title = new Label (null);
 		title.set_markup ("<b>%s</b>".printf (Markup.escape_text (heading)));
-		title.xalign = 0;
+		title.xalign = 0.0f;
 		title.margin_top = 12;
 		var area = new DrawingArea ();
 		area.set_size_request (-1, int.max (1, rows.size) * ROW_H);
-		area.draw.connect ((cr) => {
-			int width = area.get_allocated_width ();
+		area.set_draw_func ((a, cr, width, height) => {
 			var ctx = area.get_style_context ();
-			var fg = ctx.get_color (StateFlags.NORMAL);
+			var fg = ctx.get_color ();
 			Gdk.RGBA accent;
 			if (!ctx.lookup_color ("bb_accent", out accent) && !ctx.lookup_color ("theme_selected_bg_color", out accent))
 				accent = { 0.24, 0.43, 0.79, 1 };
 			if (rows.size == 0) {
 				text (cr, area, _("No plays yet"), 0, 0, width, fg, 0.6);
-				return true;
+				return;
 			}
 			uint most = rows[0].plays;
 			int bar_w = int.max (20, width - LABEL_W - COUNT_W - 16);
@@ -143,11 +142,10 @@ class BeatBox.StatsWindow : Gtk.Window {
 				cr.fill ();
 				text (cr, area, rows[i].plays.to_string (), LABEL_W + (int)w + 6, y, COUNT_W, fg, 0.7);
 			}
-			return true;
 		});
 		var box = new Box (Orientation.VERTICAL, 4);
-		box.add (title);
-		box.add (area);
+		box.append (title);
+		box.append (area);
 		return box;
 	}
 

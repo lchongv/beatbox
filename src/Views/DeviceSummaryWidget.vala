@@ -76,7 +76,8 @@ public class BeatBox.DeviceSummaryWidget : Box {
 		//get_style_context().add_class (Granite.STYLE_CLASS_CONTENT_VIEW);
 		
 		top_portion = new StyledContentBox();
-		deviceImage = new Gtk.Image.from_gicon(dev.get_icon(), IconSize.DIALOG);
+		deviceImage = new Gtk.Image.from_gicon(dev.get_icon());
+		deviceImage.pixel_size = 48;
 		spaceWidget = new SpaceWidget(dev.get_capacity());
 		
 		Label deviceNameLabel = new Label(_("Device Name:"));
@@ -97,37 +98,37 @@ public class BeatBox.DeviceSummaryWidget : Box {
 		// device name box
 		var deviceNameBox = new Box(Orientation.HORIZONTAL, 6);
 		deviceNameBox.homogeneous = true;
-		deviceNameBox.add(deviceNameLabel);
-		deviceNameBox.add(deviceName);
+		deviceNameBox.append(deviceNameLabel);
+		deviceNameBox.append(deviceName);
 		
 		// auto sync box
 		var autoSyncBox = new Box(Orientation.HORIZONTAL, 6);
 		autoSyncBox.homogeneous = true;
-		autoSyncBox.add(autoSyncLabel);
-		autoSyncBox.add(UI.wrap_alignment(syncAtStart, 0, 0, 0, 0));
+		autoSyncBox.append(autoSyncLabel);
+		autoSyncBox.append(UI.wrap_alignment(syncAtStart, 0, 0, 0, 0));
 		
 		// sync options box
 		var musicBox = new Box(Orientation.HORIZONTAL, 6);
-		musicBox.add(syncMusic);
-		musicBox.add(musicDropdown);
+		musicBox.append(syncMusic);
+		musicBox.append(musicDropdown);
 		
 		var podcastBox = new Box(Orientation.HORIZONTAL, 6);
-		podcastBox.add(syncPodcasts);
-		podcastBox.add(podcastDropdown);
+		podcastBox.append(syncPodcasts);
+		podcastBox.append(podcastDropdown);
 		
 		//var audiobookBox = new Box(Orientation.HORIZONTAL, 6);
 		//audiobookBox.pack_start(syncAudiobooks, false, false, 0);
 		//audiobookBox.pack_start(audiobookDropdown, false, false, 0);
 		
 		var syncOptionsBox = new Box(Orientation.VERTICAL, 0);
-		syncOptionsBox.add(musicBox);
-		if(dev.supports_podcasts()) 	syncOptionsBox.add(podcastBox);
+		syncOptionsBox.append(musicBox);
+		if(dev.supports_podcasts()) 	syncOptionsBox.append(podcastBox);
 		//if(dev.supports_audiobooks()) 	syncOptionsBox.pack_start(audiobookBox, false, false, 0);
 		
 		var syncHBox = new Box(Orientation.HORIZONTAL, 6);
 		syncHBox.homogeneous = true;
-		syncHBox.add(syncOptionsLabel);
-		syncHBox.add(syncOptionsBox);
+		syncHBox.append(syncOptionsLabel);
+		syncHBox.append(syncOptionsBox);
 		
 		// create bottom section
 		//var syncBox = new Box(Orientation.VERTICAL, 0);
@@ -142,18 +143,17 @@ public class BeatBox.DeviceSummaryWidget : Box {
 		//bottomBox.pack_start(syncButtonBox, false, false, 0);
 		
 		// put it all together
-		content.add(deviceNameBox);
-		content.add(autoSyncBox);
-		content.add(syncHBox);
+		content.append(deviceNameBox);
+		content.append(autoSyncBox);
+		content.append(syncHBox);
 		top_portion.set_content(UI.wrap_alignment(content, 15, 10, 10, 10));
 		
 		this.set_orientation(Orientation.VERTICAL);
-		set_border_width(0);
 		
 		top_portion.vexpand = true;
 		spaceWidget.vexpand = false; // its own height: the room left goes to the options above
-		this.add(top_portion);
-		this.add(spaceWidget);
+		this.append(top_portion);
+		this.append(spaceWidget);
 		
 		//add_with_viewport(content_plus_spacewidget);//wrap_alignment(content, 15, 10, 10, 10));
 		
@@ -225,8 +225,6 @@ public class BeatBox.DeviceSummaryWidget : Box {
 		deviceName.changed.connect(deviceNameChanged);
 		spaceWidget.sync_clicked.connect(syncClicked);
 		dev.sync_finished.connect(sync_finished);
-		
-		show_all();
 	}
 	
 	void refreshSpaceWidget() {
@@ -335,11 +333,11 @@ public class BeatBox.DeviceSummaryWidget : Box {
 		
 		/* add entire library options */
 		musicList.append(out iter);
-		musicList.set(iter, 0, null, 1, _("All Music"), 2, App.icons.MUSIC.render(IconSize.MENU));
+		musicList.set(iter, 0, null, 1, _("All Music"), 2, App.icons.MUSIC.render(IconSize.NORMAL));
 		podcastList.append(out iter);
-		podcastList.set(iter, 0, null, 1, _("All Podcasts"), 2, App.icons.PODCAST.render(IconSize.MENU));
+		podcastList.set(iter, 0, null, 1, _("All Podcasts"), 2, App.icons.PODCAST.render(IconSize.NORMAL));
 		//audiobookList.append(out iter);
-		//audiobookList.set(iter, 0, null, 1, "All Audiobooks");//, 2, App.icons.audiobook_icon.render(IconSize.MENU, audiobookDropdown.get_style_context()));
+		//audiobookList.set(iter, 0, null, 1, "All Audiobooks");//, 2, App.icons.audiobook_icon.render(IconSize.NORMAL, audiobookDropdown.get_style_context()));
 		
 		/* add separator */
 		musicList.append(out iter);
@@ -350,8 +348,8 @@ public class BeatBox.DeviceSummaryWidget : Box {
 		//audiobookList.set(iter, 0, null, 1, "<separator_item_unique_name>");
 		
 		/* add all playlists */
-		var smart_playlist_pix = App.icons.SMART_PLAYLIST.render(IconSize.MENU, null);
-		var playlist_pix = App.icons.PLAYLIST.render(IconSize.MENU, null);
+		var smart_playlist_pix = App.icons.SMART_PLAYLIST.render(IconSize.NORMAL, null);
+		var playlist_pix = App.icons.PLAYLIST.render(IconSize.NORMAL, null);
 		
 		foreach(var p in App.playlists.playlists()) {
 			var pix = (p is StaticPlaylist) ? playlist_pix : smart_playlist_pix;
@@ -512,7 +510,7 @@ public class BeatBox.DeviceSummaryWidget : Box {
 			
 			if(not_found.size > 0) { // hand control over to SWD
 				SyncWarningDialog swd = new SyncWarningDialog(dev, list, not_found);
-				swd.show();
+				swd.present();
 			}
 			else {
 				spaceWidget.set_sync_button_sensitive(false);
