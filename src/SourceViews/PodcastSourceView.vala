@@ -42,7 +42,7 @@ public class BeatBox.PodcastSourceView : SourceView {
 		// Setup welcome screen
 		welcome_screen = new Welcome(_("Subscribe to Podcasts"), _("No Podcasts were found."));
 		welcome_screen_keys = new HashMap<int, Device>();
-		var podcast_icon = App.icons.PODCAST.render (IconSize.DIALOG, null);
+		var podcast_icon = App.icons.PODCAST.render (null, null, 48);
 		welcome_screen.append_with_pixbuf(podcast_icon, _("Find Podcasts"), _("Search the Apple Podcasts directory."));
 		welcome_screen.append("list-add", _("Subscribe by Address"), _("Paste the address of a podcast RSS feed."));
 		welcome_screen.activated.connect(welcome_screen_activated);
@@ -115,7 +115,7 @@ public class BeatBox.PodcastSourceView : SourceView {
 	}
 	
 	public override Gdk.Pixbuf get_view_icon() {
-		return App.icons.PODCAST.render(IconSize.MENU, null);
+		return App.icons.PODCAST.render(null, null);
 	}
 	
 	public override string get_view_name() {
@@ -130,7 +130,7 @@ public class BeatBox.PodcastSourceView : SourceView {
 		return false;
 	}
 	
-	public override void drag_received(Gtk.SelectionData data) {
+	public override void drag_received(string[] uris) {
 		
 	}
 	

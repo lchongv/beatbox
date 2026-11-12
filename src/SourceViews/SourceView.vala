@@ -163,7 +163,7 @@ public abstract class BeatBox.SourceView : Box, View {
 		view_container.show_tabs = false;
 		view_container.show_border = false;
 		view_container.vexpand = true;
-		this.add (view_container);
+		this.append (view_container);
 
 		initialized = true;
 	}
@@ -180,9 +180,9 @@ public abstract class BeatBox.SourceView : Box, View {
 		}
 
 		if (have_list_view) {
-			list_scroll = new ScrolledWindow(null, null);
+			list_scroll = new ScrolledWindow();
 			list_scroll.set_policy(PolicyType.AUTOMATIC, PolicyType.AUTOMATIC);
-			list_scroll.add(list_view);
+			list_scroll.set_child(list_view);
 			list_page = list_scroll;
 			
 			// Must do this after, so genericlist can setup vadjustment listeners
@@ -193,23 +193,22 @@ public abstract class BeatBox.SourceView : Box, View {
 		}
 		
 		if(have_album_view) {
-			album_scroll = new ScrolledWindow(null, null);
+			album_scroll = new ScrolledWindow();
 			album_scroll.set_policy(PolicyType.AUTOMATIC, PolicyType.AUTOMATIC);
-			album_scroll.add(album_view);
+			album_scroll.set_child(album_view);
 			
 			// albums unfold inline instead of in a popup
 			wall = new AlbumWall(album_view, this);
 			wall.album_activated.connect(play_album);
-			wall_scroll = new ScrolledWindow(null, null);
+			wall_scroll = new ScrolledWindow();
 			wall_scroll.set_policy(PolicyType.NEVER, PolicyType.AUTOMATIC);
-			wall_scroll.add(wall);
+			wall_scroll.set_child(wall);
 			
 			album_child = AquaScroll.wrap(album_scroll);
 			wall_child = AquaScroll.wrap(wall_scroll);
 			album_page = new Stack();
-			album_page.add(album_child);
-			album_page.add(wall_child);
-			album_page.show_all();
+			album_page.add_child(album_child);
+			album_page.add_child(wall_child);
 			apply_album_click_mode();
 			App.settings.main.notify["album-grid-inline"].connect(apply_album_click_mode);
 			view_container.append_page (album_page);
@@ -221,22 +220,21 @@ public abstract class BeatBox.SourceView : Box, View {
 			cover_flow = new CoverFlow(album_view);
 			cover_flow.album_selected.connect(scroll_list_to_album);
 			cover_flow.album_activated.connect(play_album);
-			var paned = new Paned(Orientation.VERTICAL);
-			paned.pack1(cover_flow, false, false);
-			paned.pack2(AquaScroll.wrap(list_scroll), true, false);
-			// Cover Flow gets half of the height until the user drags the divider
-			bool user_moved = false;
-			paned.size_allocate.connect((alloc) => {
-				if (!user_moved && alloc.height > 1)
-					paned.position = alloc.height / 2;
-			});
-			// a press on the divider (presses inside the panes stay with them)
-			var divider_press = new GestureClick(paned);
+			var paned = new MiddlePaned();
+			paned.start_child = cover_flow;
+			paned.resize_start_child = false;
+			paned.shrink_start_child = false;
+			paned.end_child = AquaScroll.wrap(list_scroll);
+			paned.resize_end_child = true;
+			paned.shrink_end_child = false;
+			// the divider keeps half the height until it is pressed
+			// (in GTK4 presses inside the panes also reach this controller)
+			var divider_press = new GestureClick();
 			divider_press.button = 0;
-			divider_press.pressed.connect(() => { user_moved = true; });
-			paned.set_data("press-gesture", divider_press); // GTK3 controllers need a reference
+			divider_press.pressed.connect(() => { paned.centered = false; });
+			paned.add_controller(divider_press);
 			list_page = paned;
-			cover_flow.no_show_all = true;
+			cover_flow.visible = false;
 		}
 		
 		if (have_list_view) {
@@ -263,15 +261,17 @@ public abstract class BeatBox.SourceView : Box, View {
 		var bar = new Box (Orientation.HORIZONTAL, 6);
 		bar.get_style_context ().add_class ("source-actions");
 		foreach (var b in buttons)
-			bar.add(b);
-		add(bar);
-		reorder_child (bar, 0);
+			bar.append(b);
+		append(bar);
+		reorder_child_after (bar, null);
 	}
 
 	protected static Button action_button (string icon_name, string label) {
-		var b = new Button.with_label (label);
-		b.image = new Image.from_icon_name (icon_name, IconSize.MENU);
-		b.always_show_image = true;
+		var b = new Button ();
+		var content = new Box (Orientation.HORIZONTAL, 6);
+		content.append (new Image.from_icon_name (icon_name));
+		content.append (new Label (label));
+		b.child = content;
 		return b;
 	}
 
@@ -726,7 +726,7 @@ public abstract class BeatBox.SourceView : Box, View {
 	public abstract string get_view_name();
 	public abstract GLib.MenuModel? get_context_menu();
 	public abstract bool can_receive_drop();
-	public abstract void drag_received(Gtk.SelectionData data);
+	public abstract void drag_received(string[] uris);
 	public abstract SideTreeCategory get_sidetree_category();
 	protected abstract void pre_set_as_current_view();
 	
@@ -804,7 +804,7 @@ public abstract class BeatBox.SourceView : Box, View {
 		}
 	}
 	
-	public GLib.List<Gtk.MenuItem>? get_search_menu(string search) {
+	public GLib.List<PopMenuItem>? get_search_menu(string search) {
 		var new_search = search.down();
 
 		if (get_is_valid_search_string (new_search)) {
@@ -896,5 +896,20 @@ public abstract class BeatBox.SourceView : Box, View {
 	
 	public void reset_view() {
 		
+	}
+}
+
+// A vertical paned that keeps its divider in the middle until the user drags it
+private class BeatBox.MiddlePaned : Paned {
+	public bool centered = true;
+
+	public MiddlePaned () {
+		Object (orientation: Orientation.VERTICAL);
+	}
+
+	public override void size_allocate (int width, int height, int baseline) {
+		base.size_allocate (width, height, baseline);
+		if (centered && height > 1)
+			position = height / 2;
 	}
 }

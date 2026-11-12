@@ -66,7 +66,7 @@ public class BeatBox.DefaultSourceView : SourceView {
 	}
 	
 	public override Gdk.Pixbuf get_view_icon() {
-		return App.icons.MUSIC.render(IconSize.MENU, null);
+		return App.icons.MUSIC.render(null, null);
 	}
 	
 	public override string get_view_name() {
@@ -81,7 +81,7 @@ public class BeatBox.DefaultSourceView : SourceView {
 		return false;
 	}
 	
-	public override void drag_received(Gtk.SelectionData data) {
+	public override void drag_received(string[] uris) {
 		
 	}
 	

@@ -92,7 +92,7 @@ public class BeatBox.PlaylistSourceView : SourceView {
 	}
 	
 	public override Gdk.Pixbuf get_view_icon() {
-		return App.icons.PLAYLIST.render(IconSize.MENU, null);
+		return App.icons.PLAYLIST.render(null, null);
 	}
 	
 	public override string get_view_name() {
@@ -107,7 +107,7 @@ public class BeatBox.PlaylistSourceView : SourceView {
 		return true;
 	}
 	
-	public override void drag_received(Gtk.SelectionData data) {
+	public override void drag_received(string[] uris) {
 		BasePlaylist p = App.playlists.playlist_from_id(relative_id);
 		if(!(p is StaticPlaylist)) {
 			warning("User tried to drop media onto a smart playlist");
@@ -118,7 +118,7 @@ public class BeatBox.PlaylistSourceView : SourceView {
 		
 		message("Adding files to playlist %s\n", p.name);
 		var to_add = new LinkedList<Media>();
-		foreach (string uri in data.get_uris ()) {
+		foreach (string uri in uris) {
 			File file = File.new_for_uri (uri);
 			if(file.query_file_type(FileQueryInfoFlags.NOFOLLOW_SYMLINKS) == FileType.REGULAR && file.is_native ()) {
 				Media m = App.library.media_from_file(uri);
@@ -154,7 +154,7 @@ public class BeatBox.PlaylistSourceView : SourceView {
 		BasePlaylist p = App.playlists.playlist_from_id(relative_id);
 		
 		if(p != null && p is StaticPlaylist) {
-			PlaylistUtils.export_playlist_to_file((StaticPlaylist)p, App.window, null);
+			PlaylistUtils.export_playlist_to_file.begin((StaticPlaylist)p, App.window, null);
 		}
 	}
 }

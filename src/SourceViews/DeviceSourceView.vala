@@ -50,8 +50,8 @@ public class BeatBox.DeviceSourceView : SourceView {
 		
 		if(tvs.get_hint() == TreeViewSetup.Hint.CDROM) {
 			var bar = UI.experimental_bar(_("importing audio CDs hasn't been tested on current systems."));
-			add(bar);
-			reorder_child(bar, 0);
+			append(bar);
+			reorder_child_after(bar, null);
 		}
 		
 		// Setup context menu for this view
@@ -149,13 +149,13 @@ public class BeatBox.DeviceSourceView : SourceView {
 	public override Gdk.Pixbuf get_view_icon() {
 		switch (hint) {
 			case TreeViewSetup.Hint.DEVICE_AUDIO:
-				return App.icons.MUSIC.render(IconSize.MENU, null);
+				return App.icons.MUSIC.render(null, null);
 			case TreeViewSetup.Hint.DEVICE_PODCAST:
-				return App.icons.PODCAST.render(IconSize.MENU, null);
+				return App.icons.PODCAST.render(null, null);
 			case TreeViewSetup.Hint.DEVICE_AUDIOBOOK:
-				return App.icons.AUDIOBOOK.render(IconSize.MENU, null);
+				return App.icons.AUDIOBOOK.render(null, null);
 			case TreeViewSetup.Hint.CDROM:
-				return App.icons.AUDIO_CD.render(IconSize.MENU, null);
+				return App.icons.AUDIO_CD.render(null, null);
 			default:
 				error("Device view with unknown hint");
 		}
@@ -193,7 +193,7 @@ public class BeatBox.DeviceSourceView : SourceView {
 		return false;
 	}
 	
-	public override void drag_received(Gtk.SelectionData data) {
+	public override void drag_received(string[] uris) {
 		
 	}
 	

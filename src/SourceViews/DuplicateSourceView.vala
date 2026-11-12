@@ -47,7 +47,7 @@ public class BeatBox.DuplicateSourceView : SourceView {
 		
 		// Add the top bar with different options
 		top_bar = new Box(Orientation.HORIZONTAL, 0);
-		top_bar.margin = 6;
+		top_bar.margin_top = top_bar.margin_bottom = top_bar.margin_start = top_bar.margin_end = 6;
 		remove_checked = new Gtk.Button.with_label(_("Remove Checked Items"));
 		priority = new ComboBoxText();
 		priority.append("manual", _("Manually select duplicates"));
@@ -55,11 +55,11 @@ public class BeatBox.DuplicateSourceView : SourceView {
 		priority.append("file", _("Keep largest file"));
 		priority.set_active(0);
 		first_priority = highest_bitrate;
-		top_bar.add(priority);
+		top_bar.append(priority);
 		remove_checked.hexpand = true;
 		remove_checked.halign = Gtk.Align.END;
-		top_bar.add(remove_checked);
-		add(top_bar); // below the list
+		top_bar.append(remove_checked);
+		append(top_bar); // below the list
 		
 		// Add list and alert widgets
 		list_view = new DuplicateList(tvs);
@@ -180,7 +180,7 @@ public class BeatBox.DuplicateSourceView : SourceView {
 	}
 	
 	public override Gdk.Pixbuf get_view_icon() {
-		return App.icons.render_icon("edit-copy", Gtk.IconSize.MENU);
+		return App.icons.render_icon("edit-copy", Gtk.IconSize.NORMAL);
 	}
 	
 	public override string get_view_name() {
@@ -195,7 +195,7 @@ public class BeatBox.DuplicateSourceView : SourceView {
 		return false;
 	}
 	
-	public override void drag_received(Gtk.SelectionData data) {
+	public override void drag_received(string[] uris) {
 		
 	}
 	

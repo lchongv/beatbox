@@ -39,7 +39,7 @@ public class BeatBox.MusicSourceView : SourceView {
 		// Setup welcome screen
 		welcome_screen = new Welcome(_("Get Some Tunes"), _("BeatBox can't find your music."));
 		welcome_screen_keys = new HashMap<int, Device>();
-		var music_folder_icon = App.icons.MUSIC_FOLDER.render (IconSize.DIALOG, null);
+		var music_folder_icon = App.icons.MUSIC_FOLDER.render (null, null, 48);
 		welcome_screen.append_with_pixbuf(music_folder_icon, _("Locate"), _("Change your music folder."));
 		welcome_screen.activated.connect(welcome_screen_activated);
 		
@@ -75,13 +75,8 @@ public class BeatBox.MusicSourceView : SourceView {
 	public void device_added(Device d) {
 		// add option to import in welcome screen
 		string secondary = (d.getContentType() == "cdrom") ? _("Import songs from audio CD") : _("Import media from device");
-		int key = welcome_screen.append_with_image( new Image.from_gicon(d.get_icon(), Gtk.IconSize.DIALOG), d.getDisplayName(), secondary);
+		int key = welcome_screen.append_with_image(new Image.from_gicon(d.get_icon()), d.getDisplayName(), secondary);
 		welcome_screen_keys.set(key, d);
-		
-		// Show the newly added item
-		if(welcome_screen.visible) {
-			welcome_screen.show_all();
-		}
 	}
 
 	public void device_removed(Device d) {
@@ -175,7 +170,7 @@ public class BeatBox.MusicSourceView : SourceView {
 	}
 	
 	public override Gdk.Pixbuf get_view_icon() {
-		return App.icons.MUSIC.render(IconSize.MENU, null);
+		return App.icons.MUSIC.render(null, null);
 	}
 	
 	public override string get_view_name() {
@@ -190,7 +185,7 @@ public class BeatBox.MusicSourceView : SourceView {
 		return false;
 	}
 	
-	public override void drag_received(Gtk.SelectionData data) {
+	public override void drag_received(string[] uris) {
 		
 	}
 	

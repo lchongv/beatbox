@@ -19,7 +19,7 @@ etapa 2 con el andamio; `tools/gtk4-check.sh` tarda ~2 s.
 | T13 editores | D | [~] | | | |
 | T14 sueltos | D | [x] | | 0 | export_playlist_to_file es async: SourceViews la llama sin yield (T16 debe usar .begin) |
 | T15 widgets simples | D | [~] | | | |
-| T16 vistas de origen | D | [~] | | | |
+| T16 vistas de origen | D | [x] | | 0 | arrastre de la lista de reproducción sin probar; MiddlePaned centra el divisor a mano |
 | T20 listas (base y música) | H | [x] | | 0 | arrastre de varias filas sin probar (riesgo 3, revisión manual); «Añadir a lista» abre el submenú al pulsar, no al pasar el ratón; DropTarget de la cola sin confirmar en 4.6 |
 | T21 otras listas | D | [~] | | | |
 | T22 rejillas y lista emergente | H | [~] | | | |
@@ -28,7 +28,7 @@ etapa 2 con el andamio; `tools/gtk4-check.sh` tarda ~2 s.
 | T25 barra lateral | H | [~] | | | |
 | T26 «Reproduciendo» | H | [x] | | 0 | video_area_xid borrado: LibraryWindow.vala:50 (T27) y Streamer.vala 269/338/424/517/519 (T14) lo leían: decidir 0 o quitarlo (T42); EventBox de letras y resumen pasa al widget que envolvía, sin GestureClick |
 | T27 ventana principal | H | [~] | | | |
-| T28 núcleo de la aplicación | H | [ ] | | | |
+| T28 núcleo de la aplicación | H | [~] | | | |
 | T29 código C | H | [x] | | 0 | comentarios nuevos en español, como el resto de ese archivo |
 | T30 cierre de compilación | H | [ ] | | | |
 | T31 pruebas y primer arranque | H | [ ] | | | |

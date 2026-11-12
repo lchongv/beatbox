@@ -78,7 +78,7 @@ public class BeatBox.HistorySourceView : SourceView {
 	}
 	
 	public override Gdk.Pixbuf get_view_icon() {
-		return App.icons.HISTORY.render(IconSize.MENU, null);
+		return App.icons.HISTORY.render(null, null);
 	}
 	
 	public override string get_view_name() {
@@ -93,7 +93,7 @@ public class BeatBox.HistorySourceView : SourceView {
 		return false;
 	}
 	
-	public override void drag_received(Gtk.SelectionData data) {
+	public override void drag_received(string[] uris) {
 		
 	}
 	
@@ -125,7 +125,7 @@ public class BeatBox.HistorySourceView : SourceView {
 		}
 		p.add_medias(to_add);
 		
-		PlaylistUtils.export_playlist_to_file(p, App.window, null);
+		PlaylistUtils.export_playlist_to_file.begin(p, App.window, null);
 	}
 }
 

@@ -77,7 +77,7 @@ public class BeatBox.QueueSourceView : SourceView {
 	}
 	
 	public override Gdk.Pixbuf get_view_icon() {
-		return App.icons.MUSIC.render(IconSize.MENU, null);
+		return App.icons.MUSIC.render(null, null);
 	}
 	
 	public override string get_view_name() {
@@ -92,10 +92,10 @@ public class BeatBox.QueueSourceView : SourceView {
 		return true;
 	}
 	
-	public override void drag_received(Gtk.SelectionData data) {
+	public override void drag_received(string[] uris) {
 		var to_queue = new LinkedList<Media>();
 		
-		foreach (string uri in data.get_uris ()) {
+		foreach (string uri in uris) {
 			File file = File.new_for_uri (uri);
 			if(file.query_file_type(FileQueryInfoFlags.NOFOLLOW_SYMLINKS) == FileType.REGULAR && file.is_native ()) {
 				Media m = App.library.media_from_file(uri);
@@ -138,7 +138,7 @@ public class BeatBox.QueueSourceView : SourceView {
 		}
 		p.add_medias(to_add);
 		
-		PlaylistUtils.export_playlist_to_file(p, App.window, null);
+		PlaylistUtils.export_playlist_to_file.begin(p, App.window, null);
 	}
 }
 

@@ -45,7 +45,7 @@ public class BeatBox.StationSourceView : SourceView {
 		// Setup welcome screen
 		welcome_screen = new Welcome(_("Turn up the Radio"), _("No Stations were found."));
 		welcome_screen_keys = new HashMap<int, Device>();
-		var station_icon = App.icons.STATION.render (IconSize.DIALOG, null);
+		var station_icon = App.icons.STATION.render (null, null, 48);
 		welcome_screen.append_with_pixbuf(station_icon, _("Find Stations"), _("Search thousands of stations on radio-browser.info, SHOUTcast, laut.fm and Icecast."));
 		welcome_screen.append("list-add", _("Add by Address"), _("Type the address of a station's stream."));
 		welcome_screen.append("document-open", _("Import File"), _("Add the stations of a .pls or .m3u file."));
@@ -62,14 +62,17 @@ public class BeatBox.StationSourceView : SourceView {
 		grid.valign = Align.START;
 		grid.max_children_per_line = 64;
 		grid.row_spacing = grid.column_spacing = 12;
-		grid.margin = 18;
+		grid.margin_top = grid.margin_bottom = grid.margin_start = grid.margin_end = 18;
 		grid.activate_on_single_click = false;
 		grid.child_activated.connect((child) => play_row(child.get_index()));
-		grid.button_press_event.connect(grid_clicked);
-		var grid_scroll = new ScrolledWindow(null, null);
+		var grid_press = new GestureClick();
+		grid_press.button = 3;
+		grid_press.pressed.connect((n_press, x, y) => grid_clicked(x, y));
+		grid.add_controller(grid_press);
+		var grid_scroll = new ScrolledWindow();
 		grid_scroll.hscrollbar_policy = PolicyType.NEVER;
 		grid_scroll.get_style_context().add_class("albumwall");
-		grid_scroll.add(grid);
+		grid_scroll.set_child(grid);
 		grid_page = AquaScroll.wrap(grid_scroll);
 		list_view.visible_changed.connect(fill_grid);
 		StationLogos.get_default().found.connect((uri) => { logos.unset(uri); fill_grid(); });
@@ -102,55 +105,54 @@ public class BeatBox.StationSourceView : SourceView {
 	}
 	
 	void fill_grid() {
-		grid.foreach((child) => child.destroy());
+		UI.clear (grid);
 		var table = list_view.get_visible_table();
 		for (int i = 0; i < table.size(); i++) {
 			var m = table.get(i);
 			var box = new Box(Orientation.VERTICAL, 2);
-			box.margin = 6;
+			box.margin_top = box.margin_bottom = box.margin_start = box.margin_end = 6;
 			box.tooltip_text = m.title;
-			box.add(new Image.from_pixbuf(logo_for(m)));
+			var logo = new Image();
+			UI.show_pixbuf(logo, logo_for(m));
+			box.append(logo);
 			var name = new Label(m.title);
 			name.ellipsize = Pango.EllipsizeMode.END;
 			name.max_width_chars = 16;
 			name.margin_top = 4;
 			name.get_style_context().add_class("station-name");
-			box.add(name);
+			box.append(name);
 			var genre = new Label(m.genre);
 			genre.ellipsize = Pango.EllipsizeMode.END;
 			genre.max_width_chars = 16;
 			genre.get_style_context().add_class("dim-label");
-			box.add(genre);
+			box.append(genre);
 			if (StreamRecorder.get_default().is_recording(m.uri)) {
 				var rec = new Label(null);
 				rec.set_markup("<span foreground=\"#d33\" weight=\"bold\">● " + _("REC") + "</span>");
-				box.add(rec);
+				box.append(rec);
 			}
-			grid.add(box);
+			grid.append(box);
 		}
-		grid.show_all();
 	}
 	
 	/** Right click on a station: choose its own image, or go back to the directory's */
-	bool grid_clicked(Gdk.EventButton event) {
-		if (event.type != Gdk.EventType.BUTTON_PRESS || event.button != 3)
-			return false;
-		var child = grid.get_child_at_pos((int)event.x, (int)event.y);
+	void grid_clicked(double x, double y) {
+		var child = grid.get_child_at_pos((int)x, (int)y);
 		var table = list_view.get_visible_table();
 		if (child == null || child.get_index() >= table.size())
-			return false;
+			return;
 		var m = table.get(child.get_index());
 		var logos = StationLogos.get_default();
-		var menu = new Gtk.Menu();
-		var choose = new Gtk.MenuItem.with_label(_("Choose Image…"));
-		choose.activate.connect(() => choose_logo(m));
+		var menu = new PopMenu();
+		var choose = new PopMenuItem.with_label(_("Choose Image…"));
+		choose.clicked.connect(() => choose_logo.begin(m));
 		menu.append(choose);
 		var recorder = StreamRecorder.get_default();
-		var record = new Gtk.MenuItem.with_label(recorder.is_recording(m.uri) ? _("Stop Recording") : _("Record"));
+		var record = new PopMenuItem.with_label(recorder.is_recording(m.uri) ? _("Stop Recording") : _("Record"));
 		if (recorder.is_recording(m.uri))
-			record.activate.connect(() => recorder.stop(m.uri));
+			record.clicked.connect(() => recorder.stop(m.uri));
 		else if (recorder.available())
-			record.activate.connect(() => {
+			record.clicked.connect(() => {
 				var folder = Path.build_filename(App.settings.main.recordings_path(), StreamRecorder.safe_name(m.title));
 				if (!recorder.start(m.uri, folder, App.settings.main.recording_minutes * 60))
 					App.window.doAlert(_("Could not record “%s”").printf(m.title), _("streamripper did not start."));
@@ -161,28 +163,26 @@ public class BeatBox.StationSourceView : SourceView {
 		}
 		menu.append(record);
 		if (logos.has_custom(m.uri)) {
-			var remove = new Gtk.MenuItem.with_label(_("Remove Custom Image"));
-			remove.activate.connect(() => logos.clear_custom(m.uri));
+			var remove = new PopMenuItem.with_label(_("Remove Custom Image"));
+			remove.clicked.connect(() => logos.clear_custom(m.uri));
 			menu.append(remove);
 		}
-		menu.show_all();
-		menu.popup_at_pointer(event);
-		return true;
+		menu.popup_at(grid, x, y);
 	}
 	
-	void choose_logo(Media m) {
+	async void choose_logo(Media m) {
 		var chooser = new Gtk.FileChooserDialog(_("Image for “%s”").printf(m.title), App.window, Gtk.FileChooserAction.OPEN,
 		                                       _("Cancel"), Gtk.ResponseType.CANCEL, _("Choose"), Gtk.ResponseType.ACCEPT);
 		var images = new Gtk.FileFilter();
 		images.set_filter_name(_("Images"));
 		images.add_pixbuf_formats();
 		chooser.add_filter(images);
-		if (chooser.run() == Gtk.ResponseType.ACCEPT) {
+		if ((yield UI.run_dialog (chooser)) == Gtk.ResponseType.ACCEPT) {
 			var file = chooser.get_file();
 			if (!StationLogos.get_default().set_custom(m.uri, file)) {
 				var error = new Gtk.MessageDialog(App.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.CLOSE,
 				                                  _("“%s” is not an image BeatBox can read."), file.get_basename());
-				error.run();
+				yield UI.run_dialog (error);
 				error.destroy();
 			}
 		}
@@ -230,7 +230,7 @@ public class BeatBox.StationSourceView : SourceView {
 	}
 	
 	public override Gdk.Pixbuf get_view_icon() {
-		return App.icons.STATION.render(IconSize.MENU, null);
+		return App.icons.STATION.render(null, null);
 	}
 	
 	public override string get_view_name() {
@@ -245,7 +245,7 @@ public class BeatBox.StationSourceView : SourceView {
 		return false;
 	}
 	
-	public override void drag_received(Gtk.SelectionData data) {
+	public override void drag_received(string[] uris) {
 		
 	}
 	

@@ -173,7 +173,7 @@ public class BeatBox.SimilarSourceView : SourceView {
 	}
 	
 	public override Gdk.Pixbuf get_view_icon() {
-		return App.icons.SMART_PLAYLIST.render(IconSize.MENU, null);
+		return App.icons.SMART_PLAYLIST.render(null, null);
 	}
 	
 	public override string get_view_name() {
@@ -188,7 +188,7 @@ public class BeatBox.SimilarSourceView : SourceView {
 		return false;
 	}
 	
-	public override void drag_received(Gtk.SelectionData data) {
+	public override void drag_received(string[] uris) {
 		
 	}
 	
@@ -212,7 +212,7 @@ public class BeatBox.SimilarSourceView : SourceView {
 		
 		p.name = (App.playback.media_active) ? (_("Similar to %s").printf(Markup.escape_text(App.playback.current_media.title))) : _("Similar list");
 		
-		PlaylistUtils.export_playlist_to_file(p, App.window, null);
+		PlaylistUtils.export_playlist_to_file.begin(p, App.window, null);
 	}
 }
 
