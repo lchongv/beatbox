@@ -41,7 +41,7 @@ public class BeatBox.ShortcutsPreferences : SimplePreferences {
 		accel.accel_cleared.connect ((path) => { change (path, ""); });
 
 		var frame = new Frame (null);
-		frame.add (view);
+		frame.set_child (view);
 		add_row (frame);
 
 		notice = new Label ("");

@@ -18,7 +18,7 @@
  * License along with this library; if not, write to the
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
- * 
+ *
  * The BeatBox project hereby grant permission for non-gpl compatible GStreamer
  * plugins to be used and distributed together with GStreamer and BeatBox. This
  * permission is above and beyond the permissions granted by the GPL license
@@ -32,75 +32,95 @@ public class BeatBox.PodcastPreferences : GLib.Object, PreferencesSection {
 	public string title { get { return _("Podcasts"); } }
 	public Gdk.Pixbuf? icon { get { return null; } }
 	public Widget widget { get { return content; } }
-	
+
 	Box content;
-	FileChooserButton fileChooser;
+	Button fileChooser; // GTK4: shows the folder; a click opens a folder chooser
+	string folder;
 	Button import;
 	Button rescan;
 	CheckButton downloadNewPodcasts;
-	
+
 	public PodcastPreferences() {
 		content = new Box(Orientation.VERTICAL, 0);
 		content.spacing = 10;
-		
+
 		var podcastLabel = new Label(_("Podcast Library Location"));
-		fileChooser = new FileChooserButton(_("Podcast Folder"), FileChooserAction.SELECT_FOLDER);
+		fileChooser = new Button();
 		import = new Button.with_label(_("Import..."));
 		rescan = new Button.with_label(_("Rescan"));
-		
+
 		var managementLabel = new Label(_("Library Management"));
 		downloadNewPodcasts = new CheckButton.with_label(_("Automatically download new podcast episodes"));
-		
+
 		managementLabel.xalign = 0.0f;
 		podcastLabel.xalign = 0.0f;
 		podcastLabel.set_markup("<b>" + _("Podcast Library Location") + "</b>");
 		managementLabel.set_markup("<b>" + _("Library Management") + "</b>");
-		
-		var button_box = new ButtonBox(Orientation.HORIZONTAL);
-		button_box.set_layout(ButtonBoxStyle.END);
-		button_box.add(import);
-		button_box.add(rescan);
-		
-		fileChooser.set_current_folder(App.settings.main.podcast_folder);
+
+		var button_box = new Box(Orientation.HORIZONTAL, 6);
+		button_box.halign = Align.END;
+		button_box.append(import);
+		button_box.append(rescan);
+
+		show_folder(App.settings.main.podcast_folder);
 		downloadNewPodcasts.set_active(App.settings.main.download_new_podcasts);
-		
-		content.add(podcastLabel);
-		content.add(UI.wrap_alignment(fileChooser, 0, 0, 0, 10));
-		content.add(UI.wrap_alignment(button_box, 0, 0, 0, 10));
-		content.add(managementLabel);
-		content.add(UI.wrap_alignment(downloadNewPodcasts, 0, 0, 0, 10));
-		
+
+		content.append(podcastLabel);
+		content.append(UI.wrap_alignment(fileChooser, 0, 0, 0, 10));
+		content.append(UI.wrap_alignment(button_box, 0, 0, 0, 10));
+		content.append(managementLabel);
+		content.append(UI.wrap_alignment(downloadNewPodcasts, 0, 0, 0, 10));
+
 		App.operations.operation_started.connect(operation_started);
 		App.operations.operation_finished.connect(operation_finished);
 		if (App.operations.doing_ops) {
 			operation_started();
 		}
-		
-		fileChooser.current_folder_changed.connect(file_chooser_set);
+
+		fileChooser.clicked.connect(() => choose_folder.begin());
 		import.clicked.connect(import_clicked);
 		rescan.clicked.connect(rescan_clicked);
 		downloadNewPodcasts.toggled.connect(download_new_podcasts_toggled);
 	}
-	
+
+	void show_folder(string path) {
+		folder = path;
+		fileChooser.label = GLib.Path.get_basename(path);
+	}
+
+	async void choose_folder() {
+		var chooser = new FileChooserDialog(_("Podcast Folder"), UI.window_of(fileChooser), FileChooserAction.SELECT_FOLDER,
+		                                    _("_Cancel"), ResponseType.CANCEL, _("_Open"), ResponseType.ACCEPT);
+		try {
+			chooser.set_current_folder(File.new_for_path(folder));
+		} catch (Error e) {
+		}
+		if ((yield UI.run_dialog(chooser)) == ResponseType.ACCEPT) {
+			show_folder(chooser.get_file().get_path());
+			file_chooser_set();
+		}
+		chooser.destroy();
+	}
+
 	void download_new_podcasts_toggled() {
 		App.settings.main.download_new_podcasts = downloadNewPodcasts.get_active();
 	}
-	
+
 	// The idle is so that the dialog is layered properly above the media editor
 	void file_chooser_set() {
 		Idle.add( () => {
-			if(fileChooser.get_current_folder() != App.settings.main.podcast_folder) {
-				App.window.confirm_set_library_folder(App.library.podcast_library, File.new_for_path(fileChooser.get_current_folder()));
+			if(folder != App.settings.main.podcast_folder) {
+				App.window.confirm_set_library_folder(App.library.podcast_library, File.new_for_path(folder));
 			}
-			
+
 			return false;
 		});
 	}
-	
+
 	void import_clicked() {
 		App.actions.show_import_folders_dialog(App.library.podcast_library);
 	}
-	
+
 	void rescan_clicked() {
 		if(App.library.podcast_library.folder.query_exists()) {
 			App.library.podcast_library.rescan_local_folder();
@@ -109,22 +129,22 @@ public class BeatBox.PodcastPreferences : GLib.Object, PreferencesSection {
 			App.window.doAlert(_("Could not find Music Folder"), _("Please make sure that your Music folder is accessible and mounted."));
 		}
 	}
-	
+
 	public void save() {
-		
+
 	}
-	
+
 	public void cancel() {
-		
+
 	}
-	
+
 	void operation_started() {
 		fileChooser.set_sensitive(false);
 		import.set_sensitive(false);
 		rescan.set_sensitive(false);
 		fileChooser.set_tooltip_text(_("Please wait until all operations finish before setting your podcast folder."));
 	}
-	
+
 	void operation_finished () {
 		fileChooser.set_tooltip_text("");
 		fileChooser.set_sensitive(true);

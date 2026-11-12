@@ -18,7 +18,7 @@
  * License along with this library; if not, write to the
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
- * 
+ *
  * The BeatBox project hereby grant permission for non-gpl compatible GStreamer
  * plugins to be used and distributed together with GStreamer and BeatBox. This
  * permission is above and beyond the permissions granted by the GPL license
@@ -33,39 +33,39 @@ public abstract class BeatBox.SimplePreferences : GLib.Object, PreferencesSectio
 	public abstract string title { get; }
 	public Gdk.Pixbuf? icon { get { return null; } }
 	public Widget widget { get { return content; } }
-	
+
 	protected Box content = new Box(Orientation.VERTICAL, 10);
-	
+
 	protected void add_heading(string text) {
 		var label = new Label("");
 		label.xalign = 0.0f;
 		label.set_markup("<b>" + Markup.escape_text(text) + "</b>");
-		content.add(label);
+		content.append(label);
 	}
-	
+
 	protected void add_row(Widget row) {
-		content.add(UI.wrap_alignment(row, 0, 0, 0, 10));
+		content.append(UI.wrap_alignment(row, 0, 0, 0, 10));
 	}
-	
+
 	protected CheckButton add_check(string text, bool active) {
 		var check = new CheckButton.with_label(text);
 		check.active = active;
 		add_row(check);
 		return check;
 	}
-	
+
 	protected static Box labelled(string text, Widget w, string? after = null) {
 		var box = new Box(Orientation.HORIZONTAL, 8);
-		box.add(new Label(text));
-		box.add(w);
+		box.append(new Label(text));
+		box.append(w);
 		if (after != null)
-			box.add(new Label(after));
+			box.append(new Label(after));
 		return box;
 	}
-	
+
 	public void save() {
 	}
-	
+
 	public void cancel() {
 	}
 }
@@ -74,7 +74,7 @@ public abstract class BeatBox.SimplePreferences : GLib.Object, PreferencesSectio
 public class BeatBox.LibraryPreferences : SimplePreferences {
 	public override string title { get { return _("Library"); } }
 	Box libraries = new Box(Orientation.VERTICAL, 6);
-	
+
 	public LibraryPreferences() {
 		add_heading(_("Libraries"));
 		add_row(libraries);
@@ -89,43 +89,43 @@ public class BeatBox.LibraryPreferences : SimplePreferences {
 		write.toggled.connect(() => { App.settings.main.write_metadata_to_file = write.active; });
 		copy.toggled.connect(() => { App.settings.main.copy_imported_music = copy.active; });
 	}
-	
+
 	void fill_libraries() {
-		libraries.foreach((w) => w.destroy());
+		UI.clear(libraries);
 		foreach (var id in LibrarySwitcher.all_ids()) {
 			var row = new Box(Orientation.HORIZONTAL, 8);
 			var name = new Label("");
 			string text = Markup.escape_text(LibrarySwitcher.name_of(id));
 			name.set_markup(id == App.settings.main.library ? "<b>%s</b> %s".printf(text, Markup.escape_text(_("(open)"))) : text);
 			var folder = new Label(Libraries.option(id, "music-folder"));
-			folder.get_style_context().add_class("dim-label");
+			folder.add_css_class("dim-label");
 			folder.ellipsize = Pango.EllipsizeMode.START;
 			folder.xalign = 0;
 			folder.hexpand = true;
-			row.add(name);
-			row.add(folder);
+			row.append(name);
+			row.append(folder);
 			var rename = new Button.with_label(_("Rename…"));
-			rename.clicked.connect(() => ask_rename(id));
-			row.add(rename);
+			rename.clicked.connect(() => ask_rename.begin(id));
+			row.append(rename);
 			if (id != "" && id != App.settings.main.library) { // never the main or the open one
 				var remove = new Button.with_label(_("Remove…"));
-				remove.clicked.connect(() => ask_remove(id));
-				row.add(remove);
+				remove.clicked.connect(() => ask_remove.begin(id));
+				row.append(remove);
 			}
-			libraries.add(row);
+			libraries.append(row);
 		}
-		libraries.show_all();
 	}
-	
-	void ask_rename(string id) {
-		var dialog = new Dialog.with_buttons(_("Rename Library"), (Gtk.Window) libraries.get_toplevel(),
+
+	async void ask_rename(string id) {
+		var dialog = new Dialog.with_buttons(_("Rename Library"), UI.window_of(libraries),
 		                                     DialogFlags.MODAL | DialogFlags.DESTROY_WITH_PARENT,
 		                                     _("Cancel"), ResponseType.CANCEL, _("Rename"), ResponseType.OK);
-		var entry = new Entry() { text = LibrarySwitcher.name_of(id), activates_default = true, margin = 12 };
-		dialog.get_content_area().add(entry);
+		var entry = new Entry() { text = LibrarySwitcher.name_of(id), activates_default = true,
+		                          margin_top = 12, margin_bottom = 12, margin_start = 12, margin_end = 12 };
+		dialog.get_content_area().append(entry);
 		dialog.set_default_response(ResponseType.OK);
-		dialog.show_all();
-		bool rename = dialog.run() == ResponseType.OK && entry.text.strip() != "";
+		var answer = yield UI.run_dialog(dialog);
+		bool rename = answer == ResponseType.OK && entry.text.strip() != "";
 		string name = entry.text.strip();
 		dialog.destroy();
 		if (rename) {
@@ -133,14 +133,15 @@ public class BeatBox.LibraryPreferences : SimplePreferences {
 			fill_libraries();
 		}
 	}
-	
-	void ask_remove(string id) {
-		var dialog = new MessageDialog((Gtk.Window) libraries.get_toplevel(), DialogFlags.MODAL | DialogFlags.DESTROY_WITH_PARENT,
+
+	async void ask_remove(string id) {
+		var dialog = new MessageDialog(UI.window_of(libraries), DialogFlags.MODAL | DialogFlags.DESTROY_WITH_PARENT,
 		                               MessageType.WARNING, ButtonsType.NONE, _("Remove the library “%s”?"), LibrarySwitcher.name_of(id));
 		dialog.secondary_text = _("Its songs, play counts and playlists are removed from BeatBox; the music files stay where they are.");
 		dialog.add_button(_("Cancel"), ResponseType.CANCEL);
 		dialog.add_button(_("Remove"), ResponseType.OK);
-		bool remove = dialog.run() == ResponseType.OK;
+		var answer = yield UI.run_dialog(dialog);
+		bool remove = answer == ResponseType.OK;
 		dialog.destroy();
 		if (remove) {
 			App.libraries.remove(id);
@@ -152,7 +153,7 @@ public class BeatBox.LibraryPreferences : SimplePreferences {
 /** ReplayGain and crossfade */
 public class BeatBox.PlaybackPreferences : SimplePreferences {
 	public override string title { get { return _("Playback"); } }
-	
+
 	public PlaybackPreferences() {
 		add_heading(_("Playback"));
 		var rg = new ComboBoxText();
@@ -162,7 +163,7 @@ public class BeatBox.PlaybackPreferences : SimplePreferences {
 		rg.active_id = App.settings.equalizer.replaygain.to_string();
 		rg.changed.connect(() => { App.settings.equalizer.replaygain = int.parse(rg.active_id); });
 		add_row(labelled(_("Volume normalization (ReplayGain):"), rg, _("from the next song")));
-		
+
 		var crossfade = new SpinButton.with_range(0, 12, 1);
 		crossfade.value = App.settings.main.crossfade_seconds;
 		crossfade.value_changed.connect(() => { App.settings.main.crossfade_seconds = (int)crossfade.value; });
@@ -173,18 +174,15 @@ public class BeatBox.PlaybackPreferences : SimplePreferences {
 /** Recording radio stations (StreamRecorder) */
 public class BeatBox.RecordingPreferences : SimplePreferences {
 	public override string title { get { return _("Recording"); } }
-	
+	Button recordings; // GTK4: shows the folder; a click opens a folder chooser
+
 	public RecordingPreferences() {
 		add_heading(_("Recording"));
-		var recordings = new FileChooserButton(_("Recordings Folder"), FileChooserAction.SELECT_FOLDER);
+		recordings = new Button();
 		var folder = App.settings.main.recordings_path();
 		DirUtils.create_with_parents(folder, 0755); // the chooser can only show a folder that exists
-		recordings.set_current_folder(folder);
-		recordings.selection_changed.connect(() => {
-			var chosen = recordings.get_filename();
-			if (chosen != null)
-				App.settings.main.recordings_folder = chosen;
-		});
+		show_folder(folder);
+		recordings.clicked.connect(() => choose_folder.begin());
 		add_row(labelled(_("Save recordings of radio stations in:"), recordings));
 		var minutes = new SpinButton.with_range(1, 1440, 1);
 		minutes.value = App.settings.main.recording_minutes;
@@ -192,21 +190,40 @@ public class BeatBox.RecordingPreferences : SimplePreferences {
 		add_row(labelled(_("Start a new file every:"), minutes, _("minutes")));
 		var hint = new Label(_("Right click a station in the radio grid to record it. Needs streamripper."));
 		hint.xalign = 0.0f;
-		hint.get_style_context().add_class("dim-label");
+		hint.add_css_class("dim-label");
 		add_row(hint);
+	}
+
+	void show_folder(string path) {
+		recordings.label = GLib.Path.get_basename(path);
+	}
+
+	async void choose_folder() {
+		var chooser = new FileChooserDialog(_("Recordings Folder"), UI.window_of(recordings), FileChooserAction.SELECT_FOLDER,
+		                                    _("_Cancel"), ResponseType.CANCEL, _("_Open"), ResponseType.ACCEPT);
+		try {
+			chooser.set_current_folder(File.new_for_path(App.settings.main.recordings_path()));
+		} catch (Error e) {
+		}
+		if ((yield UI.run_dialog(chooser)) == ResponseType.ACCEPT) {
+			string chosen = chooser.get_file().get_path();
+			App.settings.main.recordings_folder = chosen;
+			show_folder(chosen);
+		}
+		chooser.destroy();
 	}
 }
 
 /** Skins */
 public class BeatBox.AppearancePreferences : SimplePreferences {
 	public override string title { get { return _("Appearance"); } }
-	
+
 	public AppearancePreferences() {
 		// Skins (plugins: folders in ~/.local/share/beatbox/skins)
 		add_heading(_("Skin"));
 		var skinChooser = new ComboBoxText();
 		var preview = new Image();
-		preview.xalign = 0.0f;
+		preview.halign = Align.START;
 		var skins = Skins.available();
 		foreach (var skin in skins)
 			skinChooser.append(skin.id, skin.name);
@@ -217,7 +234,7 @@ public class BeatBox.AppearancePreferences : SimplePreferences {
 			foreach (var skin in skins) {
 				if (skin.id != skinChooser.active_id)
 					continue;
-				var editor = new SkinEditor((Window)editCss.get_toplevel(), skin);
+				var editor = new SkinEditor(UI.window_of(editCss), skin);
 				skinChooser.sensitive = editCss.sensitive = false; // the preview goes over this skin
 				editor.saved.connect((id) => {
 					if (id == skinChooser.active_id)
@@ -228,8 +245,8 @@ public class BeatBox.AppearancePreferences : SimplePreferences {
 						skinChooser.append(s.id, s.name);
 					skinChooser.active_id = id;
 				});
-				editor.destroy.connect(() => { skinChooser.sensitive = editCss.sensitive = true; });
-				editor.show_all();
+				editor.close_request.connect(() => { skinChooser.sensitive = editCss.sensitive = true; return false; });
+				editor.present();
 			}
 		});
 		var openSkins = new Button.with_label(_("Open Skins Folder"));
@@ -242,8 +259,8 @@ public class BeatBox.AppearancePreferences : SimplePreferences {
 			}
 		});
 		var skinBox = labelled(_("Skin:"), skinChooser);
-		skinBox.add(editCss);
-		skinBox.add(openSkins);
+		skinBox.append(editCss);
+		skinBox.append(openSkins);
 		add_row(skinBox);
 		add_row(preview);
 		skinChooser.changed.connect(() => {
@@ -255,7 +272,7 @@ public class BeatBox.AppearancePreferences : SimplePreferences {
 				if (skin.id != id || skin.preview == null)
 					continue;
 				try {
-					preview.pixbuf = new Gdk.Pixbuf.from_stream_at_scale(skin.preview.read(), 440, -1, true);
+					UI.show_pixbuf(preview, new Gdk.Pixbuf.from_stream_at_scale(skin.preview.read(), 440, -1, true));
 				} catch (Error err) {
 					warning("Could not load the preview of %s: %s", id, err.message);
 				}
@@ -274,7 +291,7 @@ public class BeatBox.AppearancePreferences : SimplePreferences {
 		classic_note.xalign = 0.0f;
 		classic_note.wrap = true;
 		classic_note.max_width_chars = 60;
-		classic_note.get_style_context().add_class("dim-label");
+		classic_note.add_css_class("dim-label");
 		add_row(classic_note);
 #endif
 	}
@@ -283,7 +300,7 @@ public class BeatBox.AppearancePreferences : SimplePreferences {
 /** What the LCD shows and its position bar */
 public class BeatBox.LcdPreferences : SimplePreferences {
 	public override string title { get { return _("LCD"); } }
-	
+
 	public LcdPreferences() {
 		add_heading(_("Display"));
 		var lcdLines = new ComboBoxText();
@@ -296,23 +313,23 @@ public class BeatBox.LcdPreferences : SimplePreferences {
 			App.settings.main.lcd_two_lines = (lcdLines.active_id != "one");
 		});
 		add_row(labelled(_("Song information in the LCD:"), lcdLines));
-		
+
 		var lyrics = add_check(_("Show synced lyrics when available (lrclib.net)"), App.settings.main.lcd_lyrics);
 		lyrics.toggled.connect(() => { App.settings.main.lcd_lyrics = lyrics.active; });
-		
+
 		var lcdCover = add_check(_("Show the album cover at the left edge of the LCD"), App.settings.main.lcd_show_cover);
 		lcdCover.toggled.connect(() => { App.settings.main.lcd_show_cover = lcdCover.active; });
-		
+
 		var interval = new SpinButton.with_range(1, 60, 1);
 		interval.value = App.settings.main.lcd_alternate_seconds;
 		add_row(labelled(_("Switch between artist and album every:"), interval, _("seconds")));
 		interval.value_changed.connect(() => { App.settings.main.lcd_alternate_seconds = (int)interval.value; });
-		
+
 		var transition = new SpinButton.with_range(0, 3000, 100);
 		transition.value = App.settings.main.lcd_transition_ms;
 		add_row(labelled(_("Duration of the slide:"), transition, _("milliseconds")));
 		transition.value_changed.connect(() => { App.settings.main.lcd_transition_ms = (int)transition.value; });
-		
+
 		add_heading(_("Position bar"));
 		var trackWidth = new SpinButton.with_range(2, 16, 1);
 		trackWidth.value = App.settings.main.lcd_track_width;
@@ -346,7 +363,7 @@ public class BeatBox.LcdPreferences : SimplePreferences {
 /** The compact window */
 public class BeatBox.MiniPlayerPreferences : SimplePreferences {
 	public override string title { get { return _("Mini Player"); } }
-	
+
 	public MiniPlayerPreferences() {
 		add_heading(_("Mini Player"));
 		var keepAbove = add_check(_("Keep the mini player above other windows"), App.settings.main.mini_keep_above);
@@ -355,7 +372,7 @@ public class BeatBox.MiniPlayerPreferences : SimplePreferences {
 			// GTK 3 can't ask a Wayland compositor for that
 			keepAbove.sensitive = false;
 			var hint = new Label(_("On Wayland the desktop keeps windows on top: right-click the toolbar and choose “Always on Top”."));
-			hint.get_style_context().add_class("dim-label");
+			hint.add_css_class("dim-label");
 			hint.xalign = 0.0f;
 			hint.wrap = true;
 			hint.max_width_chars = 60;
@@ -367,28 +384,27 @@ public class BeatBox.MiniPlayerPreferences : SimplePreferences {
 /** Turning the plugins found on disk on and off, and installing more (see docs/plugins.md) */
 public class BeatBox.PluginsPreferences : SimplePreferences {
 	public override string title { get { return _("Plugins"); } }
-	
+
 	Box list = new Box(Orientation.VERTICAL, 10);
 	Label none = new Label(_("No plugins are installed."));
-	
+
 	public PluginsPreferences() {
 		add_heading(_("Plugins"));
-		none.get_style_context().add_class("dim-label");
+		none.add_css_class("dim-label");
 		none.xalign = 0.0f;
-		none.no_show_all = true;
-		list.add(none);
+		list.append(none);
 		add_row(list);
 		foreach(var p in App.plugins.plugins)
 			add_plugin(p);
 		none.visible = App.plugins.plugins.size == 0;
-		
+
 		var install = new Button.with_label(_("Install Plugin…"));
 		install.clicked.connect(choose_plugin);
 		var row = new Box(Orientation.HORIZONTAL, 0); // add_row stretches what it gets
-		row.add(install);
+		row.append(install);
 		add_row(row);
 	}
-	
+
 	void add_plugin(PluginInfo p) {
 		var check = new CheckButton.with_label(p.name);
 		check.active = p.active;
@@ -397,44 +413,47 @@ public class BeatBox.PluginsPreferences : SimplePreferences {
 			if(check.active != p.active) // it couldn't be loaded
 				check.active = p.active;
 		});
-		list.add(check);
+		list.append(check);
 		if(p.description != "") {
 			var text = new Label(p.description);
-			text.get_style_context().add_class("dim-label");
+			text.add_css_class("dim-label");
 			text.xalign = 0.0f;
 			text.wrap = true;
 			text.max_width_chars = 60;
 			text.margin_start = 24;
-			list.add(text);
+			list.append(text);
 		}
-		list.show_all();
 		none.hide();
 	}
-	
+
 	void choose_plugin() {
-		var chooser = new FileChooserNative(_("Install Plugin"), (Window)list.get_toplevel(), FileChooserAction.OPEN, _("Install"), _("Cancel"));
+		var chooser = new FileChooserNative(_("Install Plugin"), UI.window_of(list), FileChooserAction.OPEN, _("Install"), _("Cancel"));
 		var filter = new FileFilter();
 		filter.set_filter_name(_("BeatBox plugins (*.plugin)"));
 		filter.add_pattern("*.plugin");
 		chooser.add_filter(filter);
-		if(chooser.run() != ResponseType.ACCEPT)
-			return;
-		try {
-			var p = App.plugins.install(chooser.get_file());
-			if(p != null)
-				add_plugin(p);
-			else
-				App.window.doAlert(_("Plugin updated"), _("A plugin with the same name is in use: restart BeatBox to use the one just installed."));
-		} catch (Error err) {
-			App.window.doAlert(_("Could not install the plugin"), err.message);
-		}
+		// GTK 4's native chooser does not block: the answer comes by signal
+		chooser.response.connect((answer) => {
+			if(answer != ResponseType.ACCEPT)
+				return;
+			try {
+				var p = App.plugins.install(chooser.get_file());
+				if(p != null)
+					add_plugin(p);
+				else
+					App.window.doAlert(_("Plugin updated"), _("A plugin with the same name is in use: restart BeatBox to use the one just installed."));
+			} catch (Error err) {
+				App.window.doAlert(_("Could not install the plugin"), err.message);
+			}
+		});
+		chooser.show();
 	}
 }
 
 /** The cover grid and where album art comes from */
 public class BeatBox.CoverPreferences : SimplePreferences {
 	public override string title { get { return _("Album Art"); } }
-	
+
 	public CoverPreferences() {
 		add_heading(_("Cover Grid"));
 		var clickMode = new ComboBoxText();
@@ -443,20 +462,20 @@ public class BeatBox.CoverPreferences : SimplePreferences {
 		clickMode.active_id = App.settings.main.album_grid_inline ? "inline" : "popup";
 		clickMode.changed.connect(() => { App.settings.main.album_grid_inline = (clickMode.active_id == "inline"); });
 		add_row(labelled(_("Clicking an album in the cover grid:"), clickMode));
-		
+
 		var coverSize = new Scale.with_range(Orientation.HORIZONTAL, 0, 60, 5);
 		coverSize.set_value(App.settings.main.album_detail_cover_percent);
 		coverSize.width_request = 260;
 		coverSize.value_pos = PositionType.RIGHT;
-		coverSize.format_value.connect((v) => ((int)v == 0) ? _("hidden") : "%d %%".printf((int)v));
+		coverSize.set_format_value_func((s, v) => ((int)v == 0) ? _("hidden") : "%d %%".printf((int)v));
 		coverSize.value_changed.connect(() => { App.settings.main.album_detail_cover_percent = (int)coverSize.get_value(); });
 		var coverBox = labelled(_("Size of the cover in the unfolded album:"), coverSize);
 		var coverHint = new Label(_("Share of the band's width; 0 shows no cover"));
-		coverHint.get_style_context().add_class("dim-label");
+		coverHint.add_css_class("dim-label");
 		coverHint.xalign = 0.0f;
 		add_row(coverBox);
 		add_row(coverHint);
-		
+
 		add_heading(_("Missing Album Art"));
 		var download = add_check(_("Download missing album art from the internet (MusicBrainz, Apple Music)"), App.settings.main.download_covers);
 		download.toggled.connect(() => {
@@ -470,17 +489,19 @@ public class BeatBox.CoverPreferences : SimplePreferences {
 /** Credits, version and the services BeatBox talks to */
 public class BeatBox.AboutPreferences : SimplePreferences {
 	public override string title { get { return _("About"); } }
-	
+
 	public AboutPreferences() {
 		var top = new Box(Orientation.HORIZONTAL, 14);
-		top.add(new Image.from_pixbuf(App.icons.BEATBOX.render(null, null, 112)));
+		var logo = new Image();
+		UI.show_pixbuf(logo, App.icons.BEATBOX.render(null, null, 112));
+		top.append(logo);
 		var name = new Label("");
 		name.xalign = 0.0f;
 		name.set_markup("<span size='x-large' weight='bold'>BeatBox</span>\n" + Markup.escape_text(_("Version %s").printf(Build.VERSION))
 		                + "\n" + Markup.escape_text(_("A music player for your collection, podcasts and internet radio.")));
-		top.add(name);
-		content.add(top);
-		
+		top.append(name);
+		content.append(top);
+
 		add_heading(_("Authors"));
 		add_row(text("Scott Ringwelski\nVictor Eduardo M."));
 		add_heading(_("Contributions"));
@@ -488,8 +509,8 @@ public class BeatBox.AboutPreferences : SimplePreferences {
 		add_heading(_("Artwork"));
 		add_row(text("Scott Ringwelski\nDanielle Foré"));
 		add_heading(_("2026 update"));
-		add_row(text(_("Ported to GTK 3, GStreamer 1.0 and libsoup 3, with a new look, Cover Flow, the inline cover grid, internet radio and podcast directories, online album art and skins.")));
-		
+		add_row(text(_("Ported to GTK 4, GStreamer 1.0 and libsoup 3, with a new look, Cover Flow, the inline cover grid, internet radio and podcast directories, online album art and skins.")));
+
 		add_heading(_("Services"));
 		add_row(text(_("Internet radio stations: %s").printf(link("https://www.radio-browser.info", "radio-browser.info") + ", " + link("https://directory.shoutcast.com", "SHOUTcast")
 		             + ", " + link("https://laut.fm", "laut.fm") + ", " + link("https://dir.xiph.org", "Icecast"))
@@ -497,16 +518,16 @@ public class BeatBox.AboutPreferences : SimplePreferences {
 		             + "\n" + _("Album art: %s, with %s as fallback").printf(link("https://musicbrainz.org", "MusicBrainz") + " / " + link("https://coverartarchive.org", "Cover Art Archive"), link("https://music.apple.com", "Apple Music"))
 		             + "\n" + _("Lyrics: %s").printf(link("https://lrclib.net", "LRCLIB"))
 		             + "\n" + _("Scrobbling: %s").printf(link("https://www.last.fm", "Last.fm") + ", " + link("https://listenbrainz.org", "ListenBrainz")), true));
-		
+
 		add_heading(_("License"));
 		add_row(text(_("Free software under the %s.").printf(link("https://www.gnu.org/licenses/gpl-3.0.html", _("GNU General Public License, version 3")))
 		             + "\n" + link("https://launchpad.net/beat-box", "launchpad.net/beat-box"), true));
 	}
-	
+
 	static string link(string url, string label) {
 		return "<a href=\"%s\">%s</a>".printf(url, Markup.escape_text(label));
 	}
-	
+
 	static Label text(string s, bool markup = false) {
 		var label = new Label("");
 		label.xalign = 0.0f;

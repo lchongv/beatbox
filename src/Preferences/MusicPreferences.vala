@@ -18,7 +18,7 @@
  * License along with this library; if not, write to the
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
- * 
+ *
  * The BeatBox project hereby grant permission for non-gpl compatible GStreamer
  * plugins to be used and distributed together with GStreamer and BeatBox. This
  * permission is above and beyond the permissions granted by the GPL license
@@ -32,66 +32,86 @@ public class BeatBox.MusicPreferences : GLib.Object, PreferencesSection {
 	public string title { get { return _("Music"); } }
 	public Gdk.Pixbuf? icon { get { return null; } }
 	public Widget widget { get { return content; } }
-	
+
 	Box content;
-	FileChooserButton fileChooser;
+	Button fileChooser; // GTK4: shows the folder; a click opens a folder chooser
+	string folder;
 	Button import;
 	Button rescan;
-	
+
 	public MusicPreferences() {
 		content = new Box(Orientation.VERTICAL, 0);
 		content.spacing = 10;
-		
+
 		var musicLabel = new Label(_("Music Library Location"));
-		fileChooser = new FileChooserButton(_("Music Folder"), FileChooserAction.SELECT_FOLDER);
+		fileChooser = new Button();
 		import = new Button.with_label(_("Import..."));
 		rescan = new Button.with_label(_("Rescan"));
-		
+
 		musicLabel.xalign = 0.0f;
 		musicLabel.set_markup("<b>" + _("Music Library Location") + "</b>");
-		
-		fileChooser.set_current_folder(App.settings.main.music_folder);
-		
-		var button_box = new ButtonBox(Orientation.HORIZONTAL);
-		button_box.set_layout(ButtonBoxStyle.END);
-		button_box.add(import);
-		button_box.add(rescan);
-		
-		content.add(musicLabel);
-		content.add(UI.wrap_alignment(fileChooser, 0, 0, 0, 10));
+
+		show_folder(App.settings.main.music_folder);
+
+		var button_box = new Box(Orientation.HORIZONTAL, 6);
+		button_box.halign = Align.END;
+		button_box.append(import);
+		button_box.append(rescan);
+
+		content.append(musicLabel);
+		content.append(UI.wrap_alignment(fileChooser, 0, 0, 0, 10));
 		var hint = new Label(_("A folder holding a file named .nomedia is left out, with its subfolders."));
 		hint.xalign = 0.0f;
 		hint.wrap = true;
 		hint.get_style_context().add_class("dim-label");
-		content.add(UI.wrap_alignment(hint, 0, 0, 0, 10));
-		content.add(UI.wrap_alignment(button_box, 0, 0, 0, 10));
-		
+		content.append(UI.wrap_alignment(hint, 0, 0, 0, 10));
+		content.append(UI.wrap_alignment(button_box, 0, 0, 0, 10));
+
 		App.operations.operation_started.connect(operation_started);
 		App.operations.operation_finished.connect(operation_finished);
 		if (App.operations.doing_ops) {
 			operation_started();
 		}
-		
-		fileChooser.current_folder_changed.connect(file_chooser_set);
+
+		fileChooser.clicked.connect(() => choose_folder.begin());
 		import.clicked.connect(import_clicked);
 		rescan.clicked.connect(rescan_clicked);
 	}
-	
+
+	void show_folder(string path) {
+		folder = path;
+		fileChooser.label = GLib.Path.get_basename(path);
+	}
+
+	async void choose_folder() {
+		var chooser = new FileChooserDialog(_("Music Folder"), UI.window_of(fileChooser), FileChooserAction.SELECT_FOLDER,
+		                                    _("_Cancel"), ResponseType.CANCEL, _("_Open"), ResponseType.ACCEPT);
+		try {
+			chooser.set_current_folder(File.new_for_path(folder));
+		} catch (Error e) {
+		}
+		if ((yield UI.run_dialog(chooser)) == ResponseType.ACCEPT) {
+			show_folder(chooser.get_file().get_path());
+			file_chooser_set();
+		}
+		chooser.destroy();
+	}
+
 	// The idle is so that the dialog is layered properly above the media editor
 	void file_chooser_set() {
 		Idle.add( () => {
-			if(fileChooser.get_current_folder() != App.settings.main.music_folder) {
-				App.window.confirm_set_library_folder(App.library.song_library, File.new_for_path(fileChooser.get_current_folder()));
+			if(folder != App.settings.main.music_folder) {
+				App.window.confirm_set_library_folder(App.library.song_library, File.new_for_path(folder));
 			}
-			
+
 			return false;
 		});
 	}
-	
+
 	void import_clicked() {
 		App.actions.show_import_folders_dialog(App.library.song_library);
 	}
-	
+
 	void rescan_clicked() {
 		if(App.library.song_library.folder.query_exists()) {
 			App.library.song_library.rescan_local_folder();
@@ -100,22 +120,22 @@ public class BeatBox.MusicPreferences : GLib.Object, PreferencesSection {
 			App.window.doAlert(_("Could not find Music Folder"), _("Please make sure that your Music folder is accessible and mounted."));
 		}
 	}
-	
+
 	public void save() {
-		
+
 	}
-	
+
 	public void cancel() {
-		
+
 	}
-	
+
 	void operation_started() {
 		fileChooser.set_sensitive(false);
 		import.set_sensitive(false);
 		rescan.set_sensitive(false);
 		fileChooser.set_tooltip_text(_("Please wait until all operations finish before setting your music folder."));
 	}
-	
+
 	void operation_finished () {
 		fileChooser.set_tooltip_text("");
 		fileChooser.set_sensitive(true);
