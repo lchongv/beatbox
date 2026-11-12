@@ -51,8 +51,6 @@ public class BeatBox.RemoveDuplicatesDialog : Gtk.Window {
 		set_title(_("Duplicates Remover"));
 
 		// Window properties
-		window_position = WindowPosition.CENTER;
-		type_hint = Gdk.WindowTypeHint.DIALOG;
 		modal = true;
 		resizable = false;
 		set_transient_for(App.window);
@@ -72,21 +70,19 @@ public class BeatBox.RemoveDuplicatesDialog : Gtk.Window {
 		percent_box = new Box(Orientation.HORIZONTAL, 0);
 		var percentLabel = new Label(_("Media must match by at least "));
 		var percentPercentLabel = new Label(_(" percent."));
-		percent_box.add(percentLabel);
-		percent_box.add(matchPercent);
-		percent_box.add(percentPercentLabel);
+		percent_box.append(percentLabel);
+		percent_box.append(matchPercent);
+		percent_box.append(percentPercentLabel);
 		
 		Box feedbackBox = new Box(Orientation.HORIZONTAL, 6);
-		feedbackBox.add(is_working);
-		feedbackBox.add(feedback_label);
+		feedbackBox.append(is_working);
+		feedbackBox.append(feedback_label);
 		
-		var buttonSep = new ButtonBox(Orientation.HORIZONTAL);
-		buttonSep.set_spacing (6);
-		buttonSep.set_layout(ButtonBoxStyle.END);
-		buttonSep.add(feedbackBox);
-		buttonSep.add(cancel);
-		buttonSep.add(analyze);
-		((Gtk.ButtonBox)buttonSep).set_child_secondary(feedbackBox, true);
+		var buttonSep = new Box(Orientation.HORIZONTAL, 6);
+		feedbackBox.hexpand = true; // GTK4: the feedback takes the free space, left of the buttons
+		buttonSep.append(feedbackBox);
+		buttonSep.append(cancel);
+		buttonSep.append(analyze);
 		
 		// fancy up the category labels
 		matchLabel.xalign = 0.0f;
@@ -96,24 +92,24 @@ public class BeatBox.RemoveDuplicatesDialog : Gtk.Window {
 		matchOption.set_active(0);
 		
 		// Pack all widgets
-		content.add(wrap_alignment(matchLabel, 10, 0, 0, 0));
-		content.add(wrap_alignment(matchOption, 0, 0, 0, 10));
-		content.add(wrap_alignment(percent_box, 0, 0, 0, 10));
+		content.append(wrap_alignment(matchLabel, 10, 0, 0, 0));
+		content.append(wrap_alignment(matchOption, 0, 0, 0, 10));
+		content.append(wrap_alignment(percent_box, 0, 0, 0, 10));
 		buttonSep.margin_top = buttonSep.margin_bottom = 10;
 		buttonSep.vexpand = true;
 		buttonSep.valign = Gtk.Align.END; // at the bottom
-		content.add(buttonSep);
+		content.append(buttonSep);
 		
 		content.hexpand = true;
 		content.margin_start = content.margin_end = 10;
-		padding.add(content);
-		add(padding);
+		padding.append(content);
+		set_child(padding);
 		
-		is_working.set_no_show_all(true);
-		feedback_label.set_no_show_all(true);
-		percent_box.set_no_show_all(true);
+		is_working.visible = false;
+		feedback_label.visible = false;
+		percent_box.visible = false;
 		
-		show_all();
+		present();
 		
 		cancel.clicked.connect(cancel_clicked);
 		analyze.clicked.connect(analyze_clicked);

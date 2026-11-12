@@ -46,7 +46,7 @@ public class BeatBox.DirectoryDialog : Dialog {
 		        transient_for: App.window, modal: true, destroy_with_parent: true);
 		this.kind = kind;
 		set_default_size ((kind == Kind.RADIO) ? 860 : 720, 560);
-		destroy.connect (() => { closed = true; });
+		close_request.connect (() => { closed = true; return false; });
 
 		entry = new SearchEntry ();
 		entry.placeholder_text = (kind == Kind.RADIO) ? _("Station name, city or genre (jazz, news, rock…)")
@@ -55,12 +55,12 @@ public class BeatBox.DirectoryDialog : Dialog {
 		spinner = new Spinner ();
 		var top = new Box (Orientation.HORIZONTAL, 6);
 		entry.hexpand = true;
-		top.add(entry);
-		top.add(spinner);
+		top.append(entry);
+		top.append(spinner);
 
 		store = new Gtk.ListStore (7, typeof (string), typeof (string), typeof (string), typeof (string), typeof (string), typeof (bool), typeof (string));
 		view = new TreeView.with_model (store);
-		view.get_style_context ().add_class ("tracklist");
+		view.add_css_class ("tracklist");
 		string[] headers = (kind == Kind.RADIO) ? new string[] { _("Station"), _("Country"), _("Genre") }
 		                                        : new string[] { _("Podcast"), _("Author"), _("Genre") };
 		for (int i = 0; i < 3; i++) {
@@ -81,27 +81,27 @@ public class BeatBox.DirectoryDialog : Dialog {
 		}
 		detail_column = view.get_column (1);
 		view.row_activated.connect (() => add_selected ());
-		var scroll = new ScrolledWindow (null, null);
-		scroll.shadow_type = ShadowType.IN;
-		scroll.add (view);
+		var scroll = new ScrolledWindow ();
+		scroll.has_frame = true;
+		scroll.set_child (view);
 
 		status = new Label ("");
 		status.xalign = 0;
 		status.ellipsize = Pango.EllipsizeMode.END;
 		source = new Label (_("Podcasts from the Apple Podcasts directory."));
 		source.xalign = 0;
-		source.get_style_context ().add_class ("dim-label");
+		source.add_css_class ("dim-label");
 
 		var box = get_content_area ();
 		box.spacing = 8;
-		box.margin = 12;
-		box.add(top);
+		box.margin_top = box.margin_bottom = box.margin_start = box.margin_end = 12;
+		box.append (top);
 		if (kind == Kind.RADIO)
-			box.add (build_filters (top));
+			box.append (build_filters (top));
 		scroll.vexpand = true;
-		box.add(AquaScroll.wrap(scroll));
-		box.add(status);
-		box.add(source);
+		box.append (AquaScroll.wrap(scroll));
+		box.append (status);
+		box.append (source);
 
 		add_button (_("Close"), ResponseType.CLOSE);
 		add_btn = add_button ((kind == Kind.RADIO) ? _("Add Station") : _("Subscribe"), ResponseType.APPLY);
@@ -116,7 +116,7 @@ public class BeatBox.DirectoryDialog : Dialog {
 				destroy ();
 		});
 
-		show_all ();
+		present ();
 		entry.grab_focus ();
 
 		// Something to start with: the most voted stations of the user's country
@@ -138,8 +138,7 @@ public class BeatBox.DirectoryDialog : Dialog {
 			directory = (Radio.Directory) directories.active;
 			directory_changed ();
 		});
-		top.pack_start (directories, false, false);
-		top.reorder_child (directories, 0);
+		top.prepend (directories);
 
 		var filters = new FlowBox ();
 		filters.selection_mode = SelectionMode.NONE;
@@ -175,8 +174,8 @@ public class BeatBox.DirectoryDialog : Dialog {
 		https = new CheckButton.with_label (_("HTTPS only"));
 		https.toggled.connect (() => search (entry.text.strip ()));
 		var box = new Box (Orientation.HORIZONTAL, 0);
-		box.add (https);
-		filters.add (box);
+		box.append (https);
+		filters.append (box);
 		filling = false;
 		return filters;
 	}
@@ -212,9 +211,9 @@ public class BeatBox.DirectoryDialog : Dialog {
 			filter_changed (combo);
 		});
 		var box = new Box (Orientation.HORIZONTAL, 4);
-		box.add (new Label (title));
-		box.add (combo);
-		filters.add (box);
+		box.append (new Label (title));
+		box.append (combo);
+		filters.append (box);
 		return combo;
 	}
 
@@ -520,20 +519,20 @@ public class BeatBox.DirectoryDialog : Dialog {
 	}
 
 	/** Small dialog to add a station from its stream address */
-	public static void add_station_by_url () {
+	public static async void add_station_by_url () {
 		var dialog = new Dialog.with_buttons (_("Add Station"), App.window, DialogFlags.MODAL | DialogFlags.DESTROY_WITH_PARENT,
 		                                      _("Cancel"), ResponseType.CANCEL, _("Add"), ResponseType.OK);
 		var name = new Entry () { placeholder_text = _("My favourite station"), activates_default = true };
 		var url = new Entry () { placeholder_text = "https://…", activates_default = true, width_chars = 40 };
-		var grid = new Grid () { row_spacing = 8, column_spacing = 8, margin = 12 };
+		var grid = new Grid () { row_spacing = 8, column_spacing = 8, margin_top = 12, margin_bottom = 12, margin_start = 12, margin_end = 12 };
 		grid.attach (new Label (_("Name:")) { xalign = 1 }, 0, 0);
 		grid.attach (name, 1, 0);
 		grid.attach (new Label (_("Stream address:")) { xalign = 1 }, 0, 1);
 		grid.attach (url, 1, 1);
 		var hint = new Label (_("The address of the audio stream itself (often ending in .mp3, .aac or /stream).\nTo add a .pls or .m3u file use “Import File…”."));
-		hint.get_style_context ().add_class ("dim-label");
+		hint.add_css_class ("dim-label");
 		grid.attach (hint, 0, 2, 2, 1);
-		dialog.get_content_area ().add (grid);
+		dialog.get_content_area ().append (grid);
 		dialog.set_default_response (ResponseType.OK);
 		var ok = dialog.get_widget_for_response (ResponseType.OK);
 		ok.sensitive = false;
@@ -541,8 +540,7 @@ public class BeatBox.DirectoryDialog : Dialog {
 			var u = url.text.strip ();
 			ok.sensitive = (u.has_prefix ("http://") || u.has_prefix ("https://")) && !(" " in u);
 		});
-		dialog.show_all ();
-		if (dialog.run () == ResponseType.OK) {
+		if ((yield UI.run_dialog (dialog)) == ResponseType.OK) {
 			var n = name.text.strip ();
 			add_station (n != "" ? n : url.text.strip (), url.text.strip ());
 		}

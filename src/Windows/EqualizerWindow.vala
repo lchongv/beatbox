@@ -82,10 +82,8 @@ public class BeatBox.EqualizerWindow : Gtk.Window {
 	void build_ui () {
 		set_title(_("Equalizer"));
 
-		window_position = WindowPosition.CENTER;
-		type_hint = Gdk.WindowTypeHint.DIALOG;
 		set_transient_for(App.window);
-		get_style_context().add_class("equalizer");
+		add_css_class("equalizer");
 		this.destroy_with_parent = true;
 		resizable = false;
 
@@ -104,8 +102,8 @@ public class BeatBox.EqualizerWindow : Gtk.Window {
 		volume = new VolumeWidget(App.playback.get_volume());
 		volume.hexpand = true;
 		volume.margin_start = volume.margin_end = 6;
-		scales.add(volume);
-		scales.add(new Gtk.Separator(Gtk.Orientation.VERTICAL) { hexpand = true, margin_start = 6, margin_end = 6 });
+		scales.append(volume);
+		scales.append(new Gtk.Separator(Gtk.Orientation.VERTICAL) { hexpand = true, margin_start = 6, margin_end = 6 });
 		
 		string[] decibels = {"32", "64", "125", "250", "500", "1k", "2k", "4k", "8k", "16k"};
 		for (int index = 0; index < 10; ++index) {
@@ -121,12 +119,12 @@ public class BeatBox.EqualizerWindow : Gtk.Window {
 			v.vexpand = true;
 			v.tooltip_text = gain_text(0);
 			v.value_changed.connect(() => { v.tooltip_text = gain_text(v.get_value()); });
-			holder.add(v);
-			holder.add(UI.wrap_alignment(label, 4, 0, 0, 0));
+			holder.append(v);
+			holder.append(UI.wrap_alignment(label, 4, 0, 0, 0));
 
 			holder.hexpand = true;
 			holder.margin_start = holder.margin_end = 6;
-			scales.add(holder);
+			scales.append(holder);
 			scale_list.append(v);
 			label_list.append(label);
 
@@ -153,37 +151,36 @@ public class BeatBox.EqualizerWindow : Gtk.Window {
 		new_preset_entry = new Entry();
 		new_preset_entry.set_size_request(165, -1);
 
-		var entry_icon = App.icons.render_icon ("dialog-apply", IconSize.MENU);
-		new_preset_entry.set_icon_from_pixbuf(Gtk.EntryIconPosition.SECONDARY, entry_icon);
+		var entry_icon = App.icons.render_icon ("dialog-apply", IconSize.NORMAL);
+		new_preset_entry.set_icon_from_paintable(Gtk.EntryIconPosition.SECONDARY, Gdk.Texture.for_pixbuf(entry_icon));
 		new_preset_entry.set_icon_tooltip_text(Gtk.EntryIconPosition.SECONDARY, _("Save preset"));
 		
 		close_button = new Button.with_label(_("Done"));
 
-		var bottom_toolbar = new ButtonBox(Orientation.HORIZONTAL);
-		bottom_toolbar.set_layout(ButtonBoxStyle.END);
+		var bottom_toolbar = new Box(Orientation.HORIZONTAL, 6);
+		var bottom_filler = new Box(Orientation.HORIZONTAL, 0);
+		bottom_filler.hexpand = true;
 
-		bottom_toolbar.add(eq_switch);
-		bottom_toolbar.add(preset_combo);
-		bottom_toolbar.add(new_preset_entry);
-		bottom_toolbar.add(close_button);
+		bottom_toolbar.append(eq_switch);
+		bottom_toolbar.append(preset_combo);
+		bottom_toolbar.append(new_preset_entry);
+		bottom_toolbar.append(bottom_filler);
+		bottom_toolbar.append(close_button);
 		
-		((Gtk.ButtonBox)bottom_toolbar).set_child_secondary(eq_switch, true);
-		((Gtk.ButtonBox)bottom_toolbar).set_child_secondary(preset_combo, true);
-		((Gtk.ButtonBox)bottom_toolbar).set_child_secondary(new_preset_entry, true);
 
 		scales.vexpand = true;
-		inner_box.add(UI.wrap_alignment(scales, 10, 12, 10, 12));
+		inner_box.append(UI.wrap_alignment(scales, 10, 12, 10, 12));
 		effects_box = new Box(Orientation.VERTICAL, 6);
-		effects_box.add(effects_preset_row());
+		effects_box.append (effects_preset_row());
 		effects_table = effects_grid();
-		effects_box.add(effects_table);
-		inner_box.add(UI.wrap_alignment(effects_box, 0, 12, 4, 12));
-		inner_box.add(UI.wrap_alignment(bottom_toolbar, 0, 0, 10, 0));
+		effects_box.append (effects_table);
+		inner_box.append(UI.wrap_alignment(effects_box, 0, 12, 4, 12));
+		inner_box.append(UI.wrap_alignment(bottom_toolbar, 0, 0, 10, 0));
 
 		inner_box.hexpand = true;
 		inner_box.margin_start = inner_box.margin_end = 10;
-		outer_box.add(inner_box);
-		add(outer_box);
+		outer_box.append(inner_box);
+		set_child(outer_box);
 		
 		volume.volume_changed.connect(volume_changed);
 		eq_switch.notify["active"].connect(on_eq_switch_toggled);
@@ -198,11 +195,10 @@ public class BeatBox.EqualizerWindow : Gtk.Window {
 		});
 
 		close_button.clicked.connect(on_quit);
-		destroy.connect(on_quit);
+		close_request.connect(() => { on_quit(); return false; });
 
-		show_all();
+		present();
 		
-		new_preset_entry.set_no_show_all(true);
 		new_preset_entry.visible = false;
 	}
 	
@@ -228,13 +224,12 @@ public class BeatBox.EqualizerWindow : Gtk.Window {
 			App.settings.equalizer.apply_effect_preset (App.settings.equalizer.effect_preset_names()[effects_preset.active - 1]);
 			effects_box.remove (effects_table);
 			effects_table = effects_grid ();
-			effects_box.add (effects_table);
-			effects_table.show_all ();
+			effects_box.append (effects_table);
 			App.playback.apply_effects ();
 		});
 		var row = new Box (Orientation.HORIZONTAL, 6);
-		row.add (new Label (_("Effects preset")));
-		row.add (effects_preset);
+		row.append (new Label (_("Effects preset")));
+		row.append (effects_preset);
 		return row;
 	}
 
@@ -275,7 +270,7 @@ public class BeatBox.EqualizerWindow : Gtk.Window {
 		add_effect (details, ref d, _("Room size"), 0, 100, eq.reverb_room, _("Size of the simulated room"), "%d%%", (v) => { eq.reverb_room = v; });
 		add_effect (details, ref d, _("Damping"), 0, 100, eq.reverb_damping, _("How much the highs fade in the room: more is warmer"), "%d%%", (v) => { eq.reverb_damping = v; });
 		var expander = new Expander (_("Details")) { margin_top = 6 };
-		expander.add (details);
+		expander.set_child (details);
 		grid.attach (crossfeed, 0, next_row, 6, 1);
 		grid.attach (expander, 0, next_row + 1, 6, 1);
 		return grid;
@@ -468,7 +463,7 @@ public class BeatBox.EqualizerWindow : Gtk.Window {
 		new_preset_entry.grab_focus();
 	}
 
-	void new_preset_entry_icon_pressed (EntryIconPosition pos, Gdk.Event event) {
+	void new_preset_entry_icon_pressed (EntryIconPosition pos) {
 
 		if(pos != Gtk.EntryIconPosition.SECONDARY && !adding_preset)
 			return;

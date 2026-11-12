@@ -30,101 +30,98 @@ using Gtk;
 public class BeatBox.AddPodcastWindow : Window {
 	Box content;
 	Box padding;
-	
+
 	Gtk.Entry _source;
 	Gtk.Image _is_valid;
 	Gtk.Spinner _is_working;
 	Button _save;
 	Button _cancel;
-	
+
 	Gdk.Pixbuf not_valid;
 	Gdk.Pixbuf valid;
-	
+
 	Gee.HashSet<string> existing_rss;
 	bool already_validating;
 	string next;
-	
+
 	public AddPodcastWindow() {
 		already_validating = false;
 		next = "";
-		
+
 		title = (_("Add RSS Feed"));
-		
+
 		set_size_request(400, -1);
-		
+
 		this.resizable = false;
-		
-		this.window_position = WindowPosition.CENTER;
-		this.type_hint = Gdk.WindowTypeHint.DIALOG;
+
 		this.set_modal(true);
 		this.set_transient_for(App.window);
 		this.destroy_with_parent = true;
-		
+
 		content = new Box(Orientation.VERTICAL, 12);
 		padding = new Box(Orientation.HORIZONTAL, 12);
-		
+
 		/* get pixbufs */
-		valid = App.icons.PROCESS_COMPLETED.render (IconSize.MENU);
-		not_valid = App.icons.PROCESS_ERROR.render (IconSize.MENU);
-		
+		valid = App.icons.PROCESS_COMPLETED.render (IconSize.NORMAL);
+		not_valid = App.icons.PROCESS_ERROR.render (IconSize.NORMAL);
+
 		if(valid == null)
-			valid = App.icons.render_icon("emblem-default", IconSize.MENU);
+			valid = App.icons.render_icon("emblem-default", IconSize.NORMAL);
 		if(not_valid == null)
-			not_valid = App.icons.render_icon("dialog-error", IconSize.MENU);
-		
+			not_valid = App.icons.render_icon("dialog-error", IconSize.NORMAL);
+
 		/* start out by creating all category labels */
 		Label sourceLabel = new Label(_("Podcast RSS Source"));
 		_source = new Gtk.Entry() { placeholder_text = _("Podcast Source...") };
-		_is_valid = new Gtk.Image.from_pixbuf(not_valid);
+		_is_valid = new Gtk.Image();
+		UI.show_pixbuf(_is_valid, not_valid);
 		_is_working = new Gtk.Spinner();
 		_save = new Button.with_label(_("Add"));
 		_cancel = new Button.with_label(_("Cancel"));
 		/* set up controls */
 		sourceLabel.xalign = 0.0f;
 		sourceLabel.set_markup("<b>%s</b>".printf(_("Podcast RSS Source")));
-		
+
 		_is_working.start();
-		_is_working.active = true;
-		
+
 		/* add controls to form */
-		var bottomButtons = new ButtonBox(Orientation.HORIZONTAL);
-		bottomButtons.set_layout(ButtonBoxStyle.END);
-		bottomButtons.set_spacing (6);
-		bottomButtons.add(_cancel);
-		bottomButtons.add(_save);
+		var bottomButtons = new Box(Orientation.HORIZONTAL, 6);
+		bottomButtons.halign = Align.END;
+		bottomButtons.append(_cancel);
+		bottomButtons.append(_save);
 
 		/* source vbox */
 		Box sourceBox = new Box(Orientation.HORIZONTAL, 6);
 		_source.hexpand = true;
-		sourceBox.add(_source);
-		sourceBox.add(_is_working);
-		sourceBox.add(_is_valid);
-		
-		content.add(wrap_alignment(sourceLabel, 12, 0, 0, 0));
-		content.add(wrap_alignment(sourceBox, 0, 12, 0, 0));
+		sourceBox.append(_source);
+		sourceBox.append(_is_working);
+		sourceBox.append(_is_valid);
+
+		content.append(wrap_alignment(sourceLabel, 12, 0, 0, 0));
+		content.append(wrap_alignment(sourceBox, 0, 12, 0, 0));
 		bottomButtons.margin_top = bottomButtons.margin_bottom = 12;
-		content.add(bottomButtons);
-		
+		content.append(bottomButtons);
+
 		content.hexpand = true;
 		content.margin_start = content.margin_end = 12;
-		padding.add(content);
-		
-		add(padding);
-		
+		padding.append(content);
+
+		set_child(padding);
+
 		existing_rss = new Gee.HashSet<string>();
 		foreach(Media pod in App.library.podcast_library.medias()) {
 			existing_rss.add(pod.rss_uri);
 		}
-		
-		show_all();
+
+		present();
 		sourceChanged();
-		
+
 		_save.clicked.connect(saveClicked);
 		_cancel.clicked.connect(cancel_clicked);
 		_source.activate.connect(sourceActivate);
 		_source.changed.connect(sourceChanged);
 	}
-	
+
 	public static Gtk.Widget wrap_alignment (Gtk.Widget widget, int top, int right, int bottom, int left) {
 		// padding as extra margins (Gtk.Alignment is deprecated)
 		widget.margin_top += top;
@@ -142,17 +139,17 @@ public class BeatBox.AddPodcastWindow : Window {
 		App.podcasts.parse_new_rss(_source.get_text());
 		this.destroy();
 	}
-	
+
 	void sourceActivate() {
 		saveClicked();
 	}
-	
+
 	void sourceChanged() {
 		string url = _source.get_text();
-		
+
 		// simple quick validation
 		if(!(url.has_prefix("http://") || url.has_prefix("https://")) || url.contains(" ") || existing_rss.contains(url)) {
-			_is_valid.set_from_pixbuf(not_valid);
+			UI.show_pixbuf(_is_valid, not_valid);
 			_is_valid.show();
 			_is_working.hide();
 			_save.set_sensitive(false);
@@ -161,14 +158,14 @@ public class BeatBox.AddPodcastWindow : Window {
 		else {
 			_is_working.show();
 			_is_valid.hide();
-			
+
 			if(already_validating) {
 				next = url;
 			}
 			else {
 				already_validating = true;
 				next = url;
-				
+
 				try {
 					new Thread<void*>.try (null, test_url_validity);
 				}
@@ -178,7 +175,7 @@ public class BeatBox.AddPodcastWindow : Window {
 			}
 		}
 	}
-	
+
 	public void* test_url_validity () {
 		bool is_valid = false;
 		while(next != "") {
@@ -186,21 +183,21 @@ public class BeatBox.AddPodcastWindow : Window {
 			next = "";
 			is_valid = App.podcasts.is_valid_rss(previous_url) && !existing_rss.contains(previous_url);
 		}
-		
+
 		Idle.add( () => {
 			_is_working.hide();
 			_is_valid.show();
 			if(is_valid)
-				_is_valid.set_from_pixbuf(valid);
+				UI.show_pixbuf(_is_valid, valid);
 			else
-				_is_valid.set_from_pixbuf(not_valid);
-			
+				UI.show_pixbuf(_is_valid, not_valid);
+
 			_save.set_sensitive(is_valid);
-			
+
 			already_validating = false;
 			return false;
 		});
-				
+
 		return null;
 	}
 }

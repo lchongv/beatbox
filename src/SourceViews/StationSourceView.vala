@@ -83,7 +83,7 @@ public class BeatBox.StationSourceView : SourceView {
 		var add = action_button ("list-add-symbolic", _("Add by Address…"));
 		var import = action_button ("document-open-symbolic", _("Import File…"));
 		find.clicked.connect (() => { new DirectoryDialog (DirectoryDialog.Kind.RADIO); });
-		add.clicked.connect (() => { DirectoryDialog.add_station_by_url (); });
+		add.clicked.connect (() => { DirectoryDialog.add_station_by_url.begin (); });
 		import.clicked.connect (() => { App.actions.import_station.activate(null); });
 		pack_action_bar ({ find, add, import });
 		
@@ -92,7 +92,7 @@ public class BeatBox.StationSourceView : SourceView {
 		radioMenu.append(_("Find Stations…"), "view.find");
 		add_context_action("find", () => { new DirectoryDialog (DirectoryDialog.Kind.RADIO); });
 		radioMenu.append(_("Add by Address…"), "view.add-address");
-		add_context_action("add-address", () => { DirectoryDialog.add_station_by_url (); });
+		add_context_action("add-address", () => { DirectoryDialog.add_station_by_url.begin (); });
 		radioMenu.append_item(App.actions.model_item(App.actions.import_station));
 		
 		// Populate views
@@ -215,7 +215,7 @@ public class BeatBox.StationSourceView : SourceView {
 		if(index == 0)
 			new DirectoryDialog (DirectoryDialog.Kind.RADIO);
 		else if(index == 1)
-			DirectoryDialog.add_station_by_url ();
+			DirectoryDialog.add_station_by_url.begin ();
 		else
 			App.actions.import_station.activate(null);
 	}

@@ -29,34 +29,32 @@ using Gtk;
 
 public class BeatBox.PlaylistNameWindow : Window {
 	public StaticPlaylist _original;
-	
+
 	Box content;
 	Box padding;
-	
+
 	public Entry name_widget {get; private set;}
 	public Button save_widget {get; private set;}
 	public Button cancel_widget {get; private set;}
 
 	public signal void playlist_saved(StaticPlaylist p);
-	
+
 	public PlaylistNameWindow(StaticPlaylist original) {
 		title = "BeatBox";
-		
-		this.window_position = WindowPosition.CENTER;
-		this.type_hint = Gdk.WindowTypeHint.DIALOG;
+
 		this.set_modal(true);
 		this.set_transient_for(App.window);
 		this.destroy_with_parent = true;
 //		this.type = WindowType.POPUP;
-		
+
 		set_size_request (250, -1);
 		resizable = false;
-		
+
 		_original = original;
-		
+
 		content = new Box(Orientation.VERTICAL, 12);
 		padding = new Box(Orientation.HORIZONTAL, 12);
-		
+
 		/* start out by creating all category labels */
 		Label nameLabel = new Label(_("Name of Playlist"));
 		name_widget = new Entry();
@@ -66,28 +64,27 @@ public class BeatBox.PlaylistNameWindow : Window {
 		/* set up controls */
 		nameLabel.xalign = 0.0f;
 		nameLabel.set_markup("<b>%s</b>".printf(_("Name of Playlist")));
-		
+
 		name_widget.text = original.name;
-		
+
 		/* add controls to form */
-		var bottomButtons = new ButtonBox(Orientation.HORIZONTAL);
-		bottomButtons.set_spacing (6);
-		bottomButtons.set_layout(ButtonBoxStyle.END);
-		bottomButtons.add(cancel_widget);
-		bottomButtons.add(save_widget);
-		
-		content.add(wrap_alignment(nameLabel, 12, 0, 0, 0));
-		content.add(wrap_alignment(name_widget, 0, 12, 0, 12));
+		var bottomButtons = new Box(Orientation.HORIZONTAL, 6);
+		bottomButtons.halign = Align.END;
+		bottomButtons.append(cancel_widget);
+		bottomButtons.append(save_widget);
+
+		content.append(wrap_alignment(nameLabel, 12, 0, 0, 0));
+		content.append(wrap_alignment(name_widget, 0, 12, 0, 12));
 		bottomButtons.margin_top = bottomButtons.margin_bottom = 12;
-		content.add(bottomButtons);
-		
+		content.append(bottomButtons);
+
 		content.hexpand = true;
 		content.margin_start = content.margin_end = 12;
-		padding.add(content);
-		
-		add(padding);
-		
-		show_all();
+		padding.append(content);
+
+		set_child(padding);
+
+		present();
 
 		save_widget.clicked.connect(saveClicked);
 		cancel_widget.clicked.connect (cancel_clicked);
@@ -107,18 +104,18 @@ public class BeatBox.PlaylistNameWindow : Window {
 		widget.margin_start += left;
 		return widget;
 	}
-	
+
 	void saveClicked() {
 		_original.name = name_widget.text;
 		playlist_saved(_original);
-		
+
 		this.destroy();
 	}
-	
+
 	void nameActivate() {
 		saveClicked();
 	}
-	
+
 	void nameChanged() {
 		if(name_widget.get_text() == "") {
 			save_widget.set_sensitive(false);
@@ -132,7 +129,7 @@ public class BeatBox.PlaylistNameWindow : Window {
 				}
 			}
 		}
-		
+
 		save_widget.set_sensitive(true);
 	}
 }

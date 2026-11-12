@@ -12,6 +12,7 @@ public class BeatBox.SkinEditor : Gtk.Window {
 	Button save_button;
 	string saved_text;
 	uint pending = 0;
+	bool closing = false;
 
 	public SkinEditor (Window parent, Skins.Skin skin) {
 		this.skin = skin;
@@ -34,9 +35,9 @@ public class BeatBox.SkinEditor : Gtk.Window {
 		view.monospace = true;
 		view.left_margin = view.right_margin = view.top_margin = view.bottom_margin = 6;
 		view.buffer.text = saved_text;
-		var scroll = new ScrolledWindow (null, null);
-		scroll.expand = true;
-		scroll.add (view);
+		var scroll = new ScrolledWindow ();
+		scroll.hexpand = scroll.vexpand = true;
+		scroll.set_child (view);
 
 		status = new Label ("");
 		status.xalign = 0;
@@ -48,19 +49,22 @@ public class BeatBox.SkinEditor : Gtk.Window {
 		revert.clicked.connect (() => { view.buffer.text = saved_text; });
 		save_button = new Button.with_label (Skins.is_user (skin) ? _("Save") : _("Save as Copy"));
 		save_button.tooltip_text = Skins.is_user (skin) ? null : _("A bundled skin can't be changed: the copy goes to the skins folder");
-		save_button.get_style_context ().add_class ("suggested-action");
+		save_button.add_css_class ("suggested-action");
 		save_button.clicked.connect (() => { save (); });
 
 		var bottom = new Box (Orientation.HORIZONTAL, 6);
-		bottom.margin = 6;
-		bottom.pack_start (status, true, true);
-		bottom.pack_end (save_button, false, false);
-		bottom.pack_end (revert, false, false);
+		bottom.margin_top = bottom.margin_bottom = bottom.margin_start = bottom.margin_end = 6;
+		status.hexpand = true;
+		bottom.append (status);
+		bottom.append (revert);   // in GTK3 these were packed from the end: the save button stays rightmost
+		bottom.append (save_button);
 		var box = new Box (Orientation.VERTICAL, 0);
-		box.pack_start (AquaScroll.wrap (scroll), true, true);
-		box.pack_start (new Separator (Orientation.HORIZONTAL), false, false);
-		box.pack_start (bottom, false, false);
-		add (box);
+		var aqua = AquaScroll.wrap (scroll);
+		aqua.vexpand = true;
+		box.append (aqua);
+		box.append (new Separator (Orientation.HORIZONTAL));
+		box.append (bottom);
+		set_child (box);
 
 		// shown a moment after typing stops, not at every key
 		view.buffer.changed.connect (() => {
@@ -68,11 +72,11 @@ public class BeatBox.SkinEditor : Gtk.Window {
 				Source.remove (pending);
 			pending = Timeout.add (300, () => { pending = 0; show_css (); return false; });
 		});
-		delete_event.connect (() => !may_close ());
-		destroy.connect (() => {
-			if (pending != 0)
-				Source.remove (pending);
-			Skins.apply (App.settings.main.skin); // what's saved, not what was typed
+		close_request.connect (() => {
+			if (closing)
+				return false;
+			confirm_close.begin ();
+			return true; // the window closes once the question below is answered
 		});
 		show_css ();
 	}
@@ -109,18 +113,24 @@ public class BeatBox.SkinEditor : Gtk.Window {
 		}
 	}
 
-	/** Unsaved changes: save them, drop them or stay */
-	bool may_close () {
-		if (text () == saved_text)
-			return true;
-		var ask = new MessageDialog (this, DialogFlags.MODAL, MessageType.QUESTION, ButtonsType.NONE,
-			"%s", _("Save the changes to the skin?"));
-		ask.add_button (_("Close Without Saving"), ResponseType.REJECT);
-		ask.add_button (_("Cancel"), ResponseType.CANCEL);
-		ask.add_button (_("Save"), ResponseType.ACCEPT);
-		ask.set_default_response (ResponseType.ACCEPT);
-		var answer = ask.run ();
-		ask.destroy ();
-		return answer == ResponseType.REJECT || (answer == ResponseType.ACCEPT && save ());
+	/** Unsaved changes: save them, drop them or stay. Closes the window when that is done. */
+	async void confirm_close () {
+		if (text () != saved_text) {
+			var ask = new MessageDialog (this, DialogFlags.MODAL, MessageType.QUESTION, ButtonsType.NONE,
+				"%s", _("Save the changes to the skin?"));
+			ask.add_button (_("Close Without Saving"), ResponseType.REJECT);
+			ask.add_button (_("Cancel"), ResponseType.CANCEL);
+			ask.add_button (_("Save"), ResponseType.ACCEPT);
+			ask.set_default_response (ResponseType.ACCEPT);
+			var answer = yield UI.run_dialog (ask);
+			ask.destroy ();
+			if (!(answer == ResponseType.REJECT || (answer == ResponseType.ACCEPT && save ())))
+				return;
+		}
+		if (pending != 0)
+			Source.remove (pending);
+		Skins.apply (App.settings.main.skin); // what's saved, not what was typed
+		closing = true;
+		close ();
 	}
 }

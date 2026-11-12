@@ -44,7 +44,7 @@ public class BeatBox.PreferencesWindow : Gtk.Window {
 		build_ui();
 		add_sections();
 		
-		show_all();
+		present();
 		
 	}
 	
@@ -52,8 +52,6 @@ public class BeatBox.PreferencesWindow : Gtk.Window {
 		set_title(_("Preferences"));
 
 		// Window properties
-		window_position = WindowPosition.CENTER;
-		type_hint = Gdk.WindowTypeHint.DIALOG;
 		set_modal(true);
 		//resizable = false;
 		set_transient_for(App.window);
@@ -63,7 +61,7 @@ public class BeatBox.PreferencesWindow : Gtk.Window {
 		var content = new Box(Orientation.VERTICAL, 10);
 		var padding = new Box(Orientation.HORIZONTAL, 0);
 		var notebook_padding = new Box(Orientation.HORIZONTAL, 10);
-		var notebook_scroll = new ScrolledWindow(null, null);
+		var notebook_scroll = new ScrolledWindow();
 		
 		side_bar = new SideBar();
 		notebook = new Notebook();
@@ -76,29 +74,29 @@ public class BeatBox.PreferencesWindow : Gtk.Window {
 		
 		notebook.hexpand = true;
 		notebook.margin_start = notebook.margin_end = 10;
-		notebook_padding.add(notebook);
-		notebook_scroll.add(notebook_padding);
+		notebook_padding.append(notebook);
+		notebook_scroll.set_child(notebook_padding);
 		
 		var list_to_content = new Box(Orientation.HORIZONTAL, 0);
-		list_to_content.add(side_bar);
+		list_to_content.append(side_bar);
 		notebook_scroll.hexpand = true;
-		list_to_content.add(AquaScroll.wrap(notebook_scroll));
+		list_to_content.append(AquaScroll.wrap(notebook_scroll));
 		
 		saveChanges = new Button.with_label(_("Done"));
 		
 		// Add save button
-		var bottomButtons = new ButtonBox(Orientation.HORIZONTAL);
-		bottomButtons.set_layout(ButtonBoxStyle.END);
-		bottomButtons.add(saveChanges);
+		var bottomButtons = new Box(Orientation.HORIZONTAL, 6);
+		bottomButtons.halign = Align.END;
+		bottomButtons.append(saveChanges);
 		
 		list_to_content.vexpand = true;
-		content.add(UI.wrap_alignment(list_to_content, 10, 0, 0, 0));
+		content.append(UI.wrap_alignment(list_to_content, 10, 0, 0, 0));
 		bottomButtons.margin_top = bottomButtons.margin_bottom = 10;
-		content.add(bottomButtons);
+		content.append(bottomButtons);
 		
 		content.hexpand = true;
-		padding.add(UI.wrap_alignment(content, 0, 10, 0, 10));
-		add(padding);
+		padding.append(UI.wrap_alignment(content, 0, 10, 0, 10));
+		set_child(padding);
 		
 		general_iter = side_bar.addItem(null, null, null, null, null, _("General"), null, false, false, false);
 		libraries_iter = side_bar.addItem(null, null, null, null, null, _("Libraries"), null, false, false, false);
