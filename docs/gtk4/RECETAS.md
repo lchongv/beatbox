@@ -71,9 +71,10 @@ public class BeatBox.PopMenu : Gtk.Popover {
 public class BeatBox.PopMenuItem : Gtk.Button {       // sustituye a Gtk.MenuItem
     public PopMenuItem.with_label (string label);
     public PopMenuItem.with_child (Gtk.Widget child); // sustituye a MenuItem () + add (w)
-    public signal void activate ();                   // igual que en Gtk.MenuItem
-    public bool keep_open { get; set; }               // true: el menú no se cierra al activar
+    public bool keep_open { get; set; }               // true: el menú no se cierra al clicar
 }
+// Un ítem se conecta por «clicked», nunca por «activate»: Vala no deja declarar
+// «activate» aquí (ya lo tiene Gtk.Button, que solo lo emite con el teclado).
 public class BeatBox.PopMenuCheck : BeatBox.PopMenuItem {  // CheckMenuItem y RadioMenuItem
     public PopMenuCheck.with_label (string label, bool radio = false);
     public bool active { get; set; }

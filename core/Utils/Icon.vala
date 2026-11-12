@@ -140,10 +140,11 @@ public class BeatBox.Icon : GLib.Object {
 		return new GLib.ThemedIcon.with_default_fallbacks (this.name);
 	}
 
-	public Gtk.IconInfo? get_icon_info (int size) {
-		var icon_theme = IconTheme.get_default();
-		// the ThemedIcon already carries the generic fallbacks; GENERIC_FALLBACK isn't allowed with a gicon
-		return icon_theme.lookup_by_gicon (get_gicon(), size, 0);
+	// GTK4 has no icon_size_lookup () and its IconSize only says "normal" or "large"; the theme
+	// sizes them in CSS, and by default they are 16 and 32 px
+	static void size_lookup (Gtk.IconSize size, out int width, out int height) {
+		width = size == Gtk.IconSize.LARGE ? 32 : 16;
+		height = width;
 	}
 
 	// Bundled icons decoded once per size: each SVG takes milliseconds, and every list's
@@ -189,7 +190,7 @@ public class BeatBox.Icon : GLib.Object {
 
 		// If a null size was passed, use original size
 		if (size != null) {
-			icon_size_lookup (size, out width, out height);
+			size_lookup (size, out width, out height);
 		}
 		else if (px_size > 0) {
 			width = px_size;
@@ -207,15 +208,16 @@ public class BeatBox.Icon : GLib.Object {
 		}
 		
 		// Otherwise load it from the theme
-		if (rv == null && IconTheme.get_default().has_icon(this.name)) {
+		var theme = Gtk.IconTheme.get_for_display (Gdk.Display.get_default ());
+		if (rv == null && theme.has_icon(this.name)) {
+			// GTK4-PENDIENTE: a symbolic icon keeps the colors of its file, not those of the context
+			// (load_symbolic_for_context has no GTK4 pixbuf equivalent)
 			try {
-				var icon_info = get_icon_info (height);
-				if (icon_info != null) {
-					if (context != null)
-						rv = icon_info.load_symbolic_for_context (context);
-					else
-						rv = icon_info.load_icon ();
-				}
+				// the ThemedIcon already carries the generic fallbacks
+				var icon = theme.lookup_by_gicon (get_gicon (), height, 1, Gtk.TextDirection.NONE, 0);
+				var file = icon.get_file ();
+				if (file != null && file.get_path () != null)
+					rv = new Gdk.Pixbuf.from_file_at_size (file.get_path (), height, height);
 			}
 			catch (Error err) {
 				message ("%s, falling back to default.", err.message);
@@ -234,7 +236,7 @@ public class BeatBox.Icon : GLib.Object {
 
 		// If a null size was passed, use original size
 		if (size != null) {
-			icon_size_lookup (size, out width, out height);
+			size_lookup (size, out width, out height);
 		}
 		else if (px_size > 0) {
 			width = px_size;
@@ -247,12 +249,14 @@ public class BeatBox.Icon : GLib.Object {
 
 		if (has_backup) {
 			rv = new Image.from_resource (this.backup);
-		} else if (IconTheme.get_default().has_icon (this.name) && size != null) {
-			rv = new Image.from_icon_name (this.name, size);
+		} else if (Gtk.IconTheme.get_for_display (Gdk.Display.get_default ()).has_icon (this.name) && size != null) {
+			rv = new Image.from_icon_name (this.name);
+			rv.pixel_size = width;
 		} else {
 			// And if there was no backup, use the default method
 			message ("Loading %s using default method", this.name);
-			rv = new Image.from_pixbuf (this.render (size, ctx));
+			rv = new Image ();
+			UI.show_pixbuf (rv, this.render (size, ctx));
 		}
 
 		return rv;

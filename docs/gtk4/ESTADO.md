@@ -11,7 +11,7 @@ etapa 2 con el andamio; `tools/gtk4-check.sh` tarda ~2 s.
 | Tarea | Quién | Estado | Commit | Pendientes | Notas |
 |---|---|---|---|---|---|
 | T00 rama, meson y andamio | orquestador | [x] | | | total de errores: 1549 (etapa 2) |
-| T01 utilidades y PopMenu | H | [ ] | | | |
+| T01 utilidades y PopMenu | H | [x] | | 2 | icono simbólico sin colores de contexto (Icon.vala:213); WindowHandle también maximiza con doble clic (UI.vala:117) |
 | T02 resto de core | H | [ ] | | | |
 | T10 diálogos | D | [ ] | | | |
 | T11 preferencias | D | [ ] | | | |

@@ -45,7 +45,7 @@ si vuelve a fallar, dale la tarea a un trabajador Haiku.
 > No borres ni comentes funcionalidad para que compile. 6) Devuelve un informe breve:
 > archivos tocados, salida final de Comprobar, cada GTK4-PENDIENTE con su motivo.
 
-**Paralelismo:** como máximo 3 trabajadores a la vez (2 Deepseek + 1 Haiku), siempre con
+**Paralelismo:** como máximo 8 trabajadores a la vez (decidido por el usuario), siempre con
 archivos disjuntos (la tabla «Reparto» ya lo garantiza). T01 → T02 van en serie y solas.
 T21 solo después de T20. T29 puede correr desde el principio. Las fases 3 y 4, en serie y
 sin nadie más trabajando. T50 y T51 pueden ir juntas, después de T31.
