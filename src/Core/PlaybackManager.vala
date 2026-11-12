@@ -161,8 +161,11 @@ public class BeatBox.PlaybackManager : GLib.Object, BeatBox.PlaybackInterface {
 		player.setVolume(val);
 	}
 	
+	// the LCD's spectrum and the classic visualizer may both want it: on while either does
+	int spectrum_users = 0;
 	public void want_spectrum(bool wanted) {
-		player.want_spectrum(wanted);
+		spectrum_users = int.max(0, spectrum_users + (wanted ? 1 : -1));
+		player.want_spectrum(spectrum_users > 0);
 	}
 
 	public void want_pcm(bool wanted) {

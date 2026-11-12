@@ -265,6 +265,18 @@ public class BeatBox.AppearancePreferences : SimplePreferences {
 
 		var aqua = add_check(_("Mac OS X Tiger scrollbars (applies on restart)"), App.settings.main.aqua_scrollbars);
 		aqua.toggled.connect(() => { App.settings.main.aqua_scrollbars = aqua.active; });
+#if HAVE_PROJECTM
+		// without projectM there is nothing to choose: the visualizer shows the classic effects
+		add_heading(_("Visualizer"));
+		var classic = add_check(_("Use the classic effects instead of the MilkDrop presets"), App.settings.main.visualizer_classic);
+		classic.toggled.connect(() => { App.settings.main.visualizer_classic = classic.active; });
+		var classic_note = new Label(_("They need no OpenGL. The visualizer also turns to them when the MilkDrop presets can't start."));
+		classic_note.xalign = 0.0f;
+		classic_note.wrap = true;
+		classic_note.max_width_chars = 60;
+		classic_note.get_style_context().add_class("dim-label");
+		add_row(classic_note);
+#endif
 	}
 }
 

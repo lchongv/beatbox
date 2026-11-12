@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- eye: icono monocromo de itunes7. Reemplázalo por tu propio
+     arte si lo deseas; se recolorea con el `color` del CSS. -->
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24">
+  <g class="symbolic" fill="#3a3a3a"><path d="M12 5C6 5 2 12 2 12s4 7 10 7 10-7 10-7-4-7-10-7zm0 3a4 4 0 110 8 4 4 0 010-8z" fill-rule="evenodd"/></g>
+</svg>

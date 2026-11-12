@@ -72,6 +72,7 @@ src/Widgets/TopDisplay/BufferDisplay.vala
 src/Widgets/TopDisplay/MetadataDisplay.vala
 src/Widgets/TopDisplay/TimeScale.vala
 src/Widgets/TrackReport.vala
+src/Widgets/Visualizer.vala
 src/Windows/AddPodcastWindow.vala
 src/Windows/DirectoryDialog.vala
 src/Windows/Editors/FieldEditorImpl.vala

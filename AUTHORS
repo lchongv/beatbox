@@ -17,3 +17,9 @@ Adapted from Granite 6.2.0 (elementary, Inc. and contributors, LGPL-3.0-or-later
     the view switcher and the empty-view page (src/Widgets/ModeButton.vala,
     src/Widgets/Welcome.vala), the log format (src/Core/Logger.vala) and the
     cover shadow's blur (src/Utils/PixbufUtils.vala)
+
+The visualizer's classic effects (src/C/classic-visualizer.c) and the bottom
+bar's icons come from lchongv's own GTK4 music player. The logos the classic
+effects show in the middle:
+    Tux: Larry Ewing <lewing@isc.tamu.edu>, made with The GIMP
+    GNU head: Aurelio A. Heckert, CC BY-SA 2.0

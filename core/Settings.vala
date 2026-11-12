@@ -326,6 +326,7 @@ public class BeatBox.Settings {
         public bool aqua_scrollbars { get; set; }    // Mac OS X Tiger scrollbars, drawn by aqua-scrollbar.c (applies on restart)
         public int album_detail_cover_percent { get; set; }
         public bool download_covers { get; set; }
+        public bool visualizer_classic { get; set; } // the built-in effects instead of projectM's (Visualizer)
         
         /** Where recordings go: the folder chosen, or Recordings in the user's music folder */
         public string recordings_path () {
@@ -357,6 +358,7 @@ public class BeatBox.Settings {
             album_grid_inline = true;
             album_detail_cover_percent = 25;
             download_covers = true;
+            visualizer_classic = false;
             init_config ("settings", "net.launchpad.beatbox.Settings", {
                 "library-name", "music-folder", "music-mount-name", "watch-music-folder",
                 "last-media-playing", "last-media-position" });

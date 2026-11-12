@@ -15,6 +15,7 @@
     <file>icons/16x16/actions/lastfm-ban.svg</file>
     <file>icons/16x16/actions/lastfm-love.svg</file>
     <file>icons/16x16/actions/media-eq-symbolic.svg</file>
+    <file>icons/16x16/actions/visualizer-symbolic.svg</file>
     <file>icons/16x16/actions/pane-hide-symbolic.svg</file>
     <file>icons/16x16/actions/pane-show-symbolic.svg</file>
     <file>icons/16x16/actions/view-coverflow-symbolic.svg</file>
@@ -42,5 +43,7 @@
     <file>icons/32x32/apps/beatbox.svg</file>
     <file>icons/48x48/apps/beatbox.svg</file>
     <file>icons/64x64/apps/beatbox.svg</file>
+    <file>icons/visualizer/tux-mono.svg</file>
+    <file>icons/visualizer/gnu.svg</file>
   </gresource>
 </gresources>

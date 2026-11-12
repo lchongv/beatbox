@@ -1,4 +1,4 @@
-project('beatbox', 'vala', 'c', version: '1.2.7')
+project('beatbox', 'vala', 'c', version: '1.2.8')
 
 gnome = import('gnome')
 i18n = import('i18n')
@@ -32,7 +32,8 @@ valac = meson.get_compiler('vala')
 # iPod sync needs libgpod (meson setup -Dipod=disabled builds without it)
 gpod_dep = dependency('libgpod-1.0', required: get_option('ipod'))
 gpod_vala_args = gpod_dep.found() ? ['-D', 'HAVE_GPOD'] : []
-# The visualizer (src/Widgets/Visualizer.vala) is optional: without libprojectM 4 there is no button for it
+# projectM's effects in the visualizer (src/Widgets/Visualizer.vala) are optional: without
+# libprojectM 4, EGL and GL it shows only the classic ones
 projectm_dep = dependency('projectM-4', required: false)
 egl_dep = dependency('egl', required: false)
 gl_dep = dependency('gl', required: false)
@@ -327,6 +328,8 @@ skin_resources = gnome.compile_resources('beatbox-skins', 'skins/skins.gresource
 embed_cover_sources = []
 app_vala_args = gpod_vala_args
 app_deps = [core_dep, dependency('gstreamer-app-1.0')] # the pipeline's sample branch (appsink)
+# The visualizer always has the classic effects (cairo); projectM's when it is found
+app_sources += files('src/Widgets/Visualizer.vala', 'src/C/classic-visualizer.c')
 if visualizer
   app_vala_args += ['-D', 'HAVE_PROJECTM', '--pkg', 'projectM-4']
   # projectM draws into framebuffer 0: an off-screen EGL context gives it one of its own.
@@ -334,7 +337,6 @@ if visualizer
   offscreen_gl = static_library('offscreen-gl', 'src/C/offscreen-gl.c',
     dependencies: [egl_dep, gl_dep, dependency('glib-2.0')])
   app_deps += [projectm_dep, declare_dependency(link_with: offscreen_gl)]
-  app_sources += files('src/Widgets/Visualizer.vala')
 endif
 if python_plugins
   app_vala_args += ['-D', 'HAVE_PEAS']

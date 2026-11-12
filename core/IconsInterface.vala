@@ -80,6 +80,7 @@ public interface BeatBox.IconsInterface : GLib.Object {
 	public abstract BeatBox.Icon REPEAT_ONCE { get; protected set; }
 	public abstract BeatBox.Icon REPEAT_OFF { get; protected set; }
 	public abstract BeatBox.Icon EQ { get; protected set; }
+	public abstract BeatBox.Icon VISUALIZER { get; protected set; }
 	public abstract BeatBox.Icon VIEW_COLUMN { get; protected set; }
 	public abstract BeatBox.Icon VIEWS { get; protected set; }
 	public abstract BeatBox.Icon VIEW_DETAILS { get; protected set; }

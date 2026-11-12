@@ -404,12 +404,11 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		topControls.insert(playButton, -1);
 		topControls.insert(nextButton, -1);
 		topControls.insert(viewSelectorBin, -1);
-#if HAVE_PROJECTM
 		// the visualizer's button, bottom left with the shuffle and repeat; the visualizer takes the lists' place while it is on
 		var visualizer = new Visualizer();
 		visualizer.no_show_all = true;
 		var visualizerButton = new ToggleButton();
-		var visualizerIcon = new Image.from_icon_name("audio-x-generic", IconSize.MENU);
+		var visualizerIcon = App.icons.VISUALIZER.render_image(IconSize.MENU);
 		StatusBar.follow_text_color(visualizerIcon); // dark on the bar, like the other icons there
 		visualizerButton.image = visualizerIcon;
 		visualizerButton.relief = ReliefStyle.NONE;
@@ -420,7 +419,6 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 			all_views.visible = !visualizerButton.active;
 		});
 		statusBar.insert_widget(visualizerButton, true);
-#endif
 		// the "i" (now playing) toggle is gone: redundant; Ctrl+I still opens that view
 		topControls.insert(top_displayBin, -1);
 		topControls.insert(searchFieldBin, -1);
@@ -490,10 +488,8 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		contentBox.add(infoBar);
 		all_views.vexpand = true;
 		contentBox.add(all_views);
-#if HAVE_PROJECTM
 		visualizer.vexpand = true;
 		contentBox.add(visualizer);
-#endif
 		
 		sourcesToMedias.position = App.settings.saved_state.sidebar_width;
 		sourcesToMedias.pack1(sideBox, false, true);

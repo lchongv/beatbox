@@ -4002,6 +4002,106 @@ msgstr "Título y artista"
 msgid "Title, Artist, and Album"
 msgstr "Título, artista y álbum"
 
+#: src/Core/LibraryWindow.vala
+msgid "Visualizer"
+msgstr "Visualizador"
+
+#: src/Widgets/Visualizer.vala
+msgid "Next Effect"
+msgstr "Siguiente efecto"
+
+#: src/Widgets/Visualizer.vala
+msgid "Previous Effect"
+msgstr "Efecto anterior"
+
+#: src/Widgets/Visualizer.vala
+msgid "Change Effects by Themselves"
+msgstr "Cambiar de efecto solo"
+
+#: src/Widgets/Visualizer.vala
+msgid "Colors"
+msgstr "Colores"
+
+#: src/Widgets/Visualizer.vala
+msgid "Tunnel"
+msgstr "Túnel"
+
+#: src/Widgets/Visualizer.vala
+msgid "Rays"
+msgstr "Rayos"
+
+#: src/Widgets/Visualizer.vala
+msgid "Burst"
+msgstr "Estallido"
+
+#: src/Widgets/Visualizer.vala
+msgid "Spectrum"
+msgstr "Espectro"
+
+#: src/Widgets/Visualizer.vala
+msgid "Wave"
+msgstr "Onda"
+
+#: src/Widgets/Visualizer.vala
+msgid "Spectrogram"
+msgstr "Espectrograma"
+
+#: src/Widgets/Visualizer.vala
+msgid "Stars"
+msgstr "Estrellas"
+
+#: src/Widgets/Visualizer.vala
+msgid "Lissajous"
+msgstr "Lissajous"
+
+#: src/Widgets/Visualizer.vala
+msgid "Flower"
+msgstr "Flor"
+
+#: src/Widgets/Visualizer.vala
+msgid "Grid"
+msgstr "Rejilla"
+
+#: src/Widgets/Visualizer.vala
+msgid "Fire"
+msgstr "Fuego"
+
+#: src/Widgets/Visualizer.vala
+msgid "Circles"
+msgstr "Círculos"
+
+#: src/Widgets/Visualizer.vala
+msgid "Amber"
+msgstr "Ámbar"
+
+#: src/Widgets/Visualizer.vala
+msgid "Ocean"
+msgstr "Océano"
+
+#: src/Widgets/Visualizer.vala
+msgid "Neon"
+msgstr "Neón"
+
+#: src/Widgets/Visualizer.vala
+msgid "Forest"
+msgstr "Bosque"
+
+#: src/Widgets/Visualizer.vala
+msgid "Rainbow"
+msgstr "Arcoíris"
+
+#: src/Widgets/Visualizer.vala
+msgid "Sunset"
+msgstr "Atardecer"
+
+#: src/Preferences/BehaviorPreferences.vala
+msgid "Use the classic effects instead of the MilkDrop presets"
+msgstr "Usar los efectos clásicos en vez de los presets de MilkDrop"
+
+#: src/Preferences/BehaviorPreferences.vala
+msgid "They need no OpenGL. The visualizer also turns to them when the MilkDrop presets can't start."
+msgstr "No necesitan OpenGL. El visualizador también recurre a ellos cuando los presets de MilkDrop no pueden arrancar."
+
 #~ msgid "Most popular stations in your country. Double click one to add it."
 #~ msgstr ""
 #~ "Las emisoras más populares de tu país. Haz doble clic en una para "

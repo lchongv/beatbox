@@ -82,6 +82,7 @@ public class BeatBox.Icons : GLib.Object, BeatBox.IconsInterface {
 	public BeatBox.Icon REPEAT_ONCE { get; protected set; }
 	public BeatBox.Icon REPEAT_OFF { get; protected set; }
 	public BeatBox.Icon EQ { get; protected set; }
+	public BeatBox.Icon VISUALIZER { get; protected set; }
 	public BeatBox.Icon VIEW_COLUMN { get; protected set; }
 	public BeatBox.Icon VIEWS { get; protected set; }
 	public BeatBox.Icon VIEW_DETAILS { get; protected set; }
@@ -136,6 +137,7 @@ public class BeatBox.Icons : GLib.Object, BeatBox.IconsInterface {
 		REPEAT_OFF         = new BeatBox.Icon ("media-playlist-no-repeat-symbolic", 16, Type.STATUS, null, true);
 		SHUFFLE_OFF        = new BeatBox.Icon ("media-playlist-no-shuffle-symbolic", 16, Type.STATUS, null, true);
 		EQ                 = new BeatBox.Icon ("media-eq-symbolic", 16, Type.ACTION, null, true);
+		VISUALIZER         = new BeatBox.Icon ("visualizer-symbolic", 16, Type.ACTION, null, true);
 
 		MEDIA_PLAY_SYMBOLIC  = new BeatBox.Icon ("media-playback-start-symbolic", 16, Type.ACTION, null, false);
 		MEDIA_PAUSE_SYMBOLIC = new BeatBox.Icon ("media-playback-pause-symbolic", 16, Type.ACTION, null, false);
