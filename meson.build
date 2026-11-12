@@ -1,4 +1,4 @@
-project('beatbox', 'vala', 'c', version: '1.2.6')
+project('beatbox', 'vala', 'c', version: '1.2.7')
 
 gnome = import('gnome')
 i18n = import('i18n')
@@ -34,6 +34,9 @@ gpod_dep = dependency('libgpod-1.0', required: get_option('ipod'))
 gpod_vala_args = gpod_dep.found() ? ['-D', 'HAVE_GPOD'] : []
 # The visualizer (src/Widgets/Visualizer.vala) is optional: without libprojectM 4 there is no button for it
 projectm_dep = dependency('projectM-4', required: false)
+egl_dep = dependency('egl', required: false)
+gl_dep = dependency('gl', required: false)
+visualizer = projectm_dep.found() and egl_dep.found() and gl_dep.found()
 taglib_dep = dependency('taglib_c')
 deps = [
   dependency('glib-2.0'),
@@ -324,9 +327,13 @@ skin_resources = gnome.compile_resources('beatbox-skins', 'skins/skins.gresource
 embed_cover_sources = []
 app_vala_args = gpod_vala_args
 app_deps = [core_dep, dependency('gstreamer-app-1.0')] # the pipeline's sample branch (appsink)
-if projectm_dep.found()
+if visualizer
   app_vala_args += ['-D', 'HAVE_PROJECTM', '--pkg', 'projectM-4']
-  app_deps += projectm_dep
+  # projectM draws into framebuffer 0: an off-screen EGL context gives it one of its own.
+  # A C library of its own, so that valac isn't asked for egl and gl vapis (there are none)
+  offscreen_gl = static_library('offscreen-gl', 'src/C/offscreen-gl.c',
+    dependencies: [egl_dep, gl_dep, dependency('glib-2.0')])
+  app_deps += [projectm_dep, declare_dependency(link_with: offscreen_gl)]
   app_sources += files('src/Widgets/Visualizer.vala')
 endif
 if python_plugins
