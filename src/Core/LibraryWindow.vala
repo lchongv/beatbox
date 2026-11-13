@@ -461,8 +461,8 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		appmenu_button.child = appmenu_icon;
 		appmenu_button.add_css_class ("round-menu");
 		appmenu_button.set_size_request (40, 40);
-		// the round button is 80 % of the LCD's height. GTK4-PENDIENTE: a Box has no size-allocate signal, so this
-		// is worked out when the LCD maps and when the top display shows or hides, not on every resize
+		// the round button is 80 % of the LCD's height. A Box has no size-allocate signal in GTK 4: it is
+		// worked out when the LCD maps and when the top display shows or hides (a skin change keeps it right)
 		lcd.map.connect (() => { Idle.add (() => { resize_appmenu (lcd, appmenu_icon, appmenu_button); return false; }); });
 		top_display.notify["visible"].connect (() => resize_appmenu (lcd, appmenu_icon, appmenu_button));
 		// a skin picked in Preferences may want the other shape (after Skins.apply has run)
