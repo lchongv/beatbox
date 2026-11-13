@@ -300,7 +300,7 @@ public class BeatBox.Visualizer : DrawingArea {
 		// the palettes open beside the item, and the menu stays open meanwhile
 		var colors_item = new PopMenuItem.with_label(_("Colors"));
 		colors_item.keep_open = true;
-		colors_item.clicked.connect(() => colors.popup_at(colors_item, colors_item.get_width(), 0)); // GTK4-PENDIENTE: se abre al clicar (GTK3 al pasar el raton) y al elegir solo se cierra el submenu, porque PopMenu cierra solo su menu mas cercano
+		colors_item.clicked.connect(() => colors.popup_at(colors_item, colors_item.get_width(), 0)); // opens on a click (GTK3: on hover); choosing a palette closes both menus
 		menu.append(new PopMenuSeparator());
 		menu.append(colors_item);
 	}
@@ -494,7 +494,7 @@ public class BeatBox.Visualizer : DrawingArea {
 					filled = true;
 					add_preset_items(submenu, path);
 				}
-				submenu.popup_at(item, item.get_width(), 0); // GTK4-PENDIENTE: como el submenu de colores (se abre al clicar, y al elegir cierra solo el submenu)
+				submenu.popup_at(item, item.get_width(), 0); // opens on a click, like the colors submenu; a preset closes them all
 			});
 			menu.append(item);
 		}

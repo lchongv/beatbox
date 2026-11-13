@@ -82,13 +82,17 @@ public class BeatBox.PopMenuItem : Gtk.Button {
 		set_child (child);
 	}
 
-	// a click: close the menu unless the item stays open
+	// a click: close the menu unless the item stays open, and the menus it opened from
+	// (a submenu hangs from an item of the menu that opened it)
 	protected virtual void item_clicked () {
 		if (keep_open)
 			return;
 		var menu = get_ancestor (typeof (PopMenu)) as PopMenu;
-		if (menu != null)
+		while (menu != null) {
+			var from = menu.get_parent ();
 			menu.popdown ();
+			menu = (from != null) ? from.get_ancestor (typeof (PopMenu)) as PopMenu : null;
+		}
 	}
 }
 

@@ -238,10 +238,10 @@ public class BeatBox.PopupListView : Gtk.Window {
 
 	/**
 	 * Shows the window (GTK3 show_all). It used to be centered over the album wall;
-	 * GTK4 does not let an application place its windows, so the window manager decides.
+	 * GTK4 does not let an application place its windows: the window manager puts this
+	 * one (transient for the main window) over the main window, near its middle.
 	 */
 	public void show_list () {
-		// GTK4-PENDIENTE: centering over the album wall needs move/get_position, which GTK4 lacks
 		present ();
 	}
 
