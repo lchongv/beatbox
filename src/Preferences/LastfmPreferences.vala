@@ -217,14 +217,12 @@ public class BeatBox.LastfmPreferences : GLib.Object, PreferencesSection {
 
 	void login_click() {
 		// TODO: Show this once gtk gets its act together. (Also, need to force it to be smaller)
-		//is_working.show();
 		is_working.start();
 
 		App.info.lastfm.authenticate_user(username.get_text(), password.get_text());
 	}
 
 	void login_returned(bool success) {
-		//is_working.hide();
 		is_working.stop();
 
 		if(success) {
@@ -244,26 +242,24 @@ public class BeatBox.LastfmPreferences : GLib.Object, PreferencesSection {
 	}
 
 	void show_loginprompt_gui() {
-		auth_info.hide();
-		login_box.show();
-		login.show();
-		logout.hide();
+		show_login(false);
 	}
 
 	void show_loggedin_gui() {
-		auth_info.show();
 		auth_info.set_markup(_("You are logged in as %s.").printf("<b>" + Markup.escape_text(App.info.lastfm.username) + "</b>"));
-		login_box.hide();
-		login.hide();
-		logout.show();
+		show_login(true, true);
 	}
 
 	void show_loginfailed_gui() {
-		auth_info.show();
 		auth_info.set_markup(_("BeatBox was unable to log in as %s. Please try again.").printf("<b>" + Markup.escape_text(username.get_text()) + "</b>"));
-		login_box.show();
-		login.show();
-		logout.hide();
+		show_login(true);
+	}
+
+	/* the message above the form, and either the login form or the logout button */
+	void show_login(bool info, bool logged_in = false) {
+		auth_info.visible = info;
+		login_box.visible = login.visible = !logged_in;
+		logout.visible = logged_in;
 	}
 
 	public void save() {

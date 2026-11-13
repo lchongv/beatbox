@@ -32,9 +32,8 @@ namespace BeatBox.UI {
      * Sets the alignment of a widget by modifying the margin and align properties.
      */
     public Gtk.Widget wrap_alignment (Gtk.Widget widget, int top, int right, int bottom, int left) {
-        widget.valign = Gtk.Align.FILL;
-        widget.halign = Gtk.Align.FILL;
-
+        // alignment is left as set: the button boxes of the preferences ask for END
+        // (GTK3's ButtonBox did it inside a filling Gtk.Alignment)
         widget.margin_top = top;
         widget.margin_end = right;
         widget.margin_bottom = bottom;
@@ -107,6 +106,13 @@ namespace BeatBox.UI {
         popover.closed.connect (() => Idle.add (() => { popover.unparent (); return false; }));
         popover.popup ();
         return popover;
+    }
+
+    /** Redraws widget and everything in it: GTK3's queue_draw did, GTK4's keeps the children's last drawing */
+    public void queue_draw_all (Gtk.Widget widget) {
+        widget.queue_draw ();
+        for (var child = widget.get_first_child (); child != null; child = child.get_next_sibling ())
+            queue_draw_all (child);
     }
 
     /**
