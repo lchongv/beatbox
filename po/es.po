@@ -1850,11 +1850,11 @@ msgstr "Actualización de 2026"
 
 #: src/Preferences/BehaviorPreferences.vala:482
 msgid ""
-"Ported to GTK 3, GStreamer 1.0 and libsoup 3, with a new look, Cover Flow, "
+"Ported to GTK 4, GStreamer 1.0 and libsoup 3, with a new look, Cover Flow, "
 "the inline cover grid, internet radio and podcast directories, online album "
 "art and skins."
 msgstr ""
-"Llevado a GTK 3, GStreamer 1.0 y libsoup 3, con un aspecto nuevo, Cover "
+"Llevado a GTK 4, GStreamer 1.0 y libsoup 3, con un aspecto nuevo, Cover "
 "Flow, la grilla de carátulas desplegable, directorios de radios y podcasts, "
 "carátulas desde internet y skins."
 
@@ -4473,3 +4473,7 @@ msgstr "No necesitan OpenGL. El visualizador también recurre a ellos cuando los
 #~ msgid "This copy of BeatBox can't run plugins written in Python."
 #~ msgstr ""
 #~ "Esta copia de BeatBox no puede ejecutar complementos escritos en Python."
+
+#: src/Core/LibrarySwitcher.vala:83
+msgid "(None)"
+msgstr "(Ninguna)"

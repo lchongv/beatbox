@@ -1783,11 +1783,11 @@ msgstr "2026 年更新"
 
 #: src/Preferences/BehaviorPreferences.vala:482
 msgid ""
-"Ported to GTK 3, GStreamer 1.0 and libsoup 3, with a new look, Cover Flow, "
+"Ported to GTK 4, GStreamer 1.0 and libsoup 3, with a new look, Cover Flow, "
 "the inline cover grid, internet radio and podcast directories, online album "
 "art and skins."
 msgstr ""
-"已移植到 GTK 3、GStreamer 1.0 和 libsoup 3，并带来全新外观、Cover "
+"已移植到 GTK 4、GStreamer 1.0 和 libsoup 3，并带来全新外观、Cover "
 "Flow、专辑网格、网络电台和播客目录、在线专辑封面以及主题。"
 
 #: src/Preferences/BehaviorPreferences.vala:484

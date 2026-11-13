@@ -1856,11 +1856,11 @@ msgstr "Aggiornamento 2026"
 
 #: src/Preferences/BehaviorPreferences.vala:482
 msgid ""
-"Ported to GTK 3, GStreamer 1.0 and libsoup 3, with a new look, Cover Flow, "
+"Ported to GTK 4, GStreamer 1.0 and libsoup 3, with a new look, Cover Flow, "
 "the inline cover grid, internet radio and podcast directories, online album "
 "art and skins."
 msgstr ""
-"Portato su GTK 3, GStreamer 1.0 e libsoup 3, con un nuovo aspetto, Cover "
+"Portato su GTK 4, GStreamer 1.0 e libsoup 3, con un nuovo aspetto, Cover "
 "Flow, la griglia degli album, gli elenchi di radio e podcast, le copertine "
 "online e i temi."
 

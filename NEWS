@@ -14,6 +14,8 @@ Packages for each version: https://github.com/lchongv/beatbox/releases
   compositor.
 - Plugins built for 1.x must be rebuilt; Python plugins that use only the
   BeatBox API keep working.
+- The --display option is gone (GTK 4 no longer parses it): set the DISPLAY
+  environment variable instead.
 
 
 1.2 (11 November 2026)
