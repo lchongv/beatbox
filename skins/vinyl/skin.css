@@ -24,8 +24,8 @@
 @define-color bb_lcd_dim         #c98d3e;
 @define-color theme_selected_bg_color @bb_accent;
 
-toolbar.app-header .app-name,
-toolbar.app-header label { color: #f6e9d6; text-shadow: 0 -1px 0 alpha(black, .35); }
+.toolbar.app-header .app-name,
+.toolbar.app-header label { color: #f6e9d6; text-shadow: 0 -1px 0 alpha(black, .35); }
 
 actionbar.app-statusbar > revealer > box {
   background-image: linear-gradient(to bottom, #7a5236, #5a3b25);

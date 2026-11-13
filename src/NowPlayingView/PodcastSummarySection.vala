@@ -44,28 +44,18 @@ public class BeatBox.PodcastSummarySection : Box {
 	static CssProvider style_provider;
 	private const string WIDGET_STYLESHEET = """
 		.gray {
-			background-image: -gtk-gradient (linear,
-                                             left top, 
-                                             left bottom,
-                                             from (shade (#d5d3d1, 1.00)),
-                                             to (shade (#d5d3d1, 0.95)));
+			background-image: linear-gradient(to bottom, shade(#d5d3d1, 1.00), shade(#d5d3d1, 0.95));
 		}
 		
 		.black {
-			background-image: -gtk-gradient (linear,
-                                               left top, left bottom,
-                                               from (shade (#383838, 1.05)),
-                                               to (#383838));
+			background-image: linear-gradient(to bottom, shade(#383838, 1.05), #383838);
 		}
 		.padding {
 			padding: 6px;
 		}
 		
 		.white {
-			background-image: -gtk-gradient (linear,
-                                               left top, left bottom,
-                                               from (shade (#f8f8f8, 1.05)),
-                                               to (#f8f8f8));
+			background-image: linear-gradient(to bottom, shade(#f8f8f8, 1.05), #f8f8f8);
 		}
 		
 		.pure_white {

@@ -25,19 +25,19 @@
 @define-color theme_selected_bg_color @bb_accent;
 @define-color theme_selected_fg_color #000000;
 
-toolbar.app-header label { color: #ffffff; text-shadow: none; }
+.toolbar.app-header label { color: #ffffff; text-shadow: none; }
 
-toolbar.app-header button:not(.traffic-light),
-toolbar.app-header toolbutton.transport-button > button,
-toolbar.app-header toolitem button.round-menu {
+.toolbar.app-header button:not(.traffic-light),
+.toolbar.app-header .transport-button > button,
+.toolbar.app-header button.round-menu {
   background-image: none;
   background-color: #000000;
   border: 2px solid #ffffff;
   color: #ffffff;
   box-shadow: none;
 }
-toolbar.app-header toolbutton.transport-button > button:hover,
-toolbar.app-header button:not(.traffic-light):hover { background-color: #333333; }
+.toolbar.app-header .transport-button > button:hover,
+.toolbar.app-header button:not(.traffic-light):hover { background-color: #333333; }
 
 treeview.tracklist, treeview.tracklist.view { color: #000000; }
 treeview.view header button { background-image: none; background-color: #ffffff; color: #000000; border-color: #000000; }

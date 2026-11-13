@@ -32,7 +32,7 @@ window.beatbox {
 }
 
 /* ===== Top strip: brushed aluminium ===== */
-toolbar.app-header, toolbar.app-header.titlebar {
+.toolbar.app-header, .toolbar.app-header.titlebar {
   background-image: linear-gradient(to bottom,
     @bb_chrome_top 0%, @bb_chrome_mid 50%, @bb_chrome_bottom 100%);
   border-bottom: 1px solid @bb_chrome_border;
@@ -41,7 +41,7 @@ toolbar.app-header, toolbar.app-header.titlebar {
 }
 
 /* Round glossy transport buttons */
-toolbar.app-header toolbutton.transport-button > button {
+.toolbar.app-header .transport-button > button {
   background-image: linear-gradient(to bottom, #f8f8f8 0%, #d4d4d4 50%, #b0b0b0 100%);
   border: 1px solid #5e5e5e;
   border-radius: 50%;
@@ -55,19 +55,19 @@ toolbar.app-header toolbutton.transport-button > button {
               inset 0 -1px 1px alpha(black, .15),
               0 1px 1px alpha(black, .25);
 }
-toolbar.app-header toolbutton.transport-button > button:hover {
+.toolbar.app-header .transport-button > button:hover {
   background-image: linear-gradient(to bottom, white, #d8d8d8 50%, #b8b8b8);
 }
-toolbar.app-header toolbutton.transport-button > button:active {
+.toolbar.app-header .transport-button > button:active {
   background-image: linear-gradient(to bottom, @bb_accent_light, @bb_accent);
   color: white;
   box-shadow: inset 0 2px 3px alpha(black, .4);
 }
-toolbar.app-header toolbutton.transport-button > button:disabled { color: #8a8a8a; }
-toolbar.app-header toolbutton.transport-button { padding: 0; margin: 0; }
+.toolbar.app-header .transport-button > button:disabled { color: #8a8a8a; }
+.toolbar.app-header .transport-button { padding: 0; margin: 0; }
 
 /* Round app menu button, same glossy look as the transport buttons */
-toolbar.app-header toolitem button.round-menu {
+.toolbar.app-header button.round-menu {
   background-image: linear-gradient(to bottom, #f8f8f8 0%, #d4d4d4 50%, #b0b0b0 100%);
   border: 1px solid #5e5e5e;
   border-radius: 50%;
@@ -95,8 +95,8 @@ toolbar.app-header toolitem button.round-menu {
 .lcd .lcd-cover { margin: -2px 8px -2px -8px; }
 .lcd .lcd-logo { color: @bb_lcd_dim; font-weight: bold; font-size: 13pt; }
 /* the LCD's buttons (the display switch, cancel) are bare glyphs, whatever the header's buttons look like */
-toolbar.app-header .lcd button:not(.traffic-light),
-toolbar.app-header .lcd button:not(.traffic-light):active {
+.toolbar.app-header .lcd button:not(.traffic-light),
+.toolbar.app-header .lcd button:not(.traffic-light):active {
   background-image: none;
   border-color: transparent;
   box-shadow: none;
@@ -150,14 +150,14 @@ toolbar.app-header .lcd button:not(.traffic-light):active {
 @keyframes lcd-barber-pole { from { background-position: 0 0; } to { background-position: -10px 0; } }
 
 /* ===== View toggle (segmented) and generic header buttons ===== */
-toolbar.app-header button:not(.traffic-light) {
+.toolbar.app-header button:not(.traffic-light) {
   background-image: linear-gradient(to bottom, #fbfbfb, #d2d2d2);
   border: 1px solid #7a7a7a;
   box-shadow: inset 0 1px 0 alpha(white, .9);
   color: #2a2a2a;
 }
-toolbar.app-header button:not(.traffic-light):checked,
-toolbar.app-header button:not(.traffic-light):active {
+.toolbar.app-header button:not(.traffic-light):checked,
+.toolbar.app-header button:not(.traffic-light):active {
   background-image: linear-gradient(to bottom, @bb_accent_light, @bb_accent);
   border-color: shade(@bb_accent, .7);
   color: white;

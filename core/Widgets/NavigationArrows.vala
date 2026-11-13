@@ -34,32 +34,26 @@ public class BeatBox.NavigationArrows : Gtk.Box {
 	
 	private const string STYLESHEET = """
 		.GraniteNavigationArrows .button {
-			-GtkToolbar-button-relief: normal;
 			border-radius: 0 0 0 0;
 			border-style: solid;
 			border-width: 1px 0 1px 1px;
 
-			-unico-outer-stroke-width: 1px 0 1px 0;
-			-unico-outer-stroke-radius: 0 0 0 0;
 		}
 
 		.GraniteNavigationArrows .button:active,
 		.GraniteNavigationArrows .button:disabled {
-			-unico-outer-stroke-width: 1px 0 1px 0;
 		}
 
 		.GraniteNavigationArrows .button:first-child {
 			border-radius: 3px 0 0 3px;
 			border-width: 1px 0 1px 1px;
 
-			-unico-outer-stroke-width: 1px 0 1px 1px;
 		}
 
 		.GraniteNavigationArrows .button:last-child {
 			border-radius: 0 3px 3px 0;
 			border-width: 1px;
 
-			-unico-outer-stroke-width: 1px 1px 1px 0;
 		}
 	""";
 

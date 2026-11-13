@@ -36,12 +36,8 @@ public class BeatBox.NowPlayingPage : Box {
 	static CssProvider style_provider;
 	private const string WIDGET_STYLESHEET = """
         .NowPlayingPage {
-			background-image: -gtk-gradient (linear,
-                                               left top, left bottom,
-                                               from (shade (#ffffff, 1.05)),
-                                               to (#ffffff));
+			background-image: linear-gradient(to bottom, shade(#ffffff, 1.05), #ffffff);
             border: 0;
-            -unico-outer-stroke-style: none;
         }
         
         .AlbumSongList {
@@ -51,36 +47,22 @@ public class BeatBox.NowPlayingPage : Box {
 		}
 		
 		.AlbumSongList row:selected {
-			/*background-image: -gtk-gradient (linear,
-			                                 left top,
-			                                 left bottom,
-			                                 from (shade (@selected_bg_color, 1.20)),
-			                                 to (shade (@selected_bg_color, 0.98)));*/
+			/*background-image: linear-gradient(to bottom, shade(@selected_bg_color, 1.20), shade(@selected_bg_color, 0.98));*/
 		}
 		
 		.gray {
-			background-image: -gtk-gradient (linear,
-                                             left top, 
-                                             left bottom,
-                                             from (shade (#d5d3d1, 1.00)),
-                                             to (shade (#d5d3d1, 0.95)));
+			background-image: linear-gradient(to bottom, shade(#d5d3d1, 1.00), shade(#d5d3d1, 0.95));
 		}
 		
 		.black {
-			background-image: -gtk-gradient (linear,
-                                               left top, left bottom,
-                                               from (shade (#383838, 1.05)),
-                                               to (#383838));
+			background-image: linear-gradient(to bottom, shade(#383838, 1.05), #383838);
 		}
 		.padding {
 			padding: 6px;
 		}
 		
 		.white {
-			background-image: -gtk-gradient (linear,
-                                               left top, left bottom,
-                                               from (shade (#f8f8f8, 1.05)),
-                                               to (#f8f8f8));
+			background-image: linear-gradient(to bottom, shade(#f8f8f8, 1.05), #f8f8f8);
 		}
 		
 		.pure_white {

@@ -50,10 +50,7 @@ public class BeatBox.SpaceWidget : StyledContentBox {
 		}
 		
         .SpaceWidgetBase {
-            background-image: -gtk-gradient (linear, left top, left bottom,
-                                             from (shade (#f7f7f7, 0.96)),
-                                             color-stop (0.5, alpha (shade (#e6e6e6, 1.1) , 0.7)),
-                                             to (shade (#e6e6e6, 1.04)));
+            background-image: linear-gradient(to bottom, shade(#f7f7f7, 0.96), alpha(shade(#e6e6e6, 1.1) , 0.7) 50%, shade(#e6e6e6, 1.04));
 
             border: 0;
             padding: 0;
@@ -67,11 +64,11 @@ public class BeatBox.SpaceWidget : StyledContentBox {
             border-radius: 300px 300px 300px 300px;
         }
 
-        .SpaceBarItem:nth-child(first) {
+        .SpaceBarItem:first-child {
             border-radius: 300px 0 0 300px;
         }
 
-        .SpaceBarItem:nth-child(last) {
+        .SpaceBarItem:last-child {
             border-radius: 0 300px 300px 0;
         }
 
@@ -80,45 +77,27 @@ public class BeatBox.SpaceWidget : StyledContentBox {
         }
 
         .blue {
-            background-image: -gtk-gradient (linear,
-                                             left top, left bottom,
-                                             from (shade (#4b91dd, 1.10) ),
-                                             to (#4b91dd));
+            background-image: linear-gradient(to bottom, shade(#4b91dd, 1.10) , #4b91dd);
         }
 
         .orange {
-            background-image: -gtk-gradient (linear,
-                                             left top, left bottom,
-                                             from (shade (#eb713f, 1.10)),
-                                             to (#eb713f));
+            background-image: linear-gradient(to bottom, shade(#eb713f, 1.10), #eb713f);
         }
 
         .green {
-            background-image: -gtk-gradient (linear,
-                                             left top, left bottom,
-                                             from (shade (#408549, 1.05)),
-                                             to (#408549));
+            background-image: linear-gradient(to bottom, shade(#408549, 1.05), #408549);
         }
 
         .purple {
-            background-image: -gtk-gradient (linear,
-                                           left top, left bottom,
-                                           from (shade (#a64067, 1.05)),
-                                           to (#a64067));
+            background-image: linear-gradient(to bottom, shade(#a64067, 1.05), #a64067);
         }
 
         .red {
-            background-image: -gtk-gradient (linear,
-                                               left top, left bottom,
-                                               from (shade (#ba393e, 1.05)),
-                                               to (#ba393e));
+            background-image: linear-gradient(to bottom, shade(#ba393e, 1.05), #ba393e);
         }
 
         .grey {
-            background-image: -gtk-gradient (linear,
-                                               left top, left bottom,
-                                               from (shade (#d5d3d1, 1.05)),
-                                               to (#d5d3d1));
+            background-image: linear-gradient(to bottom, shade(#d5d3d1, 1.05), #d5d3d1);
         }
 
 

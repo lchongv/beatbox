@@ -33,69 +33,38 @@ public class BeatBox.StyledBox : Gtk.Box {
 	
 	private const string WIDGET_STYLESHEET = """
         .borderButton{
-			-unico-inner-stroke-width: 0;
 			
-			background-image: -gtk-gradient (linear,
-                                             left top, 
-                                             left bottom,
-                                             from (shade (#d5d3d1, 1.05)),
-                                             to (#d5d3d1));
+			background-image: linear-gradient(to bottom, shade(#d5d3d1, 1.05), #d5d3d1);
 			
-            -unico-border-gradient: -gtk-gradient (linear, 
-												   left top, 
-												   left bottom,
-                                                   from (alpha (#fff, 0.9)),
-                                                   to (alpha (#fff, 0.5)));
 
-            -unico-outer-stroke-gradient: -gtk-gradient (linear, 
-														 left top, 
-														 left bottom,
-                                                         from (alpha (#000, 0.3)),
-                                                         to (alpha (#000, 0.3)));
         }
         
         .StyledBox .top {
 			border-radius: 6px 6px 0 0;
-            -unico-outer-stroke-width: 1px 1px 0 1px;
 		}
 		
 		.StyledBox .right {
 			border-radius: 0 0 0 0;
-			-unico-outer-stroke-width: 0 1px 0 0;
 		}
 		
 		.StyledBox .bottom {
 			border-radius: 0 0 6px 6px;
-			-unico-outer-stroke-width: 0 1px 1px 1px;
 		}
 		
 		.StyledBox .left {
 			border-radius: 0 0 0 0;
-			-unico-outer-stroke-width: 0 0 0 1px;
 		}
         
         .gray {
-			background-image: -gtk-gradient (linear,
-                                             left top, 
-                                             left bottom,
-                                             from (shade (#d5d3d1, 1.05)),
-                                             to (#d5d3d1));
+			background-image: linear-gradient(to bottom, shade(#d5d3d1, 1.05), #d5d3d1);
 		}
 		
 		.black {
-			background-image: -gtk-gradient (linear,
-                                             left top, 
-                                             left bottom,
-                                             from (shade (#383838, 1.05)),
-                                             to (#383838));
+			background-image: linear-gradient(to bottom, shade(#383838, 1.05), #383838);
 		}
 		
 		.white {
-			background-image: -gtk-gradient (linear,
-                                             left top, 
-                                             left bottom,
-                                             from (shade (#f8f8f8, 1.05)),
-                                             to (#f8f8f8));
+			background-image: linear-gradient(to bottom, shade(#f8f8f8, 1.05), #f8f8f8);
 		}
 		
 		.pure_white {

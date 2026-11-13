@@ -21,7 +21,7 @@ d=$(cat "$tmp/display"); [ -n "$d" ] || { echo "Xvfb no arrancó" >&2; exit 2; }
 # le hablaría al BeatBox que el usuario tiene abierto
 env -u WAYLAND_DISPLAY -u DBUS_SESSION_BUS_ADDRESS HOME="$tmp/home" XDG_CONFIG_HOME="$tmp/home/.config" \
     XDG_DATA_HOME="$tmp/home/.local/share" XDG_CACHE_HOME="$tmp/home/.cache" \
-    DISPLAY=":$d" GDK_BACKEND=x11 GSETTINGS_BACKEND=keyfile NO_AT_BRIDGE=1 \
+    DISPLAY=":$d" GDK_BACKEND=x11 GSETTINGS_BACKEND=keyfile NO_AT_BRIDGE=1 GTK_A11Y=none \
   dbus-run-session -- bash -c '
     "$0" >"$1" 2>&1 & pid=$!
     sleep "${WAIT:-45}"

@@ -32,7 +32,7 @@ namespace BeatBox.Skins {
 	/** Whether the skin applied last wants the square app icon on the menu button */
 	public bool square_menu_icon = false;
 	string? system_theme = null; // what the desktop asked for, restored by skins without Theme=
-	bool system_dark;
+	Gtk.InterfaceColorScheme system_scheme; // GTK 4 replaces the prefer-dark-theme flag with this
 
 	public string user_dir () {
 		return Path.build_filename (Environment.get_user_data_dir (), "beatbox", "skins");
@@ -173,7 +173,7 @@ namespace BeatBox.Skins {
 		var gtk = Gtk.Settings.get_default ();
 		if (system_theme == null) {
 			system_theme = gtk.gtk_theme_name;
-			system_dark = gtk.gtk_application_prefer_dark_theme;
+			system_scheme = gtk.gtk_interface_color_scheme;
 		}
 		if (provider != null)
 			Gtk.StyleContext.remove_provider_for_display (display, provider);
@@ -192,7 +192,9 @@ namespace BeatBox.Skins {
 		string theme = (found != null && found.theme != null) ? found.theme : system_theme;
 		if (gtk.gtk_theme_name != theme)
 			gtk.gtk_theme_name = theme;
-		gtk.gtk_application_prefer_dark_theme = (found != null && found.dark) || system_dark;
+		// the dark skins ask for the dark scheme; the others get back what the desktop asked for
+		gtk.gtk_interface_color_scheme = (found != null && found.dark) ? Gtk.InterfaceColorScheme.DARK
+			: (system_scheme == Gtk.InterfaceColorScheme.UNSUPPORTED ? Gtk.InterfaceColorScheme.DEFAULT : system_scheme);
 		square_menu_icon = found != null && found.square_icon;
 
 		foreach (var skin in available ()) {
