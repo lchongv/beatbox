@@ -100,7 +100,7 @@ public class BeatBox.FastGrid : Box, Scrollable {
 		text_cell.yalign = 0.0f;
 		text_cell.wrap_mode = Pango.WrapMode.WORD_CHAR;
 		text_cell.wrap_width = IconsInterface.ALBUM_VIEW_IMAGE_SIZE;
-		view.pack_start(pix_cell, false);
+		view.pack_start(UI.full_size(pix_cell), false); // the covers at their own size
 		view.add_attribute(pix_cell, "pixbuf", PIXBUF_COLUMN);
 		view.pack_start(text_cell, false);
 		view.add_attribute(text_cell, "markup", MARKUP_COLUMN);

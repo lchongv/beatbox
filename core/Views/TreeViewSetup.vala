@@ -260,7 +260,7 @@ public class BeatBox.TreeViewSetup : GLib.Object {
 				
 			}
 			else {
-				CellRendererPixbuf crpix = new CellRendererPixbuf();
+				CellRendererPixbuf crpix = UI.full_size(new CellRendererPixbuf()); // the rating stars at their own size
 				tvc.pack_start(crpix, true);
 				tvc.set_attributes(crpix, "pixbuf", index);
 			}

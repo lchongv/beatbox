@@ -96,9 +96,24 @@ namespace BeatBox.UI {
      * A menu in a popover pointing at x, y of relative_to; actions (if any) answer
      * its "view.*" items. It goes away once closed.
      */
+    /** Where a popover can hang for the point x, y of widget: set as a child of a TreeView or
+     * an IconView it breaks their CSS nodes (gtk_css_node_insert_after critical, the header nodes
+     * are kept apart), so their parent holds it instead, at the same point */
+    public Gtk.Widget popover_parent (Gtk.Widget widget, ref double x, ref double y) {
+        var parent = widget.get_parent ();
+        if (!(widget is Gtk.TreeView || widget is Gtk.IconView) || parent == null)
+            return widget;
+        Graphene.Point p;
+        if (widget.compute_point (parent, Graphene.Point () { x = (float) x, y = (float) y }, out p)) {
+            x = p.x;
+            y = p.y;
+        }
+        return parent;
+    }
+
     public Gtk.Popover popup_menu_model (Gtk.Widget relative_to, GLib.MenuModel model, double x, double y, GLib.ActionGroup? actions = null) {
         var popover = new Gtk.PopoverMenu.from_model (model);
-        popover.set_parent (relative_to);
+        popover.set_parent (popover_parent (relative_to, ref x, ref y));
         popover.pointing_to = Gdk.Rectangle () { x = (int) x, y = (int) y, width = 1, height = 1 };
         popover.position = Gtk.PositionType.BOTTOM;
         if (actions != null)
@@ -117,6 +132,21 @@ namespace BeatBox.UI {
         Gdk.cairo_set_source_rgba (cr, color);
         cr.mask (shape);
         return Gdk.pixbuf_get_from_surface (surface, 0, 0, pix.width, pix.height);
+    }
+
+    static Gtk.CssProvider? full_size_css = null;
+
+    /** GTK 4 draws a CellRendererPixbuf's pixbuf no bigger than the CSS icon size (16 px): covers
+     * and rating stars came out tiny. This cell asks for the "large" size, which GTK marks on the
+     * view's node while drawing it, and that size is lifted for tree and icon views. */
+    public Gtk.CellRendererPixbuf full_size (Gtk.CellRendererPixbuf cell) {
+        if (full_size_css == null) {
+            full_size_css = new Gtk.CssProvider ();
+            full_size_css.load_from_data ("treeview.large-icons, iconview.large-icons { -gtk-icon-size: 512px; }".data);
+            Gtk.StyleContext.add_provider_for_display (Gdk.Display.get_default (), full_size_css, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION);
+        }
+        cell.icon_size = Gtk.IconSize.LARGE;
+        return cell;
     }
 
     /** Redraws widget and everything in it: GTK3's queue_draw did, GTK4's keeps the children's last drawing */

@@ -150,7 +150,7 @@ public abstract class BeatBox.GenericList : FastList {
 				else if(tvc.title == "Last Played")
 					insert_column_with_data_func(-1, tvc.title, new CellRendererText(), cellHelper.dateTreeViewFiller);
 				else if(tvc.title == "Rating") {
-					insert_column_with_data_func(-1, tvc.title, new CellRendererPixbuf() , cellHelper.ratingTreeViewFiller);
+					insert_column_with_data_func(-1, tvc.title, UI.full_size(new CellRendererPixbuf()), cellHelper.ratingTreeViewFiller); // the five stars at their own size
 				}
 				else if(tvc.title == "Year")
 					insert_column_with_data_func(-1, tvc.title, new CellRendererText(), cellHelper.intelligentTreeViewFiller);

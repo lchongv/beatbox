@@ -34,14 +34,15 @@ public class BeatBox.PopMenu : Gtk.Popover {
 	// x, y are in the coordinates of widget
 	public void popup_at (Gtk.Widget widget, double x, double y) {
 		detach ();
-		set_parent (widget);
+		set_parent (UI.popover_parent (widget, ref x, ref y));
 		pointing_to = Gdk.Rectangle () { x = (int) x, y = (int) y, width = 1, height = 1 };
 		popup ();
 	}
 
 	public void popup_under (Gtk.Widget widget) {
 		detach ();
-		set_parent (widget);
+		double x = 0, y = 0;
+		set_parent (UI.popover_parent (widget, ref x, ref y));
 		position = Gtk.PositionType.BOTTOM;
 		popup ();
 	}

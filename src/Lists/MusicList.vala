@@ -294,8 +294,9 @@ public class BeatBox.MusicList : GenericList {
 
 	/* a press on a row: the menus, and keeping the selection while several rows are dragged */
 	void view_click(int n_press, double x, double y) {
-		// a double click is no click for the menus or the selection
-		if(n_press != 1)
+		// a double click is no click for the menus or the selection; the header has its own
+		// (this gesture captures, so it sees the header's presses first)
+		if(n_press != 1 || on_header(y))
 			return;
 		uint button = click_gesture.get_current_button();
 		bool modified = (click_gesture.get_current_event_state() & (Gdk.ModifierType.SHIFT_MASK | Gdk.ModifierType.CONTROL_MASK)) != 0;
@@ -403,7 +404,16 @@ public class BeatBox.MusicList : GenericList {
 	}
 
 	/* a release on a row: ends a drag, or selects only the row when nothing was dragged */
+	/** Whether y (widget coordinates) is on the column headers, above the rows */
+	bool on_header(double y) {
+		int bin_x, bin_y;
+		convert_widget_to_bin_window_coords(0, (int)y, out bin_x, out bin_y);
+		return bin_y < 0;
+	}
+
 	void view_click_release(int n_press, double x, double y) {
+		if(on_header(y))
+			return;
 		uint button = click_gesture.get_current_button();
 		bool modified = (click_gesture.get_current_event_state() & (Gdk.ModifierType.SHIFT_MASK | Gdk.ModifierType.CONTROL_MASK)) != 0;
 
