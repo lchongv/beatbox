@@ -64,6 +64,8 @@ revisión de CSS de skins.
 Total fases 1–8: ~20–25 h. Fase 9: +8 h.
 
 ## Estado
+- [x] La migración real a GTK 4 está en la rama `gtk4`; plan y tareas en
+      `docs/superpowers/plans/2026-11-12-gtk4-port.md` y `docs/gtk4/ESTADO.md`.
 - [x] Fases 1, 2, 3 y 6 (commit 00e5fd9): 214 → 121 avisos.
 - [x] Fases 4 y 5: 121 → 56 avisos. Las acciones son `SimpleAction` en
       `App.actions.group` ("bb.<nombre>"); `App.actions.menu_item(a)` crea la

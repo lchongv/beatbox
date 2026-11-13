@@ -16,7 +16,7 @@ fetch linuxdeploy-plugin-gtk.sh https://raw.githubusercontent.com/linuxdeploy/li
 fetch linuxdeploy-plugin-gstreamer.sh https://raw.githubusercontent.com/linuxdeploy/linuxdeploy-plugin-gstreamer/master/linuxdeploy-plugin-gstreamer.sh
 
 # no FUSE needed for the tools
-export APPIMAGE_EXTRACT_AND_RUN=1 DEPLOY_GTK_VERSION=3
+export APPIMAGE_EXTRACT_AND_RUN=1 DEPLOY_GTK_VERSION=4
 export LINUXDEPLOY_OUTPUT_VERSION=$(meson introspect --projectinfo "$SRC/meson.build" | python3 -c 'import json,sys; print(json.load(sys.stdin)["version"])')
 
 APPDIR=$WORK/AppDir

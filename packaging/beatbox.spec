@@ -12,7 +12,7 @@ BuildRequires:  vala
 BuildRequires:  gcc
 BuildRequires:  gettext
 BuildRequires:  patchelf
-BuildRequires:  pkgconfig(gtk+-3.0)
+BuildRequires:  pkgconfig(gtk4)
 BuildRequires:  pkgconfig(gee-0.8)
 BuildRequires:  pkgconfig(taglib_c)
 BuildRequires:  pkgconfig(libxml-2.0)

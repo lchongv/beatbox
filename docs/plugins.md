@@ -237,5 +237,6 @@ nothing is removed or renamed, and no method changes its arguments. What is
 hidden from plugins (marked internal in the code, or invisible from Python)
 can change at any time.
 
-BeatBox 2.0 will move to GTK 4. Plugins that build their own widgets will need
-changes then; the others most likely won't.
+BeatBox 2.0 moves to GTK 4. Python plugins that use only BeatBox's own API keep
+working. C plugins built for 1.x must be rebuilt, and those that build their own
+widgets must be adapted to GTK 4.

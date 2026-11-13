@@ -4,6 +4,18 @@ BeatBox — what changed, newest first
 Packages for each version: https://github.com/lchongv/beatbox/releases
 
 
+2.0 (unreleased)
+-------------------
+
+- Ported to GTK 4. The window, dialogs, preferences and all views are GTK 4
+  widgets; the visual look is close to 1.x but not identical.
+- Context menus are redrawn with GTK 4 popovers.
+- The window position is no longer restored: GTK 4 leaves it to the
+  compositor.
+- Plugins built for 1.x must be rebuilt; Python plugins that use only the
+  BeatBox API keep working.
+
+
 1.2 (11 November 2026)
 ----------------------
 
