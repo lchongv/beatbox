@@ -180,7 +180,11 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 
 	/* The round menu button: 80 % of the LCD's height */
 	void resize_appmenu (Gtk.Widget lcd, Gtk.Image icon, Gtk.MenuButton button) {
-		int size = (int)(lcd.get_height() * 0.8);
+		// its whole height, border and padding included as in GTK3 (get_height leaves them out)
+		Graphene.Rect bounds;
+		if (!lcd.compute_bounds (lcd, out bounds))
+			return;
+		int size = (int)(bounds.get_height () * 0.8);
 		if (size == appmenu_size || size < 16)
 			return;
 		appmenu_size = size;
@@ -390,7 +394,7 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		top_display.notify["visible"].connect(() => { lcd_logo.visible = !top_display.visible; });
 		// (the LCD used to be a ToolItem with this margin: it now sits in the toolbar itself)
 		lcd.hexpand = true;
-		lcd.margin_start = 12;
+		lcd.margin_start = 13;
 
 		viewSelector.append(App.icons.VIEW_DETAILS.render_image (Gtk.IconSize.NORMAL));
 		viewSelector.append(App.icons.VIEW_ICONS.render_image (Gtk.IconSize.NORMAL));

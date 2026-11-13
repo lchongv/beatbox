@@ -96,6 +96,7 @@ public class BeatBox.StatusBar : Gtk.Box {
 		show_eq_button.margin_end = 6;
         
         repeat_chooser.margin_start = shuffle_chooser.margin_start = 6;
+        repeat_chooser.valign = shuffle_chooser.valign = Gtk.Align.CENTER; // not at the top of the bar
         
         insert_widget(shuffle_chooser, true);
         insert_widget(repeat_chooser, true);

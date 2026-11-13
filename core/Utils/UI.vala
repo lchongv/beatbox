@@ -134,6 +134,9 @@ namespace BeatBox.UI {
         return Gdk.pixbuf_get_from_surface (surface, 0, 0, pix.width, pix.height);
     }
 
+    /** GTK3's tree view made every row this much taller than its cells (GTK 4 adds nothing) */
+    public const int GTK3_ROW_EXTRA = 3;
+
     static Gtk.CssProvider? full_size_css = null;
 
     /** GTK 4 draws a CellRendererPixbuf's pixbuf no bigger than the CSS icon size (16 px): covers

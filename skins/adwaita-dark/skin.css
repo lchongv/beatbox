@@ -36,6 +36,7 @@ button.traffic-light.maximize { background-image: -gtk-icontheme("window-maximiz
   color: @theme_text_color;
   box-shadow: none;
   border-bottom: 1px solid @borders;
+  border-spacing: 0; /* GTK3 toolbar: the items set their own gaps */
 }
 
 /* the app menu shows the square app icon here (MenuIcon=square in skin.ini):

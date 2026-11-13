@@ -77,7 +77,7 @@ public class BeatBox.SideBarRenderer : CellRenderer {
 	public override void get_preferred_height(Widget widget, out int minimum_size, out int natural_size) {
 		int dumby;
 		widget.create_pango_layout("Test").get_pixel_size(out dumby, out minimum_size);
-		minimum_size += 6; // 3 px extra on each side for the text
+		minimum_size += 6 + UI.GTK3_ROW_EXTRA; // 3 px extra on each side for the text
 		natural_size = minimum_size;
 	}
 
@@ -119,7 +119,7 @@ public class BeatBox.SideBarRenderer : CellRenderer {
 		
 		// Draw a blank space for each level of indent
 		double start_x = depth * DEPTH_INDENT_SIZE;
-		double start_y = cell_area.y + 3;
+		double start_y = cell_area.y + 3 + UI.GTK3_ROW_EXTRA / 2;
 		if(rtl)
 			start_x = cell_area.width - start_x;
 		
@@ -170,8 +170,9 @@ public class BeatBox.SideBarRenderer : CellRenderer {
 		// Draw the expander: a small triangle in the heading's color, pointing down when expanded
 		// and to the side when collapsed (GTK 4's render_arrow draws nothing without a CSS icon)
 		if(depth == 1 && children > 0) {
-			double size = 7, x = rtl ? cell_area.x : cell_area.x + cell_area.width - EXPANDER_SIZE;
-			double y = cell_area.y + (cell_area.height - size) / 2;
+			// as small and as high in the row as the GTK3 themes drew it
+			double size = 5, x = rtl ? cell_area.x + 3 : cell_area.x + cell_area.width - EXPANDER_SIZE;
+			double y = cell_area.y + 5;
 			var color = Gdk.RGBA();
 			color.parse(heading_color(widget));
 			Gdk.cairo_set_source_rgba(context, color);

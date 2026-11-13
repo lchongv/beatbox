@@ -38,6 +38,7 @@ window.beatbox {
   border-bottom: 1px solid @bb_chrome_border;
   box-shadow: inset 0 1px 0 alpha(white, .85), inset 0 -1px 0 alpha(black, .18);
   padding: 8px 10px;
+  border-spacing: 0; /* as GTK3's toolbar: the items set their own gaps (Adwaita for GTK 4 adds 6px) */
 }
 
 /* Round glossy transport buttons */
@@ -116,6 +117,7 @@ window.beatbox {
   border: none;
   border-radius: 1px;
   min-height: 6px;
+  min-width: 2px; /* the theme's -1px margins would make its minimum negative (GTK 4 warns) */
 }
 .lcd scale slider {
   /* diamond position marker; GTK3 rasterizes a CSS image at the SVG's own size and then

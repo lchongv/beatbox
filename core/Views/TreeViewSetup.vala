@@ -243,7 +243,7 @@ public class BeatBox.TreeViewSetup : GLib.Object {
 			TreeViewColumn tvc = _columns.nth_data(index);
 			
 			if(tvc.title != " " && tvc.title != "Rating"/* && tvc.title != DuplicateList.CHECKBOX_COLUMN_TITLE*/) {
-				CellRendererText crtext = new CellRendererText();
+				CellRendererText crtext = new ListText();
 				tvc.pack_start(crtext, true);
 				tvc.set_attributes(crtext, "text", index);
 			}
@@ -470,4 +470,18 @@ public class BeatBox.TreeViewSetup : GLib.Object {
 			return GPod.PlaylistSortOrder.MANUAL;
 	}
 #endif
+}
+
+/** A text cell for the song lists, as tall as GTK3 made their rows */
+public class BeatBox.ListText : Gtk.CellRendererText {
+	public override void get_preferred_height (Gtk.Widget widget, out int minimum, out int natural) {
+		base.get_preferred_height (widget, out minimum, out natural);
+		minimum += UI.GTK3_ROW_EXTRA;
+		natural += UI.GTK3_ROW_EXTRA;
+	}
+	public override void get_preferred_height_for_width (Gtk.Widget widget, int width, out int minimum, out int natural) {
+		base.get_preferred_height_for_width (widget, width, out minimum, out natural);
+		minimum += UI.GTK3_ROW_EXTRA;
+		natural += UI.GTK3_ROW_EXTRA;
+	}
 }

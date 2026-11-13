@@ -83,3 +83,17 @@ Estado de la rama `gtk4` (sin fusionar, sin publicar, sin etiquetar, sin instala
 - Captura: gtk4-final.png sin CRITICAL ni avisos.
 - Marcas GTK4-PENDIENTE: ninguna.
 - Empaquetado y CI: sin verificar localmente.
+
+## Revisión del 13-11-2026 (rejilla de carátulas y apariencia)
+
+Comparado con la versión GTK 3 lado a lado, también en una sesión GNOME/Wayland sin pantalla
+(`gnome-shell --headless`), con la apariencia «template», ventana maximizada y 45 álbumes.
+
+- **Rejilla de carátulas en blanco al desplazar:** el muro solo pinta la parte visible y GTK 4 desplaza
+  moviendo el último dibujo, sin volver a pintar. Ahora se repinta al cambiar el desplazamiento.
+- **Filas 3 px más bajas** en las listas y la barra lateral: GTK 3 añadía ese alto a cada fila (`UI.GTK3_ROW_EXTRA`, `ListText`).
+- **Barra superior:** GTK 4 separaba los elementos 6 px (`border-spacing` de Adwaita); el botón del menú
+  salía 5 px más pequeño (se medía el LCD sin borde ni relleno).
+- **Barra de estado:** los iconos de aleatorio y repetir quedaban pegados arriba.
+- **Flechas de la barra lateral:** del tamaño y en el sitio de GTK 3.
+- Aviso `GtkGizmo (highlight) reported min width -2` con las apariencias no nativas: corregido.

@@ -142,56 +142,56 @@ public abstract class BeatBox.GenericList : FastList {
 			if(!(tvc.title == " " || tvc.title == "id")) {
 				// Music, General
 				if(tvc.title == "Bitrate")
-					insert_column_with_data_func(-1, tvc.title, new CellRendererText(), cellHelper.bitrateTreeViewFiller);
+					insert_column_with_data_func(-1, tvc.title, new ListText(), cellHelper.bitrateTreeViewFiller);
 				else if(tvc.title == "Length")
-					insert_column_with_data_func(-1, tvc.title, new CellRendererText(), cellHelper.lengthTreeViewFiller);
+					insert_column_with_data_func(-1, tvc.title, new ListText(), cellHelper.lengthTreeViewFiller);
 				else if(tvc.title == "Date Added")
-					insert_column_with_data_func(-1, tvc.title, new CellRendererText(), cellHelper.dateTreeViewFiller);
+					insert_column_with_data_func(-1, tvc.title, new ListText(), cellHelper.dateTreeViewFiller);
 				else if(tvc.title == "Last Played")
-					insert_column_with_data_func(-1, tvc.title, new CellRendererText(), cellHelper.dateTreeViewFiller);
+					insert_column_with_data_func(-1, tvc.title, new ListText(), cellHelper.dateTreeViewFiller);
 				else if(tvc.title == "Rating") {
 					insert_column_with_data_func(-1, tvc.title, UI.full_size(new CellRendererPixbuf()), cellHelper.ratingTreeViewFiller); // the five stars at their own size
 				}
 				else if(tvc.title == "Year")
-					insert_column_with_data_func(-1, tvc.title, new CellRendererText(), cellHelper.intelligentTreeViewFiller);
+					insert_column_with_data_func(-1, tvc.title, new ListText(), cellHelper.intelligentTreeViewFiller);
 				else if(tvc.title == "#")
-					insert_column_with_data_func(-1, tvc.title, new CellRendererText(), cellHelper.intelligentTreeViewFiller);
+					insert_column_with_data_func(-1, tvc.title, new ListText(), cellHelper.intelligentTreeViewFiller);
 				else if(tvc.title == "Track")
-					insert_column_with_data_func(-1, tvc.title, new CellRendererText(), cellHelper.intelligentTreeViewFiller);
+					insert_column_with_data_func(-1, tvc.title, new ListText(), cellHelper.intelligentTreeViewFiller);
 				else if(tvc.title == "Plays")
-					insert_column_with_data_func(-1, tvc.title, new CellRendererText(), cellHelper.intelligentTreeViewFiller);
+					insert_column_with_data_func(-1, tvc.title, new ListText(), cellHelper.intelligentTreeViewFiller);
 				else if(tvc.title == "Skips")
-					insert_column_with_data_func(-1, tvc.title, new CellRendererText(), cellHelper.intelligentTreeViewFiller);
+					insert_column_with_data_func(-1, tvc.title, new ListText(), cellHelper.intelligentTreeViewFiller);
 				else if(tvc.title == "Title")
-					insert_column_with_data_func(-1, tvc.title, new CellRendererText(), cellHelper.stringTreeViewFiller);
+					insert_column_with_data_func(-1, tvc.title, new ListText(), cellHelper.stringTreeViewFiller);
 				else if(tvc.title == "Artist")
-					insert_column_with_data_func(-1, tvc.title, new CellRendererText(), cellHelper.stringTreeViewFiller);
+					insert_column_with_data_func(-1, tvc.title, new ListText(), cellHelper.stringTreeViewFiller);
 				else if(tvc.title == "Album")
-					insert_column_with_data_func(-1, tvc.title, new CellRendererText(), cellHelper.stringTreeViewFiller);
+					insert_column_with_data_func(-1, tvc.title, new ListText(), cellHelper.stringTreeViewFiller);
 				else if(tvc.title == "Genre")
-					insert_column_with_data_func(-1, tvc.title, new CellRendererText(), cellHelper.stringTreeViewFiller);
+					insert_column_with_data_func(-1, tvc.title, new ListText(), cellHelper.stringTreeViewFiller);
 				else if(tvc.title == "BPM")
-					insert_column_with_data_func(-1, tvc.title, new CellRendererText(), cellHelper.intelligentTreeViewFiller);
+					insert_column_with_data_func(-1, tvc.title, new ListText(), cellHelper.intelligentTreeViewFiller);
 				
 				// Podcast
 				else if(tvc.title == "Date")
-					insert_column_with_data_func(-1, tvc.title, new CellRendererText(), cellHelper.dateTreeViewFiller);
+					insert_column_with_data_func(-1, tvc.title, new ListText(), cellHelper.dateTreeViewFiller);
 				else if(tvc.title == "Episode")
-					insert_column_with_data_func(-1, tvc.title, new CellRendererText(), cellHelper.intelligentTreeViewFiller);
+					insert_column_with_data_func(-1, tvc.title, new ListText(), cellHelper.intelligentTreeViewFiller);
 				else if(tvc.title == "Name")
-					insert_column_with_data_func(-1, tvc.title, new CellRendererText(), cellHelper.stringTreeViewFiller);
+					insert_column_with_data_func(-1, tvc.title, new ListText(), cellHelper.stringTreeViewFiller);
 				else if(tvc.title == "Comment")
-					insert_column_with_data_func(-1, tvc.title, new CellRendererText(), cellHelper.stringTreeViewFiller);
+					insert_column_with_data_func(-1, tvc.title, new ListText(), cellHelper.stringTreeViewFiller);
 				else if(tvc.title == "Category")
-					insert_column_with_data_func(-1, tvc.title, new CellRendererText(), cellHelper.stringTreeViewFiller);
+					insert_column_with_data_func(-1, tvc.title, new ListText(), cellHelper.stringTreeViewFiller);
 				else if(tvc.title == "Podcast")
-					insert_column_with_data_func(-1, tvc.title, new CellRendererText(), cellHelper.stringTreeViewFiller);
+					insert_column_with_data_func(-1, tvc.title, new ListText(), cellHelper.stringTreeViewFiller);
 				else if(tvc.title == "Pulser")
 					insert_column(tvc, index); // cells for pulser is made ready to go in TVS
 				
 				// Radio
 				else if(tvc.title == "Station")
-					insert_column_with_data_func(-1, tvc.title, new CellRendererText(), cellHelper.stringTreeViewFiller);
+					insert_column_with_data_func(-1, tvc.title, new ListText(), cellHelper.stringTreeViewFiller);
 				
 				// Duplicates
 				else if(tvc.title == DuplicateList.CHECKBOX_COLUMN_TITLE)
