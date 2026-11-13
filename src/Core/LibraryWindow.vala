@@ -530,8 +530,8 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 			if(report.visible && !placing_report && contentToReport.get_width() > 1)
 				App.settings.saved_state.more_width = contentToReport.get_width() - contentToReport.position;
 		});
-		// GTK4-PENDIENTE: Gtk.Paned has no size-allocate signal (GTK3 placed the divider on every allocation);
-		// here it is re-placed when the window width changes, once laid out. Check in the GUI.
+		// Gtk.Paned has no size-allocate signal (GTK3 placed the divider on every allocation): it is
+		// re-placed when the window width changes, once laid out (the report keeps its width maximized)
 		this.notify["default-width"].connect(() => { Idle.add(() => { place_report_width(); return false; }); });
 
 		reportButton = new ToggleButton();

@@ -281,7 +281,11 @@ public abstract class BeatBox.SourceView : Box, View {
 		var b = new Button ();
 		var content = new Box (Orientation.HORIZONTAL, 6);
 		content.append (new Image.from_icon_name (icon_name));
-		content.append (new Label (label));
+		// ellipsized when short of room: the row of buttons would otherwise be the minimum width
+		// of every view, hidden ones included (a Notebook is as wide as its widest page)
+		var text = new Label (label);
+		text.ellipsize = Pango.EllipsizeMode.END;
+		content.append (text);
 		b.child = content;
 		return b;
 	}
