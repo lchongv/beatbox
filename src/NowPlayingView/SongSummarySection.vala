@@ -382,9 +382,15 @@ public class BeatBox.SongSummarySection : Box {
 		}
 	}*/
 	
-	public override void size_allocate(int width, int height, int baseline) {
-		base.size_allocate(width, height, baseline);
-		update_lyrics();
+	// GTK 4 calls no size_allocate on a Box (its layout manager allocates); a resize redraws, so the
+	// width is checked when drawn, and acted on after the frame
+	int drawn_width = -1;
+	public override void snapshot(Gtk.Snapshot s) {
+		base.snapshot(s);
+		if(get_width() != drawn_width) {
+			drawn_width = get_width();
+			Idle.add(() => { update_lyrics(); return false; });
+		}
 	}
 	
 	void update_lyrics() {

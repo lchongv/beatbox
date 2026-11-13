@@ -37,11 +37,9 @@ public class BeatBox.Marquee : Box {
 		first.show();
 		box.show();
 		second.visible = false; // shown only while the text overflows
-	}
-
-	public override void size_allocate(int width, int height, int baseline) {
-		base.size_allocate(width, height, baseline);
-		check_overflow();
+		// GTK 4 calls no size_allocate on a Box (its layout manager allocates): the adjustment
+		// changes when the visible width or the text's width does (idle: that is mid-allocation)
+		scroll.hadjustment.changed.connect(() => Idle.add(() => { check_overflow(); return false; }));
 	}
 
 	int natural_width() {

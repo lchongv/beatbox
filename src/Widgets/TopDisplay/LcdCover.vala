@@ -8,12 +8,13 @@
 
 using Gtk;
 
-public class BeatBox.LcdCover : Box {
+// A plain widget around its image: GTK 4 calls no measure or size_allocate of a Box subclass
+public class BeatBox.LcdCover : Widget {
 	delegate bool ZoomFunc (double zoom);
 
 	const int CORNER = 7;  // inner radius of the LCD's rounded border
 
-	// GTK 4 does not let a class derive from Image: the picture is a child of this box
+	// GTK 4 does not let a class derive from Image: the picture is a child of this widget
 	Image image = new Image ();
 
 	Gdk.Pixbuf? source = null;  // the cover, unscaled
@@ -22,9 +23,8 @@ public class BeatBox.LcdCover : Box {
 	string picture_uri = "";    // the file picture was read from (or is being read from)
 
 	public LcdCover () {
-		Object (orientation: Orientation.HORIZONTAL, spacing: 0);
 		image.vexpand = true;
-		append (image);
+		image.set_parent (this);
 		visible = false;
 		valign = Align.FILL;  // the stylesheet pulls it over the LCD's padding (see .lcd-cover)
 		get_style_context ().add_class ("lcd-cover");
@@ -147,7 +147,7 @@ public class BeatBox.LcdCover : Box {
 		ZoomFunc set_zoom = (z) => {
 			zoom = z.clamp (0.1, 2.5);
 			UI.show_pixbuf (image, src.scale_simple (int.max (1, (int)(src.width * zoom)), int.max (1, (int)(src.height * zoom)), Gdk.InterpType.BILINEAR));
-			win.set_default_size (1, 1); // shrink with the image; GTK4-PENDIENTE: GTK4 may not shrink a window that grew, revisar en la GUI
+			win.set_default_size (1, 1); // shrink with the image (the window takes its content's size again)
 			return true;
 		};
 		set_zoom (fit);
@@ -157,6 +157,7 @@ public class BeatBox.LcdCover : Box {
 		win.set_data<Gtk.EventControllerScroll> ("scroll-controller", scroll); // the window keeps a reference to it
 		var double_click = new Gtk.GestureClick ();
 		double_click.button = 0;
+		double_click.propagation_phase = Gtk.PropagationPhase.CAPTURE; // before the WindowHandle, which claims double clicks
 		((Gtk.Widget) win).add_controller (double_click); // Window.add_controller () is the shortcut one
 		double_click.pressed.connect ((n_press) => {
 			if (n_press == 2)
@@ -193,7 +194,7 @@ public class BeatBox.LcdCover : Box {
 
 	// the square is as wide as it is tall: the box gives the width asked here, so the logo is not cut
 	public override void measure (Gtk.Orientation orientation, int for_size, out int minimum, out int natural, out int minimum_baseline, out int natural_baseline) {
-		base.measure (orientation, for_size, out minimum, out natural, out minimum_baseline, out natural_baseline);
+		image.measure (orientation, for_size, out minimum, out natural, out minimum_baseline, out natural_baseline);
 		if (orientation == Gtk.Orientation.HORIZONTAL)
 			minimum = natural = side_for_now ();
 	}
@@ -221,8 +222,14 @@ public class BeatBox.LcdCover : Box {
 		UI.show_pixbuf (image, Gdk.pixbuf_get_from_surface (surface, 0, 0, side, side));
 	}
 
+	public override void dispose () {
+		if (image.get_parent () == this)
+			image.unparent ();
+		base.dispose ();
+	}
+
 	public override void size_allocate (int width, int height, int baseline) {
-		base.size_allocate (width, height, baseline);
+		image.allocate (width, height, baseline, null);
 		if (source != null && height > 16 && height != side) {
 			int h = height;
 			Idle.add (() => { render (h); return Source.REMOVE; }); // resizing inside an allocation would loop
