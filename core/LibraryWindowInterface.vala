@@ -29,7 +29,6 @@ public interface BeatBox.LibraryWindowInterface : Gtk.Window {
 	public abstract TopDisplayInterface top_display { get; protected set; }
 	public abstract NowPlayingViewInterface now_playing { get; protected set; }
 	public abstract ListSetupInterface setups { get; protected set; }
-	public abstract ulong video_area_xid { get; }
 	
 	public abstract bool dragging_from_music { get; set; }
 	

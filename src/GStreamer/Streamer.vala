@@ -263,11 +263,6 @@ public class BeatBox.Streamer : GLib.Object {
 		checked_video = false;
 		set_resume_pos = false;
 		doing_gapless = false;
-		
-		if(pipe.video.element != null && is_video_enabled) {
-			var xoverlay = pipe.video.element as Gst.Video.Overlay;
-			xoverlay.set_window_handle((uint*)App.window.video_area_xid);
-		}
 	}
 	
 	public void setPosition(int64 pos) {
@@ -333,11 +328,6 @@ public class BeatBox.Streamer : GLib.Object {
 		pipe.playbin.get("flags", out flags);
 		if(val) {
 			flags = (flags | Gst.PlayFlag.VIDEO);
-			if(pipe.video.element != null) {
-				var xoverlay = pipe.video.element as Gst.Video.Overlay;
-				xoverlay.set_window_handle((uint*)App.window.video_area_xid);
-				message("Video enabled. Videos will now be output to proper area in app.\n");
-			}
 		}
 		else {
 			flags = (flags & ~Gst.PlayFlag.VIDEO);
@@ -418,11 +408,6 @@ public class BeatBox.Streamer : GLib.Object {
 				Idle.add( () => {
 					if(getPosition() > 0) {
 						checked_video = true;
-						
-						if(pipe.video.element != null) {
-							var xoverlay = pipe.video.element as Gst.Video.Overlay;
-							xoverlay.set_window_handle((uint*)App.window.video_area_xid);
-						}
 						
 						if(pipe.videoStreamCount() > 0) {
 							//App.playback.current_media.is_video = true;
@@ -513,15 +498,8 @@ public class BeatBox.Streamer : GLib.Object {
 		
 		if(Gst.Video.is_video_overlay_prepare_window_handle_message(message)) {
 			
-			message.src.set_property("force-aspect-ratio", true);
-			if(pipe.video.element != null && App.window.video_area_xid != 0) {
-				var xoverlay = pipe.video.element as Gst.Video.Overlay;
-				xoverlay.set_window_handle((uint*)App.window.video_area_xid);
-			}
-			else {
-				warning("Video area should have been realized by now");
-			}
-			
+			// ponytail: no window handle to give, video output is off (Video.vala); a GTK 4
+			// sink (gtk4paintablesink) draws into a Gdk.Paintable instead when it is turned on
 			// Notify that a video is being played.
 			video_enabled();
 		}

@@ -79,6 +79,9 @@ public class BeatBox.SideBar : Gtk.TreeView {
 		
 		this.set_headers_visible(false);
 		this.set_show_expanders(false);
+		// no type-ahead: letters go to the search box (LibraryWindow.handle_key), and GTK 4's
+		// search popover breaks the tree's CSS nodes (gtk_css_node_insert_after critical)
+		enable_search = false;
 		filter.set_visible_column(SideBarColumn.COLUMN_VISIBLE);
 		this.set_grid_lines(TreeViewGridLines.NONE);
 		this.name = "SidebarContent";

@@ -46,12 +46,6 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 	public NowPlayingViewInterface now_playing { get; protected set; }
 	public ListSetupInterface setups { get; protected set; }
 	
-	// GTK4-PENDIENTE: the X11 window id where GStreamer drew the video (Streamer.vala asks for it) has no GTK4
-	// equivalent and NowPlayingView no longer has one: 0 until the video output is ported
-	public ulong video_area_xid {
-		get { return 0; }
-	}
-	
 	public bool dragging_from_music { get; set; }
 	public bool initializationFinished { get; private set; }
 	
@@ -959,15 +953,15 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		if(focus is Gtk.Editable)
 			return false;
 
-		return handle_key(keyval, state);
+		return handle_key(keyval, state, key_controller);
 	}
 
 	// the keys that a text field did not use: the window's shortcuts get them there
 	bool keyBubbled(uint keyval, uint keycode, Gdk.ModifierType state) {
-		return get_focus() is Gtk.Editable && handle_key(keyval, state);
+		return get_focus() is Gtk.Editable && handle_key(keyval, state, key_bubble);
 	}
 
-	bool handle_key(uint keyval, Gdk.ModifierType state) {
+	bool handle_key(uint keyval, Gdk.ModifierType state, EventControllerKey controller) {
 		var focus = get_focus();
 
 		if(Shortcuts.activate(keyval, state))
@@ -976,8 +970,11 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		// typing a letter or a digit anywhere starts a search
 		var mods = state & Gtk.accelerator_get_default_mod_mask();
 		var typed = ((unichar) Gdk.keyval_to_unicode(keyval)).to_string();
-		if(mods == 0 && Regex.match_simple("^[a-zA-Z0-9]$", typed) && searchField.sensitive && !(focus is Gtk.Entry))
-			searchField.grab_focus(); // the key itself then goes on to it
+		if(mods == 0 && Regex.match_simple("^[a-zA-Z0-9]$", typed) && searchField.sensitive && !(focus is Gtk.Entry)) {
+			searchField.grab_focus();
+			// GTK 4 keeps sending the key to the old focus: hand it to the search box's text
+			return controller.forward((Gtk.Widget) searchField.get_delegate());
+		}
 
 		return false;
 	}
