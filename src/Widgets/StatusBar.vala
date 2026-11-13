@@ -43,7 +43,9 @@ public class BeatBox.StatusBar : Gtk.Box {
 	SimpleOptionChooser repeat_chooser;
 	Image show_eq_button;
 
-    /** The icon is painted in the text color, so the skin's bar recolors it */
+    /** The icon is painted in the text color, so the skin's bar recolors it. A symbolic SVG
+     * (all the bar's icons) is a paintable GTK 4 recolors itself on every style change; only a
+     * bitmap is tinted here, once */
     public static void follow_text_color (Image image) {
         var paintable = image.get_paintable ();
         if (!(paintable is Gdk.Texture))
@@ -56,17 +58,7 @@ public class BeatBox.StatusBar : Gtk.Box {
         if (size > 0 && (pix.width != size || pix.height != size))
             pix = pix.scale_simple (size, size, Gdk.InterpType.BILINEAR);
 
-        var surface = new Cairo.ImageSurface (Cairo.Format.ARGB32, pix.width, pix.height);
-        var cr = new Cairo.Context (surface);
-        Gdk.cairo_set_source_pixbuf (cr, pix, 0, 0);
-        cr.paint ();
-        var icon = cr.get_source ();
-        var color = image.get_style_context ().get_color ();
-        Gdk.cairo_set_source_rgba (cr, color);
-        cr.mask (icon);
-        UI.show_pixbuf (image, Gdk.pixbuf_get_from_surface (surface, 0, 0, pix.width, pix.height));
-        // GTK4-PENDIENTE: the icon is tinted once, when created: a later skin change
-        // of the bar's text color no longer recolors it (GTK4 has no draw signal here).
+        UI.show_pixbuf (image, UI.tint (pix, image.get_style_context ().get_color ()));
     }
 
     public StatusBar () {

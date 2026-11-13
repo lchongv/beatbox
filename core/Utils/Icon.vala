@@ -210,8 +210,6 @@ public class BeatBox.Icon : GLib.Object {
 		// Otherwise load it from the theme
 		var theme = Gtk.IconTheme.get_for_display (Gdk.Display.get_default ());
 		if (rv == null && theme.has_icon(this.name)) {
-			// GTK4-PENDIENTE: a symbolic icon keeps the colors of its file, not those of the context
-			// (load_symbolic_for_context has no GTK4 pixbuf equivalent)
 			try {
 				// the ThemedIcon already carries the generic fallbacks
 				var icon = theme.lookup_by_gicon (get_gicon (), height, 1, Gtk.TextDirection.NONE, 0);
@@ -223,6 +221,11 @@ public class BeatBox.Icon : GLib.Object {
 				message ("%s, falling back to default.", err.message);
 			}
 		}
+
+		// a symbolic icon takes the context's color, as GTK3's load_symbolic_for_context did
+		// (ponytail: in one color; the few two-color symbolic icons lose their accent)
+		if (rv != null && context != null && this.name.has_suffix ("-symbolic"))
+			rv = UI.tint (rv, context.get_color ());
 
 		return rv;
 	}

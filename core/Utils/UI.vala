@@ -108,6 +108,17 @@ namespace BeatBox.UI {
         return popover;
     }
 
+    /** The pixbuf's shape in one color: what GTK3 did to a symbolic icon (GTK4 only recolors paintables) */
+    public Gdk.Pixbuf? tint (Gdk.Pixbuf pix, Gdk.RGBA color) {
+        var surface = new Cairo.ImageSurface (Cairo.Format.ARGB32, pix.width, pix.height);
+        var cr = new Cairo.Context (surface);
+        Gdk.cairo_set_source_pixbuf (cr, pix, 0, 0);
+        var shape = cr.get_source ();
+        Gdk.cairo_set_source_rgba (cr, color);
+        cr.mask (shape);
+        return Gdk.pixbuf_get_from_surface (surface, 0, 0, pix.width, pix.height);
+    }
+
     /** Redraws widget and everything in it: GTK3's queue_draw did, GTK4's keeps the children's last drawing */
     public void queue_draw_all (Gtk.Widget widget) {
         widget.queue_draw ();
@@ -120,8 +131,9 @@ namespace BeatBox.UI {
      * since GTK4 cannot start a move from a gesture. Call it once the window has its child.
      */
     public void make_window_draggable (Gtk.Window window) {
-        // GTK4-PENDIENTE: a Gtk.WindowHandle also toggles maximized on a double click; GTK3 avoided that
-        // (the move started only after the pointer moved). Revisar LcdCover y PopupListView.
+        // A Gtk.WindowHandle also maximizes on a double click, but GTK only allows that on windows
+        // without a transient parent: both users (LcdCover, PopupListView) have one. LcdCover's own
+        // double click (close) runs in the capture phase, before the handle claims it.
         var child = window.get_child ();
         var handle = new Gtk.WindowHandle ();
         window.set_child (null);

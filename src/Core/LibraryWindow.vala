@@ -282,7 +282,7 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
         dest.drop.connect ((value, x, y) => {
             string[] uris = {};
             if (value.holds (typeof (Gdk.FileList))) {
-                foreach (File f in ((Gdk.FileList) value.get_object ()).get_files ())
+                foreach (File f in ((Gdk.FileList) value.get_boxed ()).get_files ()) // boxed, not an object
                     uris += f.get_uri ();
             }
             else
@@ -371,7 +371,6 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		// bar at once); grouped with the drag source, which the claim would otherwise cancel
 		lcd_cover_gesture = new GestureClick();
 		lcd_cover_gesture.button = 0;
-		lcd_cover_gesture.group(cover_drag);
 		lcd_cover_gesture.pressed.connect(() => {
 			cover_dragged = false;
 			lcd_cover_gesture.set_state(EventSequenceState.CLAIMED);
@@ -381,6 +380,7 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 				lcdCover.show_full_size(this);
 		});
 		lcdCover.add_controller(lcd_cover_gesture);
+		lcd_cover_gesture.group(cover_drag); // both on the cover by now, as grouping requires
 		lcd.append(lcdCover); // thumbnail at the left edge (optional)
 		var lcd_logo = new Label("BeatBox");
 		lcd_logo.add_css_class("lcd-logo");
