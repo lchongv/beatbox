@@ -167,14 +167,27 @@ public class BeatBox.SideBarRenderer : CellRenderer {
 							background_area.width, background_area.height);
 		}
 		
-		// Draw the expander. GTK4 contexts have no set_state, so the expanded
-		// state is drawn by the arrow's angle (south when expanded, east when collapsed)
+		// Draw the expander: a small triangle in the heading's color, pointing down when expanded
+		// and to the side when collapsed (GTK 4's render_arrow draws nothing without a CSS icon)
 		if(depth == 1 && children > 0) {
-			int far_right = cell_area.x + cell_area.width;
-			double angle = expanded ? Math.PI : Math.PI / 2.0;
-
-			widget.get_style_context().render_arrow(context, angle, rtl ? cell_area.x : far_right - EXPANDER_SIZE,
-		                                           cell_area.y + 8 / 2, 8.0);
+			double size = 7, x = rtl ? cell_area.x : cell_area.x + cell_area.width - EXPANDER_SIZE;
+			double y = cell_area.y + (cell_area.height - size) / 2;
+			var color = Gdk.RGBA();
+			color.parse(heading_color(widget));
+			Gdk.cairo_set_source_rgba(context, color);
+			if(expanded) {
+				context.move_to(x, y + 1);
+				context.line_to(x + size, y + 1);
+				context.line_to(x + size / 2, y + size - 1);
+			}
+			else {
+				double tip = rtl ? x : x + size, back = rtl ? x + size - 1 : x + 1;
+				context.move_to(back, y);
+				context.line_to(back, y + size);
+				context.line_to(tip - (rtl ? -1 : 1), y + size / 2);
+			}
+			context.close_path();
+			context.fill();
 		}
 		                         
 		                         
