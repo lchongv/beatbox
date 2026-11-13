@@ -47,7 +47,13 @@ public class BeatBox.Welcome : Gtk.Box {
 		content.attach (subtitle_label, 0, 1, 1, 1);
 		content.attach (options, 0, 2, 1, 1);
 
-		base.append (content);
+		// scrolled: the wrapped text would otherwise make the window's minimum height depend on its
+		// width, and GTK 4 then measures the window below that minimum ("Trying to measure ...")
+		var scrolled = new Gtk.ScrolledWindow ();
+		scrolled.hscrollbar_policy = Gtk.PolicyType.NEVER;
+		scrolled.vexpand = true;
+		scrolled.child = content;
+		base.append (scrolled);
 	}
 
 	public int append (string icon_name, string title, string description) {
@@ -73,6 +79,9 @@ public class BeatBox.Welcome : Gtk.Box {
 		description_label.valign = Gtk.Align.START;
 		description_label.wrap = true;
 		description_label.wrap_mode = Pango.WrapMode.WORD;
+		// one fixed width: a centered grid whose height changes with its width makes GTK 4 warn
+		description_label.width_chars = description_label.max_width_chars = 40;
+		description_label.xalign = 0;
 		description_label.get_style_context ().add_class ("dim-label");
 
 		var grid = new Gtk.Grid ();
