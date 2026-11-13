@@ -1,0 +1,50 @@
+MESA-EGL: warning: DRI3 error: Could not get DRI3 device
+MESA-EGL: warning: Ensure your X server supports DRI3 to get accelerated rendering
+
+(net.launchpad.beatbox:4122863): Gtk-WARNING **: 21:20:16.688: Trying to measure BeatBoxLibraryWindow 0x556a777de3a0 for height of 466, but it needs at least 573
+
+(net.launchpad.beatbox:4122863): Gtk-WARNING **: 21:20:16.756: Trying to measure BeatBoxLibraryWindow 0x556a777de3a0 for height of 466, but it needs at least 573
+
+(net.launchpad.beatbox:4122863): Gtk-WARNING **: 21:20:16.757: Trying to measure BeatBoxLibraryWindow 0x556a777de3a0 for height of 466, but it needs at least 573
+
+(net.launchpad.beatbox:4122863): Gtk-WARNING **: 21:20:16.782: Trying to measure BeatBoxLibraryWindow 0x556a777de3a0 for height of 466, but it needs at least 573
+
+(net.launchpad.beatbox:4122863): Gtk-WARNING **: 21:20:16.794: Trying to measure GtkGrid 0x556a77ff5c90 for height of 82, but it needs at least 141
+
+(net.launchpad.beatbox:4122863): Gtk-WARNING **: 21:20:16.799: Trying to measure BeatBoxLibraryWindow 0x556a777de3a0 for height of 466, but it needs at least 573
+
+(net.launchpad.beatbox:4122863): Gtk-WARNING **: 21:20:27.679: Trying to measure BeatBoxLibraryWindow 0x556a777de3a0 for height of 466, but it needs at least 573
+
+(net.launchpad.beatbox:4122863): Gtk-WARNING **: 21:20:27.712: Trying to measure BeatBoxLibraryWindow 0x556a777de3a0 for height of 466, but it needs at least 573
+
+(net.launchpad.beatbox:4122863): Gtk-WARNING **: 21:20:27.718: Trying to measure BeatBoxLibraryWindow 0x556a777de3a0 for height of 466, but it needs at least 573
+
+(net.launchpad.beatbox:4122863): Gtk-WARNING **: 21:20:27.735: Trying to measure BeatBoxLibraryWindow 0x556a777de3a0 for height of 466, but it needs at least 573
+
+(net.launchpad.beatbox:4122863): Gtk-WARNING **: 21:20:29.046: Trying to measure BeatBoxLibraryWindow 0x556a777de3a0 for height of 466, but it needs at least 573
+
+(net.launchpad.beatbox:4122863): Gtk-WARNING **: 21:20:29.126: Trying to measure BeatBoxLibraryWindow 0x556a777de3a0 for height of 466, but it needs at least 573
+
+(net.launchpad.beatbox:4122863): Gtk-WARNING **: 21:20:29.155: Trying to measure BeatBoxLibraryWindow 0x556a777de3a0 for height of 466, but it needs at least 573
+
+(net.launchpad.beatbox:4122863): Gtk-WARNING **: 21:20:29.191: Trying to measure BeatBoxLibraryWindow 0x556a777de3a0 for height of 466, but it needs at least 573
+
+(net.launchpad.beatbox:4122863): Gtk-WARNING **: 21:20:29.193: Trying to measure BeatBoxLibraryWindow 0x556a777de3a0 for height of 466, but it needs at least 573
+
+(net.launchpad.beatbox:4122863): Gtk-WARNING **: 21:20:29.194: Trying to measure BeatBoxLibraryWindow 0x556a777de3a0 for height of 466, but it needs at least 573
+
+(net.launchpad.beatbox:4122863): Gtk-WARNING **: 21:20:29.197: Trying to measure BeatBoxLibraryWindow 0x556a777de3a0 for height of 466, but it needs at least 573
+
+(net.launchpad.beatbox:4122863): Gtk-WARNING **: 21:20:29.207: Trying to measure BeatBoxLibraryWindow 0x556a777de3a0 for height of 466, but it needs at least 573
+
+(net.launchpad.beatbox:4122863): Gtk-WARNING **: 21:20:29.208: Trying to measure BeatBoxLibraryWindow 0x556a777de3a0 for height of 466, but it needs at least 573
+[94m[INFO 21:20:15.720661][0m Info.vala:83: Loading info from database...
+[94m[INFO 21:20:15.724404][0m SongLibrary.vala:77: Loading songs...
+[94m[INFO 21:20:15.724740][0m PodcastLibrary.vala:73: Loading podcasts...
+[94m[INFO 21:20:15.725051][0m StationLibrary.vala:58: Loading stations...
+[94m[INFO 21:20:15.729911][0m PlaylistManager.vala:42: Loading playlists from database...
+Could not grab media player keys: GDBus.Error:org.freedesktop.DBus.Error.ServiceUnknown: The name org.gnome.SettingsDaemon was not provided by any .service files
+[94m[INFO 21:20:15.774244][0m LibraryWindow.vala:226: Building user interface
+[94m[INFO 21:20:15.951349][0m OperationDisplay.vala:58: Found that app is already doing ops. Showing...
+[94m[INFO 21:20:16.601263][0m Launcher.vala:67: Registered the launcher for /home/lchongv/Proyectos/beatbox-master/build-gtk4/beatbox
+[94m[INFO 21:20:28.965139][0m CoverManager.vala:314: Album art cached in memory.

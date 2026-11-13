@@ -40,7 +40,7 @@ public class BeatBox.AdvancedSearchBox : Gtk.Entry {
 		placeholder_text = _("Search...");
 		// what GTK 3's search entry drew: a lens, and a clear button while there is text (GTK 4 leaves it to the entry)
 		set_icon_from_icon_name (Gtk.EntryIconPosition.PRIMARY, "system-search-symbolic");
-		set_icon_from_icon_name (Gtk.EntryIconPosition.SECONDARY, "edit-clear-symbolic");
+		set_icon_from_icon_name (Gtk.EntryIconPosition.SECONDARY, null); // changed () shows it while there is text
 		icon_press.connect ((entry, pos) => { if (pos == Gtk.EntryIconPosition.SECONDARY) set_text (""); });
 		changed.connect (() => set_icon_from_icon_name (Gtk.EntryIconPosition.SECONDARY, get_text () == "" ? null : "edit-clear-symbolic"));
 		
