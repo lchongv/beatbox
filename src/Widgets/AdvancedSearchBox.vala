@@ -118,11 +118,9 @@ public class BeatBox.AdvancedSearchBox : Gtk.Entry {
 	
 	void start_show_menu_process(string search) {
 		if(search == last_search && search.length > 2) {
-			try {
-				new Thread<void*>.try (null, update_contents);
-			} catch (Error err) {
-				warning ("Could not create search suggester thread: %s", err.message);
-			}
+			// ponytail: on the main thread, GTK 4 widgets cannot be made in a worker. The scoring is one
+			// pass over the view's songs, like the search itself; split it from the items if it ever stalls typing
+			update_contents();
 		}
 		else if(search.length <= 2) {
 			clear_menu();
@@ -131,27 +129,18 @@ public class BeatBox.AdvancedSearchBox : Gtk.Entry {
 	}
 	
 	// go through visible table and find top tracks, albums, artists, genres.
-	void* update_contents() {
+	void update_contents() {
 		var new_menu_items = App.window.get_current_view().get_search_menu(last_search);
-		
-		Idle.add( () => {
-			if(new_menu_items != null) {
-				clear_menu();
-				foreach(var item in new_menu_items) {
-					search_suggester.append(item);
-				}
-				
-				search_suggester.popup_under(this);
-			}
-			
-			return false;
-		});
-		
-		return null;
+		if(new_menu_items == null)
+			return;
+		clear_menu();
+		foreach(var item in new_menu_items)
+			search_suggester.append(item);
+		search_suggester.popup_under(this);
 	}
 	
 	public void clear_menu() {
-		UI.clear (search_suggester);
+		search_suggester.clear ();
 	}
 	
 	bool keyPressed(uint keyval, uint keycode, Gdk.ModifierType state) {

@@ -26,6 +26,11 @@ public class BeatBox.PopMenu : Gtk.Popover {
 		box.append (item);
 	}
 
+	// the items only: the popover's own children must stay (UI.clear on it broke it)
+	public void clear () {
+		UI.clear (box);
+	}
+
 	// x, y are in the coordinates of widget
 	public void popup_at (Gtk.Widget widget, double x, double y) {
 		detach ();
