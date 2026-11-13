@@ -97,6 +97,7 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 	// GTK3 controllers need a reference
 	EventControllerKey key_controller;
 	GestureClick lcd_cover_gesture;
+	bool cover_dragged = false; // the cover was dragged out since the press: the release does not enlarge it
 	
 	public StatusBar statusBar { get; private set; }
 	
@@ -367,19 +368,24 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 			return new Gdk.ContentProvider.for_bytes("text/uri-list", new Bytes(uri.data));
 		});
 		cover_drag.drag_begin.connect((drag) => {
+			cover_dragged = true;
 			var icon = lcdCover.drag_icon();
 			if (icon != null)
 				cover_drag.set_icon(Gdk.Texture.for_pixbuf(icon), icon.width / 2, icon.height / 2);
 		});
 		lcdCover.add_controller(cover_drag);
-		// a click (released without dragging) enlarges it
-		// GTK4-PENDIENTE: GTK3 claimed the press here, so the title bar would not move the window; GTK4 would
-		// cancel the drag source if the click claimed it. Not claimed for now: check in the GUI that dragging
-		// the cover does not also enlarge it or move the window.
+		// a click (released without dragging) enlarges it. The press is claimed, as in GTK3, so the
+		// title bar does not move the window (GTK 4 lets a drag start only after 100 ms held, the title
+		// bar at once); grouped with the drag source, which the claim would otherwise cancel
 		lcd_cover_gesture = new GestureClick();
 		lcd_cover_gesture.button = 0;
+		lcd_cover_gesture.group(cover_drag);
+		lcd_cover_gesture.pressed.connect(() => {
+			cover_dragged = false;
+			lcd_cover_gesture.set_state(EventSequenceState.CLAIMED);
+		});
 		lcd_cover_gesture.released.connect(() => {
-			if (lcd_cover_gesture.get_current_button() == 1)
+			if (lcd_cover_gesture.get_current_button() == 1 && !cover_dragged)
 				lcdCover.show_full_size(this);
 		});
 		lcdCover.add_controller(lcd_cover_gesture);
