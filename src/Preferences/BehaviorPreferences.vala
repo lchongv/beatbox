@@ -366,18 +366,14 @@ public class BeatBox.MiniPlayerPreferences : SimplePreferences {
 
 	public MiniPlayerPreferences() {
 		add_heading(_("Mini Player"));
-		var keepAbove = add_check(_("Keep the mini player above other windows"), App.settings.main.mini_keep_above);
-		keepAbove.toggled.connect(() => { App.settings.main.mini_keep_above = keepAbove.active; });
-		if (Gdk.Display.get_default().get_type().name() == "GdkWaylandDisplay") {
-			// GTK 3 can't ask a Wayland compositor for that
-			keepAbove.sensitive = false;
-			var hint = new Label(_("On Wayland the desktop keeps windows on top: right-click the toolbar and choose “Always on Top”."));
-			hint.add_css_class("dim-label");
-			hint.xalign = 0.0f;
-			hint.wrap = true;
-			hint.max_width_chars = 60;
-			add_row(hint);
-		}
+		// GTK 4 cannot keep a window above the others (GTK3 could, on X11 only): the window
+		// menu offers it. (The text, kept for its translations, still says Wayland.)
+		var hint = new Label(_("On Wayland the desktop keeps windows on top: right-click the toolbar and choose “Always on Top”."));
+		hint.add_css_class("dim-label");
+		hint.xalign = 0.0f;
+		hint.wrap = true;
+		hint.max_width_chars = 60;
+		add_row(hint);
 	}
 }
 

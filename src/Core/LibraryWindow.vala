@@ -231,7 +231,6 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		
 		App.devices.load_pre_existing_devices();
 		
-		App.settings.main.notify["mini-keep-above"].connect(apply_keep_above);
 		if (App.settings.saved_state.mini_player) {
 			toggle_mini();
 			maximized_before_mini = App.settings.saved_state.window_state == Settings.WindowState.MAXIMIZED;
@@ -646,11 +645,6 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 			if (maximized_before_mini)
 				maximize();
 		}
-		apply_keep_above();
-	}
-
-	/** GTK4 cannot keep a window above the others (Wayland never could): the window menu of the compositor offers "Always on Top" */
-	public void apply_keep_above() {
 	}
 
 	public void setup_playback() {
