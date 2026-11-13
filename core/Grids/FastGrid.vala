@@ -28,9 +28,33 @@
 using Gtk;
 
 [GIR (visible = false)] // internal, not for plugins
-public class BeatBox.FastGrid : Box {
+public class BeatBox.FastGrid : Box, Scrollable {
 	// GTK 4 does not let a class derive from IconView: the icon view is a child of this box
 	protected IconView view;
+
+	// The scrolled window scrolls the icon view itself, as when this was the IconView (GTK3):
+	// through a viewport the icon view only ever laid out one column.
+	// (set to null while constructing, before the view exists)
+	public Adjustment hadjustment {
+		get { return view.hadjustment; }
+		set construct { if (view != null) view.hadjustment = value; }
+	}
+	public Adjustment vadjustment {
+		get { return view.vadjustment; }
+		set construct { if (view != null) view.vadjustment = value; }
+	}
+	public ScrollablePolicy hscroll_policy {
+		get { return view.hscroll_policy; }
+		set { view.hscroll_policy = value; }
+	}
+	public ScrollablePolicy vscroll_policy {
+		get { return view.vscroll_policy; }
+		set { view.vscroll_policy = value; }
+	}
+	public bool get_border (out Border border) {
+		border = {};
+		return false;
+	}
 
 	protected const int PIXBUF_COLUMN = 0;
 	protected const int MARKUP_COLUMN = 1;

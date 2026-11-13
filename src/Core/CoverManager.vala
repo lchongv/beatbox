@@ -307,7 +307,7 @@ public class BeatBox.CoverManager : Object, BeatBox.CoverInterface {
             fetch_cover_of_media(s);
 			if(get_monotonic_time() - shown > 250000) { // they appear as they load, not all at the end
 				shown = get_monotonic_time();
-				Idle.add(() => { App.window.queue_draw(); return false; });
+				Idle.add(() => { UI.queue_draw_all(App.window); return false; });
 			}
 		}
 		
@@ -315,7 +315,7 @@ public class BeatBox.CoverManager : Object, BeatBox.CoverInterface {
 		in_fetch_thread = false;
 		
 		// Views may have been drawn before the covers were ready
-		Idle.add(() => { App.window.queue_draw(); return false; });
+		Idle.add(() => { UI.queue_draw_all(App.window); return false; });
 		
 		fetch_remaining_album_art();
 		

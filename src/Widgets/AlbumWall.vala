@@ -10,7 +10,10 @@
 
 using Gtk;
 
-public class BeatBox.AlbumWall : Fixed {
+/* A plain widget with its own measure and size_allocate, holding the band as its only child.
+ * (GTK3's Gtk.Layout became a Gtk.Fixed in the port, and the Fixed's layout manager kept
+ * GTK 4 from ever calling the overrides: one column of covers and no band.) */
+public class BeatBox.AlbumWall : Widget {
 	const int COVER = Icons.ALBUM_VIEW_IMAGE_SIZE; // cached covers include their shadow
 	const int CELL_W = COVER + 16;
 	const int CELL_H = COVER + 44;                  // cover + two lines of text
@@ -114,36 +117,50 @@ public class BeatBox.AlbumWall : Fixed {
 		return row_y (open_row) + CELL_H + GAP / 2;
 	}
 
+	static int columns_for (int width) {
+		return int.max (1, (width - GAP) / (CELL_W + GAP));
+	}
+
+	/** The band's height at width, arrow included: what its content needs, times how far
+	 * the revealer has unfolded it. 0 without a band. */
+	int band_height (int width) {
+		if (detail == null)
+			return 0;
+		int shown_h, shown_nat, min_base, nat_base, min_w;
+		detail.measure (Orientation.HORIZONTAL, -1, out min_w, out shown_nat, out min_base, out nat_base);
+		detail.measure (Orientation.VERTICAL, int.max (width, min_w), out shown_h, out shown_nat, out min_base, out nat_base);
+		return shown_h + ARROW_H;
+	}
+
+	/* One column wide at least (the scrolled window gives it the rest); as tall as the rows and the band */
+	public override void measure (Orientation orientation, int for_size, out int minimum, out int natural,
+	                              out int minimum_baseline, out int natural_baseline) {
+		minimum_baseline = natural_baseline = -1;
+		int width = for_size > 0 ? for_size : CELL_W + 2 * GAP;
+		if (orientation == Orientation.HORIZONTAL) {
+			minimum = natural = CELL_W + 2 * GAP;
+			return;
+		}
+		int c = columns_for (width);
+		int band = band_height (width);
+		minimum = natural = GAP + (albums.length + c - 1) / c * (CELL_H + GAP) + (band > 0 ? band + GAP : 0);
+	}
+
 	public override void size_allocate (int width, int height, int baseline) {
-		cols = int.max (1, (width - GAP) / (CELL_W + GAP));
+		cols = columns_for (width);
 		step = int.max (GAP, (width - cols * CELL_W) / (cols + 1));
 
 		int full_h = 0;
 		if (detail != null) {
-			// The band takes the whole width; its height is whatever its content needs,
-			// times how far the revealer has unfolded it
+			// The band takes the whole width
 			set_detail_side (width);
-			int min_h, min_base, nat_base, shown_h, shown_nat;
+			int min_h, min_base, nat_base;
 			content.measure (Orientation.VERTICAL, width, out min_h, out full_h, out min_base, out nat_base);
-			holder.set_size_request (width, full_h); // no-op (no relayout) when unchanged
-			detail.measure (Orientation.VERTICAL, width, out shown_h, out shown_nat, out min_base, out nat_base);
-			detail_h = shown_h + ARROW_H;
-			int y = band_y () + ARROW_H;
-			double old_x, old_y;
-			get_child_position (detail, out old_x, out old_y);
-			if (old_x != 0 || old_y != y)
-				move (detail, 0, y);
+			holder.set_size_request (-1, full_h); // no-op (no relayout) when unchanged; a width would become the band's minimum
+			detail_h = band_height (width);
+			var at = Graphene.Point () { x = 0, y = band_y () + ARROW_H };
+			detail.allocate (width, detail_h - ARROW_H, -1, new Gsk.Transform ().translate (at));
 		}
-
-		int rows = (albums.length + cols - 1) / cols;
-		int wall_h = GAP + rows * (CELL_H + GAP) + ((detail != null) ? detail_h + GAP : 0);
-		wall_h = int.max (wall_h, height); // paint the background down to the bottom
-		int old_w, old_h;
-		get_size_request (out old_w, out old_h);
-		if (old_w != width || old_h != wall_h)
-			set_size_request (width, wall_h);
-
-		base.size_allocate (width, height, baseline);
 
 		if (scroll_to_detail && detail != null) {
 			scroll_to_detail = false;
@@ -177,6 +194,13 @@ public class BeatBox.AlbumWall : Fixed {
 			scroll_tick = 0;
 			return Source.REMOVE;
 		});
+	}
+
+	public override void dispose () {
+		if (detail != null)
+			detail.unparent ();
+		detail = null;
+		base.dispose ();
 	}
 
 	/* ---------- painting ---------- */
@@ -357,7 +381,7 @@ public class BeatBox.AlbumWall : Fixed {
 			return;
 		}
 		if (detail != null)
-			remove (detail);
+			detail.unparent ();
 		detail = null;
 		holder = content = null;
 		detail_list = null;
@@ -384,7 +408,7 @@ public class BeatBox.AlbumWall : Fixed {
 		detail.transition_type = RevealerTransitionType.SLIDE_DOWN;
 		detail.transition_duration = unfolded ? 0 : ANIMATION_MS;
 		detail.set_child (holder);
-		put (detail, 0, 0);
+		detail.set_parent (this);
 		detail.reveal_child = true;
 		scroll_to_detail = true;
 		queue_resize ();
