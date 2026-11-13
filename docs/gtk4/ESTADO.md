@@ -31,13 +31,13 @@ etapa 2 con el andamio; `tools/gtk4-check.sh` tarda ~2 s.
 | T28 núcleo de la aplicación | H | [x] | | 0 | opciones de GTK (--display) ya no se parsean; «(None)» del selector de bibliotecas es texto nuevo sin traducir; LibrarySwitcher.new_library es async |
 | T29 código C | H | [x] | | 0 | comentarios nuevos en español, como el resto de ese archivo |
 | T30 cierre de compilación | H (orquestador) | [x] | | 0 | valac 0 errores; ninja termina (beatbox, plugins y pruebas). Antes del cierre: 4 clases que heredaban de tipos opacos de GTK 4 (ScrolledWindow, IconView, Separator, Notebook, Image, Viewport, ActionBar, SearchEntry, CellRendererPixbuf, Stack) pasan a composición |
-| T31 pruebas y primer arranque | H | [ ] | | | |
-| T40 avisos y widgets ocultos | H | [ ] | | | |
-| T41 CSS y apariencias | H | [ ] | | | |
-| T42 pendientes | H | [ ] | | | |
-| T43 capturas | orquestador | [ ] | | | |
-| T50 empaquetado | D | [ ] | | | sin verificar hasta el CI |
-| T51 documentación | D | [ ] | | | |
+| T31 pruebas y primer arranque | H | [x] | dfbdd8a, f3f5e73 | 1 | 17/17 pruebas con SMOKE_REQUIRED=1. El arranque se colgaba: ModeButton.append se llamaba a sí mismo (ModeButton.vala) y el manejador «forzar NORMAL» de RatingMenuItem limpiaba DIR_LTR en bucle; corregidos. Una vez falló la prueba smoke con «Failed to open display» (el Xvfb de la prueba aún no estaba listo); dos reintentos pasan: vigilar |
+| T40 avisos y widgets ocultos | H | [~] | 220a213 | 1 | Corregidos: CRITICAL de AT-SPI (GTK_A11Y=none en pruebas y capturas), avisos de analizador CSS (T41), prefer-dark-theme → gtk-interface-color-scheme. Riesgo 1: los 40 no_show_all retirados tienen ahora visible=false o set_visible en el código actual; show()/hide() siguen funcionando en 4.24 (son gtk_widget_show/hide, deprecados). PENDIENTE: 19 avisos «Trying to measure BeatBoxLibraryWindow … height of 466, but it needs at least 573» al arrancar: la ventana recibe 466 px en su primera asignación y su mínimo es 573; con 590 px no hay aviso. La cadena de mínimos cuelga de la pantalla de bienvenida (BeatBoxWelcome, rejilla de 184 px dada 118). Causa no confirmada |
+| T41 CSS y apariencias | H | [x] | 220a213 | 2 | csscheck: data/theme.css y los 8 skins sin errores; los 8 bloques CSS embebidos en el código también. Cambios: -gtk-gradient → linear-gradient; -unico-* quitados (no aparecen en el registro de GTK 3); toolbar/toolbutton/toolitem → clases; :nth-child(first/last) → :first-child/:last-child; -GtkToolbar-button-relief quitado. PENDIENTE: revisión visual de cada apariencia; la cabecera solo cambia con un skin no nativo (el nativo no carga theme.css) |
+| T42 pendientes | H | [x] | | 14 | 14 marcas GTK4-PENDIENTE: ninguna tiene solución sin decisión del usuario o una prueba visual. Cada una está en «Pendientes para el usuario» |
+| T43 capturas | orquestador | [x] | f3f5e73 | 0 | docs/gtk4/capturas/gtk4-final.png; diferencias abajo |
+| T50 empaquetado | D | [x] | bf1322c | 0 | sin verificar hasta el CI: Debian, Fedora, Arch y CI piden GTK 4; AppImage con DEPLOY_GTK_VERSION=4 (plugin de linuxdeploy sin verificar); Flatpak ya usa org.gnome.Platform 50 |
+| T51 documentación | D | [x] | bf1322c | 0 | README, docs/plugins.md, docs/gtk4-prep.md y NEWS (2.0, unreleased). listeninglog.py no pide Gtk (solo BeatBox 1.0): sin cambios |
 
 ## Necesita un modelo más capaz
 
@@ -45,12 +45,34 @@ etapa 2 con el andamio; `tools/gtk4-check.sh` tarda ~2 s.
 
 ## Pendientes para el usuario
 
-(vacío)
+1. Vídeo en la ventana «Reproduciendo»: `video_area_xid` devuelve 0 (`src/Core/LibraryWindow.vala:49`, `Streamer.vala`). GTK 4 no da un XID por widget. Solución: gtk4paintablesink (decisión).
+2. Lista emergente centrada sobre el muro: GTK 4 no coloca ventanas (`src/Views/PopupListView.vala:244`).
+3. Mantener la ventana encima en el modo mini: GTK 4 no lo permite (`LibraryWindow.vala`, `apply_keep_above`).
+4. Submenús del visualizador: se abren al pulsar y al elegir solo cierran el submenú (`src/Widgets/Visualizer.vala:303`, `:497`).
+5. Barra de título: `Gtk.WindowHandle` también maximiza con doble clic (`core/Utils/UI.vala:117`); arrastre y doble clic por revisar en la GUI (`LibraryWindow.vala:382`).
+6. Icono simbólico sin los colores del contexto (`core/Utils/Icon.vala:213`).
+7. Icono de la barra de estado: se tiñe solo al crearse, no al cambiar de skin (`src/Widgets/StatusBar.vala:68`).
+8. Tamaños que dependían de `size-allocate` (GTK 4 no lo tiene en Box ni en Paned): botón redondo del LCD (`LibraryWindow.vala:472`) y divisor principal (`LibraryWindow.vala:541`). Revisar en la GUI.
+9. Tamaño de la ventana con la barra de título (`LibraryWindow.vala:202`) y `set_default_size (1, 1)` del LCD (`src/Widgets/TopDisplay/LcdCover.vala:150`). Revisar en la GUI.
+10. Decisión: el texto de Acerca de dice «Ported to GTK 4» (antes GTK 3); es un cambio visible.
+11. Decisión: «(None)» del selector de bibliotecas es texto nuevo sin traducir.
+12. Decisión: la opción `--display` de GTK ya no se analiza.
+13. Avisos de medida de la ventana al arrancar (T40): sin resolver.
 
 ## Diferencias vistas en las capturas
 
-(vacío)
+Contra `docs/gtk4/capturas/gtk3-referencia.png`, el resultado final (`gtk4-final.png`) tiene la misma estructura: barra superior, barra lateral, panel central con la pantalla de bienvenida y barra inferior.
+Diferencias: no aparecen las flechas de expansión de la barra lateral; el icono de ajustes de la barra inferior derecha es otro (puntos en vez de deslizadores); los iconos de reproducción salen grises y el deslizador de volumen tiene la pista gris en vez de azul; la cabecera es más plana (tema nativo de Adwaita en vez del de GTK 3).
+La ventana mide 1100×590 frente a unos 1110×700 de la referencia; no se ha comprobado si se debe a la configuración de la captura. El título «BeatBox 1.2.x» se solapa con los botones de modo también en la referencia (no es nuevo).
 
 ## Resumen final
 
-(vacío)
+Estado de la rama `gtk4` (sin fusionar, sin publicar, sin etiquetar, sin instalar):
+
+- Arranque: la ventana aparece y el proceso queda en reposo. El bucle al arrancar estaba en ModeButton.append (recursión) y en RatingMenuItem (manejador de estado); corregidos en dfbdd8a.
+- Pruebas: 17/17 con SMOKE_REQUIRED=1 (una vez falló por la carrera del Xvfb de la prueba; dos reintentos pasan).
+- Captura: gtk4-final.png sin avisos de CRITICAL ni del analizador CSS. Queda 1 aviso de BeatBox: la medida de la ventana al arrancar (T40, pendiente).
+- Riesgo 2 (pixbuf en Gtk.Image): sin hallazgos. Las tres coincidencias de set_*_from_pixbuf son de otras API (iPod y libnotify).
+- Pendientes de código: 14 marcas GTK4-PENDIENTE (lista arriba). Ninguna se puede comprobar sin la GUI.
+- Revisión manual que sigue siendo del usuario: arrastre de varias canciones a listas, menús contextuales, rejillas/muro/Cover Flow/visualizador, cada apariencia clara y oscura, editor de canciones, mini reproductor, importar una carpeta soltándola sobre la ventana.
+- Empaquetado y CI: sin verificar localmente.
