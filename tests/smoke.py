@@ -316,12 +316,22 @@ def main():
             sys.exit(1 if os.environ.get('SMOKE_REQUIRED') else SKIP)  # CI sets it
 
     home = tempfile.mkdtemp(prefix='beatbox-smoke-')
-    read, write = os.pipe()
-    xvfb = subprocess.Popen(['Xvfb', '-displayfd', str(write), '-screen', '0', '1100x700x24', '-nolisten', 'tcp'],
-                            pass_fds=[write], stderr=subprocess.DEVNULL)
-    os.close(write)
-    display = os.read(read, 16).decode().strip()
-    os.close(read)
+    # an X server started at the same moment may take the display number this one picked: it then
+    # exits without writing it ("Failed to open display" later), and is started again
+    for attempt in range(5):
+        read, write = os.pipe()
+        xvfb = subprocess.Popen(['Xvfb', '-displayfd', str(write), '-screen', '0', '1100x700x24', '-nolisten', 'tcp'],
+                                pass_fds=[write], stderr=subprocess.DEVNULL)
+        os.close(write)
+        display = os.read(read, 16).decode().strip()
+        os.close(read)
+        if display:
+            break
+        xvfb.wait()
+        time.sleep(0.5)
+    else:
+        print('Xvfb did not start')
+        sys.exit(1)
     # XAUTHORITY is the desktop's cookie for its own X server: the test's X server doesn't accept it
     env = {k: v for k, v in os.environ.items() if k not in ('WAYLAND_DISPLAY', 'DBUS_SESSION_BUS_ADDRESS', 'XAUTHORITY')}
     # GTK 4 tries to register with the AT-SPI bus, which this bus doesn't have: a critical, not a bug
@@ -338,7 +348,8 @@ def main():
         xvfb.terminate()
         xvfb.wait()
     if code == 0:
-        shutil.rmtree(home)
+        # the document portal's FUSE mount (run/doc) may still be going away: not the test's failure
+        shutil.rmtree(home, ignore_errors=True)
     else:
         print('left for a look:', home)
     sys.exit(code)
