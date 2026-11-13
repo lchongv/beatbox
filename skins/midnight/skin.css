@@ -26,17 +26,17 @@
 window.beatbox, window.beatbox label { color: #e4e6ea; }
 
 .toolbar.app-header button:not(.traffic-light),
-.toolbar.app-header .transport-button > button,
-.toolbar.app-header button.round-menu {
+.toolbar.app-header button.transport-button,
+.toolbar.app-header menubutton.round-menu > button {
   background-image: linear-gradient(to bottom, #6a6e75, #45484e 50%, #33363a);
   border-color: #141517;
   color: #eceef1;
   box-shadow: inset 0 1px 0 alpha(white, .25), 0 1px 1px alpha(black, .4);
 }
-.toolbar.app-header .transport-button > button:hover {
+.toolbar.app-header button.transport-button:hover {
   background-image: linear-gradient(to bottom, #7a7e85, #50545a 50%, #3b3e43);
 }
-.toolbar.app-header .transport-button > button:disabled { color: #8b8f96; }
+.toolbar.app-header button.transport-button:disabled { color: #8b8f96; }
 
 window.beatbox .album-detail button, window.beatbox .source-actions button, window.beatbox dialog button {
   background-image: linear-gradient(to bottom, #5a5e65, #3d4045);

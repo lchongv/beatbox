@@ -89,7 +89,7 @@ public abstract class BeatBox.GenericGrid : FastGrid {
         set_parent_wrapper (parent_wrapper);
 		this.tvs = tvs;
 		
-		add_css_class ("albumgrid");
+		view.add_css_class ("albumgrid"); // the stylesheets style iconview.albumgrid (GTK3: this was the IconView)
 		
 		view.item_width = ITEM_WIDTH;
 		view.item_padding = ITEM_PADDING;

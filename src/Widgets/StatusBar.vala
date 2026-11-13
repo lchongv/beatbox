@@ -64,6 +64,7 @@ public class BeatBox.StatusBar : Gtk.Box {
     public StatusBar () {
 		Object (orientation: Gtk.Orientation.VERTICAL, spacing: 0);
 		append (bar);
+		bar.add_css_class ("app-statusbar"); // the skins style actionbar.app-statusbar (GTK3: this widget was the bar)
 		bar.set_center_widget (status_label);
 		repeat_chooser = new SimpleOptionChooser();
 		repeat_chooser.first_step = 1; // the left click cycle: Off, Song, then the last album/artist/all

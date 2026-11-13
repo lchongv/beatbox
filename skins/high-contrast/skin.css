@@ -28,15 +28,15 @@
 .toolbar.app-header label { color: #ffffff; text-shadow: none; }
 
 .toolbar.app-header button:not(.traffic-light),
-.toolbar.app-header .transport-button > button,
-.toolbar.app-header button.round-menu {
+.toolbar.app-header button.transport-button,
+.toolbar.app-header menubutton.round-menu > button {
   background-image: none;
   background-color: #000000;
   border: 2px solid #ffffff;
   color: #ffffff;
   box-shadow: none;
 }
-.toolbar.app-header .transport-button > button:hover,
+.toolbar.app-header button.transport-button:hover,
 .toolbar.app-header button:not(.traffic-light):hover { background-color: #333333; }
 
 treeview.tracklist, treeview.tracklist.view { color: #000000; }

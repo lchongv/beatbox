@@ -575,7 +575,6 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 			button.margin_top = 12; // room for the traffic lights above
 		}
 		searchField.add_css_class("search-bar");
-		statusBar.add_css_class("app-statusbar");
 
 		/* Top toolbar events */
 		previousButton.clicked.connect(previousClicked);

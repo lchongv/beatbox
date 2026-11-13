@@ -41,7 +41,7 @@ window.beatbox {
 }
 
 /* Round glossy transport buttons */
-.toolbar.app-header .transport-button > button {
+.toolbar.app-header button.transport-button {
   background-image: linear-gradient(to bottom, #f8f8f8 0%, #d4d4d4 50%, #b0b0b0 100%);
   border: 1px solid #5e5e5e;
   border-radius: 50%;
@@ -55,19 +55,19 @@ window.beatbox {
               inset 0 -1px 1px alpha(black, .15),
               0 1px 1px alpha(black, .25);
 }
-.toolbar.app-header .transport-button > button:hover {
+.toolbar.app-header button.transport-button:hover {
   background-image: linear-gradient(to bottom, white, #d8d8d8 50%, #b8b8b8);
 }
-.toolbar.app-header .transport-button > button:active {
+.toolbar.app-header button.transport-button:active {
   background-image: linear-gradient(to bottom, @bb_accent_light, @bb_accent);
   color: white;
   box-shadow: inset 0 2px 3px alpha(black, .4);
 }
-.toolbar.app-header .transport-button > button:disabled { color: #8a8a8a; }
+.toolbar.app-header button.transport-button:disabled { color: #8a8a8a; }
 .toolbar.app-header .transport-button { padding: 0; margin: 0; }
 
 /* Round app menu button, same glossy look as the transport buttons */
-.toolbar.app-header button.round-menu {
+.toolbar.app-header menubutton.round-menu > button {
   background-image: linear-gradient(to bottom, #f8f8f8 0%, #d4d4d4 50%, #b0b0b0 100%);
   border: 1px solid #5e5e5e;
   border-radius: 50%;
