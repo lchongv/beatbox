@@ -196,6 +196,17 @@ public class BeatBox.AlbumWall : Widget {
 		});
 	}
 
+	/* Only the visible part is painted (see snapshot), and GTK 4 scrolls by moving the last drawing:
+	 * without a redraw the rows scrolled into view stay blank. Same when the view grows taller. */
+	ulong scroll_id = 0;
+	public override void map () {
+		base.map ();
+		if (scroll_id != 0)
+			return;
+		scroll_id = vadjustment.value_changed.connect (queue_draw);
+		vadjustment.changed.connect (queue_draw);
+	}
+
 	public override void dispose () {
 		if (detail != null)
 			detail.unparent ();
