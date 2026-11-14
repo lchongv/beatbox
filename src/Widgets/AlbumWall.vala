@@ -132,6 +132,12 @@ public class BeatBox.AlbumWall : Widget {
 		return shown_h + ARROW_H;
 	}
 
+	/* The height depends on the width: without this GTK 4 measures the height for no width
+	 * (one column of covers), and the wall scrolled into a huge blank below the last row */
+	public override SizeRequestMode get_request_mode () {
+		return SizeRequestMode.HEIGHT_FOR_WIDTH;
+	}
+
 	/* One column wide at least (the scrolled window gives it the rest); as tall as the rows and the band */
 	public override void measure (Orientation orientation, int for_size, out int minimum, out int natural,
 	                              out int minimum_baseline, out int natural_baseline) {
