@@ -100,6 +100,7 @@ public class BeatBox.Song : BeatBox.Media {
 		rv.skip_shuffle = skip_shuffle;
 		rv.volume_adjust = volume_adjust;
 		rv.remember_position = remember_position;
+		rv.unchecked = unchecked;
 		rv.resume_pos = resume_pos;
 		//rv.isPreview = isPreview;
 		rv.isTemporary = isTemporary;

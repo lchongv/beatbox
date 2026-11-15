@@ -31,7 +31,7 @@ using SQLHeavy;
 public class BeatBox.SongLibrary : BaseLibrary {
 	// by name, in the order the fields are read below: a library whose columns were
 	// added in another order still loads right
-	const string LOAD_SONGS_QUERY = "SELECT rowid, uri, file_size, title, artist, composer, album_artist, album, grouping, genre, comment, lyrics, album_path, has_embedded, year, track, track_count, album_number, album_count, bitrate, length, samplerate, rating, playcount, skipcount, dateadded, lastplayed, lastmodified, mediatype, podcast_rss, podcast_url, podcast_date, is_new_podcast, resume_pos, is_video, bpm, sort_title, sort_artist, sort_album_artist, sort_album, sort_composer, compilation, skip_shuffle, volume_adjust, remember_position FROM 'songs'";
+	const string LOAD_SONGS_QUERY = "SELECT rowid, uri, file_size, title, artist, composer, album_artist, album, grouping, genre, comment, lyrics, album_path, has_embedded, year, track, track_count, album_number, album_count, bitrate, length, samplerate, rating, playcount, skipcount, dateadded, lastplayed, lastmodified, mediatype, podcast_rss, podcast_url, podcast_date, is_new_podcast, resume_pos, is_video, bpm, sort_title, sort_artist, sort_album_artist, sort_album, sort_composer, compilation, skip_shuffle, volume_adjust, remember_position, unchecked FROM 'songs'";
 	
 	Song ref_song = new Song("");
 	public override string key { get { return ref_song.key; } }
@@ -128,6 +128,7 @@ public class BeatBox.SongLibrary : BaseLibrary {
 				s.skip_shuffle = results.fetch_int(42) == 1;
 				s.volume_adjust = results.fetch_int(43);
 				s.remember_position = results.fetch_int(44) == 1;
+				s.unchecked = results.fetch_int(45) == 1;
 				
 				//lock(_medias) {
 					App.library.assign_id_to_media(s);
@@ -156,12 +157,12 @@ public class BeatBox.SongLibrary : BaseLibrary {
 'album', 'grouping', 'genre', 'comment', 'lyrics', 'has_embedded', 'year', 'track', 'track_count', 'album_number', 'album_count',
 'bitrate', 'length', 'samplerate', 'rating', 'playcount', 'skipcount', 'dateadded', 'lastplayed', 'lastmodified', 'mediatype', 'podcast_rss',
 'podcast_url', 'podcast_date', 'is_new_podcast', 'resume_pos', 'is_video', 'bpm', 'sort_title', 'sort_artist', 'sort_album_artist',
-'sort_album', 'sort_composer', 'compilation', 'skip_shuffle', 'volume_adjust', 'remember_position') 
+'sort_album', 'sort_composer', 'compilation', 'skip_shuffle', 'volume_adjust', 'remember_position', 'unchecked') 
 VALUES (:rowid, :uri, :file_size, :title, :artist, :composer, :album_artist, :album, :grouping, 
 :genre, :comment, :lyrics, :has_embedded, :year, :track, :track_count, :album_number, :album_count, :bitrate, :length, :samplerate, 
 :rating, :playcount, :skipcount, :dateadded, :lastplayed, :lastmodified, :mediatype, :podcast_rss, :podcast_url, :podcast_date, :is_new_podcast,
 :resume_pos, :is_video, :bpm, :sort_title, :sort_artist, :sort_album_artist, :sort_album, :sort_composer, :compilation,
-:skip_shuffle, :volume_adjust, :remember_position);""");
+:skip_shuffle, :volume_adjust, :remember_position, :unchecked);""");
 			
 			foreach(Media s in added) {
 				if(s.rowid > 0 && !s.isTemporary) {
@@ -209,6 +210,7 @@ VALUES (:rowid, :uri, :file_size, :title, :artist, :composer, :album_artist, :al
 					query.set_int(":skip_shuffle", s.skip_shuffle ? 1 : 0);
 					query.set_int(":volume_adjust", s.volume_adjust);
 					query.set_int(":remember_position", s.remember_position ? 1 : 0);
+					query.set_int(":unchecked", s.unchecked ? 1 : 0);
 					
 					query.execute();
 				}
@@ -238,7 +240,7 @@ album_count=:album_count,bitrate=:bitrate, length=:length, samplerate=:samplerat
 dateadded=:dateadded, lastplayed=:lastplayed, lastmodified=:lastmodified, mediatype=:mediatype, podcast_rss=:podcast_rss, podcast_url=:podcast_url,
 podcast_date=:podcast_date, is_new_podcast=:is_new_podcast, resume_pos=:resume_pos, is_video=:is_video, bpm=:bpm,
 sort_title=:sort_title, sort_artist=:sort_artist, sort_album_artist=:sort_album_artist, sort_album=:sort_album, sort_composer=:sort_composer,
-compilation=:compilation, skip_shuffle=:skip_shuffle, volume_adjust=:volume_adjust, remember_position=:remember_position WHERE rowid=:rowid""");
+compilation=:compilation, skip_shuffle=:skip_shuffle, volume_adjust=:volume_adjust, remember_position=:remember_position, unchecked=:unchecked WHERE rowid=:rowid""");
 			
 			foreach(Media s in updated) {
 				if(s.rowid != -2 && s.rowid > 0) {
@@ -287,6 +289,7 @@ compilation=:compilation, skip_shuffle=:skip_shuffle, volume_adjust=:volume_adju
 					query.set_int(":skip_shuffle", s.skip_shuffle ? 1 : 0);
 					query.set_int(":volume_adjust", s.volume_adjust);
 					query.set_int(":remember_position", s.remember_position ? 1 : 0);
+					query.set_int(":unchecked", s.unchecked ? 1 : 0);
 					
 					query.execute();
 				}

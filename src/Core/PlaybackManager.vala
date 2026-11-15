@@ -407,7 +407,8 @@ public class BeatBox.PlaybackManager : GLib.Object, BeatBox.PlaybackInterface {
 	
 	bool skipped_in_shuffle(Media m) {
 		// and songs with no file (last.fm suggestions in Similar) can't be played in a row
-		return (m.skip_shuffle && shuffle_mode == ShuffleMode.ALL && !_playing_queued_song) || m.uri == "";
+		// and unchecked songs (their box in the lists) unless queued; a double click still plays them
+		return ((m.unchecked || (m.skip_shuffle && shuffle_mode == ShuffleMode.ALL)) && !_playing_queued_song) || m.uri == "";
 	}
 	
 	Media? step_next(bool play) {

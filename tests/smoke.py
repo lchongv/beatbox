@@ -202,6 +202,19 @@ def run(app, home):
         print('restarted with two songs opened; Next went from one to the other')
         quit(proc)
 
+        # Song 2's check box off in the lists: opened between 1 and 3, Next passes it by
+        one = os.path.join(music, 'Song 1.ogg')
+        with sqlite3.connect(db, timeout=5) as c:
+            c.execute('UPDATE songs SET unchecked = 1 WHERE rowid = ?', (int(track_of(db, two).rsplit('/', 1)[1]),))
+        proc = start(app, home, log, [one, two, three])
+        wait_for('the first opened song', lambda: track() == track_of(db, one) and status() == 'Playing', 20)
+        player('Next')
+        after = wait_for('Next', lambda: track() not in (None, track_of(db, one)) and track(), 10)
+        if after != track_of(db, three):
+            fail('Next went to %s, not past the unchecked song to %s' % (after, track_of(db, three)))
+        print('Next passed the unchecked song by')
+        quit(proc)
+
         # third run: the live sync with itunes7 (docs/SYNC-BEATBOX.md in itunes7). A
         # stand-in itunes7 library where Song 1 has 5 plays and 4 stars: BeatBox adds
         # them when it starts, then follows one more play made there while it runs.

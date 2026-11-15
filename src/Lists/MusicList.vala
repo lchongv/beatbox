@@ -49,6 +49,7 @@ public class BeatBox.MusicList : GenericList {
 	PopMenuItem mediaRemove;
 	PopMenuItem importToLibrary;
 	PopMenuItem mediaScrollToCurrent;
+	CellRendererToggle check_cell; // in the icon column: an unchecked song is passed by when playing in a row
 
 	/**
 	 * for sort_id use 0+ for normal, -1 for auto, -2 for none
@@ -144,6 +145,7 @@ public class BeatBox.MusicList : GenericList {
 
 	public void buildUI() {
 		add_columns ();
+		add_check_cell();
 		
 		set_compare_func(view_compare_func);
         set_search_func(view_search_func);
@@ -292,8 +294,43 @@ public class BeatBox.MusicList : GenericList {
 		}
 	}*/
 
+	void add_check_cell() {
+		var column = column_titled(" ");
+		if(column == null)
+			return;
+		check_cell = new CellRendererToggle();
+		column.pack_start(check_cell, false); // after the playing icon: the sidebar divider grabs the list's first pixels
+		column.set_cell_data_func(check_cell, (layout, cell, model, iter) => {
+			((CellRendererToggle)cell).active = !get_media_from_index((int)iter.user_data).unchecked;
+		});
+		column.fixed_width += 24;
+	}
+	
+	/** A press on a song's check box turns it over (the press is kept from the selection); true if it was one */
+	bool toggle_check_at(double x, double y) {
+		int bin_x, bin_y, cell_x = 0, cell_y, start = 0, width = 0;
+		TreePath? path = null;
+		TreeViewColumn? column = null;
+		convert_widget_to_bin_window_coords((int)x, (int)y, out bin_x, out bin_y);
+		if(check_cell == null || !get_path_at_pos(bin_x, bin_y, out path, out column, out cell_x, out cell_y) ||
+		   column != column_titled(" ") || !column.cell_get_position(check_cell, out start, out width) ||
+		   cell_x < start || cell_x >= start + width)
+			return false;
+		
+		Media m = get_media_from_index(int.parse(path.to_string()));
+		m.unchecked = !m.unchecked;
+		var changed = new LinkedList<Media>();
+		changed.add(m);
+		App.library.update_medias(changed, false, false, true);
+		click_gesture.set_state(Gtk.EventSequenceState.CLAIMED);
+		return true;
+	}
+	
 	/* a press on a row: the menus, and keeping the selection while several rows are dragged */
 	void view_click(int n_press, double x, double y) {
+		// every press on a check box, a double one too (it would play the song)
+		if(click_gesture.get_current_button() == Gdk.BUTTON_PRIMARY && !on_header(y) && toggle_check_at(x, y))
+			return;
 		// a double click is no click for the menus or the selection; the header has its own
 		// (this gesture captures, so it sees the header's presses first)
 		if(n_press != 1 || on_header(y))

@@ -111,6 +111,7 @@ public abstract class BeatBox.Media : GLib.Object {
 	public bool skip_shuffle { get; set; default = false; }       // shuffled play passes it by
 	public int volume_adjust { get; set; default = 0; }           // -100..100 %, see ReplayGain.vala
 	public bool remember_position { get; set; default = false; }  // resumes where it was left, like podcasts
+	public bool unchecked { get; set; default = false; }         // its check box is off: playing in a row passes it by
 	
 	/* What the lists sort by: the Sorting tab's names, otherwise the names themselves (lower case) */
 	public string title_key { owned get { return (sort_title != "" ? sort_title : title).down(); } }

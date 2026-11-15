@@ -220,7 +220,7 @@ CREATE TABLE IF NOT EXISTS list_setups (
 	/* Columns of 'songs' added since BeatBox 0.13, in this order after is_video (the
 	 * library reads them by position): databases without them get them at startup */
 	const string[] SONG_COLUMNS_ADDED = { "bpm INT", "sort_title TEXT", "sort_artist TEXT", "sort_album_artist TEXT",
-		"sort_album TEXT", "sort_composer TEXT", "compilation INT", "skip_shuffle INT", "volume_adjust INT", "remember_position INT" };
+		"sort_album TEXT", "sort_composer TEXT", "compilation INT", "skip_shuffle INT", "volume_adjust INT", "remember_position INT", "unchecked INT" };
 	
 	SQLHeavy.Database _db;
 	
