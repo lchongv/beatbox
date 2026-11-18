@@ -74,3 +74,9 @@ actionbar.app-statusbar > revealer > box {
   box-shadow: inset 0 1px 0 alpha(white, .08);
 }
 actionbar.app-statusbar label, actionbar.app-statusbar image { color: #dfe2e7; text-shadow: none; }
+
+label.column-browser-header {
+  background-image: linear-gradient(to bottom, #44474c, #33363a);
+  border-bottom-color: #17181a;
+}
+.column-browser > separator { background-color: #101113; }

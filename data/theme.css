@@ -210,6 +210,29 @@ treeview.view header button {
   font-weight: normal;
 }
 
+/* ===== Column browser: iTunes style, zebra rows, glossy headers, blue selection ===== */
+.column-browser { background-color: @bb_row_a; }
+.column-browser > separator { background-image: none; background-color: #a4a4a4; min-width: 1px; }
+label.column-browser-header {
+  background-image: linear-gradient(to bottom, #fdfdfd, #dcdcdc);
+  border-bottom: 1px solid #a4a4a4;
+  padding: 2px 8px;
+  font-size: 90%;
+}
+listview.column-browser-list, listview.column-browser-list > row { background-color: transparent; }
+listview.column-browser-list > row { padding: 0; min-height: 0; border-radius: 0; }
+listview.column-browser-list > row:nth-child(odd) { background-color: @bb_row_a; }
+listview.column-browser-list > row:nth-child(even) { background-color: @bb_row_b; }
+listview.column-browser-list > row:hover { background-color: alpha(@bb_accent, .12); }
+listview.column-browser-list > row:selected {
+  background-image: linear-gradient(to bottom, shade(@bb_accent, 1.18), @bb_accent);
+  color: white;
+}
+listview.column-browser-list > row:selected label { color: white; }
+.column-browser-row { padding: 1px 8px; font-size: 90%; }
+.column-browser-row label.dim-label { opacity: .6; }
+label.browser-all { font-weight: bold; }
+
 /* ===== Album grid ===== */
 iconview.albumgrid, iconview.albumgrid.view {
   background-color: #f0f1f4;
