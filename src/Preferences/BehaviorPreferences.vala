@@ -450,7 +450,62 @@ public class BeatBox.PluginsPreferences : SimplePreferences {
 public class BeatBox.CoverPreferences : SimplePreferences {
 	public override string title { get { return _("Album Art"); } }
 
+	/** One chooser per column (the first is always there, the others can be "none"): a criterion is used once */
+	void add_browser_column_choosers() {
+		var chosen = new string[4];
+		int n = 0;
+		foreach(var c in BrowserCriterion.parse(App.settings.main.column_browser_columns))
+			chosen[n++] = c.id;
+		for(int i = n; i < 4; i++)
+			chosen[i] = "";
+		var combos = new ComboBoxText[4];
+		bool updating = false;
+		
+		for(int i = 0; i < 4; i++) {
+			int index = i;
+			var combo = new ComboBoxText();
+			if(i > 0)
+				combo.append("", _("(none)"));
+			foreach(var c in BrowserCriterion.all())
+				combo.append(c.id, c.label);
+			combo.active_id = chosen[i];
+			combos[i] = combo;
+			combo.changed.connect(() => {
+				if(updating)
+					return;
+				updating = true;
+				string old = chosen[index];
+				string picked = combo.active_id ?? "";
+				// a criterion already in another column goes there in exchange
+				for(int j = 0; j < 4; j++) {
+					if(j != index && picked != "" && chosen[j] == picked) {
+						if(old == "" && j == 0)
+							old = chosen[0]; // the first column can't be left empty
+						chosen[j] = old;
+						combos[j].active_id = old;
+					}
+				}
+				chosen[index] = picked;
+				// no gaps: the columns are the filled choosers in order
+				var ids = new string[0];
+				foreach(var id in chosen) {
+					if(id != "")
+						ids += id;
+				}
+				App.settings.main.column_browser_columns = string.joinv(",", ids);
+				updating = false;
+			});
+			string[] names = { _("First column:"), _("Second column:"), _("Third column:"), _("Fourth column:") };
+			add_row(labelled(names[i], combo));
+		}
+	}
+
 	public CoverPreferences() {
+		add_heading(_("Column Browser"));
+		var browser = add_check(_("Show the Genre, Artist and Album boxes above the song list"), App.settings.main.show_column_browser);
+		browser.toggled.connect(() => { App.settings.main.show_column_browser = browser.active; });
+		add_browser_column_choosers();
+
 		add_heading(_("Cover Grid"));
 		var clickMode = new ComboBoxText();
 		clickMode.append("inline", _("Unfold it inline, under its row"));

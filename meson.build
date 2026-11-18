@@ -1,4 +1,4 @@
-project('beatbox', 'vala', 'c', version: '1.2.58')
+project('beatbox', 'vala', 'c', version: '1.2.59')
 
 gnome = import('gnome')
 i18n = import('i18n')
@@ -288,6 +288,7 @@ app_sources = files(
   'src/Widgets/TrackReport.vala',
   'src/Widgets/CoverFlow.vala',
   'src/Widgets/AlbumWall.vala',
+  'src/Widgets/ColumnBrowser.vala',
   'src/Widgets/AdvancedSearchBox.vala',
   'src/Widgets/SourceViewSearchSuggestions.vala',
   'src/Widgets/SimpleOptionChooser.vala',

@@ -121,7 +121,7 @@ public class BeatBox.AlbumGrid : GenericGrid {
 			Album m = (Album)table.get(i);
 			
 			if(search in m.get_album_artist().down() || search in m.get_album().down()) {
-				if((m.get_album_artist().down() == parent_wrapper.artist_filter.down() || parent_wrapper.artist_filter == "")) {
+				if(parent_wrapper.album_passes_filters(m)) {
 					show.set(show_index++, m);
 				}
 			}

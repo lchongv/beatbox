@@ -628,9 +628,7 @@ public abstract class BeatBox.GenericList : FastList {
 			search in m.album.down() || search in m.title.down() ||
 			search in m.genre.down()) {
 				if(parent_wrapper != null) {
-					if((m.album_artist.down() == parent_wrapper.artist_filter.down() || parent_wrapper.artist_filter == "") &&
-					(m.album.down() == parent_wrapper.album_filter.down() || parent_wrapper.album_filter == "") &&
-					(m.genre.down() == parent_wrapper.genre_filter.down() || parent_wrapper.genre_filter == "")) {
+					if(parent_wrapper.passes_filters(m)) {
 						show.set(show_index++, table.get(i));
 					}
 				}

@@ -94,9 +94,16 @@ public abstract class BeatBox.SourceView : Box, View {
 	// ALL the media. Data source.
 	public int media_count { get { return (list_view != null) ? (int)list_view.get_table().size() : 0; } }
 	protected string last_search = "";
-	protected string _artist_filter = "";
-	protected string _album_filter = "";
-	protected string _genre_filter = "";
+	// The values the list is narrowed to (lower-cased); an empty set lets everything in.
+	// They come from the column browser (several values at once) or from the search suggestions (one)
+	// per criterion id ("genre", "artist", "album", "year"...), see BrowserCriterion
+	protected HashMap<string, HashSet<string>> filters = new HashMap<string, HashSet<string>>();
+	ColumnBrowser? browser = null;
+	Paned? browser_paned = null;
+	bool browser_wanted = false;     // shown, or sliding in
+	bool browser_animating = false;
+	uint browser_anim_id = 0;
+	uint browser_refresh_id = 0;
 
 	// Stops from searching unnecesarilly when changing b/w 0 words and search.
 	private bool showing_all { get { return list_view.get_visible_table().size() == list_view.get_table().size(); } }
@@ -104,42 +111,51 @@ public abstract class BeatBox.SourceView : Box, View {
 	bool initialized;
 	
 	public string album_filter {
-		get {
-			return _album_filter;
-		}
-		set {
-			if(_album_filter != value) {
-				_album_filter = value;
-				
-				re_search();
-			}
-		}
+		set { set_single_filter("album", value); }
 	}
 	
 	public string artist_filter {
-		get {
-			return _artist_filter;
-		}
-		set {
-			if(_artist_filter != value) {
-				_artist_filter = value;
-				
-				re_search();
-			}
-		}
+		set { set_single_filter("artist", value); }
 	}
 	
 	public string genre_filter {
-		get {
-			return _genre_filter;
+		set { set_single_filter("genre", value); }
+	}
+	
+	void set_single_filter (string id, string value) {
+		var set = filters.get(id);
+		if(value == "" ? (set == null || set.size == 0) : (set != null && set.size == 1 && set.contains(value.down())))
+			return;
+		set = new HashSet<string>();
+		if(value != "")
+			set.add(value.down());
+		filters.set(id, set);
+		if(browser != null)
+			browser.set_selection(filters);
+		re_search();
+	}
+	
+	/** Does the song pass every filter? */
+	public bool passes_filters (Media m) {
+		foreach(var e in filters.entries) {
+			if(e.value.size == 0)
+				continue;
+			var c = BrowserCriterion.find(e.key);
+			if(c != null && !e.value.contains(c.value_of(m).down()))
+				return false;
 		}
-		set {
-			if(_genre_filter != value) {
-				_genre_filter = value;
-				
-				re_search();
-			}
+		return true;
+	}
+	
+	/** Same for an album of the grid: it passes if any of its songs does */
+	public bool album_passes_filters (Album a) {
+		if(filters.size == 0)
+			return true;
+		foreach(var m in a.get_medias()) {
+			if(passes_filters(m))
+				return true;
 		}
+		return false;
 	}
 	
 	protected SourceView (Collection<Media> the_medias, TreeViewSetup tvs) {
@@ -151,10 +167,6 @@ public abstract class BeatBox.SourceView : Box, View {
 		
 		current_medias = new HashTable<int, int>(null, null); // rowid, int
 		album_keys = new HashMap<string, Album>(null, null);
-		
-		_album_filter = "";
-		_artist_filter = "";
-		_genre_filter = "";
 		
 		set_orientation(Orientation.VERTICAL);
 		
@@ -256,6 +268,107 @@ public abstract class BeatBox.SourceView : Box, View {
 		
 		if (grid_page != null)
 			view_container.append_page (grid_page);
+		
+		if (have_list_view && have_album_view) {
+			browser = new ColumnBrowser();
+			browser.filters_changed.connect(on_browser_filters);
+			// the browser sits above the views, and its divider moves
+			var before = view_container.get_prev_sibling();
+			remove(view_container);
+			browser_paned = new Paned(Orientation.VERTICAL);
+			browser_paned.vexpand = true;
+			browser_paned.start_child = browser;
+			browser_paned.resize_start_child = false;
+			browser_paned.shrink_start_child = false;
+			browser_paned.end_child = view_container;
+			browser_paned.resize_end_child = true;
+			browser_paned.shrink_end_child = false;
+			browser_paned.position = App.settings.main.column_browser_height;
+			browser_paned.notify["position"].connect(() => {
+				if (browser.visible && !browser_animating && browser_paned.position > 20)
+					App.settings.main.column_browser_height = browser_paned.position;
+			});
+			insert_child_after(browser_paned, before);
+			browser.visible = false;
+			browser.set_criteria(BrowserCriterion.parse(App.settings.main.column_browser_columns), filters);
+			App.settings.main.notify["show-column-browser"].connect(() => { update_browser_visibility(true); });
+			App.settings.main.notify["column-browser-columns"].connect(() => {
+				browser.set_criteria(BrowserCriterion.parse(App.settings.main.column_browser_columns), filters);
+				queue_browser_refresh();
+			});
+		}
+	}
+	
+	void on_browser_filters (HashMap<string, HashSet<string>> chosen) {
+		filters = chosen; // only what the browser shows is kept
+		re_search();
+	}
+	
+	/** Shows or hides the browser; from the toggle (animate) it slides open or shut, otherwise it just is */
+	void update_browser_visibility (bool animate = false) {
+		if (browser == null)
+			return;
+		bool showing_media = view_container.page == view_container.page_num(list_page) ||
+			(album_page != null && view_container.page == view_container.page_num(album_page));
+		bool want = App.settings.main.show_column_browser && showing_media;
+		if (want == browser_wanted && browser_anim_id == 0)
+			return;
+		browser_wanted = want;
+		int height = App.settings.main.column_browser_height;
+
+		if (browser_anim_id != 0) {
+			browser_paned.remove_tick_callback(browser_anim_id);
+			browser_anim_id = 0;
+		}
+		if (!animate || !browser_paned.get_mapped()) {
+			browser_animating = false;
+			browser_paned.shrink_start_child = false;
+			browser.visible = want;
+			if (want)
+				browser_paned.position = height;
+			return;
+		}
+
+		// slide the divider: from where it is now (0 when hidden) to the saved height, or to 0
+		int from = browser.visible ? browser_paned.position : 0;
+		int to = want ? height : 0;
+		int64 duration = 220 * 1000; // microseconds
+		int64 start = 0;
+		browser_animating = true;
+		browser_paned.shrink_start_child = true; // so the divider can go under the browser's own height
+		browser.visible = true;
+		browser_paned.position = from;
+		browser_anim_id = browser_paned.add_tick_callback((widget, clock) => {
+			if (start == 0)
+				start = clock.get_frame_time();
+			double t = ((double)(clock.get_frame_time() - start) / duration).clamp(0, 1);
+			double eased = 1 - Math.pow(1 - t, 3); // fast at first, slowing to a stop
+			browser_paned.position = from + (int)Math.round((to - from) * eased);
+			if (t < 1)
+				return Source.CONTINUE;
+			browser_animating = false;
+			browser_anim_id = 0;
+			browser_paned.shrink_start_child = false;
+			if (!want)
+				browser.visible = false;
+			else
+				browser_paned.position = to;
+			return Source.REMOVE;
+		});
+	}
+	
+	/** The browser lists what the view holds: after any change of it (once, however many changes come) */
+	void queue_browser_refresh () {
+		if (browser == null || browser_refresh_id != 0)
+			return;
+		browser_refresh_id = Idle.add(() => {
+			browser_refresh_id = 0;
+			var all = new ArrayList<Media>();
+			foreach(var m in list_view.get_table().get_values())
+				all.add(m);
+			browser.set_medias(all);
+			return Source.REMOVE;
+		});
 	}
 	
 	bool have_grid { get { return have_album_view || grid_page != null; } }
@@ -350,6 +463,7 @@ public abstract class BeatBox.SourceView : Box, View {
 		view_container.set_current_page (view_index);
 		if (cover_flow != null)
 			cover_flow.visible = (type == SourceViewType.LIST && App.window.get_current_view_selection() == 2);
+		update_browser_visibility();
 
 		// Update BeatBox's toolbar widgets
 		if(visible)
@@ -436,9 +550,14 @@ public abstract class BeatBox.SourceView : Box, View {
 	}
 	
 	public void clear_filters () {
-		_album_filter = "";
-		_artist_filter = "";
-		_genre_filter = "";
+		bool any = false;
+		foreach(var set in filters.values)
+			any = any || set.size > 0;
+		if(!any)
+			return;
+		filters.clear();
+		if(browser != null)
+			browser.set_selection(filters);
 		
 		re_search();
 	}
@@ -507,6 +626,7 @@ public abstract class BeatBox.SourceView : Box, View {
 		update_library_window_widgets ();
 		set_statusbar_info ();
 		check_have_media ();
+		queue_browser_refresh();
 	}
 	
 	public void update_medias (Collection<Media> to_update, bool metadata_changed) {
@@ -628,6 +748,7 @@ public abstract class BeatBox.SourceView : Box, View {
 		update_library_window_widgets ();
 		set_statusbar_info ();
 		check_have_media ();
+		queue_browser_refresh();
 	}
 	
 	public void remove_medias (Collection<Media> to_remove) {
@@ -682,6 +803,7 @@ public abstract class BeatBox.SourceView : Box, View {
 		update_library_window_widgets ();
 		set_statusbar_info ();
 		check_have_media ();
+		queue_browser_refresh();
 	}
 	
 	public void set_media (Collection<Media> new_media, bool update_grid = false) {
@@ -728,6 +850,7 @@ public abstract class BeatBox.SourceView : Box, View {
 			set_statusbar_info ();
 			check_have_media ();
 			update_library_window_widgets ();
+			queue_browser_refresh();
 			
 		}
 	}

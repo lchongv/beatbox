@@ -323,6 +323,9 @@ public class BeatBox.Settings {
         public string lcd_marker_shape { get; set; } // diamond, circle, cup or nyan (data/<shape>.svg)
         public bool lcd_total_time { get; set; }     // the right time shows the length instead of what remains (click it)
         public bool album_grid_inline { get; set; }
+        public bool show_column_browser { get; set; } // the boxes above the song list
+        public string column_browser_columns { get; set; } // their criteria: "genre,artist,album" (BrowserCriterion ids, 1 to 4)
+        public int column_browser_height { get; set; }
         public bool aqua_scrollbars { get; set; }    // Mac OS X Tiger scrollbars, drawn by aqua-scrollbar.c (applies on restart)
         public int album_detail_cover_percent { get; set; }
         public bool download_covers { get; set; }
@@ -356,6 +359,9 @@ public class BeatBox.Settings {
             lcd_marker_size = 14;
             lcd_marker_shape = "diamond";
             album_grid_inline = true;
+            show_column_browser = false;
+            column_browser_columns = "genre,artist,album";
+            column_browser_height = 150;
             album_detail_cover_percent = 25;
             download_covers = true;
             visualizer_classic = false;
