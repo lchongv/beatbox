@@ -88,6 +88,7 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 	Image playIcon;
 	Button nextButton;
 	ModeButton viewSelector;
+	ToggleButton browserToggle;
 	Scale volumeScale;
 	bool songInfoShown; // the now playing view in place of the lists (Ctrl+I)
 	AdvancedSearchBox searchField;
@@ -413,7 +414,18 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		});
 		var viewBox = new Box(Orientation.VERTICAL, 0);
 		viewBox.valign = Gtk.Align.CENTER;
-		viewBox.append(viewSelector);
+		// the toggle of the column browser (Genre | Artist | Album...) sits right of the view switcher
+		browserToggle = new ToggleButton();
+		browserToggle.child = new Image.from_resource("/net/launchpad/beatbox/icons/16x16/actions/view-columns-symbolic.svg");
+		browserToggle.tooltip_text = _("Show or hide the column browser");
+		browserToggle.valign = Gtk.Align.CENTER;
+		browserToggle.active = App.settings.main.show_column_browser;
+		browserToggle.toggled.connect(() => { App.settings.main.show_column_browser = browserToggle.active; });
+		App.settings.main.notify["show-column-browser"].connect(() => { browserToggle.active = App.settings.main.show_column_browser; });
+		var viewRow = new Box(Orientation.HORIZONTAL, 6);
+		viewRow.append(viewSelector);
+		viewRow.append(browserToggle);
+		viewBox.append(viewRow);
 		viewBox.append(volumeScale);
 
 		viewSelectorBin = viewBox;
@@ -861,6 +873,7 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		nextButton.set_sensitive(mediaActive || songsInList);
 		
 		viewSelector.set_sensitive(get_current_view().supports_view_selector());
+		browserToggle.set_sensitive(get_current_view().supports_view_selector());
 		searchField.set_sensitive(get_current_view().supports_search());
 
 		sideTree.setVisibility(sideTree.playlists_iter, haveMedias);
