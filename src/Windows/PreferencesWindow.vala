@@ -29,9 +29,9 @@ using Gtk;
 using Gee;
 
 public class BeatBox.PreferencesWindow : Gtk.Window {
-	HashMap<PreferencesSection, TreeIter?> sections;
-	TreeIter general_iter;
-	TreeIter libraries_iter;
+	HashMap<PreferencesSection, SideBarItem?> sections;
+	SideBarItem general_iter;
+	SideBarItem libraries_iter;
 	
 	SideBar side_bar;
 	Notebook notebook;
@@ -41,7 +41,7 @@ public class BeatBox.PreferencesWindow : Gtk.Window {
 	PreferencesSection first_section; // shown when the page on screen is hidden
 	
 	public PreferencesWindow () {
-		sections = new HashMap<PreferencesSection, TreeIter?>();
+		sections = new HashMap<PreferencesSection, SideBarItem?>();
 		
 		build_ui();
 		add_sections();
@@ -83,7 +83,11 @@ public class BeatBox.PreferencesWindow : Gtk.Window {
 		notebook_scroll.set_child(notebook_padding);
 		
 		var list_to_content = new Box(Orientation.HORIZONTAL, 0);
-		list_to_content.append(side_bar);
+		var side_scroll = new ScrolledWindow();
+		side_scroll.set_policy(PolicyType.NEVER, PolicyType.AUTOMATIC);
+		side_scroll.set_child(side_bar);
+		side_scroll.has_frame = true;
+		list_to_content.append(side_scroll);
 		notebook_scroll.hexpand = true;
 		list_to_content.append(AquaScroll.wrap(notebook_scroll));
 		
@@ -142,7 +146,7 @@ public class BeatBox.PreferencesWindow : Gtk.Window {
 		}
 		
 		update_visible_sections();
-		side_bar.setSelectedIter(side_bar.convertToFilter(sections.get(library_pref)));
+		side_bar.setSelectedItem(sections.get(library_pref));
 	}
 
 	/** The pages shown without "Show advanced settings": about five everyday ones */
@@ -167,7 +171,7 @@ public class BeatBox.PreferencesWindow : Gtk.Window {
 		}
 		side_bar.expand_all();
 		if (on_screen_hidden)
-			side_bar.setSelectedIter(side_bar.convertToFilter(sections.get(first_section)));
+			side_bar.setSelectedItem(sections.get(first_section));
 	}
 	
 	public void add_section(PreferencesSection section) {
@@ -176,13 +180,13 @@ public class BeatBox.PreferencesWindow : Gtk.Window {
 			return; // nothing to do but tell them they suck and return
 		}
 		
-		TreeIter? parent = null;
+		SideBarItem? parent = null;
 		if(section.category == PreferencesSectionCategory.LIBRARIES)
 			parent = libraries_iter;
 		else
 			parent = general_iter;
 		
-		TreeIter? iter = side_bar.addItem(parent, null, section, section.widget, section.icon, Markup.escape_text(section.title), null, false, false, false);
+		SideBarItem? iter = side_bar.addItem(parent, null, section, section.widget, section.icon, section.title, null, false, false, false);
 		sections.set(section, iter);
 		notebook.append_page(section.widget);
 		if (first_section != null && !App.settings.main.show_advanced_preferences && !is_basic(section))

@@ -29,37 +29,37 @@ using Gtk;
 using Gee;
 
 public class BeatBox.SideTreeView : BeatBox.SideBar {
-	HashMap<View, TreeIter?> view_to_iter;
+	HashMap<View, SideBarItem?> view_to_iter;
 	
-	public TreeIter library_iter {get; private set;}
-	public TreeIter library_music_iter {get; private set;}
-	public TreeIter library_podcasts_iter {get; private set;}
-	public TreeIter library_audiobooks_iter {get; private set;}
-	public TreeIter? library_duplicates_iter {get; private set;}
+	public SideBarItem library_iter {get; private set;}
+	public SideBarItem library_music_iter {get; private set;}
+	public SideBarItem library_podcasts_iter {get; private set;}
+	public SideBarItem library_audiobooks_iter {get; private set;}
+	public SideBarItem? library_duplicates_iter {get; private set;}
 
-	public TreeIter devices_iter {get; private set;}
-	public TreeIter devices_cdrom_iter {get; private set;}
+	public SideBarItem devices_iter {get; private set;}
+	public SideBarItem devices_cdrom_iter {get; private set;}
 	
-	public TreeIter network_iter {get; private set;}
-	public TreeIter network_radio_iter {get; private set;}
-	public TreeIter network_store_iter {get; private set;}
+	public SideBarItem network_iter {get; private set;}
+	public SideBarItem network_radio_iter {get; private set;}
+	public SideBarItem network_store_iter {get; private set;}
 	
-	public TreeIter playlists_iter {get; private set;}
-	public TreeIter playlists_queue_iter {get; private set;}
-	public TreeIter playlists_history_iter {get; private set;}
-	public TreeIter playlists_similar_iter {get; private set;}
+	public SideBarItem playlists_iter {get; private set;}
+	public SideBarItem playlists_queue_iter {get; private set;}
+	public SideBarItem playlists_history_iter {get; private set;}
+	public SideBarItem playlists_similar_iter {get; private set;}
 	
-	public TreeIter plugins_iter { get; private set; }
+	public SideBarItem plugins_iter { get; private set; }
 	
 	GLib.Menu libraryMenu;
 	GLib.Menu playlistMenu;
 	Gtk.GestureClick side_list_click; // GTK3 controllers need a reference
 	
 	public SideTreeView() {
-		view_to_iter = new HashMap<View, TreeIter?>();
+		view_to_iter = new HashMap<View, SideBarItem?>();
 
 		// Setup theming
-		add_css_class ("sidebar");
+		view.add_css_class ("sidebar");
 		
 		buildUI();
 	}
@@ -78,12 +78,10 @@ public class BeatBox.SideTreeView : BeatBox.SideBar {
 		side_list_click.button = 0;
 		side_list_click.propagation_phase = Gtk.PropagationPhase.CAPTURE;
 		side_list_click.pressed.connect(sideListClick);
-		this.add_controller(side_list_click);
-		this.row_activated.connect((path, column) => sideListDoubleClick(path, column));
+		view.add_controller(side_list_click);
+		this.item_activated.connect(sideListDoubleClick);
 		this.true_selection_change.connect(side_list_selection_change);
 		this.true_drag_received.connect(true_drag_received_signal);
-		
-		this.expand_all();
 		
 		addBasicItems ();
 	}
@@ -103,7 +101,7 @@ public class BeatBox.SideTreeView : BeatBox.SideBar {
 	
 	// TODO: Make this properly recursive
 	public void add_view(View view) {
-		TreeIter? added = addItem(convert_category_to_iter(view.get_sidetree_category()), get_proper_before(view), 
+		SideBarItem? added = addItem(convert_category_to_iter(view.get_sidetree_category()), get_proper_before(view), 
 								 view.get_object(), view, view.get_view_icon(), view.get_view_name(),
 								 null, false, view.can_receive_drop(), false);
 		
@@ -112,7 +110,7 @@ public class BeatBox.SideTreeView : BeatBox.SideBar {
 		// We add all the iter items here, and let LW handle adding them to the notebook
 		if(view.get_sub_views() != null) {
 			foreach(View sub_view in view.get_sub_views()) {
-				TreeIter sub_added = addItem(added, null, sub_view.get_object(), sub_view, sub_view.get_view_icon(), sub_view.get_view_name(),
+				SideBarItem sub_added = addItem(added, null, sub_view.get_object(), sub_view, sub_view.get_view_icon(), sub_view.get_view_name(),
 					 null, false, sub_view.can_receive_drop(), false);
 				
 				view_to_iter.set(sub_view, sub_added);
@@ -154,7 +152,7 @@ public class BeatBox.SideTreeView : BeatBox.SideBar {
 		}
 	}
 	
-	private TreeIter? convert_category_to_iter(SideTreeCategory category) {
+	private SideBarItem? convert_category_to_iter(SideTreeCategory category) {
 		switch(category) {
 			case SideTreeCategory.LIBRARY:
 				return library_iter;
@@ -173,52 +171,30 @@ public class BeatBox.SideTreeView : BeatBox.SideBar {
 	
 	// TODO: Abstract this to View api? If I do, could cause unwanted behavior
 	// from 3rd party plugins
-	private TreeIter? get_proper_before(View view) {
-		TreeIter? before_iter = null;
+	private SideBarItem? get_proper_before(View view) {
+		SideBarItem? before_iter = null;
 
 		// Decide which category to use
 		switch (view.get_view_type()) {
 			case View.ViewType.PLAYLIST:
 				string name = ((BasePlaylist)view.get_object()).name;
-				TreeIter pivot;
-				tree.iter_children(out pivot, playlists_iter);
-				
-				do {
-					string tempName;
-					GLib.Object tempO;
-					tree.get(pivot, SideBarColumn.COLUMN_OBJECT, out tempO, SideBarColumn.COLUMN_TEXT, out tempName);
-					
-					if(tempO != null && tempO is StaticPlaylist && tempName > name) {
+				for(uint i = 0; i < playlists_iter.children.get_n_items(); i++) {
+					var pivot = (SideBarItem) playlists_iter.children.get_item(i);
+					if(pivot.object != null && pivot.object is StaticPlaylist && pivot.text > name) {
 						before_iter = pivot;
 						break;
 					}
-					else if(!tree.iter_next(ref pivot)) {
-						break;
-					}
-					
-				} while(true);
-				
+				}
 				break;
 			case View.ViewType.SMART_PLAYLIST:
 				string name = ((BasePlaylist)view.get_object()).name;
-				TreeIter pivot;
-				tree.iter_children(out pivot, playlists_iter);
-				
-				do {
-					string tempName;
-					GLib.Object tempO;
-					tree.get(pivot, SideBarColumn.COLUMN_OBJECT, out tempO, SideBarColumn.COLUMN_TEXT, out tempName);
-					
-					if(tempO != null && ((tempO is StaticPlaylist) || tempName > name)) {
+				for(uint i = 0; i < playlists_iter.children.get_n_items(); i++) {
+					var pivot = (SideBarItem) playlists_iter.children.get_item(i);
+					if(pivot.object != null && ((pivot.object is StaticPlaylist) || pivot.text > name)) {
 						before_iter = pivot;
 						break;
 					}
-					else if(!tree.iter_next(ref pivot)) {
-						break;
-					}
-					
-				} while(true);
-				
+				}
 				break;
 			default:
 				break;
@@ -247,7 +223,7 @@ public class BeatBox.SideTreeView : BeatBox.SideBar {
 			library_duplicates_iter = null;
 		}
 		
-		TreeIter? to_remove = view_to_iter.get(view);
+		SideBarItem? to_remove = view_to_iter.get(view);
 		//view_to_iter.unset(view);
 		if(to_remove != null) {
 			removeItem(to_remove);
@@ -257,42 +233,27 @@ public class BeatBox.SideTreeView : BeatBox.SideBar {
 	// This will get executed twice when user selects a view by clicking on
 	// the sidetree, but in all other cases this gets called once.
 	public void select_view(View view) {
-		TreeIter? iter = view_to_iter.get(view);
+		SideBarItem? iter = view_to_iter.get(view);
 		
 		if(iter != null) {
-			setSelectedIter(convertToFilter(iter));
+			setSelectedItem(iter);
 		}
 		else {
 			warning("Could not find an iter for view %s", view.name);
 		}
 	}
 	
-	void sideListClick(int n_press, double widget_x, double widget_y) {
+	void sideListClick(int n_press, double x, double y) {
 		uint button = side_list_click.get_current_button();
-		int x, y;
-		convert_widget_to_bin_window_coords((int)widget_x, (int)widget_y, out x, out y);
-		TreeIter iter;
-		TreePath path;
-		TreeViewColumn column;
-		int cell_x;
-		int cell_y;
-		
-		this.get_path_at_pos(x, y, out path, out column, out cell_x, out cell_y);
-		if(path == null)
+		var item = item_at(x, y);
+		if(item == null)
 			return;
 		
-		if(!filter.get_iter(out iter, path))
-			return;
-		
-		TreeIter parent;
-		if(filter.iter_parent(out parent, iter)) {
-			Widget w;
-			filter.get(iter, SideBarColumn.COLUMN_WIDGET, out w);
-			
-			View view = (View)w;
+		if(item.parent != null) {
+			View view = (View)item.widget;
 			if(button == 3) {
 				if(view.get_context_menu() != null) {
-					UI.popup_menu_model(this, view.get_context_menu(), widget_x, widget_y, view.get_context_actions());
+					UI.popup_menu_model(this, view.get_context_menu(), x, y, view.get_context_actions());
 				}
 			}
 			else if(button == 2) {
@@ -301,38 +262,26 @@ public class BeatBox.SideTreeView : BeatBox.SideBar {
 				}
 			}
 		}
-		else {
-			if(button == 3) {
-				if(iter == convertToFilter(library_iter)) {
-					if(App.actions.show_duplicates.get_enabled()) // its only item, hidden while duplicates are shown
-						UI.popup_menu_model(this, libraryMenu, widget_x, widget_y);
-				}
-				else if(iter == convertToFilter(playlists_iter)) {
-					UI.popup_menu_model(this, playlistMenu, widget_x, widget_y);
-				}
+		else if(button == 3) {
+			if(item == library_iter) {
+				if(App.actions.show_duplicates.get_enabled()) // its only item, hidden while duplicates are shown
+					UI.popup_menu_model(this, libraryMenu, x, y);
+			}
+			else if(item == playlists_iter) {
+				UI.popup_menu_model(this, playlistMenu, x, y);
 			}
 		}
 	}
 	
-	void sideListDoubleClick(TreePath path, TreeViewColumn column) {
-		TreeIter iter_f;
-		TreeIter iter;
-		
-		if(!filter.get_iter(out iter_f, path))
-			return;
-			
-		iter = convertToChild(iter_f);
-			
-		Widget w = getWidget(iter);
-		View view = (View)w;
-		
-		if(view.can_set_as_current_list()) {
+	void sideListDoubleClick(SideBarItem item) {
+		View? view = item.widget as View;
+		if(view != null && view.can_set_as_current_list()) {
 			view.play_first_media();
 		}
 	}
 	
 	public void reset_view() {
-		TreeIter? iter = null;
+		SideBarItem? iter = null;
 		
         if(App.playback.current_media == null || App.playback.current_media is Song) {
 			iter = library_music_iter;
@@ -364,8 +313,8 @@ public class BeatBox.SideTreeView : BeatBox.SideBar {
 		App.window.set_active_view ((View)w);
 	}
 	
-	void true_drag_received_signal(TreeIter iter, string[] uris) {
-		Widget w = getWidget(convertToChild(iter));
+	void true_drag_received_signal(SideBarItem iter, string[] uris) {
+		Widget w = getWidget(iter);
 		View view = (View)w;
 
 		if(view.can_receive_drop()) {

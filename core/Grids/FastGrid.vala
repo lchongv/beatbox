@@ -25,36 +25,15 @@
  * BeatBox is covered by.
  */
 
+
 using Gtk;
 
+/** A grid of covers on a Gtk.GridView (Gtk.IconView is deprecated since GTK 4.10). As
+ *  FastList, the grid keeps a table of its objects, sorts it itself and shows the ones the
+ *  search lets through; the cells read the cover, the text and the tooltip from the value func. */
 [GIR (visible = false)] // internal, not for plugins
-public class BeatBox.FastGrid : Box, Scrollable {
-	// GTK 4 does not let a class derive from IconView: the icon view is a child of this box
-	protected IconView view;
-
-	// The scrolled window scrolls the icon view itself, as when this was the IconView (GTK3):
-	// through a viewport the icon view only ever laid out one column.
-	// (set to null while constructing, before the view exists)
-	public Adjustment hadjustment {
-		get { return view.hadjustment; }
-		set construct { if (view != null) view.hadjustment = value; }
-	}
-	public Adjustment vadjustment {
-		get { return view.vadjustment; }
-		set construct { if (view != null) view.vadjustment = value; }
-	}
-	public ScrollablePolicy hscroll_policy {
-		get { return view.hscroll_policy; }
-		set { view.hscroll_policy = value; }
-	}
-	public ScrollablePolicy vscroll_policy {
-		get { return view.vscroll_policy; }
-		set { view.vscroll_policy = value; }
-	}
-	public bool get_border (out Border border) {
-		border = {};
-		return false;
-	}
+public class BeatBox.FastGrid : ScrollableBin {
+	protected GridView view;
 
 	protected const int PIXBUF_COLUMN = 0;
 	protected const int MARKUP_COLUMN = 1;
@@ -62,8 +41,14 @@ public class BeatBox.FastGrid : Box, Scrollable {
 	protected const int ALBUM_COLUMN = 3;
 	
 	FastGridModel fm;
+	SingleSelection selection;
 	HashTable<int, GLib.Object> table; // is not the same object as showing.
 	HashTable<int, GLib.Object> showing; // should never point to table.
+	internal Gee.HashSet<FastGridCell> bound_cells = new Gee.HashSet<FastGridCell>();
+	
+	/* user specific function for the cells' values */
+	public delegate Value ValueReturnFunc (int row, int column, GLib.Object o);
+	internal unowned ValueReturnFunc value_func;
 	
 	/* sortable stuff */
 	public delegate int SortCompareFunc (GLib.Object a, GLib.Object b);
@@ -76,38 +61,44 @@ public class BeatBox.FastGrid : Box, Scrollable {
 	
 	/** The visible (sorted, searched) objects changed */
 	public signal void visible_changed();
+	/** An item was clicked (single_click_activate) or got Enter */
+	public signal void item_activated(int position);
 	
-	public FastGrid (GLib.Object default_value) {
-		Object (orientation: Orientation.VERTICAL, spacing: 0);
+	const string CSS = """
+gridview.albumgrid { padding: 12px; }
+gridview.albumgrid > child { padding: 12px; border-radius: 6px; }
+""";
+	
+	public FastGrid () {
+		UI.add_css(CSS);
 		table = new HashTable<int, GLib.Object>(null, null);
 		showing = new HashTable<int, GLib.Object>(null, null);
-		fm = new FastGridModel(default_value);
-
+		fm = new FastGridModel();
+		selection = new SingleSelection(fm) { autoselect = false, can_unselect = true };
+		
 		last_search = "";
-
-		view = new IconView();
-		view.hexpand = view.vexpand = true;
-		view.margin_top = view.margin_bottom = view.margin_start = view.margin_end = 12;
-		view.item_width = IconsInterface.ALBUM_VIEW_IMAGE_SIZE;
-		append(view);
-
-		// Pack the cells by hand: with set_pixbuf_column()/set_markup_column()
-		// GTK3 reserves twice item_width per item, leaving huge gaps.
-		var pix_cell = new CellRendererPixbuf();
-		var text_cell = new CellRendererText();
-		text_cell.alignment = Pango.Alignment.CENTER;
-		text_cell.xalign = 0.5f;
-		text_cell.yalign = 0.0f;
-		text_cell.wrap_mode = Pango.WrapMode.WORD_CHAR;
-		text_cell.wrap_width = IconsInterface.ALBUM_VIEW_IMAGE_SIZE;
-		view.pack_start(UI.full_size(pix_cell), false); // the covers at their own size
-		view.add_attribute(pix_cell, "pixbuf", PIXBUF_COLUMN);
-		view.pack_start(text_cell, false);
-		view.add_attribute(text_cell, "markup", MARKUP_COLUMN);
-		view.set_tooltip_column(TOOLTIP_COLUMN);
-
+		
+		var factory = new SignalListItemFactory();
+		factory.setup.connect((obj) => ((ListItem) obj).child = new FastGridCell(this));
+		factory.bind.connect((obj) => {
+			var item = (ListItem) obj;
+			var cell = (FastGridCell) item.child;
+			cell.item = item;
+			bound_cells.add(cell);
+			cell.refresh();
+		});
+		factory.unbind.connect((obj) => {
+			var cell = (FastGridCell) ((ListItem) obj).child;
+			bound_cells.remove(cell);
+			cell.item = null;
+		});
+		
+		view = new GridView(selection, factory);
+		view.max_columns = 64; // as many as the width allows
+		view.activate.connect((position) => item_activated((int) position));
+		scroll_child = view;
+		
 		set_table(table);
-		view.set_model(fm);
 	}
 	
 	/** Should not be manipulated by client */
@@ -120,27 +111,41 @@ public class BeatBox.FastGrid : Box, Scrollable {
 		return showing;
 	}
 	
-	public int get_index_from_iter(TreeIter iter) {
-		return (int)iter.user_data;
-	}
-	
 	public GLib.Object get_object_from_index(int index) {
 		return showing.get(index);
 	}
 	
 	protected GLib.List<Object> get_selected_objects() {
 		var rv = new GLib.List<Object>();
-		
-		foreach(TreePath path in view.get_selected_items()) {
-			Object o = get_object_from_index(int.parse(path.to_string()));
-			rv.append(o);
-		}
-		
+		if(selection.selected_item != null)
+			rv.append(selection.selected_item);
 		return rv;
 	}
 	
-	public void set_value_func(FastGridModel.ValueReturnFunc func) {
-		fm.set_value_func(func);
+	protected int count_selected() {
+		return selection.selected_item != null ? 1 : 0;
+	}
+	
+	/** The item under (x, y) in this widget's coordinates, -1 for none */
+	public int item_at(double x, double y) {
+		for(var w = pick(x, y, PickFlags.DEFAULT); w != null && w != this; w = w.get_parent()) {
+			if(w is FastGridCell)
+				return ((FastGridCell) w).item != null ? (int) ((FastGridCell) w).item.position : -1;
+			if(w.get_css_name() == "child") { // the padding around a cell
+				var cell = w.get_first_child() as FastGridCell;
+				return (cell != null && cell.item != null) ? (int) cell.item.position : -1;
+			}
+		}
+		return -1;
+	}
+	
+	public void select_only(int position) {
+		if(position >= 0 && position < fm.get_n_items())
+			selection.selected = position;
+	}
+	
+	public void set_value_func(ValueReturnFunc func) {
+		value_func = func;
 	}
 	
 	public void set_table (HashTable<int, GLib.Object> table, bool do_resort = true) {
@@ -153,7 +158,6 @@ public class BeatBox.FastGrid : Box, Scrollable {
 	}
 	
 	// If a GLib.Object is in objects but not in table, will just ignore
-	// TODO: FIXME FOR GENERIC OBJECT. MAYBE ADD INTERFACE WITH GET_KEY()?
 	public void remove_objects (HashTable<GLib.Object, int> objects) {
 		int index = 0;
 		var new_table = new HashTable<int, GLib.Object>(null, null);
@@ -168,7 +172,6 @@ public class BeatBox.FastGrid : Box, Scrollable {
 		
 		// no need to resort, just removing
 		set_table(new_table, false);
-		//get_selection().unselect_all();
 	}
 	
 	// Does NOT check for duplicates
@@ -190,34 +193,30 @@ public class BeatBox.FastGrid : Box, Scrollable {
 		if(search_func == null)
 			return;
 		
-		
 		showing.remove_all();
 		if(search != null)
 			last_search = search;
 		
-		//if(last_search == "") {
-		//	for(int i = 0; i < table.size(); ++i) {
-		//		showing.set(i, table.get(i));
-		//	}
-		//}
-		//else {
-			search_func(last_search, table, ref showing);
-		//}
+		search_func(last_search, table, ref showing);
 		
-		// ponytail: always rebuild the whole model. The old incremental
-		// append/remove path left GtkIconView with stale rows (albums went
-		// missing); a full rebuild is cheap for the number of albums a grid shows.
-		view.set_model(null);
 		fm.set_table(showing);
-		view.set_model(fm);
 		visible_changed();
 	}
 	
+	/** Redraws the cell of an item */
 	public void redraw_row (int row_index) {
-		fm.update_row (row_index);
+		foreach(var cell in bound_cells)
+			if(cell.item != null && cell.item.position == row_index)
+				cell.refresh();
 	}
 	
-	/** Sorting is done in the treeview, not the model. That way the whole
+	/** Redraws every cell on screen (new covers) */
+	public void refresh_all () {
+		foreach(var cell in bound_cells)
+			cell.refresh();
+	}
+	
+	/** Sorting is done here, not in the model. That way the whole
 	 * table is sorted and ready to go and we do not need to resort every
 	 * time we repopulate/search the model
 	**/
@@ -237,6 +236,8 @@ public class BeatBox.FastGrid : Box, Scrollable {
 	}
 	
 	public void quicksort (int start, int end) {
+		if(end <= start)
+			return;
 		GLib.Object pivot = table.get((start+end)/2);
 		int i = start;
 		int j = end;
@@ -252,5 +253,45 @@ public class BeatBox.FastGrid : Box, Scrollable {
 		
 		if(start < j)	quicksort (start, j);
 		if(i < end)		quicksort (i, end);
+	}
+}
+
+/** A cell of a FastGrid: the cover, and the text under it */
+[GIR (visible = false)]
+public class BeatBox.FastGridCell : Gtk.Box {
+	weak FastGrid grid;
+	public ListItem? item = null;
+	Picture cover;
+	Label text;
+	
+	public FastGridCell (FastGrid grid) {
+		Object (orientation: Orientation.VERTICAL, spacing: 4);
+		this.grid = grid;
+		cover = new Picture();
+		cover.can_shrink = false;
+		cover.halign = Align.CENTER;
+		append(cover);
+		text = new Label(null);
+		text.justify = Justification.CENTER;
+		text.wrap = true;
+		text.wrap_mode = Pango.WrapMode.WORD_CHAR;
+		text.max_width_chars = 1; // as wide as the cover, not the text
+		text.hexpand = false;
+		text.width_request = IconsInterface.ALBUM_VIEW_IMAGE_SIZE;
+		append(text);
+		set_cursor_from_name("pointer");
+	}
+	
+	public void refresh () {
+		if(item == null || item.item == null || grid.value_func == null)
+			return;
+		int row = (int) item.position;
+		Value pix = grid.value_func(row, 0, item.item);
+		Value markup = grid.value_func(row, 1, item.item);
+		Value tooltip = grid.value_func(row, 2, item.item);
+		var pixbuf = pix.holds(typeof(Gdk.Pixbuf)) ? (Gdk.Pixbuf?) pix.get_object() : null;
+		cover.paintable = (pixbuf != null) ? UI.pixbuf_texture(pixbuf) : null;
+		text.set_markup(markup.holds(typeof(string)) && markup.get_string() != null ? markup.get_string() : "");
+		tooltip_markup = tooltip.holds(typeof(string)) ? tooltip.get_string() : null;
 	}
 }

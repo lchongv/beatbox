@@ -28,13 +28,27 @@
 using Gee;
 using Gtk;
 
+/** A column of a song list as it is kept between sessions: its title (the English key the
+ *  lists match on), its width and whether it shows */
+public class BeatBox.ListColumn : GLib.Object {
+	public string title;
+	public int width;
+	public bool visible;
+
+	public ListColumn(string title, int width, bool visible) {
+		this.title = title;
+		this.width = width;
+		this.visible = visible;
+	}
+}
+
 public class BeatBox.TreeViewSetup : GLib.Object {
 	
 	// TODO: Fixme. I am a duplicate of DuplicateList.CHECKBOX_COLUMN_TITLE
 	// for core dependency reasons
 	public const string CHECKBOX_COLUMN_TITLE = "";
 	
-	public const int MUSIC_COLUMN_COUNT = 19;
+	public const int MUSIC_COLUMN_COUNT = 18; // MusicColumn but PRICE, which no list shows
 	public const int DUPLICATE_COLUMN_COUNT = 19;
 	public const int PODCAST_COLUMN_COUNT = 12;
 	public const int RADIO_COLUMN_COUNT = 6;
@@ -84,7 +98,7 @@ public class BeatBox.TreeViewSetup : GLib.Object {
 	Hint hint;
 	public int sort_column_id; // Index of sort column
 	public Gtk.SortType sort_direction; // ASCENDING, DESCENDING
-	GLib.List<TreeViewColumn> _columns;
+	GLib.List<ListColumn> _columns;
 	
 	public TreeViewSetup(int sort_col, SortType sort_dir, Hint hint) {
 		this.hint = hint;
@@ -235,54 +249,9 @@ public class BeatBox.TreeViewSetup : GLib.Object {
 	}
 	
 	void create_default_columns () {
-		_columns = new GLib.List<TreeViewColumn>();
+		_columns = new GLib.List<ListColumn>();
 		foreach(var c in default_columns(hint))
-			add_new_column(c.title, c.width, c.visible);
-		
-		for(uint index = 0; index < _columns.length(); ++index) {
-			TreeViewColumn tvc = _columns.nth_data(index);
-			
-			if(tvc.title != " " && tvc.title != "Rating"/* && tvc.title != DuplicateList.CHECKBOX_COLUMN_TITLE*/) {
-				CellRendererText crtext = new ListText();
-				tvc.pack_start(crtext, true);
-				tvc.set_attributes(crtext, "text", index);
-			}
-			else if(tvc.title == " ") {
-				CellRendererPixbuf crpix = new CellRendererPixbuf();
-				tvc.pack_start(crpix, true);
-				CellRendererSpinner crspin = new CellRendererSpinner();
-				tvc.pack_start(crspin, true);
-				
-				tvc.set_attributes(crpix, "gicon", index);
-				
-				tvc.set_attributes(crspin, "pulse", _columns.length() - 1);
-				crspin.active = true;
-				
-			}
-			else {
-				CellRendererPixbuf crpix = UI.full_size(new CellRendererPixbuf()); // the rating stars at their own size
-				tvc.pack_start(crpix, true);
-				tvc.set_attributes(crpix, "pixbuf", index);
-			}
-				
-			
-			tvc.resizable = true;
-			tvc.reorderable = true;
-			tvc.clickable = true;
-			tvc.sort_column_id = (int)index;
-			tvc.set_sort_indicator(false);
-			tvc.sizing = Gtk.TreeViewColumnSizing.FIXED;
-		}
-	}
-	
-	void add_new_column(string title, int width, bool visible) {
-		var col = new TreeViewColumn();
-		
-		col.set_title(title);
-		col.set_fixed_width(width);
-		col.set_visible(visible);
-		
-		_columns.append(col);
+			_columns.append(new ListColumn(c.title, c.width, c.visible));
 	}
 	
 	public void set_column_visible(int index, bool val) {
@@ -303,68 +272,31 @@ public class BeatBox.TreeViewSetup : GLib.Object {
 			sort_direction = SortType.DESCENDING;
 	}
 	
-	public GLib.List<TreeViewColumn> get_columns() {
-		var rv = new GLib.List<TreeViewColumn>();
-		foreach(var tvc in _columns)
-			rv.append(tvc);
+	public GLib.List<ListColumn> get_columns() {
+		var rv = new GLib.List<ListColumn>();
+		foreach(var c in _columns)
+			rv.append(c);
 			
 		return rv;
 	}
 	
-	public void set_columns(GLib.List<weak TreeViewColumn> cols) {
-		_columns = new GLib.List<TreeViewColumn>();
-		foreach(var tvc in cols)
-			_columns.append(tvc);
+	public void set_columns(GLib.List<ListColumn> cols) {
+		_columns = new GLib.List<ListColumn>();
+		foreach(var c in cols)
+			_columns.append(c);
 	}
 	
 	public void import_columns(string cols) {
 		string[] col_strings = cols.split("<column_seperator>", 0);
-		_columns = new GLib.List<TreeViewColumn>();
+		_columns = new GLib.List<ListColumn>();
 		
-		int index;
-		for(index = 0; index < col_strings.length - 1; ++index) { /* the '-1' because col_strings has blank column at end */
+		for(int index = 0; index < col_strings.length - 1; ++index) { /* the '-1' because col_strings has blank column at end */
 			string[] pieces_of_column = col_strings[index].split("<value_seperator>", 0);
-			
-			TreeViewColumn tvc;
-			if(pieces_of_column[0] != " " && pieces_of_column[0] != "Rating")
-				tvc = new Gtk.TreeViewColumn.with_attributes(pieces_of_column[0], new Gtk.CellRendererText(), "text", index, null);
-			else if(pieces_of_column[0] == " ") {
-				tvc = new TreeViewColumn();
-				tvc.set_title(" ");
-				tvc.set_fixed_width(24);
-				tvc.set_visible(true);
-				
-				CellRendererPixbuf crpix = new CellRendererPixbuf();
-				tvc.pack_start(crpix, true);
-				CellRendererSpinner crSpin = new CellRendererSpinner();
-				tvc.pack_start(crSpin, true);
-				
-				tvc.set_attributes(crpix, "gicon", index);
-				tvc.set_attributes(crSpin, "pulse", col_strings.length - 2); // -2 because col_strings has blank column at end
-				crSpin.active = true;
-			}
-			else {
-				tvc = new Gtk.TreeViewColumn.with_attributes(pieces_of_column[0], new Gtk.CellRendererPixbuf(), "pixbuf", index, null);
-			}
-			
-			tvc.resizable = true;
-			tvc.reorderable = true;
-			tvc.clickable = true;
-			tvc.sort_column_id = index;
-			tvc.set_sort_indicator(false);
-			tvc.sizing = Gtk.TreeViewColumnSizing.FIXED;
-			
-			tvc.fixed_width = int.parse(pieces_of_column[1]);
-			tvc.visible = (int.parse(pieces_of_column[2]) == 1);
-			
-			_columns.append(tvc);
+			if(pieces_of_column.length < 3)
+				continue;
+			_columns.append(new ListColumn(pieces_of_column[0], int.parse(pieces_of_column[1]), int.parse(pieces_of_column[2]) == 1));
 		}
-		
-		/*if(!is_valid_setup ()) {
-			warning("Invalid treeview setup found. Creating a new one!\n");
-			create_default_columns ();
-		}*/
-		
+		is_valid_setup(); // one saved with other columns starts anew
 	}
 	
 	public bool is_valid_setup() {
@@ -380,6 +312,11 @@ public class BeatBox.TreeViewSetup : GLib.Object {
 		}*/
 		else if(hint == TreeViewSetup.Hint.STATION) {
 			if(_columns.length() != RADIO_COLUMN_COUNT) {
+				rv = false;
+			}
+		}
+		else if(hint == TreeViewSetup.Hint.DUPLICATES) {
+			if(_columns.length() != DUPLICATE_COLUMN_COUNT) {
 				rv = false;
 			}
 		}
@@ -413,14 +350,11 @@ public class BeatBox.TreeViewSetup : GLib.Object {
 			}
 		}
 		
-		foreach(TreeViewColumn tvc in _columns) {
+		foreach(ListColumn tvc in _columns) {
 			int width_to_use = tvc.width;
 			
 			if(tvc.title == last_visible_column) {
 				width_to_use = default_width_for_last_visible;
-			}
-			else if(width_to_use < 10) {
-				width_to_use = tvc.fixed_width;
 			}
 			
 			rv += tvc.title + "<value_seperator>" + width_to_use.to_string() + "<value_seperator>" + ( (tvc.visible) ? "1" : "0" ) + "<column_seperator>";
@@ -473,15 +407,3 @@ public class BeatBox.TreeViewSetup : GLib.Object {
 }
 
 /** A text cell for the song lists, as tall as GTK3 made their rows */
-public class BeatBox.ListText : Gtk.CellRendererText {
-	public override void get_preferred_height (Gtk.Widget widget, out int minimum, out int natural) {
-		base.get_preferred_height (widget, out minimum, out natural);
-		minimum += UI.GTK3_ROW_EXTRA;
-		natural += UI.GTK3_ROW_EXTRA;
-	}
-	public override void get_preferred_height_for_width (Gtk.Widget widget, int width, out int minimum, out int natural) {
-		base.get_preferred_height_for_width (widget, width, out minimum, out natural);
-		minimum += UI.GTK3_ROW_EXTRA;
-		natural += UI.GTK3_ROW_EXTRA;
-	}
-}

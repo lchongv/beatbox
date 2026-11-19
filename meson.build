@@ -1,4 +1,4 @@
-project('beatbox', 'vala', 'c', version: '1.2.63')
+project('beatbox', 'vala', 'c', version: '1.2.64')
 
 gnome = import('gnome')
 i18n = import('i18n')
@@ -86,7 +86,6 @@ core_sources = files(
   'core/MediaEditorInterface.vala',
   'core/TopDisplayInterface.vala',
   'core/NowPlayingViewInterface.vala',
-  'core/CellRenderers/CellDataFunctionHelper.vala',
   'core/Devices/DevicePreferences.vala',
   'core/Devices/Device.vala',
   'core/Info/BasicInfo.vala',
@@ -141,6 +140,7 @@ core_sources = files(
   'core/Widgets/PopMenu.vala',
   'core/Widgets/StyledBox.vala',
   'core/Widgets/ButtonDialog.vala',
+  'core/Widgets/ScrollableBin.vala',
   'core/Widgets/SimpleTable.vala',
   'core/Widgets/ChoiceBox.vala',
 )
@@ -209,7 +209,6 @@ app_sources = files(
   'src/Core/RadioDirectories.vala',
   'src/Core/StationLogoFiles.vala',
   'src/Core/StreamRecorder.vala',
-  'src/CellRenderers/SideBarRenderer.vala',
   'src/DataBase/DataBaseManager.vala',
   'src/DBus/MediaKeyListener.vala',
   'src/DBus/UnityIntegration.vala',

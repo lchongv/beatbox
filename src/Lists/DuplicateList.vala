@@ -68,27 +68,7 @@ public class BeatBox.DuplicateList : GenericList {
 	 * for sort_id use 0+ for normal, -1 for auto, -2 for none
 	 */
 	public DuplicateList(TreeViewSetup tvs) {
-		var types = new GLib.List<Type>();
-		types.append(typeof(int)); // id
-		types.append(typeof(bool)); // checkbox
-		types.append(typeof(GLib.Icon)); // icon
-		types.append(typeof(int)); // #
-		types.append(typeof(int)); // track
-		types.append(typeof(string)); // title
-		types.append(typeof(int)); // length
-		types.append(typeof(string)); // artist
-		types.append(typeof(string)); // album
-		types.append(typeof(string)); // genre
-		types.append(typeof(int)); // year
-		types.append(typeof(int)); // bitrate
-		types.append(typeof(int)); // rating
-		types.append(typeof(int)); // plays
-		types.append(typeof(int)); // skips
-		types.append(typeof(int)); // date added
-		types.append(typeof(int)); // last played
-		types.append(typeof(int)); // bpm
-		types.append(typeof(int)); // pulser};
-		base(types, tvs, new Song(""));
+		base(tvs);
 		
 		//last_search = "";
 		//timeout_search = new LinkedList<string>();
@@ -112,7 +92,10 @@ public class BeatBox.DuplicateList : GenericList {
         set_value_func(view_value_func);
         
 		click_gesture.pressed.connect(view_click);
-		click_gesture.released.connect(view_click_release);
+		cell_toggled.connect((row, column, active) => {
+			checked.set(get_media_from_index(row), active);
+			checked_changed();
+		});
 
 		// column chooser menu (header right click)
 		add_column_toggle("#", _("#"));
@@ -156,74 +139,15 @@ public class BeatBox.DuplicateList : GenericList {
 		if(n_press != 1)
 			return;
 		uint button = click_gesture.get_current_button();
-		bool modified = (click_gesture.get_current_event_state() & (Gdk.ModifierType.SHIFT_MASK | Gdk.ModifierType.CONTROL_MASK)) != 0;
 
 		if(button == Gdk.BUTTON_SECONDARY) { //right click
 			// the menu acts on the clicked row: select it first, unless it is part of the selection
-			TreePath? clicked;
-			if(row_at(x, y, out clicked) && !get_selection().path_is_selected(clicked)) {
-				get_selection().unselect_all();
-				get_selection().select_path(clicked);
-			}
+			int clicked = row_at(x, y);
+			if(clicked >= 0 && !is_row_selected(clicked))
+				select_only(clicked);
 
 			mediaMenuActionMenu.popup_at(this, x, y);
-
-			TreeSelection selected = get_selection();
-			selected.set_mode(SelectionMode.MULTIPLE);
-			if(selected.count_selected_rows() > 1)
-				click_gesture.set_state(Gtk.EventSequenceState.CLAIMED);
-		}
-		else if(button == 1) {
-			// Check/uncheck column
-			TreePath? path;
-			if(row_at(x, y, out path)) {
-				int bin_x, bin_y;
-				convert_widget_to_bin_window_coords((int)x, (int)y, out bin_x, out bin_y);
-				TreeViewColumn? column;
-				int cell_x, cell_y;
-				if(get_path_at_pos(bin_x, bin_y, out path, out column, out cell_x, out cell_y) &&
-				   column != null && column.sort_column_id == DuplicateColumn.CHECKBOX) {
-					Media m = get_media_from_index(int.parse(path.to_string()));
-					bool cur_val = checked.get(m);
-					checked.set(m, !cur_val);
-					checked_changed();
-				}
-			}
-
-			/* don't unselect everything if multiple selected until button release
-			 * for drag and drop reasons */
-			if(get_selection().count_selected_rows() > 1) {
-				TreePath? clicked;
-				row_at(x, y, out clicked);
-				bool on_selection = clicked != null && get_selection().path_is_selected(clicked);
-				if(on_selection && modified)
-					get_selection().unselect_path(clicked);
-				// a press on the selection, or a plain press away from it, is kept from the TreeView
-				if(on_selection || !modified)
-					click_gesture.set_state(Gtk.EventSequenceState.CLAIMED);
-			}
-		}
-	}
-
-	/* a release on a row: ends a drag, or selects only the row when nothing was dragged */
-	void view_click_release(int n_press, double x, double y) {
-		uint button = click_gesture.get_current_button();
-		bool modified = (click_gesture.get_current_event_state() & (Gdk.ModifierType.SHIFT_MASK | Gdk.ModifierType.CONTROL_MASK)) != 0;
-
-		/* if we were dragging, then set dragging to false */
-		if(dragging && button == 1) {
-			dragging = false;
 			click_gesture.set_state(Gtk.EventSequenceState.CLAIMED);
-		}
-		else if(modified) {
-			click_gesture.set_state(Gtk.EventSequenceState.CLAIMED);
-		}
-		else {
-			TreePath? path;
-			if(!row_at(x, y, out path))
-				return;
-			get_selection().unselect_all();
-			get_selection().select_path(path);
 		}
 	}
 
@@ -235,12 +159,16 @@ public class BeatBox.DuplicateList : GenericList {
 		foreach(Media m in get_selected_medias()) {
 			checked.set(m, true);
 		}
+		refresh_all();
+		checked_changed();
 	}
 	
 	void mediaUncheckClicked() {
 		foreach(Media m in get_selected_medias()) {
 			checked.set(m, false);
 		}
+		refresh_all();
+		checked_changed();
 	}
 
 	void mediaFileBrowseClicked() {

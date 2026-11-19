@@ -46,14 +46,14 @@ window.beatbox .album-detail button, window.beatbox .source-actions button, wind
 
 entry.search-bar { background-color: #26282c; color: #eceef1; border-color: #101113; }
 
-treeview.tracklist, treeview.tracklist.view { color: #e4e6ea; }
-treeview.view header button {
+columnview.tracklist, columnview.tracklist > listview, columnview.tracklist > listview > row { color: #e4e6ea; }
+columnview.tracklist > header > button {
   background-image: linear-gradient(to bottom, #44474c, #33363a);
   border-color: #17181a;
   color: #e4e6ea;
 }
 
-iconview.albumgrid, iconview.albumgrid.view, .albumwall {
+gridview.albumgrid, .albumwall {
   background-color: #1a1c1f;
   color: #e4e6ea;
 }

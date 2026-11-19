@@ -1,4 +1,4 @@
-core/CellRenderers/CellDataFunctionHelper.vala
+core/Lists/FastList.vala
 core/Media/Media.vala
 core/Media/Preview.vala
 core/Playlists/SmartQuery.vala

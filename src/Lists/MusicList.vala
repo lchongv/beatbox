@@ -49,32 +49,12 @@ public class BeatBox.MusicList : GenericList {
 	PopMenuItem mediaRemove;
 	PopMenuItem importToLibrary;
 	PopMenuItem mediaScrollToCurrent;
-	CellRendererToggle check_cell; // in the icon column: an unchecked song is passed by when playing in a row
 
 	/**
 	 * for sort_id use 0+ for normal, -1 for auto, -2 for none
 	 */
 	public MusicList(TreeViewSetup tvs) {
-		var types = new GLib.List<Type>();
-		types.append(typeof(int)); // id
-		types.append(typeof(GLib.Icon)); // icon
-		types.append(typeof(int)); // #
-		types.append(typeof(int)); // track
-		types.append(typeof(string)); // title
-		types.append(typeof(int)); // length
-		types.append(typeof(string)); // artist
-		types.append(typeof(string)); // album
-		types.append(typeof(string)); // genre
-		types.append(typeof(int)); // year
-		types.append(typeof(int)); // bitrate
-		types.append(typeof(int)); // rating
-		types.append(typeof(int)); // plays
-		types.append(typeof(int)); // skips
-		types.append(typeof(int)); // date added
-		types.append(typeof(int)); // last played
-		types.append(typeof(int)); // bpm
-		types.append(typeof(int)); // pulser};
-		base(types, tvs, new Song(""));
+		base(tvs);
 		
 		//last_search = "";
 		//timeout_search = new LinkedList<string>();
@@ -144,15 +124,15 @@ public class BeatBox.MusicList : GenericList {
 	}
 
 	public void buildUI() {
+		show_checks = true; // in the icon column: an unchecked song is passed by when playing in a row
 		add_columns ();
-		add_check_cell();
+		check_toggled.connect(toggle_check);
 		
 		set_compare_func(view_compare_func);
         set_search_func(view_search_func);
         set_value_func(view_value_func);
         
 		click_gesture.pressed.connect(view_click);
-		click_gesture.released.connect(view_click_release);
 
 		// column chooser menu (header right click)
 		if(get_hint() == TreeViewSetup.Hint.MUSIC && column_titled("#") != null)
@@ -234,117 +214,37 @@ public class BeatBox.MusicList : GenericList {
 		importToLibrary.clicked.connect(importToLibraryClicked);
 		mediaRateMedia.clicked.connect(mediaRateMediaClicked);
 		mediaScrollToCurrent.clicked.connect(mediaScrollToCurrentRequested);
-		row_activated.connect((path, column) => row_activated_signal_event(path, column));
+		row_activated.connect(row_activated_signal_event);
 		
-		set_headers_visible(tvs.get_hint() != TreeViewSetup.Hint.ALBUM_LIST &&
-							tvs.get_hint() != TreeViewSetup.Hint.NOW_PLAYING);
+		headers_visible = (tvs.get_hint() != TreeViewSetup.Hint.ALBUM_LIST &&
+		                   tvs.get_hint() != TreeViewSetup.Hint.NOW_PLAYING);
 		
 		update_sensitivities();
 	}
 
-	public void rearrangeColumns(LinkedList<string> correctOrder) {
-		move_column_after(get_column(6), get_column(7));
-		//debug("correctOrder.length = %d, get_columns.length() = %d\n", correctOrder.size, (int)get_columns().length());
-		/* iterate through get_columns and if a column is not in the
-		 * same location as correctOrder, move it there.
-		*/
-		for(int index = 0; index < get_columns().length(); ++index) {
-			//debug("on index %d column %s originally moving to %d\n", index, get_column(index).title, correctOrder.index_of(get_column(index).title));
-			if(get_column(index).title != correctOrder.get(index)) {
-				move_column_after(get_column(index), get_column(correctOrder.index_of(get_column(index).title)));
-			}
-		}
-	}
-
-	//void cellTitleEdited(string path, string new_text) {
-		/*int rowid;
-		debug("done!\n");
-		if((rowid = list_model.getRowidFromPath(path)) != 0) {
-			App.library.media_from_id(rowid).title = new_text;
-
-			App.library.update_media(App.library.media_from_id(rowid), true);
-		}
-		cellTitle.editable = false; */
-	//}
-
-	/*void sortColumnChanged() {
-		updateTreeViewSetup();
-	}*/
-
-	/*void modelRowsReordered(TreePath path, TreeIter? iter, void* new_order) {
-		/*if(TreeViewSetup.Hint == "queue") {
-			App.library.clear_queue();
-
-			TreeIter item;
-			for(int i = 0; list_model.get_iter_from_string(out item, i.to_string()); ++i) {
-				int id;
-				list_model.get(item, 0, out id);
-
-				App.library.queue_media_by_id(id);
-			}
-		}*
-		
-		// TODO: FIXME
-		//if(is_current_view) {
-		//	set_as_current_list(0, false);
-		//}
-
-		if(!scrolled_recently) {
-			scroll_to_current_media(false);
-		}
-	}*/
-
-	void add_check_cell() {
-		var column = column_titled(" ");
-		if(column == null)
+	/** A song's check box turned over */
+	void toggle_check(Media m, bool active) {
+		if(m.unchecked == !active)
 			return;
-		check_cell = new CellRendererToggle();
-		column.pack_start(check_cell, false); // after the playing icon: the sidebar divider grabs the list's first pixels
-		column.set_cell_data_func(check_cell, (layout, cell, model, iter) => {
-			((CellRendererToggle)cell).active = !get_media_from_index((int)iter.user_data).unchecked;
-		});
-		column.fixed_width += 24;
-	}
-	
-	/** A press on a song's check box turns it over (the press is kept from the selection); true if it was one */
-	bool toggle_check_at(double x, double y) {
-		int bin_x, bin_y, cell_x = 0, cell_y, start = 0, width = 0;
-		TreePath? path = null;
-		TreeViewColumn? column = null;
-		convert_widget_to_bin_window_coords((int)x, (int)y, out bin_x, out bin_y);
-		if(check_cell == null || !get_path_at_pos(bin_x, bin_y, out path, out column, out cell_x, out cell_y) ||
-		   column != column_titled(" ") || !column.cell_get_position(check_cell, out start, out width) ||
-		   cell_x < start || cell_x >= start + width)
-			return false;
-		
-		Media m = get_media_from_index(int.parse(path.to_string()));
-		m.unchecked = !m.unchecked;
+		m.unchecked = !active;
 		var changed = new LinkedList<Media>();
 		changed.add(m);
 		App.library.update_medias(changed, false, false, true);
-		click_gesture.set_state(Gtk.EventSequenceState.CLAIMED);
-		return true;
 	}
 	
-	/* a press on a row: the menus, and keeping the selection while several rows are dragged */
+	/* a press on a row: the menus */
 	void view_click(int n_press, double x, double y) {
-		// every press on a check box, a double one too (it would play the song)
-		if(click_gesture.get_current_button() == Gdk.BUTTON_PRIMARY && !on_header(y) && toggle_check_at(x, y))
-			return;
-		// a double click is no click for the menus or the selection; the header has its own
+		// a double click is no click for the menus; the header has its own
 		// (this gesture captures, so it sees the header's presses first)
 		if(n_press != 1 || on_header(y))
 			return;
 		uint button = click_gesture.get_current_button();
-		bool modified = (click_gesture.get_current_event_state() & (Gdk.ModifierType.SHIFT_MASK | Gdk.ModifierType.CONTROL_MASK)) != 0;
 
 		if(button == Gdk.BUTTON_SECONDARY) { //right click
 			// the menu acts on the clicked row: select it first, unless it is part of the selection
-			TreePath? clicked;
-			if(row_at(x, y, out clicked) && !get_selection().path_is_selected(clicked)) {
-				get_selection().unselect_all();
-				get_selection().select_path(clicked);
-			}
+			int clicked = row_at(x, y);
+			if(clicked >= 0 && !is_row_selected(clicked))
+				select_only(clicked);
 			
 			/* create add to playlist menu */
 			addToPlaylistMenu = new PopMenu();
@@ -418,68 +318,19 @@ public class BeatBox.MusicList : GenericList {
 			mediaEditMedia.label = _("Edit %s").printf(type.to_string(total_count));
 
 			mediaMenuActionMenu.popup_at(this, x, y);
-
-			TreeSelection selected = get_selection();
-			selected.set_mode(SelectionMode.MULTIPLE);
-			if(selected.count_selected_rows() > 1)
-				click_gesture.set_state(Gtk.EventSequenceState.CLAIMED);
-		}
-		else if(button == 1) {
-			/* don't unselect everything if multiple selected until button release
-			 * for drag and drop reasons */
-			if(get_selection().count_selected_rows() > 1) {
-				TreePath? path;
-				row_at(x, y, out path);
-				bool on_selection = path != null && get_selection().path_is_selected(path);
-				if(on_selection && modified)
-					get_selection().unselect_path(path);
-				// a press on the selection, or a plain press away from it, is kept from the TreeView
-				if(on_selection || !modified)
-					click_gesture.set_state(Gtk.EventSequenceState.CLAIMED);
-			}
-		}
-	}
-
-	/* a release on a row: ends a drag, or selects only the row when nothing was dragged */
-	/** Whether y (widget coordinates) is on the column headers, above the rows */
-	bool on_header(double y) {
-		int bin_x, bin_y;
-		convert_widget_to_bin_window_coords(0, (int)y, out bin_x, out bin_y);
-		return bin_y < 0;
-	}
-
-	void view_click_release(int n_press, double x, double y) {
-		if(on_header(y))
-			return;
-		uint button = click_gesture.get_current_button();
-		bool modified = (click_gesture.get_current_event_state() & (Gdk.ModifierType.SHIFT_MASK | Gdk.ModifierType.CONTROL_MASK)) != 0;
-
-		/* if we were dragging, then set dragging to false */
-		if(dragging && button == 1) {
-			dragging = false;
 			click_gesture.set_state(Gtk.EventSequenceState.CLAIMED);
-		}
-		else if(modified) {
-			click_gesture.set_state(Gtk.EventSequenceState.CLAIMED);
-		}
-		else {
-			TreePath? path;
-			if(!row_at(x, y, out path))
-				return;
-			get_selection().unselect_all();
-			get_selection().select_path(path);
 		}
 	}
 	
-	void row_activated_signal_event(TreePath path, TreeViewColumn column) {
-		if(tvs.get_hint() == TreeViewSetup.Hint.QUEUE) {
-			Media m = get_selected_medias().nth_data(0);
+	void row_activated_signal_event(int position) {
+		if(tvs.get_hint() == TreeViewSetup.Hint.QUEUE && position >= 0) {
+			Media m = get_media_from_index(position);
 			App.playback.unqueue_media(m);
 		}
 	}
 
 	protected override void updateTreeViewSetup() {
-		if(tvs == null || get_hint() == TreeViewSetup.Hint.ALBUM_LIST || get_columns().length() != TreeViewSetup.MUSIC_COLUMN_COUNT)
+		if(tvs == null || get_hint() == TreeViewSetup.Hint.ALBUM_LIST || get_hint() == TreeViewSetup.Hint.NOW_PLAYING || get_n_columns() != tvs.get_columns().length())
 			return;
 
 		int sort_id = MusicColumn.ARTIST;
@@ -489,7 +340,7 @@ public class BeatBox.MusicList : GenericList {
 		if(sort_id < 0)
 			sort_id = MusicColumn.ARTIST;
 		
-		tvs.set_columns(get_columns());
+		tvs.set_columns(get_column_setup());
 		tvs.sort_column_id = sort_id;
 		tvs.sort_direction = sort_dir;
 	}
@@ -563,49 +414,35 @@ public class BeatBox.MusicList : GenericList {
 		select_medias(selected);
 	}
 	
-	/** Selects the rows of these medias (after the queue was reordered) */
-	void select_medias(Gee.Collection<Media> medias) {
-		var selection = get_selection();
-		selection.unselect_all();
-		var visible = get_visible_table();
-		for(int i = 0; i < visible.size(); i++)
-			if(medias.contains(visible.get(i)))
-				selection.select_path(new TreePath.from_indices(i));
-	}
-	
 	/* In the queue, rows dragged within the list (or from another list) are
 	 * dropped at the pointer's position. */
 	void enable_queue_reordering() {
 		var dest = new Gtk.DropTarget(GLib.Type.INVALID, Gdk.DragAction.COPY | Gdk.DragAction.MOVE);
 		dest.set_gtypes({ typeof(string), typeof(Gdk.FileList) });
 		dest.motion.connect(queue_drag_motion);
-		dest.leave.connect(() => { set_drag_dest_row(null, TreeViewDropPosition.BEFORE); });
+		dest.leave.connect(() => { drop_line = -1; queue_draw(); });
 		dest.drop.connect(queue_drag_received);
 		add_controller(dest);
 	}
 	
-	int queue_drop_index(int x, int y, out TreePath? path, out TreeViewDropPosition pos) {
-		pos = TreeViewDropPosition.BEFORE;
-		if(!get_dest_row_at_pos(x, y, out path, out pos))
-			return (int)get_visible_table().size(); // below the last row
-		bool after = pos == TreeViewDropPosition.AFTER || pos == TreeViewDropPosition.INTO_OR_AFTER;
-		pos = after ? TreeViewDropPosition.AFTER : TreeViewDropPosition.BEFORE;
-		return path.get_indices()[0] + (after ? 1 : 0);
+	/** The row a drop at y goes before: the nearest row boundary */
+	int queue_drop_index(double y) {
+		int n = (int)get_visible_table().size();
+		double offset = y - header_height() + (vadjustment != null ? vadjustment.value : 0);
+		int index = (int)Math.round(offset / row_height());
+		return index.clamp(0, n);
 	}
 	
 	Gdk.DragAction queue_drag_motion(double x, double y) {
-		TreePath? path;
-		TreeViewDropPosition pos;
-		queue_drop_index((int)x, (int)y, out path, out pos);
-		set_drag_dest_row(path, pos);
+		drop_line = queue_drop_index(y);
+		queue_draw();
 		return Gdk.DragAction.COPY;
 	}
 	
 	bool queue_drag_received(GLib.Value value, double x, double y) {
-		TreePath? path;
-		TreeViewDropPosition pos;
-		int index = queue_drop_index((int)x, (int)y, out path, out pos);
-		set_drag_dest_row(null, TreeViewDropPosition.BEFORE);
+		int index = queue_drop_index(y);
+		drop_line = -1;
+		queue_draw();
 		string[] uris = {};
 		if(value.holds(typeof(Gdk.FileList))) {
 			foreach(unowned File f in ((Gdk.FileList)value.get_boxed()).get_files())

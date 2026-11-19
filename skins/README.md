@@ -61,9 +61,9 @@ The simplest skin (over Classic) only redefines the palette. Every rule of the C
 | `.lcd scale slider` | position diamond |
 | `.lcd .lcd-lyrics` | lyrics line of the three-line LCD, e.g. `font-size: smaller;` |
 | `entry.search-bar` | search box |
-| `treeview.sidebar` | source list |
-| `treeview.tracklist` | track lists |
-| `iconview.albumgrid` | cover grid in popup mode |
+| `listview.sidebar` | source list (`> row`, `> row:selected`) |
+| `columnview.tracklist` | track lists (`> listview > row`, `> header > button`) |
+| `gridview.albumgrid` (`> child:selected`) | cover grid in popup mode |
 | `.albumwall` | cover grid in inline mode, and the Internet Radio grid (`.station-name` is its name label) |
 | `.album-detail` | album band in inline mode |
 | `.track-report` | information panel at the right of the lists |

@@ -204,6 +204,17 @@ namespace BeatBox.UI {
     /** After drawing into a pixbuf's pixels: the surface kept for it is out of date */
     public void pixbuf_changed (Gdk.Pixbuf pix) {
         pix.set_data<Cairo.ImageSurface?> ("bb-surface", null);
+        pix.set_data<Gdk.Texture?> ("bb-texture", null);
+    }
+
+    /** The pixbuf as a texture, made once and kept on it (covers drawn again and again) */
+    public Gdk.Texture pixbuf_texture (Gdk.Pixbuf pix) {
+        var texture = pix.get_data<Gdk.Texture?> ("bb-texture");
+        if (texture == null) {
+            texture = texture_from_pixbuf (pix);
+            pix.set_data<Gdk.Texture?> ("bb-texture", texture);
+        }
+        return texture;
     }
 
     /** Draws the pixbuf with its top left corner at x, y (what Gdk.cairo_set_source_pixbuf did) */
@@ -280,12 +291,12 @@ namespace BeatBox.UI {
      * A menu in a popover pointing at x, y of relative_to; actions (if any) answer
      * its "view.*" items. It goes away once closed.
      */
-    /** Where a popover can hang for the point x, y of widget: set as a child of a TreeView or
-     * an IconView it breaks their CSS nodes (gtk_css_node_insert_after critical, the header nodes
-     * are kept apart), so their parent holds it instead, at the same point */
+    /** Where a popover can hang for the point x, y of widget: the list views (ListView,
+     * GridView, ColumnView) lay out and recycle their children themselves, so their parent
+     * holds it instead, at the same point (the lists and the side bar are such a parent) */
     public Gtk.Widget popover_parent (Gtk.Widget widget, ref double x, ref double y) {
         var parent = widget.get_parent ();
-        if (!(widget is Gtk.TreeView || widget is Gtk.IconView) || parent == null)
+        if (!(widget is Gtk.ListBase || widget is Gtk.ColumnView) || parent == null)
             return widget;
         Graphene.Point p;
         if (widget.compute_point (parent, Graphene.Point () { x = (float) x, y = (float) y }, out p)) {
@@ -320,21 +331,6 @@ namespace BeatBox.UI {
 
     /** GTK3's tree view made every row this much taller than its cells (GTK 4 adds nothing) */
     public const int GTK3_ROW_EXTRA = 3;
-
-    static Gtk.CssProvider? full_size_css = null;
-
-    /** GTK 4 draws a CellRendererPixbuf's pixbuf no bigger than the CSS icon size (16 px): covers
-     * and rating stars came out tiny. This cell asks for the "large" size, which GTK marks on the
-     * view's node while drawing it, and that size is lifted for tree and icon views. */
-    public Gtk.CellRendererPixbuf full_size (Gtk.CellRendererPixbuf cell) {
-        if (full_size_css == null) {
-            full_size_css = new Gtk.CssProvider ();
-            full_size_css.load_from_string ("treeview.large-icons, iconview.large-icons { -gtk-icon-size: 512px; }");
-            UI.add_css_provider (full_size_css, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION);
-        }
-        cell.icon_size = Gtk.IconSize.LARGE;
-        return cell;
-    }
 
     /** Redraws widget and everything in it: GTK3's queue_draw did, GTK4's keeps the children's last drawing */
     public void queue_draw_all (Gtk.Widget widget) {

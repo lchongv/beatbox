@@ -47,20 +47,7 @@ public class BeatBox.PodcastList : GenericList {
 	PopMenuItem importToLibrary;
 
 	public PodcastList(TreeViewSetup tvs) {
-		var types = new GLib.List<Type>();
-		types.append(typeof(int)); // id
-		types.append(typeof(GLib.Icon)); // icon
-		types.append(typeof(int)); // episode (track)
-		types.append(typeof(string)); // name (title)
-		types.append(typeof(int)); // length
-		types.append(typeof(string)); // artist
-		types.append(typeof(string)); // album
-		types.append(typeof(int)); // date
-		types.append(typeof(string)); // category (genre)
-		types.append(typeof(string)); // comment
-		types.append(typeof(int)); // rating
-		types.append(typeof(int)); // pulser
-		base(types, tvs, new Podcast(""));
+		base(tvs);
 		
 		//last_search = "";
 		//timeout_search = new LinkedList<string>();
@@ -97,7 +84,6 @@ public class BeatBox.PodcastList : GenericList {
         set_value_func(view_value_func);
 
 		click_gesture.pressed.connect(view_click);
-		click_gesture.released.connect(view_click_release);
 
 		// column chooser menu (header right click)
 		add_column_toggle("Episode", _("Episode"));
@@ -149,20 +135,6 @@ public class BeatBox.PodcastList : GenericList {
 		update_sensitivities();
 	}
 	
-	public void rearrangeColumns(LinkedList<string> correctOrder) {
-		move_column_after(get_column(6), get_column(7));
-		//debug("correctOrder.length = %d, get_columns.length() = %d\n", correctOrder.size, (int)get_columns().length());
-		/* iterate through get_columns and if a column is not in the
-		 * same location as correctOrder, move it there.
-		*/
-		for(int index = 0; index < get_columns().length(); ++index) {
-			//debug("on index %d column %s originally moving to %d\n", index, get_column(index).title, correctOrder.index_of(get_column(index).title));
-			if(get_column(index).title != correctOrder.get(index)) {
-				move_column_after(get_column(index), get_column(correctOrder.index_of(get_column(index).title)));
-			}
-		}
-	}
-
 	public void cellTitleEdited(string path, string new_text) {
 		/*int rowid;
 		debug("done!\n");
@@ -180,15 +152,12 @@ public class BeatBox.PodcastList : GenericList {
 		if(n_press != 1)
 			return;
 		uint button = click_gesture.get_current_button();
-		bool modified = (click_gesture.get_current_event_state() & (Gdk.ModifierType.SHIFT_MASK | Gdk.ModifierType.CONTROL_MASK)) != 0;
 
 		if(button == Gdk.BUTTON_SECONDARY) { //right click
 			// the menu acts on the clicked row: select it first, unless it is part of the selection
-			TreePath? clicked;
-			if(row_at(x, y, out clicked) && !get_selection().path_is_selected(clicked)) {
-				get_selection().unselect_all();
-				get_selection().select_path(clicked);
-			}
+			int clicked = row_at(x, y);
+			if(clicked >= 0 && !is_row_selected(clicked))
+				select_only(clicked);
 
 			/* create add to playlist menu */
 			addToPlaylistMenu = new PopMenu();
@@ -280,52 +249,12 @@ public class BeatBox.PodcastList : GenericList {
 			mediaEditMedia.label = _("Edit %s").printf(type.to_string(total_count));
 			
 			mediaMenuActionMenu.popup_at(this, x, y);
-
-			TreeSelection selected = get_selection();
-			selected.set_mode(SelectionMode.MULTIPLE);
-			if(selected.count_selected_rows() > 1)
-				click_gesture.set_state(Gtk.EventSequenceState.CLAIMED);
-		}
-		else if(button == 1) {
-			/* don't unselect everything if multiple selected until button release
-			 * for drag and drop reasons */
-			if(get_selection().count_selected_rows() > 1) {
-				TreePath? path;
-				row_at(x, y, out path);
-				bool on_selection = path != null && get_selection().path_is_selected(path);
-				if(on_selection && modified)
-					get_selection().unselect_path(path);
-				// a press on the selection, or a plain press away from it, is kept from the TreeView
-				if(on_selection || !modified)
-					click_gesture.set_state(Gtk.EventSequenceState.CLAIMED);
-			}
-		}
-	}
-
-	/* a release on a row: ends a drag, or selects only the row when nothing was dragged */
-	void view_click_release(int n_press, double x, double y) {
-		uint button = click_gesture.get_current_button();
-		bool modified = (click_gesture.get_current_event_state() & (Gdk.ModifierType.SHIFT_MASK | Gdk.ModifierType.CONTROL_MASK)) != 0;
-
-		/* if we were dragging, then set dragging to false */
-		if(dragging && button == 1) {
-			dragging = false;
 			click_gesture.set_state(Gtk.EventSequenceState.CLAIMED);
-		}
-		else if(modified) {
-			click_gesture.set_state(Gtk.EventSequenceState.CLAIMED);
-		}
-		else {
-			TreePath? path;
-			if(!row_at(x, y, out path))
-				return;
-			get_selection().unselect_all();
-			get_selection().select_path(path);
 		}
 	}
 
 	protected override void updateTreeViewSetup() {
-		if(tvs == null || get_columns().length() != TreeViewSetup.PODCAST_COLUMN_COUNT)
+		if(tvs == null || get_n_columns() != tvs.get_columns().length())
 			return;
 
 		int sort_id = PodcastColumn.ARTIST;
@@ -335,7 +264,7 @@ public class BeatBox.PodcastList : GenericList {
 		if(sort_id < 0)
 			sort_id = PodcastColumn.ARTIST;
 
-		tvs.set_columns(get_columns());
+		tvs.set_columns(get_column_setup());
 		tvs.sort_column_id = sort_id;
 		tvs.sort_direction = sort_dir;
 	}

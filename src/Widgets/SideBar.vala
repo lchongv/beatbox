@@ -19,79 +19,97 @@
  * License along with this library; if not, write to the
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
- * 
+ *
  * The BeatBox project hereby grant permission for non-gpl compatible GStreamer
  * plugins to be used and distributed together with GStreamer and BeatBox. This
  * permission is above and beyond the permissions granted by the GPL license
  * BeatBox is covered by.
- * 
- * NOTES: The iters returned are child model iters. To work with any function
- * except for add, you need to to use convertToFilter(child iter);
+ *
+ * A source list: headings (depth 1) with the pages under them. On a Gtk.ListView over a
+ * Gtk.TreeListModel (Gtk.TreeView is deprecated since GTK 4.10); each row is a SideBarItem.
  */
 
 using Gtk;
 using Gdk;
 
-public enum BeatBox.SideBarColumn {
-	COLUMN_OBJECT,
-	COLUMN_WIDGET,
-	COLUMN_VISIBLE,
-	COLUMN_PIXBUF,
-	COLUMN_TEXT,
-	COLUMN_CLICKABLE,
-	COLUMN_DRAGGABLE,
-	COLUMN_DROPPABLE,
-	COLUMN_IS_SELECTABLE_PARENT // whether or not to show the row even with no children
+/** A row of the side bar: a heading, or a page under one */
+public class BeatBox.SideBarItem : GLib.Object {
+	public GLib.Object? object;
+	public Widget? widget;
+	public Gdk.Pixbuf? pixbuf { get; set; }
+	public string text { get; set; }
+	public bool draggable;
+	public bool droppable;
+	public bool is_selectable_parent; // a heading shown (and chosen) even with nothing under it
+	/** Shown in the side bar: hidden ones keep their place, and their rows under them */
+	public bool shown { get; set; default = true; }
+	/** Under the pointer of a drag that can drop here */
+	public bool highlighted { get; set; default = false; }
+
+	public weak SideBarItem? parent = null;
+	public GLib.ListStore children = new GLib.ListStore (typeof (SideBarItem));
+	internal CustomFilter filter;
+	internal FilterListModel shown_children;
+
+	public SideBarItem () {
+		filter = new CustomFilter ((o) => ((SideBarItem) o).shown);
+		shown_children = new FilterListModel (children, filter);
+	}
+
+	public int depth { get { return parent == null ? 1 : parent.depth + 1; } }
 }
-	
-public class BeatBox.SideBar : Gtk.TreeView {
-	public TreeStore tree;
-	public TreeModelFilter filter;
-	Gtk.GestureClick side_bar_click; // GTK3 controllers need a reference
-	
-	SideBarRenderer side_renderer;
-	
-	TreeIter? selectedIter;
-	TreeIter? highlight_iter;
-	
-	public bool autoExpanded;
-	
-	public signal void clickable_clicked(TreeIter iter);
-	public signal void true_selection_change(TreeIter selected);
-	public signal void true_drag_received(TreeIter iter, string[] uris);
-	
+
+public class BeatBox.SideBar : ScrollableBin {
+	public ListView view { get; private set; }
+	GLib.ListStore roots = new GLib.ListStore (typeof (SideBarItem));
+	CustomFilter roots_filter;
+	TreeListModel rows;
+	SingleSelection selection;
+	Gtk.GestureClick side_bar_click;
+
+	SideBarItem? selectedItem = null;
+	SideBarItem? highlight_item = null;
+	bool quiet = false; // selection changed from code
+
+	public signal void true_selection_change(SideBarItem selected);
+	public signal void true_drag_received(SideBarItem item, string[] uris);
+	/** A row was double-clicked, or got Enter */
+	public signal void item_activated(SideBarItem item);
+
 	public SideBar() {
-		tree = new TreeStore(9, typeof(GLib.Object), typeof(Widget), typeof(bool), 
-								typeof(Gdk.Pixbuf), typeof(string), typeof(Gdk.Pixbuf), 
-								typeof(bool), typeof(bool), typeof(bool));
-		filter = new TreeModelFilter(tree, null);
-		set_model(filter);
-		
-		TreeViewColumn col = new TreeViewColumn();
-		col.title = "display";
-		this.insert_column(col, 0);
-		
-		// add the ultimate renderer
-		side_renderer = new SideBarRenderer();
-		col.pack_start(side_renderer, true);
-		col.set_cell_data_func(side_renderer, sideBarFiller);
-		col.expand = true;
-		
-		this.set_headers_visible(false);
-		this.set_show_expanders(false);
-		// no type-ahead: letters go to the search box (LibraryWindow.handle_key), and GTK 4's
-		// search popover breaks the tree's CSS nodes (gtk_css_node_insert_after critical)
-		enable_search = false;
-		filter.set_visible_column(SideBarColumn.COLUMN_VISIBLE);
-		this.set_grid_lines(TreeViewGridLines.NONE);
-		this.name = "SidebarContent";
-		
-		this.get_selection().changed.connect(selectionChange);
-		// CAPTURE: before the tree view handles the press (selection)
+		roots_filter = new CustomFilter((o) => ((SideBarItem) o).shown);
+		rows = new TreeListModel(new FilterListModel(roots, roots_filter), false, true,
+			(o) => ((SideBarItem) o).shown_children);
+		selection = new SingleSelection(rows) { autoselect = false, can_unselect = true };
+
+		var factory = new SignalListItemFactory();
+		factory.setup.connect((o) => ((ListItem) o).child = new SideBarRow());
+		factory.bind.connect((o) => {
+			var li = (ListItem) o;
+			var row = (TreeListRow) li.item;
+			var item = (SideBarItem) row.item;
+			((SideBarRow) li.child).bind(item, row, li);
+			// headings are not chosen (unless they stand for a page)
+			li.selectable = li.activatable = (item.depth > 1 || item.is_selectable_parent);
+		});
+		factory.unbind.connect((o) => ((SideBarRow) ((ListItem) o).child).unbind());
+
+		view = new ListView(selection, factory);
+		view.name = "SidebarContent";
+		view.single_click_activate = false;
+		view.activate.connect((position) => {
+			var item = item_at_position(position);
+			if(item != null)
+				item_activated(item);
+		});
+		scroll_child = view;
+
+		selection.notify["selected"].connect(selectionChange);
+		// CAPTURE: before the list handles the press (selection)
 		side_bar_click = new Gtk.GestureClick();
 		side_bar_click.propagation_phase = Gtk.PropagationPhase.CAPTURE;
 		side_bar_click.pressed.connect(sideBarClick);
-		this.add_controller(side_bar_click);
+		view.add_controller(side_bar_click);
 
 		// drag and drop: only strings, i.e. the "\n" joined uris of the rows dragged inside
 		// BeatBox. Files from outside are not accepted (as the old SAME_APP target)
@@ -99,432 +117,431 @@ public class BeatBox.SideBar : Gtk.TreeView {
 		dest.motion.connect(drag_motion_signal);
 		dest.leave.connect(drag_leave_signal);
 		dest.drop.connect(drag_received);
-		this.add_controller(dest);
+		view.add_controller(dest);
+	}
 
-	}
-	
-	// For the sidebar
-	public void sideBarFiller(CellLayout layout, CellRenderer renderer, TreeModel model, TreeIter iter) {
-		SideBarRenderer side_rend = (SideBarRenderer)renderer;
-		TreePath path = model.get_path(iter);
-		
-		side_rend.model = model;
-		side_rend.iter = iter;
-		side_rend.expanded = is_row_expanded(path);
-		side_rend.highlight = (iter == highlight_iter);
-	}
-	
 	/* Convenient add/remove/edit methods */
-	public TreeIter addItem(TreeIter? parent, TreeIter? before, GLib.Object? o, Widget? w, 
+	public SideBarItem addItem(SideBarItem? parent, SideBarItem? before, GLib.Object? o, Widget? w,
 							Gdk.Pixbuf? pixbuf, string text, Gdk.Pixbuf? clickable,
 							bool draggable, bool droppable,
 							bool is_selectable_parent) {
-		TreeIter iter;
-		
-		if(before == null)
-			tree.append(out iter, parent);
-		else
-			tree.insert_before(out iter, parent, before);
-		
-		tree.set(iter,  SideBarColumn.COLUMN_OBJECT, o,
-						SideBarColumn.COLUMN_WIDGET, w,
-						SideBarColumn.COLUMN_VISIBLE, true,
-						SideBarColumn.COLUMN_PIXBUF, pixbuf,
-						SideBarColumn.COLUMN_TEXT, text,
-						SideBarColumn.COLUMN_CLICKABLE, clickable, 
-						SideBarColumn.COLUMN_DRAGGABLE, draggable, 
-						SideBarColumn.COLUMN_DROPPABLE, droppable,
-						SideBarColumn.COLUMN_IS_SELECTABLE_PARENT, is_selectable_parent);
-		
-		if(parent != null) {
-			tree.set(parent, SideBarColumn.COLUMN_VISIBLE, true);
-		}
-		else if(!is_selectable_parent) {
-			tree.set(iter, SideBarColumn.COLUMN_VISIBLE, false);
-		}
-		
-		expand_all();
-		return iter;
+		var item = new SideBarItem();
+		item.object = o;
+		item.widget = w;
+		item.pixbuf = pixbuf;
+		item.text = text;
+		item.draggable = draggable;
+		item.droppable = droppable;
+		item.is_selectable_parent = is_selectable_parent;
+		item.parent = parent;
+		// a heading shows once something is under it
+		item.shown = parent != null || is_selectable_parent;
+
+		var store = (parent != null) ? parent.children : roots;
+		uint position = 0;
+		if(before == null || !store.find(before, out position))
+			position = store.get_n_items();
+		store.insert(position, item);
+
+		if(parent != null)
+			setVisibility(parent, true);
+
+		return item;
 	}
-	
-	public bool removeItem(TreeIter iter) {
-		TreeIter parent;
-		if(tree.iter_parent(out parent, iter)) {
-			bool show_no_children = false;
-			tree.get(parent, SideBarColumn.COLUMN_IS_SELECTABLE_PARENT, out show_no_children);
-			if(tree.iter_n_children(parent) > 1 || show_no_children)
-				tree.set(parent, SideBarColumn.COLUMN_VISIBLE, true);
-			else
-				tree.set(parent, SideBarColumn.COLUMN_VISIBLE, false);
+
+	public bool removeItem(SideBarItem item) {
+		var store = (item.parent != null) ? item.parent.children : roots;
+		uint position = 0;
+		if(!store.find(item, out position))
+			return false;
+		if(item == selectedItem)
+			selectedItem = null;
+		store.remove(position);
+
+		var parent = item.parent;
+		if(parent != null)
+			setVisibility(parent, store.get_n_items() > 0 || parent.is_selectable_parent);
+		return true;
+	}
+
+	public void setVisibility(SideBarItem item, bool val) {
+		if(item.shown == val)
+			return;
+		item.shown = val;
+		var filter = (item.parent != null) ? item.parent.filter : roots_filter;
+		filter.changed(val ? FilterChange.LESS_STRICT : FilterChange.MORE_STRICT);
+		reselect();
+	}
+
+	public void setName(SideBarItem item, string name) {
+		item.text = name;
+	}
+
+	public bool setNameFromObject(SideBarItem parent, GLib.Object o, string name) {
+		var item = getItemFromObject(parent, o);
+		if(item == null)
+			return false;
+		item.text = name;
+		return true;
+	}
+
+	public SideBarItem? getSelectedItem() {
+		return selection.selected_item != null ? (SideBarItem) ((TreeListRow) selection.selected_item).item : null;
+	}
+
+	public void setSelectedItem(SideBarItem? item) {
+		if(item == null || item == selectedItem)
+			return;
+
+		selectedItem = item;
+		reselect();
+		true_selection_change(item);
+	}
+
+	/** Every heading open: the old tree showed all rows */
+	public void expand_all() {
+		for(uint i = 0; i < rows.get_n_items(); i++) {
+			var row = rows.get_row(i);
+			if(row != null && row.expandable)
+				row.expanded = true;
 		}
-		
-		//Widget w;
-		//tree.get(iter, SideBarColumn.COLUMN_WIDGET, out w);
-		//w.destroy();
-		
-		// destroy child row widgets as well
-		//TreeIter current;
-		//if(tree.iter_children(out current, iter)) {
-		//	do {
-				//tree.get(current, SideBarColumn.COLUMN_WIDGET, out w);
-				//w.destroy();
-		//	}
-		//	while(tree.iter_next(ref current));
-		//}
-		
-		return tree.remove(ref iter);
 	}
-	
-	// input MUST be a child iter
-	public void setVisibility(TreeIter it, bool val) {
-		bool was = false;
-		tree.get(it, SideBarColumn.COLUMN_VISIBLE, out was);
-		tree.set(it, SideBarColumn.COLUMN_VISIBLE, val);
-		
-		if(val && !was) {
-			var shown = convertToFilter(it); // null while a parent is hidden: nothing to expand yet
-			if(shown != null)
-				expand_row(filter.get_path(shown), true);
+
+	public GLib.Object? getObject(SideBarItem item) {
+		return item.object;
+	}
+
+	public Widget? getWidget(SideBarItem item) {
+		return item.widget;
+	}
+
+	public SideBarItem? getItemFromObject(SideBarItem parent, GLib.Object o) {
+		for(uint i = 0; i < parent.children.get_n_items(); i++) {
+			var item = (SideBarItem) parent.children.get_item(i);
+			if(item.object == o)
+				return item;
 		}
-	}
-	
-	public void setName(TreeIter it, string name) {
-		TreeIter iter = it;
-		
-		tree.set(iter, SideBarColumn.COLUMN_TEXT, name);
-	}
-	
-	// parent should be filter iter
-	public bool setNameFromObject(TreeIter parent, GLib.Object o, string name) {
-		TreeIter realParent = convertToChild(parent);
-		TreeIter pivot;
-		tree.iter_children(out pivot, realParent);
-		
-		do {
-			GLib.Object tempO;
-			tree.get(pivot, 0, out tempO);
-			
-			if(tempO == o) {
-				tree.set(pivot, SideBarColumn.COLUMN_TEXT, name);
-				return true;
-			}
-			else if(!tree.iter_next(ref pivot)) {
-				return false;
-			}
-			
-		} while(true);
-	}
-	
-	public TreeIter? getSelectedIter() {
-		TreeModel mod;
-		TreeIter sel;
-		
-		if(this.get_selection().get_selected(out mod, out sel)) {
-			return sel;
-		}
-		
 		return null;
 	}
-	
-	public void setSelectedIter(TreeIter iter) {
-		if(iter == selectedIter) {
-			return;
-		}
-		
-		this.get_selection().changed.disconnect(selectionChange);
-		get_selection().unselect_all();
-		
-		get_selection().select_iter(iter);
-		this.get_selection().changed.connect(selectionChange);
-		selectedIter = iter;
-		
-		true_selection_change(iter);
-	}
-	
-	public bool expandItem(TreeIter iter, bool expanded) {
-		TreePath path = filter.get_path(iter);
-		
-		if(path.get_depth() != 1)
-			return false;
-		
-		return this.expand_row(path, false);
-	}
-	
-	public GLib.Object? getObject(TreeIter iter) {
-		GLib.Object o;
-		filter.get(iter, SideBarColumn.COLUMN_OBJECT, out o);
-		return o;
-	}
-	
-	public Widget? getWidget(TreeIter iter) {
-		Widget w;
-		tree.get(iter, SideBarColumn.COLUMN_WIDGET, out w);
-		return w;
-	}
-	
-	public TreeIter? getIterFromObject(TreeIter parent, GLib.Object o) {
-		TreeIter realParent = parent;//convertToChild(parent);
-		TreeIter pivot;
-		tree.iter_children(out pivot, realParent);
-		
-		do {
-			GLib.Object tempO;
-			tree.get(pivot, 0, out tempO);
-			
-			if(tempO == o) {
-				return pivot;
-			}
-			else if(!tree.iter_next(ref pivot)) {
-				return null;
-			}
-			
-		} while(true);
-	}
-	
+
 	public Widget? getSelectedWidget() {
-		TreeModel m;
-		TreeIter iter;
-		
-		if(!this.get_selection().get_selected(out m, out iter)) { // user has nothing selected, reselect last selected
-			//if(iter == null)
-				return null;
-		}
-		
-		Widget w;
-		m.get(iter, SideBarColumn.COLUMN_WIDGET, out w);
-		return w;
+		var item = getSelectedItem();
+		return item != null ? item.widget : null;
 	}
-	
+
 	public Object? getSelectedObject() {
-		TreeModel m;
-		TreeIter iter;
-		
-		if(!this.get_selection().get_selected(out m, out iter)) { // user has nothing selected, reselect last selected
-			//if(iter == null)
-				return null;
-		}
-		
-		Object o;
-		m.get(iter, SideBarColumn.COLUMN_OBJECT, out o);
-		return o;
+		var item = getSelectedItem();
+		return item != null ? item.object : null;
 	}
-	
+
+	/** The row of an item, or INVALID_LIST_POSITION while it (or a heading over it) is hidden */
+	uint position_of(SideBarItem item) {
+		for(uint i = 0; i < rows.get_n_items(); i++) {
+			var row = rows.get_row(i);
+			if(row != null && row.item == item)
+				return i;
+		}
+		return INVALID_LIST_POSITION;
+	}
+
+	SideBarItem? item_at_position(uint position) {
+		var row = rows.get_row(position);
+		return row != null ? (SideBarItem) row.item : null;
+	}
+
+	/** Puts the selection back on the chosen item (rows come and go as headings show and hide) */
+	void reselect() {
+		uint position = (selectedItem != null) ? position_of(selectedItem) : INVALID_LIST_POSITION;
+		if(selection.selected == position)
+			return;
+		quiet = true;
+		selection.selected = position;
+		quiet = false;
+	}
+
 	/* stops user from selecting the root nodes */
-	public void selectionChange() {
-		TreeModel model;
-		TreeIter pending;
-		
-		if(!this.get_selection().get_selected(out model, out pending)) { // user has nothing selected, reselect last selected
-			if(selectedIter != null) {
-				this.get_selection().select_iter(selectedIter);
-			}
-			
+	void selectionChange() {
+		if(quiet)
+			return;
+		var pending = getSelectedItem();
+		if(pending == null || (pending.depth == 1 && !pending.is_selectable_parent)) {
+			// nothing, or a heading: back to the last chosen
+			Idle.add(() => { reselect(); return false; });
 			return;
 		}
-		
-		// TODO: This is the cause of the error messages that are spit out. 
-		// We need to get a path/iter that belongs to filter or model,
-		// not to this temp model that we got from above.
-		TreePath temp_path = model.get_path(pending);
-		
-		TreeIter filt_iter;
-		if(!filter.get_iter(out filt_iter, temp_path)) {
-			warning("Could not get iter from selected path");
-			return;
-		}
-		
-		bool is_selectable_parent = false;
-		model.get(filt_iter, SideBarColumn.COLUMN_IS_SELECTABLE_PARENT, out is_selectable_parent);
-		
-		if(temp_path.get_depth() == 1 && !is_selectable_parent) {
-			this.get_selection().unselect_all();
-			if(selectedIter != null)
-				this.get_selection().select_iter(selectedIter);
-		}
-		else if(pending != selectedIter) {
-			selectedIter = filt_iter;
-			true_selection_change(selectedIter);
+		if(pending != selectedItem) {
+			selectedItem = pending;
+			true_selection_change(pending);
 		}
 	}
-	
-	/* click event functions */
-	private void sideBarClick(int n_press, double widget_x, double widget_y) {
-		// select one based on mouse position
-		int x, y;
-		convert_widget_to_bin_window_coords((int)widget_x, (int)widget_y, out x, out y);
-		TreeIter iter;
-		TreePath path;
-		TreeViewColumn column;
-		int cell_x;
-		int cell_y;
-		
-		this.get_path_at_pos(x, y, out path, out column, out cell_x, out cell_y);
-		if(path == null)
-			return;
-		if(!filter.get_iter(out iter, path))
-			return;
-		
-		if(overClickable(iter, column, (int)cell_x, (int)cell_y)) {
-			clickable_clicked(iter);
+
+	/** The item under a point of the list */
+	public SideBarItem? item_at(double x, double y) {
+		var w = view.pick(x, y, PickFlags.DEFAULT);
+		while(w != null && w != view) {
+			if(w is SideBarRow)
+				return ((SideBarRow) w).item;
+			var child = w.get_first_child(); // the row around it (its padding)
+			if(child is SideBarRow)
+				return ((SideBarRow) child).item;
+			w = w.get_parent();
 		}
-		else if(overExpander(iter, column, (int)cell_x, (int)cell_y)) {
-			if(is_row_expanded(path))
-				this.collapse_row(path);
-			else
-				this.expand_row(path, true);
-		}
-	}
-	
-	private bool overClickable(TreeIter iter, TreeViewColumn col, int x, int y) {
-		/*Pixbuf pix;
-		filter.get(iter, 5, out pix);
-		
-		if(pix == null)
-			return false;
-		
-		int cell_x;
-		int cell_width;
-		col.cell_get_position(clickable_cell, out cell_x, out cell_width);
-		
-		if(x > cell_x && x < cell_x + cell_width)
-			return true;*/
-		
-		return false;
-	}
-	
-	private bool overExpander(TreeIter iter, TreeViewColumn col, int x, int y) {
-		bool rv = false;
-		if(filter.get_path(iter).get_depth() != 1)
-			rv = false;
-		else
-			rv = true;
-		
-		return rv;
-		/* for some reason, the pixbuf SOMETIMES takes space, somtimes doesn't so cope for that *
-		int pixbuf_start;
-		int pixbuf_width;
-		col.cell_get_position(pix_cell, out pixbuf_start, out pixbuf_width);
-		int text_start;
-		int text_width;
-		col.cell_get_position(text_cell, out text_start, out text_width);
-		int click_start;
-		int click_width;
-		col.cell_get_position(clickable_cell, out click_start, out click_width);
-		int total = text_start + text_width + click_width - pixbuf_start;
-		
-		if(x > total)
-			return true;
-		
-		return false;*/
-	}
-	
-	/* Helpers for child->filter, filter->child */
-	public TreeIter? convertToFilter(TreeIter? child) {
-		if(child == null)
-			return null;
-		
-		TreeIter rv;
-		
-		if(filter.convert_child_iter_to_iter(out rv, child)) {
-			return rv;
-		}
-		
 		return null;
 	}
-	
-	public TreeIter? convertToChild(TreeIter? filt) {
-		if(filt == null)
-			return null;
-		
-		TreeIter rv;
-		filter.convert_iter_to_child_iter(out rv, filt);
-		
-		return rv;
+
+	/* click event functions: a click on a heading opens or closes it */
+	void sideBarClick(int n_press, double x, double y) {
+		if(side_bar_click.get_current_button() != 1)
+			return;
+		var item = item_at(x, y);
+		if(item == null || item.depth != 1)
+			return;
+		uint position = position_of(item);
+		var row = (position != INVALID_LIST_POSITION) ? rows.get_row(position) : null;
+		if(row != null && row.expandable)
+			row.expanded = !row.expanded;
 	}
-	
+
+	/** The item a drop at a point goes to: the row, or its heading if that takes drops */
+	SideBarItem? drop_item_at(double x, double y) {
+		var item = item_at(x, y);
+		if(item == null)
+			return null;
+		if(item.droppable)
+			return item;
+		if(item.parent != null && item.parent.droppable)
+			return item.parent;
+		return null;
+	}
+
+	void set_highlight(SideBarItem? item) {
+		if(highlight_item == item)
+			return;
+		if(highlight_item != null)
+			highlight_item.highlighted = false;
+		highlight_item = item;
+		if(item != null)
+			item.highlighted = true;
+	}
+
 	Gdk.DragAction drag_motion_signal(double x, double y) {
-		TreeIter iter = TreeIter();
-		TreePath? path;
-		TreeViewDropPosition pos;
-		TreePath? target = null; // row the tree view marks as the drop position
-
-		highlight_iter = null;
-		if(get_dest_row_at_pos ((int) x, (int) y, out path, out pos) && filter.get_iter(out iter, path)) {
-			bool droppable;
-			filter.get(iter, SideBarColumn.COLUMN_DROPPABLE, out droppable);
-			if(droppable) {
-				highlight_iter = iter;
-				target = path;
-			}
-			else { // test if it's parent is droppable, and if so make that the highlight
-				TreeIter parent;
-				bool parent_droppable = false;
-
-				if(filter.iter_parent(out parent, iter)) {
-					filter.get(parent, SideBarColumn.COLUMN_DROPPABLE, out parent_droppable);
-				}
-
-				if(parent_droppable) {
-					highlight_iter = parent;
-					target = filter.get_path(parent);
-				}
-			}
-		}
-
-		set_drag_dest_row(target, TreeViewDropPosition.INTO_OR_BEFORE);
-		queue_draw();
-
-		return (highlight_iter != null) ? Gdk.DragAction.COPY : 0;
+		set_highlight(drop_item_at(x, y));
+		return (highlight_item != null) ? Gdk.DragAction.COPY : 0;
 	}
 
 	void drag_leave_signal() {
-		highlight_iter = null;
-		set_drag_dest_row(null, TreeViewDropPosition.INTO_OR_BEFORE);
-		queue_draw();
+		set_highlight(null);
 	}
 
 	bool drag_received(GLib.Value value, double x, double y) {
-		bool success = false;
-		TreeIter? iter;
-		TreePath? path;
-		TreeViewColumn column;
-		int cell_x;
-		int cell_y;
-		string text;
 		string[] uris = value.get_string().split("\n");
+		var item = drop_item_at(x, y);
+		set_highlight(null);
+		if(item == null)
+			return false;
+		message("Drag dropped on %s\n", item.text);
+		true_drag_received(item, uris);
+		return true;
+	}
 
-		// Get the path and iter from x,y and make sure this is a droppable path.
-		if(get_path_at_pos((int) x, (int) y, out path, out column, out cell_x, out cell_y)) {
-			if(filter.get_iter(out iter, path)) {
-				bool droppable;
-				filter.get(iter, SideBarColumn.COLUMN_DROPPABLE, out droppable, SideBarColumn.COLUMN_TEXT, out text);
-				if(droppable) {
-					message("Drag dropped on hovered item %s\n", text);
-					success = true;
-					true_drag_received(iter, uris);
-				}
-				else { // if parent is droppable, put drop on that
-					TreeIter parent;
-					bool parent_droppable = false;
+}// END CLASS
 
-					if(filter.iter_parent(out parent, iter)) {
-						filter.get(parent, SideBarColumn.COLUMN_DROPPABLE, out parent_droppable, SideBarColumn.COLUMN_TEXT, out text);
-					}
+/**
+ * One row of the side bar, drawn as the GTK 3 renderer did: headings in small grey capitals with
+ * a triangle at the right, pages with their icon (symbolic ones in the text's color) and name.
+ */
+public class BeatBox.SideBarRow : Gtk.Widget {
+	public static int EXPANDER_SIZE = 8;
+	public static int DEPTH_INDENT_SIZE = 8;
 
-					if(parent_droppable) {
-						message("Drag dropped on hovered item's parent %s\n", text);
-						success = true;
-						true_drag_received(parent, uris);
-					}
+	public SideBarItem? item { get; private set; default = null; }
+	TreeListRow? list_row = null;
+	ulong item_changed = 0;
+	ulong row_changed = 0;
+
+	static HashTable<Pixbuf, bool> monochrome = new HashTable<Pixbuf, bool>(direct_hash, direct_equal);
+
+	internal void bind(SideBarItem item, TreeListRow row, ListItem li) {
+		unbind();
+		this.item = item;
+		list_row = row;
+		item_changed = item.notify.connect(() => { queue_resize(); queue_draw(); });
+		row_changed = row.notify["expanded"].connect(() => queue_draw());
+		tooltip_text = null;
+		queue_resize();
+	}
+
+	internal void unbind() {
+		if(item != null && item_changed != 0)
+			item.disconnect(item_changed);
+		if(list_row != null && row_changed != 0)
+			list_row.disconnect(row_changed);
+		item_changed = row_changed = 0;
+		item = null;
+		list_row = null;
+	}
+
+	public override void dispose() {
+		unbind();
+		base.dispose();
+	}
+
+	/** True for symbolic icons: every visible pixel is a shade of grey */
+	static bool is_monochrome(Pixbuf pix) {
+		if(monochrome.contains(pix))
+			return monochrome[pix];
+		bool result = pix.has_alpha && pix.n_channels == 4;
+		unowned uint8[] px = pix.get_pixels_with_length();
+		for(int y = 0; result && y < pix.height; y++) {
+			for(int x = 0; x < pix.width; x++) {
+				int i = y * pix.rowstride + x * 4;
+				if(px[i + 3] > 64 && (((int)px[i] - px[i + 1]).abs() > 12 || ((int)px[i + 1] - px[i + 2]).abs() > 12)) {
+					result = false;
+					break;
 				}
 			}
 		}
-
-		highlight_iter = null;
-		set_drag_dest_row(null, TreeViewDropPosition.INTO_OR_BEFORE);
-		queue_draw();
-
-		return success;
+		monochrome[pix] = result;
+		return result;
 	}
-	
-}// END CLASS
+
+	static string heading_color() {
+		RGBA c = UI.named_color("bb_sidebar_heading");
+		return "#%02x%02x%02x".printf((int)(c.red * 255), (int)(c.green * 255), (int)(c.blue * 255));
+	}
+
+	Pango.Layout make_layout() {
+		var layout = create_pango_layout(null);
+		if(item == null)
+			return layout;
+		if(item.depth > 1)
+			layout.set_text(item.text, -1);
+		else
+			layout.set_markup("<span size='small' weight='bold' foreground='%s'>".printf(heading_color()) + Markup.escape_text(item.text.up()) + "</span>", -1);
+		return layout;
+	}
+
+	public override SizeRequestMode get_request_mode() {
+		return SizeRequestMode.CONSTANT_SIZE;
+	}
+
+	public override void measure(Orientation orientation, int for_size, out int minimum, out int natural,
+	                             out int minimum_baseline, out int natural_baseline) {
+		minimum_baseline = natural_baseline = -1;
+		if(orientation == Orientation.HORIZONTAL) {
+			// as narrow as the side bar is made: the text is cut at its edge
+			int w = 0, h;
+			if(item != null) {
+				make_layout().get_pixel_size(out w, out h);
+				w += item.depth * DEPTH_INDENT_SIZE + ((item.depth > 1) ? 20 : EXPANDER_SIZE + 6);
+			}
+			minimum = 1;
+			natural = w;
+		}
+		else {
+			int dumby;
+			create_pango_layout("Test").get_pixel_size(out dumby, out minimum);
+			minimum += 6 + UI.GTK3_ROW_EXTRA; // 3 px extra on each side for the text
+			natural = minimum;
+		}
+	}
+
+	public override void snapshot(Gtk.Snapshot s) {
+		if(item == null)
+			return;
+		int width = get_width(), height = get_height();
+		var r = Graphene.Rect();
+		r.init(0, 0, width, height);
+		var context = s.append_cairo(r);
+
+		int depth = item.depth;
+		var pix = item.pixbuf;
+		var layout = make_layout();
+		// the row's CSS color: the skin's text, or the selection's
+		RGBA rgba = get_color();
+		bool rtl = get_direction() == Gtk.TextDirection.RTL;
+
+		// Draw a blank space for each level of indent
+		double start_x = depth * DEPTH_INDENT_SIZE;
+		double start_y = 3 + UI.GTK3_ROW_EXTRA / 2;
+		if(rtl)
+			start_x = width - start_x;
+
+		// Draw picture if it is not level 1
+		if(depth != 1 && pix != null) {
+			int image_y = (height - pix.height > 0) ? ((height - pix.height)/2) : 0;
+			UI.set_source_pixbuf (context, pix, (int)(rtl ? start_x - pix.width : start_x), image_y);
+			if(is_monochrome(pix)) {
+				// symbolic icon: paint it in the text color (white when selected, light on dark skins)
+				var icon = context.get_source();
+				context.set_source_rgba(rgba.red, rgba.green, rgba.blue, rgba.alpha);
+				context.mask(icon);
+			}
+			else {
+				context.paint();
+			}
+
+			start_x += rtl ? -20.0 : 20.0; // for rtl, move to the left. otherwise move to right
+		}
+
+		// Draw text
+		context.set_source_rgba (rgba.red, rgba.green, rgba.blue, rgba.alpha);
+		if(rtl)
+			layout.set_alignment(Pango.Alignment.RIGHT);
+
+		Pango.Rectangle ink;
+		Pango.Rectangle extents;
+		layout.get_pixel_extents(out ink, out extents);
+
+		context.move_to(rtl ? (start_x - extents.width) : start_x, start_y);
+		Pango.cairo_show_layout(context, layout);
+
+		// If it is supposed to be highlighted, draw the highlight
+		if(item.highlighted)
+			draw_highlight(context, 0, 0, width, height);
+
+		// Draw the expander: a small triangle in the heading's color, pointing down when expanded
+		// and to the side when collapsed
+		if(depth == 1 && item.shown_children.get_n_items() > 0 && list_row != null) {
+			// as small and as high in the row as the GTK3 themes drew it
+			double size = 5, x = rtl ? 3 : width - EXPANDER_SIZE;
+			double y = 5;
+			var color = Gdk.RGBA();
+			color.parse(heading_color());
+			Gdk.cairo_set_source_rgba(context, color);
+			if(list_row.expanded) {
+				context.move_to(x, y + 1);
+				context.line_to(x + size, y + 1);
+				context.line_to(x + size / 2, y + size - 1);
+			}
+			else {
+				double tip = rtl ? x : x + size, back = rtl ? x + size - 1 : x + 1;
+				context.move_to(back, y);
+				context.line_to(back, y + size);
+				context.line_to(tip - (rtl ? -1 : 1), y + size / 2);
+			}
+			context.close_path();
+			context.fill();
+		}
+	}
+
+	void draw_highlight(Cairo.Context context, double x, double y, double width, double height) {
+		double corner_radius = (height * 2) / 10.0;   /* and corner curvature radius */
+		double radius = corner_radius;
+		double degrees = Math.PI / 180.0;
+		x += 1.5; y += 1.5; width -= 3; height -= 3;
+
+		context.new_sub_path();
+		context.arc (x + width - radius, y + radius, radius, -90 * degrees, 0 * degrees);
+		context.arc (x + width - radius, y + height - radius, radius, 0 * degrees, 90 * degrees);
+		context.arc (x + radius, y + height - radius, radius, 90 * degrees, 180 * degrees);
+		context.arc (x + radius, y + radius, radius, 180 * degrees, 270 * degrees);
+		context.close_path();
+
+		context.set_source_rgba (0.0, 0.3, 1.0, 0.1);
+		context.fill_preserve ();
+		context.set_source_rgb (0.0, 0.0, 1);
+		context.set_line_width (3.0);
+		context.stroke ();
+	}
+}

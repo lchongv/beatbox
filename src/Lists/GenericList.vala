@@ -33,11 +33,6 @@ public abstract class BeatBox.GenericList : FastList {
 	protected MediaEditor media_editor;
 	
 	protected TreeViewSetup tvs;
-	bool _is_mixed; // if true, temporary songs will be italicized in CellDataHelper
-	public bool is_mixed {
-		get { return cellHelper.is_mixed; }
-		set { cellHelper.is_mixed = value; }
-	}
 	public int relative_id;
 	protected bool is_current_list;
 	
@@ -46,8 +41,6 @@ public abstract class BeatBox.GenericList : FastList {
 	protected Gtk.GestureClick click_gesture; // the press on the rows: see MusicList.view_click
 	protected Gtk.DragSource drag_source; // drags the selected rows to the sidebar
 	protected bool dragging;
-	
-	protected CellDataFunctionHelper cellHelper;
 	
 	protected GLib.Icon playing_icon;
 	protected GLib.Icon completed_icon;
@@ -60,25 +53,12 @@ public abstract class BeatBox.GenericList : FastList {
 	
 	public signal void import_requested(LinkedList<Media> to_import);
 	
-	protected GenericList(GLib.List<Type> types, TreeViewSetup tvs, Media default_value) {
-		base(types, default_value);
+	protected GenericList(TreeViewSetup tvs) {
+		base();
 		
 		this.tvs = tvs;
 		
-		set_headers_clickable(true);
-		set_headers_visible(true);
-		set_fixed_height_mode(true);
-		set_reorderable(false);
-		
-		// Make the 
-		int icon_column = MusicColumn.ICON;
-		if(tvs.get_hint() == TreeViewSetup.Hint.DUPLICATES)
-			icon_column = DuplicateColumn.ICON;
-		
-		var starred = BeatBox.App.icons.STARRED.render (IconSize.NORMAL, null);
-		var not_starred = BeatBox.App.icons.NOT_STARRED.render (IconSize.NORMAL, null);
-		
-		cellHelper = new CellDataFunctionHelper(this, _is_mixed, icon_column, starred, not_starred);
+		set_rating_icons(BeatBox.App.icons.STARRED.render (IconSize.NORMAL, null));
 		
 		playing_icon = App.icons.MEDIA_PLAY_SYMBOLIC.get_gicon ();
 		completed_icon = App.icons.PROCESS_COMPLETED.get_gicon ();
@@ -93,9 +73,6 @@ public abstract class BeatBox.GenericList : FastList {
 		drag_source.drag_end.connect(on_drag_end);
 		add_controller(drag_source);
 		
-		// allow selecting multiple rows
-		get_selection().set_mode(SelectionMode.MULTIPLE);
-		
 		insert_action_group("columns", columnActions);
 		
 		// any press, before the list handles it
@@ -104,10 +81,9 @@ public abstract class BeatBox.GenericList : FastList {
 		click_gesture.propagation_phase = Gtk.PropagationPhase.CAPTURE;
 		click_gesture.pressed.connect(() => { scrolled_recently = true; });
 		add_controller(click_gesture);
-		// a drag of several selected rows keeps the press that the list claims (MusicList.view_click)
-		drag_source.group(click_gesture);
-		row_activated.connect((path, column) => row_activated_signal(path, column));
+		row_activated.connect(row_activated_signal);
 		rows_reordered.connect(updateTreeViewSetup);
+		column_resized.connect(updateTreeViewSetup);
 		App.playback.current_cleared.connect(current_cleared);
 		App.playback.media_played.connect(media_played);
 		App.playback.playback_stopped.connect(playback_stopped);
@@ -116,12 +92,12 @@ public abstract class BeatBox.GenericList : FastList {
 	
 	public void set_parent_wrapper(SourceView parent) {
 		this.parent_wrapper = parent;
-		vadjustment.value_changed.connect(view_scroll);
+		scrolled.connect(view_scroll);
 	}
 	
 	public abstract void update_sensitivities();
 	
-	/** TreeViewColumn header functions. Has to do with sorting and
+	/** Column header functions. Has to do with sorting and
 	 * remembering column widths/sort column/sort direction between
 	 * sessions.
 	**/
@@ -133,143 +109,58 @@ public abstract class BeatBox.GenericList : FastList {
 		N_("Last Played"), N_("Episode"), N_("Name"), N_("Podcast"), N_("Date"), N_("Comment"),
 		N_("Category"), N_("Station") };
 	
-	protected void add_columns() {
-		int index = 0;
-		
-		foreach(TreeViewColumn tvc in tvs.get_columns()) {
-			tvc.sizing = Gtk.TreeViewColumnSizing.FIXED;
-			
-			if(!(tvc.title == " " || tvc.title == "id")) {
-				// Music, General
-				if(tvc.title == "Bitrate")
-					insert_column_with_data_func(-1, tvc.title, new ListText(), cellHelper.bitrateTreeViewFiller);
-				else if(tvc.title == "Length")
-					insert_column_with_data_func(-1, tvc.title, new ListText(), cellHelper.lengthTreeViewFiller);
-				else if(tvc.title == "Date Added")
-					insert_column_with_data_func(-1, tvc.title, new ListText(), cellHelper.dateTreeViewFiller);
-				else if(tvc.title == "Last Played")
-					insert_column_with_data_func(-1, tvc.title, new ListText(), cellHelper.dateTreeViewFiller);
-				else if(tvc.title == "Rating") {
-					insert_column_with_data_func(-1, tvc.title, UI.full_size(new CellRendererPixbuf()), cellHelper.ratingTreeViewFiller); // the five stars at their own size
-				}
-				else if(tvc.title == "Year")
-					insert_column_with_data_func(-1, tvc.title, new ListText(), cellHelper.intelligentTreeViewFiller);
-				else if(tvc.title == "#")
-					insert_column_with_data_func(-1, tvc.title, new ListText(), cellHelper.intelligentTreeViewFiller);
-				else if(tvc.title == "Track")
-					insert_column_with_data_func(-1, tvc.title, new ListText(), cellHelper.intelligentTreeViewFiller);
-				else if(tvc.title == "Plays")
-					insert_column_with_data_func(-1, tvc.title, new ListText(), cellHelper.intelligentTreeViewFiller);
-				else if(tvc.title == "Skips")
-					insert_column_with_data_func(-1, tvc.title, new ListText(), cellHelper.intelligentTreeViewFiller);
-				else if(tvc.title == "Title")
-					insert_column_with_data_func(-1, tvc.title, new ListText(), cellHelper.stringTreeViewFiller);
-				else if(tvc.title == "Artist")
-					insert_column_with_data_func(-1, tvc.title, new ListText(), cellHelper.stringTreeViewFiller);
-				else if(tvc.title == "Album")
-					insert_column_with_data_func(-1, tvc.title, new ListText(), cellHelper.stringTreeViewFiller);
-				else if(tvc.title == "Genre")
-					insert_column_with_data_func(-1, tvc.title, new ListText(), cellHelper.stringTreeViewFiller);
-				else if(tvc.title == "BPM")
-					insert_column_with_data_func(-1, tvc.title, new ListText(), cellHelper.intelligentTreeViewFiller);
-				
-				// Podcast
-				else if(tvc.title == "Date")
-					insert_column_with_data_func(-1, tvc.title, new ListText(), cellHelper.dateTreeViewFiller);
-				else if(tvc.title == "Episode")
-					insert_column_with_data_func(-1, tvc.title, new ListText(), cellHelper.intelligentTreeViewFiller);
-				else if(tvc.title == "Name")
-					insert_column_with_data_func(-1, tvc.title, new ListText(), cellHelper.stringTreeViewFiller);
-				else if(tvc.title == "Comment")
-					insert_column_with_data_func(-1, tvc.title, new ListText(), cellHelper.stringTreeViewFiller);
-				else if(tvc.title == "Category")
-					insert_column_with_data_func(-1, tvc.title, new ListText(), cellHelper.stringTreeViewFiller);
-				else if(tvc.title == "Podcast")
-					insert_column_with_data_func(-1, tvc.title, new ListText(), cellHelper.stringTreeViewFiller);
-				else if(tvc.title == "Pulser")
-					insert_column(tvc, index); // cells for pulser is made ready to go in TVS
-				
-				// Radio
-				else if(tvc.title == "Station")
-					insert_column_with_data_func(-1, tvc.title, new ListText(), cellHelper.stringTreeViewFiller);
-				
-				// Duplicates
-				else if(tvc.title == DuplicateList.CHECKBOX_COLUMN_TITLE)
-					insert_column_with_data_func(-1, tvc.title, new CellRendererToggle(), cellHelper.toggleColumnFiller);
-				
-				else {
-					warning("Unknown column found. Adding anyways (%s)\n", tvc.title);
-					insert_column(tvc, index);
-				}
-
-
-				get_column(index).resizable = (tvc.title != "Rating");
-				get_column(index).reorderable = false;
-				get_column(index).clickable = true;
-				get_column(index).sort_column_id = index;
-				get_column(index).set_sort_indicator(false);
-				get_column(index).visible = tvc.visible;
-				
-				if(tvc.title == "Title" && get_hint() == TreeViewSetup.Hint.NOW_PLAYING) {
-					get_column(index).sizing = Gtk.TreeViewColumnSizing.AUTOSIZE;
-					get_column(index).expand = true;
-				}
-				else {
-					get_column(index).sizing = Gtk.TreeViewColumnSizing.FIXED;
-					get_column(index).fixed_width = tvc.fixed_width;
-					// an album's songs: the title takes the room left (at least 150 px, the band may be
-					// narrow next to a big cover), the length goes to the right edge
-					if(tvc.title == "Title" && get_hint() == TreeViewSetup.Hint.ALBUM_LIST) {
-						get_column(index).expand = true;
-						get_column(index).fixed_width = 150;
-					}
-				}
-			}
-			else if(tvc.title == " ") {
-				insert_column(tvc, index);
-
-				get_column(index).fixed_width = 24;
-				get_column(index).clickable = false;
-				get_column(index).sort_column_id = -1;
-				get_column(index).resizable = false;
-				get_column(index).reorderable = false;
-
-				get_column(index).set_cell_data_func(tvc.get_cells().nth_data(0), cellHelper.iconDataFunc);
-				get_column(index).set_cell_data_func(tvc.get_cells().nth_data(1), cellHelper.iconDataFunc);
-			}
-			else if(tvc.title == "id") {
-				insert_column(tvc, index);
-			}
-			else {
-				warning("Inserting unknown column %s at index %d\n", tvc.title, index);
-				insert_column(tvc, index);
-			}
-
-			// Show the name translated; the title stays the English key the code matches on
-			// (never _(""): gettext answers the empty string with the catalog's header)
-			if(tvc.title != " " && tvc.title != "id" && tvc.title != "") {
-				var header = new Label(_(tvc.title));
-				header.show();
-				get_column(index).widget = header;
-			}
-			
-			// CAPTURE: before the header button turns the press into a click (sorting)
-			var header_click = new Gtk.GestureClick();
-			header_click.button = 0;
-			header_click.propagation_phase = Gtk.PropagationPhase.CAPTURE;
-			header_click.pressed.connect(view_header_click);
-			get_column(index).get_button().add_controller(header_click);
-			get_column(index).notify["width"].connect(updateTreeViewSetup);
-
-			++index;
+	/** The kind of cell for a column of the setups, by its (English) title */
+	static CellKind kind_of(string title) {
+		switch(title) {
+			case " ":
+				return CellKind.ICON;
+			case "Rating":
+				return CellKind.RATING;
+			case "Bitrate":
+				return CellKind.BITRATE;
+			case "Length":
+				return CellKind.LENGTH;
+			case "Date Added":
+			case "Last Played":
+			case "Date":
+				return CellKind.DATE;
+			case "#":
+			case "Track":
+			case "Year":
+			case "Plays":
+			case "Skips":
+			case "BPM":
+			case "Episode":
+			case "Pulser":
+			case "id":
+				return CellKind.NUMBER;
+			case TreeViewSetup.CHECKBOX_COLUMN_TITLE:
+				return CellKind.TOGGLE;
+			default: // Title, Artist, Album, Genre, Name, Comment, Category, Podcast, Station
+				return CellKind.TEXT;
 		}
 	}
 	
-	protected TreeViewColumn? column_titled(string title) {
-		foreach(var column in get_columns())
-			if(column.title == title)
-				return column;
-		return null;
+	protected void add_columns() {
+		foreach(ListColumn tvc in tvs.get_columns()) {
+			var kind = kind_of(tvc.title);
+			bool special = (tvc.title == " " || tvc.title == "id" || tvc.title == TreeViewSetup.CHECKBOX_COLUMN_TITLE);
+			// Show the name translated; the title stays the English key the code matches on
+			// (never _(""): gettext answers the empty string with the catalog's header)
+			string? shown = special ? null : _(tvc.title);
+			int width = tvc.width;
+			if(tvc.title == " ")
+				width = show_checks ? 48 : 24;
+			var column = add_column(tvc.title, shown, kind, width, tvc.title != "id" && tvc.visible,
+			                        !special, !special && tvc.title != "Rating");
+			
+			if(tvc.title == "Title" && (get_hint() == TreeViewSetup.Hint.NOW_PLAYING || get_hint() == TreeViewSetup.Hint.ALBUM_LIST)) {
+				// an album's songs: the title takes the room left, the length goes to the right edge
+				column.expand = true;
+				column.fixed_width = -1;
+			}
+		}
+		set_header_menu(columnChooserMenu);
 	}
 	
 	/** A check item in the header's right click menu that shows or hides the column titled title */
@@ -280,39 +171,33 @@ public abstract class BeatBox.GenericList : FastList {
 		var action = new SimpleAction.stateful("show-%d".printf(columnChooserMenu.get_n_items()), null, new Variant.boolean(column.visible));
 		action.change_state.connect((visible) => {
 			column.visible = visible.get_boolean();
-			tvs.set_columns(get_columns());
+			updateTreeViewSetup();
 		});
 		column.notify["visible"].connect(() => action.set_state(new Variant.boolean(column.visible)));
 		columnActions.add_action(action);
 		columnChooserMenu.append(label, "columns." + action.name);
 	}
 	
-	protected void view_header_click(Gtk.GestureClick gesture, int n_press, double x, double y) {
-		uint button = gesture.get_current_button();
-		if(button == 3) {
-			UI.popup_menu_model(gesture.get_widget(), columnChooserMenu, x, y);
-			gesture.set_state(Gtk.EventSequenceState.CLAIMED);
+	/** A click on a column title: if the songs play shuffled, it unshuffles instead of sorting */
+	protected override bool sort_requested(int column, SortType order) {
+		// If the user tries to sort, then make sure that all other views
+		// become sorted (unshuffled) if they are shuffled
+		if(App.settings.main.shuffle_mode == (int)PlaybackInterface.ShuffleMode.ALL) {
+			App.settings.main.shuffle_mode = 0;
+			return false;
 		}
-		else if(button == 1) {
-			// If the user tries to sort, then make sure that all other views
-			// become sorted (unshuffled) if they are shuffled
-			if(App.settings.main.shuffle_mode == (int)PlaybackInterface.ShuffleMode.ALL) {
-				App.settings.main.shuffle_mode = 0;
-				gesture.set_state(Gtk.EventSequenceState.CLAIMED);
-				return;
-			}
-			
-			updateTreeViewSetup();
-		}
+		return true;
 	}
 	
-	public void row_activated_signal(TreePath path, TreeViewColumn column) {
+	public void row_activated_signal(int position) {
 		if(tvs.get_hint() == TreeViewSetup.Hint.DEVICE_AUDIO || tvs.get_hint() == TreeViewSetup.Hint.DEVICE_PODCAST) {
 			App.window.doAlert(_("Playing not Supported"), _("Due to issues with playing songs on certain iOS devices, playing songs on devices is currently not supported."));
 			return;
 		}
 		
-		Media m = get_selected_medias().nth_data(0);
+		Media? m = (position >= 0 && position < get_visible_table().size()) ? get_media_from_index(position) : null;
+		if(m == null)
+			return;
 		
 		// We need to first set this as the current list
 		if(m.location_unknown || (m.is_local && !File.new_for_uri(m.uri).query_exists())) {
@@ -369,7 +254,7 @@ public abstract class BeatBox.GenericList : FastList {
 		// We could find the exact rows to redraw by looping through the entire
 		// table which is O(n), or we could just redraw the screen for O(m) where
 		// m is the # of visible rows.
-		queue_draw();
+		refresh_all();
 		
 		// TODO: Also check if old media is viewable to user. If it is,
 		// they may have just adjusted the scroll only slightly and we
@@ -380,7 +265,7 @@ public abstract class BeatBox.GenericList : FastList {
 	}
 	
 	void playback_stopped(Media? was_playing) {
-		queue_draw();
+		refresh_all();
 	}
 	
 	public void medias_updated(Collection<Media> updates) {
@@ -388,15 +273,9 @@ public abstract class BeatBox.GenericList : FastList {
 		if(!get_mapped())
 			return;
 
-		var map = new HashMap<int, int>();
-		foreach(Media m in updates)
-			map.set(m.rowid, 1);
-		
-		for(int i = 0; i < get_visible_table().size(); ++i) {
-			if(map.get(get_visible_table().get(i).rowid) == 1) {
-				redraw_row (i);
-			}
-		}
+		var changed = new HashSet<Media>();
+		changed.add_all(updates);
+		redraw_medias(changed);
 	}
 	
 	void current_cleared() {
@@ -511,7 +390,7 @@ public abstract class BeatBox.GenericList : FastList {
 			Media m = get_media_from_index(i);
 
 			if(m.rowid == App.playback.current_media.rowid) {
-				scroll_to_cell(new TreePath.from_string(i.to_string()), null, false, 0.0f, 0.0f);
+				scroll_to_row(i, false);
 				scrolled_recently = false;
 
 				return;
@@ -531,7 +410,7 @@ public abstract class BeatBox.GenericList : FastList {
 					App.window.set_search_string("");
 					
 					// And now scroll to it.
-					scroll_to_cell(new TreePath.from_string(i.to_string()), null, false, 0.0f, 0.0f);
+					scroll_to_row(i, false);
 					scrolled_recently = false;
 
 					return;
@@ -565,21 +444,18 @@ public abstract class BeatBox.GenericList : FastList {
 		return is_current_list;
 	}
 	
-	/** The row under (x, y), in the coordinates of this widget (header included) */
-	protected bool row_at(double x, double y, out Gtk.TreePath? path) {
-		int bin_x, bin_y;
-		convert_widget_to_bin_window_coords((int)x, (int)y, out bin_x, out bin_y);
-		TreeViewColumn? column;
-		int cell_x, cell_y;
-		return get_path_at_pos(bin_x, bin_y, out path, out column, out cell_x, out cell_y);
-	}
-
 	/** **************************************************
 	 * Drag and drop support. GenericView is a source for uris and can
 	 * be dragged to a playlist in the sidebar; the queue's list also takes
 	 * drops to reorder (MusicList.enable_queue_reordering).
 	***************************************************************/
 	Gdk.ContentProvider? on_drag_prepare(double x, double y) {
+		if(on_header(y))
+			return null;
+		// a drag from a row out of the selection takes that row
+		int row = row_at(x, y);
+		if(row >= 0 && !is_row_selected(row))
+			select_only(row);
 		string[] uris = {};
 
 		foreach(Media m in get_selected_medias()) {
@@ -597,9 +473,9 @@ public abstract class BeatBox.GenericList : FastList {
 		debug("drag begin\n");
 
 		string? icon_name = null;
-		if(get_selection().count_selected_rows() == 1)
+		if(count_selected() == 1)
 			icon_name = "audio-x-generic";
-		else if(get_selection().count_selected_rows() > 1)
+		else if(count_selected() > 1)
 			icon_name = "folder-music";
 
 		if(icon_name != null) {

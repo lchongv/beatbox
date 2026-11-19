@@ -186,11 +186,12 @@ entry.search-bar:focus {
 scrolledwindow.sidebar-scroll {
   background-image: linear-gradient(to bottom, @bb_sidebar_top 0%, @bb_sidebar_bottom 100%);
 }
-treeview.sidebar, treeview.sidebar.view {
+listview.sidebar, listview.sidebar > row {
   background-color: transparent;
   color: @bb_sidebar_text;
 }
-treeview.sidebar:selected, treeview.sidebar.view:selected {
+listview.sidebar > row { padding: 0; min-height: 0; border-radius: 0; }
+listview.sidebar > row:selected {
   background-image: linear-gradient(to bottom, shade(@bb_accent, 1.18), @bb_accent);
   color: white;
 }
@@ -201,9 +202,10 @@ paned > separator {
 }
 
 /* ===== Track lists: white / pale blue rows, blue selection ===== */
-treeview.tracklist, treeview.tracklist.view { background-color: transparent; color: #1a1a1a; }
-treeview.tracklist:selected, treeview.tracklist.view:selected { background-color: @bb_accent; color: white; }
-treeview.view header button {
+/* the list paints its own zebra rows (FastList, which keeps the view transparent) */
+columnview.tracklist, columnview.tracklist > listview, columnview.tracklist > listview > row { color: #1a1a1a; }
+columnview.tracklist > listview > row:selected { background-color: @bb_accent; color: white; }
+columnview.tracklist > header > button {
   background-image: linear-gradient(to bottom, #fdfdfd, #dcdcdc);
   border-color: #a4a4a4;
   color: #1a1a1a;
@@ -234,11 +236,11 @@ listview.column-browser-list > row:selected label { color: white; }
 label.browser-all { font-weight: bold; }
 
 /* ===== Album grid ===== */
-iconview.albumgrid, iconview.albumgrid.view {
+gridview.albumgrid {
   background-color: #f0f1f4;
   color: #1a1a1a;
 }
-iconview.albumgrid:selected, iconview.albumgrid.view:selected {
+gridview.albumgrid > child:selected {
   background-color: alpha(@bb_accent, .18);
   color: #1a1a1a;
   border-radius: 6px;

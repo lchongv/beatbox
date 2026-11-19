@@ -233,6 +233,7 @@ public abstract class BeatBox.SourceView : Box, View {
 			cover_flow.album_selected.connect(scroll_list_to_album);
 			cover_flow.album_activated.connect(play_album);
 			var paned = new Paned(Orientation.VERTICAL);
+			paned.add_css_class("above-list"); // its grab area keeps off the list's titles (theme.css)
 			paned.start_child = cover_flow;
 			paned.resize_start_child = false;
 			paned.shrink_start_child = false;
@@ -277,6 +278,7 @@ public abstract class BeatBox.SourceView : Box, View {
 			remove(view_container);
 			browser_paned = new Paned(Orientation.VERTICAL);
 			browser_paned.vexpand = true;
+			browser_paned.add_css_class("above-list");
 			browser_paned.start_child = browser;
 			browser_paned.resize_start_child = false;
 			browser_paned.shrink_start_child = false;
@@ -982,10 +984,8 @@ public abstract class BeatBox.SourceView : Box, View {
 		int row = first_row_of(album);
 		if (row < 0)
 			return;
-		var path = new TreePath.from_indices(row);
-		list_view.scroll_to_cell(path, null, true, 0.0f, 0.0f);
-		list_view.get_selection().unselect_all();
-		list_view.get_selection().select_path(path);
+		list_view.scroll_to_row(row, true);
+		list_view.select_only(row);
 	}
 	
 	void play_album(Album album) {
@@ -996,11 +996,8 @@ public abstract class BeatBox.SourceView : Box, View {
 	protected void play_row(int row) {
 		if (row < 0)
 			return;
-		// the list plays its selected row, whatever path is activated
-		var path = new TreePath.from_indices(row);
-		list_view.get_selection().unselect_all();
-		list_view.get_selection().select_path(path);
-		list_view.row_activated(path, list_view.get_column(0));
+		list_view.select_only(row);
+		list_view.activate_row(row);
 	}
 	
 	// Playback

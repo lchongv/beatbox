@@ -318,6 +318,7 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		all_views = new Notebook();
 		verticalBox = new Box(Orientation.VERTICAL, 0);
 		sourcesToMedias = new Gtk.Paned(Orientation.HORIZONTAL);
+		sourcesToMedias.add_css_class("before-list"); // its grab area keeps off the lists (FastList's CSS)
 		contentBox = new Box(Orientation.VERTICAL, 0);
 		mainViews = new Notebook ();
 		now_playing = new NowPlayingView();
@@ -530,6 +531,7 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		report = new TrackReport();
 		report.visible = false;
 		contentToReport = new Gtk.Paned(Orientation.HORIZONTAL);
+		contentToReport.add_css_class("after-list");
 		contentToReport.start_child = contentBox;
 		contentToReport.resize_start_child = true;
 		contentToReport.shrink_start_child = false;
@@ -1150,14 +1152,27 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 	}
 
 	public void media_not_found(Media m) {
-		m.unique_status_image = App.icons.PROCESS_ERROR.render(Gtk.IconSize.NORMAL, ((SourceView)sideTree.getWidget(sideTree.library_music_iter)).list_view);
+		var music = ((SourceView)sideTree.getWidget(sideTree.library_music_iter)).list_view;
+		m.unique_status_image = App.icons.PROCESS_ERROR.render(Gtk.IconSize.NORMAL, music);
+		redraw_media(m);
 		file_not_found_pileup.add(m);
 		infoBarLabel.set_markup(_("%s media files could not be found.").printf("<b>" + file_not_found_pileup.size.to_string() + "</b>"));
 		infoBar.visible = true;
 	}
 	
+	/** The lists keep what their rows show: the one on screen shows a media's new icon */
+	void redraw_media(Media m) {
+		var view = get_current_view() as SourceView;
+		if(view != null && view.list_view != null) {
+			var one = new Gee.HashSet<Media>();
+			one.add(m);
+			view.list_view.redraw_medias(one);
+		}
+	}
+	
 	public void media_found(Media m) {
 		m.unique_status_image = null;
+		redraw_media(m);
 		file_not_found_pileup.remove(m);
 		infoBarLabel.set_markup(_("%s media files could not be found.").printf("<b>" + file_not_found_pileup.size.to_string() + "</b>"));
 		infoBar.set_visible(file_not_found_pileup.size > 0);
@@ -1181,16 +1196,13 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 	}
 
 	public void doAlert(string title, string message) {
-		var dialog = new MessageDialog(this, DialogFlags.MODAL, MessageType.ERROR, ButtonsType.OK,
-				"%s", title);
-
-		dialog.title = "BeatBox";
-		dialog.secondary_text = message;
-		dialog.secondary_use_markup = true;
-
-		// GTK4 has no dialog.run (): the alert stays modal, and the callers do not wait for it anyway
-		dialog.response.connect((id) => dialog.destroy());
-		dialog.present();
+		// the message may be markup: an alert shows plain text
+		string text = message;
+		try {
+			Pango.parse_markup(message, -1, 0, null, out text, null);
+		} catch (Error e) {
+		}
+		UI.alert(this, title, text);
 	}
 
 	void info_bar_response(int response_id) {

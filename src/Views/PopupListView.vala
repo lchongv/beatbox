@@ -127,7 +127,7 @@ public class BeatBox.PopupListView : Gtk.Window {
 		artist_label.set_label ("");
 
 		// clear treeview and media list
-        list.get_selection ().unselect_all (); // Unselect rows
+        list.unselect_all (); // Unselect rows
         list.set_table (new HashTable<int, Media> (null, null));
 
 		// Reset size request

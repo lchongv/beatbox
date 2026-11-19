@@ -71,10 +71,7 @@ public abstract class BeatBox.GenericGrid : FastGrid {
 
 	// GTK3 controllers need a reference
 	Gtk.GestureClick click_gesture;
-	Gtk.EventControllerMotion motion_controller;
 	protected Gtk.DragSource drag_source;
-	double pointer_x = -1; // where the pointer is, in widget coordinates
-	double pointer_y = -1;
 	
 	public signal void import_requested(LinkedList<Media> to_import);
 	
@@ -84,23 +81,21 @@ public abstract class BeatBox.GenericGrid : FastGrid {
 	private const int ITEM_WIDTH = Icons.ALBUM_VIEW_IMAGE_SIZE;
 
 	protected GenericGrid(SourceView parent_wrapper, TreeViewSetup tvs, GLib.Object default_value) {
-		base(default_value);
+		base();
 
         set_parent_wrapper (parent_wrapper);
 		this.tvs = tvs;
 		
-		view.add_css_class ("albumgrid"); // the stylesheets style iconview.albumgrid (GTK3: this was the IconView)
-		
-		view.item_width = ITEM_WIDTH;
-		view.item_padding = ITEM_PADDING;
-		view.columns = -1; // let GtkIconView fit as many columns as the width allows
-		view.set_column_spacing (MIN_SPACING);
-		view.set_row_spacing (MIN_SPACING);
+		view.add_css_class ("albumgrid"); // the stylesheets style gridview.albumgrid
 
 		// drag source: the URIs of the selected items, one per line (empty selection: no drag)
 		drag_source = new Gtk.DragSource ();
 		drag_source.actions = Gdk.DragAction.COPY;
 		drag_source.prepare.connect ((x, y) => {
+			// a drag from a cover takes that cover
+			int item = item_at (x, y);
+			if (item >= 0)
+				select_only (item);
 			string[] uris = get_drag_uris ();
 			if (uris.length == 0)
 				return null;
@@ -111,30 +106,17 @@ public abstract class BeatBox.GenericGrid : FastGrid {
 		//row_activated.connect(row_activated_signal);
 		//rows_reordered.connect(updateTreeViewSetup);
 		App.playback.current_cleared.connect(current_cleared);
+		App.covers.cover_changed.connect(() => refresh_all()); // the cells show the covers they were given
+		App.covers.covers_loaded.connect(() => refresh_all());
 		//App.library.media_played.connect(media_played);
 		//App.library.medias_updated.connect(medias_updated);
 
 
-		// the pointer's shape follows the item under it, when it moves and when the view scrolls
-		motion_controller = new Gtk.EventControllerMotion ();
-		add_controller (motion_controller);
-		motion_controller.motion.connect ((x, y) => {
-			pointer_x = x;
-			pointer_y = y;
-			set_pointer ();
-		});
-		motion_controller.leave.connect (() => pointer_x = pointer_y = -1);
-		// (the scrolled window around it brings its own adjustment)
-		view.notify["vadjustment"].connect (() => {
-			if (view.vadjustment != null)
-				view.vadjustment.value_changed.connect (set_pointer);
-		});
-
-		// CAPTURE: GtkIconView handles the clicks itself and passes none on
+		// CAPTURE: before the grid view handles the click
 		click_gesture = new Gtk.GestureClick ();
 		add_controller (click_gesture);
 		click_gesture.propagation_phase = Gtk.PropagationPhase.CAPTURE;
-		click_gesture.released.connect (on_released);
+		click_gesture.pressed.connect (on_pressed); // the grid view claims the press: no release reaches us
 
         // For smart spacing...
 		int MIN_N_ITEMS = 2; // we will allocate horizontal space for at least two items
@@ -151,7 +133,7 @@ public abstract class BeatBox.GenericGrid : FastGrid {
 	
 	public abstract void update_sensitivities();
 	
-	/** TreeViewColumn header functions. Has to do with sorting and
+	/** Column header functions. Has to do with sorting and
 	 * remembering column widths/sort column/sort direction between
 	 * sessions.
 	**/
@@ -190,33 +172,15 @@ public abstract class BeatBox.GenericGrid : FastGrid {
 	/** The URIs of the selected items, dragged out of the view */
 	protected abstract string[] get_drag_uris ();
 
-	private void on_released (int n_press, double widget_x, double widget_y) {
-		// GTK4 IconView has no bin window: its coordinates are the widget's own
-		TreePath? path;
-		CellRenderer cell;
-
-		view.get_item_at_pos ((int) widget_x, (int) widget_y, out path, out cell);
-
-		if (path != null)
-			item_activated_handler (get_selected_objects().nth_data (0));
+	private void on_pressed (int n_press, double widget_x, double widget_y) {
+		if (n_press != 1 || click_gesture.get_current_button () != Gdk.BUTTON_PRIMARY)
+			return;
+		int item = item_at (widget_x, widget_y);
+		if (item >= 0) {
+			select_only (item);
+			item_activated_handler (get_object_from_index (item));
+		}
 		else
 			item_activated_handler (null);
 	}
-
-	private void set_pointer () {
-		if (pointer_x < 0)
-			return;
-		TreePath? path;
-		CellRenderer cell;
-
-		view.get_item_at_pos ((int) pointer_x, (int) pointer_y, out path, out cell);
-
-		if (path == null) // blank area
-			set_cursor_from_name (null);
-		else
-			set_cursor_from_name ("pointer");
-	}
-
-
-
 }

@@ -29,6 +29,8 @@
 public interface BeatBox.CoverInterface : GLib.Object {
 	// Emitted when a cover is changed for an artist and an album.
 	public signal void cover_changed(string album_artist, string album);
+	/** Covers came into the cache, many at once (views that keep what they show read them anew) */
+	public signal void covers_loaded();
 	
 	// Emitted when a new cover is saved in the cache. Used to set the cover of every media
     // which belong to this album.

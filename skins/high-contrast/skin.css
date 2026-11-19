@@ -39,8 +39,8 @@
 .toolbar.app-header button.transport-button:hover,
 .toolbar.app-header button:not(.traffic-light):hover { background-color: #333333; }
 
-treeview.tracklist, treeview.tracklist.view { color: #000000; }
-treeview.view header button { background-image: none; background-color: #ffffff; color: #000000; border-color: #000000; }
+columnview.tracklist, columnview.tracklist > listview, columnview.tracklist > listview > row { color: #000000; }
+columnview.tracklist > header > button { background-image: none; background-color: #ffffff; color: #000000; border-color: #000000; }
 
 *:focus { outline: 2px solid #ffd400; outline-offset: -2px; }
 
@@ -58,4 +58,4 @@ actionbar.app-statusbar label, actionbar.app-statusbar image { color: #ffffff; t
 .app-name { color: #ffffff; opacity: 1; }
 
 /* black on the yellow selection, like the track lists */
-treeview.sidebar:selected, treeview.sidebar.view:selected { color: #000000; }
+listview.sidebar > row:selected { color: #000000; }

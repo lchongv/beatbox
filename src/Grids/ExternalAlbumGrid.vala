@@ -32,17 +32,13 @@ public class BeatBox.ExternalAlbumGrid : FastGrid {
 	public signal void item_chosen(GLib.Object o);
 	
 	public ExternalAlbumGrid() {
-		base(new ExternalAlbum("", "", true));
+		base();
 		
 		set_compare_func(compare_func);
 		set_value_func(val_func);
 		set_search_func(grid_search_func);
 		
-		view.item_activated.connect(item_activated_signal);
-	}
-	
-	public void item_activated_signal(TreePath path) {
-		item_chosen(get_selected_objects().nth_data(0));
+		item_activated.connect((position) => item_chosen(get_object_from_index(position)));
 	}
 	
 	/** **************************************************
