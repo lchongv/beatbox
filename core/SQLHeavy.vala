@@ -4,6 +4,7 @@
  */
 
 [GIR (visible = false)] // internal: plugins don't see it
+[CCode (gir_namespace = "BeatBox", gir_version = "1.0")] // inside BeatBox's own GIR: no other one to include
 namespace SQLHeavy {
 	public errordomain Error {
 		ERROR

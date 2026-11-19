@@ -171,7 +171,7 @@ public class BeatBox.Icon : GLib.Object {
 		return rv;
 	}
 
-	public Gdk.Pixbuf? render (Gtk.IconSize? size, StyleContext? context = null, int px_size = 0) {
+	public Gdk.Pixbuf? render (Gtk.IconSize? size, Gtk.Widget? context = null, int px_size = 0) {
 		Gdk.Pixbuf? rv = null;
 		int width = 16, height = 16;
 
@@ -222,7 +222,7 @@ public class BeatBox.Icon : GLib.Object {
 			}
 		}
 
-		// a symbolic icon takes the context's color, as GTK3's load_symbolic_for_context did
+		// a symbolic icon takes the widget's color, as GTK3's load_symbolic_for_context did
 		// (ponytail: in one color; the few two-color symbolic icons lose their accent)
 		if (rv != null && context != null && this.name.has_suffix ("-symbolic"))
 			rv = UI.tint (rv, context.get_color ());
@@ -233,7 +233,7 @@ public class BeatBox.Icon : GLib.Object {
 	/**
 	 * Use this method for loading symbolic icons. They will follow every state.
 	 **/
-	public Gtk.Image? render_image (Gtk.IconSize? size, Gtk.StyleContext? ctx = null, int px_size = 0) {
+	public Gtk.Image? render_image (Gtk.IconSize? size, Gtk.Widget? ctx = null, int px_size = 0) {
 		Gtk.Image? rv = null;
 		int width = 16, height = 16;
 

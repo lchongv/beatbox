@@ -25,9 +25,6 @@ public class BeatBox.NavigationArrows : Gtk.Box {
 
 	// Style properties. Please note that style class names are for internal
 	// use only. Theme developers should use GraniteWidgetsNavigationArrows instead.
-	internal static CssProvider style_provider;
-	internal static StyleContext widget_style;
-	private const int style_priority = Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION;
 	
 	private Gtk.Button previous_button;
 	private Gtk.Button next_button;
@@ -59,14 +56,8 @@ public class BeatBox.NavigationArrows : Gtk.Box {
 
 	public NavigationArrows () {
 
-		if (style_provider == null)
-		{
-			style_provider = new CssProvider ();
-			style_provider.load_from_data (STYLESHEET.data);
-		}
-
-		widget_style = get_style_context ();
-		widget_style.add_class ("GraniteNavigationArrows");
+		UI.add_css (STYLESHEET); // its rules only match under .GraniteNavigationArrows
+		add_css_class ("GraniteNavigationArrows");
 
 		homogeneous = true;
 		spacing = 0;
@@ -107,10 +98,7 @@ private class BeatBox.NavigationArrow : Gtk.Button {
 	public NavigationArrow () {
 		focusable = false;
 
-		const int style_priority = Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION;
-
-		get_style_context ().add_class ("raised");
-		get_style_context ().add_provider (NavigationArrows.style_provider, style_priority);
+		add_css_class("raised");
 	}
 }
 

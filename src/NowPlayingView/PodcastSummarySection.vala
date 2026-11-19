@@ -40,8 +40,6 @@ public class BeatBox.PodcastSummarySection : Box {
 	StyledBox album_songs_holder;
 	MusicList album_songs;
 	Label summary_text;
-	
-	static CssProvider style_provider;
 	private const string WIDGET_STYLESHEET = """
 		.gray {
 			background-image: linear-gradient(to bottom, shade(#d5d3d1, 1.00), shade(#d5d3d1, 0.95));
@@ -72,10 +70,7 @@ public class BeatBox.PodcastSummarySection : Box {
 	public PodcastSummarySection() {
 		set_orientation(Orientation.HORIZONTAL);
 		
-		if(style_provider == null) {
-			style_provider = new CssProvider();
-			style_provider.load_from_data (WIDGET_STYLESHEET.data);
-		}
+		UI.add_scoped_css("bb-podcastsummary", WIDGET_STYLESHEET);
 		
 		build_ui();
 		
@@ -143,7 +138,7 @@ public class BeatBox.PodcastSummarySection : Box {
 		dest.set_gtypes ({ typeof (string), typeof (Gdk.FileList) });
 		dest.motion.connect (drag_motion_signal);
 		dest.leave.connect (drag_leave_signal);
-		dest.on_drop.connect (drag_received);
+		dest.drop.connect (drag_received);
 		add_controller (dest);
 		
 		// Now the album list on left side under metadata
@@ -153,7 +148,7 @@ public class BeatBox.PodcastSummarySection : Box {
 		album_songs.is_mixed = true;
 		album_songs.set_sort_column_id(tvs.sort_column_id, tvs.sort_direction);
 		album_songs.add_css_class("AlbumSongList");
-		//album_songs.get_style_context().add_provider(style_provider, STYLE_PROVIDER_PRIORITY_APPLICATION);
+		//album_songs.add_css_class("bb-podcastsummary");
 		var scroll = new ScrolledWindow();
 		scroll.set_child(album_songs);
 		scroll.set_policy(PolicyType.AUTOMATIC, PolicyType.AUTOMATIC);
@@ -164,7 +159,7 @@ public class BeatBox.PodcastSummarySection : Box {
 		//summary_holder = new StyledBox("", "gray");
 		var summary_scroll = new ScrolledWindow();
 		summary_text.add_css_class("pure_white");
-		summary_text.get_style_context().add_provider(style_provider, STYLE_PROVIDER_PRIORITY_APPLICATION);
+		summary_text.add_css_class("bb-podcastsummary");
 		//summary_scroll.set_child(summary_text);
 		summary_scroll.set_policy(PolicyType.AUTOMATIC, PolicyType.AUTOMATIC);
 		summary_scroll.set_size_request(-1, 130);
@@ -172,12 +167,12 @@ public class BeatBox.PodcastSummarySection : Box {
 		
 		// And lastly the lyrics box
 		description_holder = new StyledBox("", "black");
-		description.get_style_context().add_class("white_text");
-		description.get_style_context().add_class("padding");
-		description.get_style_context().add_provider(style_provider, STYLE_PROVIDER_PRIORITY_APPLICATION);
+		description.add_css_class("white_text");
+		description.add_css_class("padding");
+		description.add_css_class("bb-podcastsummary");
 		var description_scroll = new ScrolledWindow();
 		description_scroll.add_css_class("black");
-		description_scroll.get_style_context().add_provider(style_provider, STYLE_PROVIDER_PRIORITY_APPLICATION);
+		description_scroll.add_css_class("bb-podcastsummary");
 		description_scroll.set_child(description);
 		description_scroll.set_policy(PolicyType.AUTOMATIC, PolicyType.AUTOMATIC);
 		description_holder.set_size_request(300, -1);

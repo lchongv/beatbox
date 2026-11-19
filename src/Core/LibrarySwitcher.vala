@@ -75,9 +75,9 @@ public class BeatBox.LibrarySwitcher : Object {
 	}
 
 	async void new_library () {
-		var dialog = new Dialog.with_buttons (_("New Library"), (Gtk.Window) App.window,
-		                                      DialogFlags.MODAL | DialogFlags.DESTROY_WITH_PARENT,
-		                                      _("Cancel"), ResponseType.CANCEL, _("Create"), ResponseType.OK);
+		var dialog = new ButtonDialog (_("New Library"), (Gtk.Window) App.window);
+		dialog.add_button (_("Cancel"), ButtonDialog.CANCEL);
+		dialog.add_button (_("Create"), ButtonDialog.OK);
 		var name = new Entry () { activates_default = true, placeholder_text = _("External Disk") };
 		string? music = null; // the folder picked with the button, which shows its name
 		var folder = new Button.with_label (_("(None)"));
@@ -87,11 +87,11 @@ public class BeatBox.LibrarySwitcher : Object {
 		grid.attach (new Label (_("Music folder:")) { xalign = 1 }, 0, 1);
 		grid.attach (folder, 1, 1);
 		var hint = new Label (_("BeatBox restarts with the new library and imports the folder."));
-		hint.get_style_context ().add_class ("dim-label");
+		hint.add_css_class("dim-label");
 		grid.attach (hint, 0, 2, 2, 1);
-		dialog.get_content_area ().append (grid);
-		dialog.set_default_response (ResponseType.OK);
-		var ok = dialog.get_widget_for_response (ResponseType.OK);
+		dialog.content_area.append (grid);
+		dialog.set_default_response (ButtonDialog.OK);
+		var ok = dialog.get_widget_for_response (ButtonDialog.OK);
 		ok.sensitive = false;
 		name.changed.connect (() => { ok.sensitive = name.text.strip () != "" && music != null; });
 		folder.clicked.connect (() => choose_music_folder.begin (dialog, (obj, res) => {
@@ -102,7 +102,7 @@ public class BeatBox.LibrarySwitcher : Object {
 			folder.label = GLib.Path.get_basename (picked);
 			ok.sensitive = name.text.strip () != "";
 		}));
-		bool create = (yield UI.run_dialog (dialog)) == ResponseType.OK;
+		bool create = (yield dialog.run ()) == ButtonDialog.OK;
 		string library_name = name.text.strip ();
 		dialog.destroy ();
 		if (create && music != null)
@@ -111,12 +111,7 @@ public class BeatBox.LibrarySwitcher : Object {
 
 	/** Asks for the music folder of a new library: the path chosen, or null */
 	async string? choose_music_folder (Gtk.Window parent) {
-		var chooser = new FileChooserDialog (_("Music Folder"), parent, FileChooserAction.SELECT_FOLDER,
-		                                     _("_Cancel"), ResponseType.CANCEL, _("_Open"), ResponseType.ACCEPT);
-		string? path = null;
-		if ((yield UI.run_dialog (chooser)) == ResponseType.ACCEPT)
-			path = chooser.get_file ().get_path ();
-		chooser.destroy ();
-		return path;
+		var folder = yield UI.choose_folder (parent, _("Music Folder"));
+		return folder != null ? folder.get_path () : null;
 	}
 }

@@ -33,7 +33,7 @@ public class BeatBox.EqualizerWindow : Gtk.Window {
 	private PresetList preset_combo;
 	private Entry new_preset_entry;
 	private Button close_button;
-	private ComboBoxText effects_preset;
+	private ChoiceBox effects_preset;
 	private Box effects_box;
 	private Grid effects_table;
 
@@ -152,7 +152,7 @@ public class BeatBox.EqualizerWindow : Gtk.Window {
 		new_preset_entry.set_size_request(165, -1);
 
 		var entry_icon = App.icons.render_icon ("dialog-apply", IconSize.NORMAL);
-		new_preset_entry.set_icon_from_paintable(Gtk.EntryIconPosition.SECONDARY, Gdk.Texture.for_pixbuf(entry_icon));
+		new_preset_entry.set_icon_from_paintable(Gtk.EntryIconPosition.SECONDARY, UI.texture_from_pixbuf (entry_icon));
 		new_preset_entry.set_icon_tooltip_text(Gtk.EntryIconPosition.SECONDARY, _("Save preset"));
 		
 		close_button = new Button.with_label(_("Done"));
@@ -213,7 +213,7 @@ public class BeatBox.EqualizerWindow : Gtk.Window {
 
 	/** A row with the effect presets; "Custom" is shown when the sliders were moved by hand */
 	Box effects_preset_row() {
-		effects_preset = new ComboBoxText () { tooltip_text = _("Sets all the effects below at once") };
+		effects_preset = new ChoiceBox () { tooltip_text = _("Sets all the effects below at once") };
 		effects_preset.append_text (_("Custom"));
 		foreach (var name in App.settings.equalizer.effect_preset_names())
 			effects_preset.append_text (preset_label (name));

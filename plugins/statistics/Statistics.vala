@@ -122,11 +122,8 @@ class BeatBox.StatsWindow : Gtk.Window {
 		var area = new DrawingArea ();
 		area.set_size_request (-1, int.max (1, rows.size) * ROW_H);
 		area.set_draw_func ((a, cr, width, height) => {
-			var ctx = area.get_style_context ();
-			var fg = ctx.get_color ();
-			Gdk.RGBA accent;
-			if (!ctx.lookup_color ("bb_accent", out accent) && !ctx.lookup_color ("theme_selected_bg_color", out accent))
-				accent = Gdk.RGBA () { red = 0.24f, green = 0.43f, blue = 0.79f, alpha = 1.0f };
+			var fg = area.get_color ();
+			Gdk.RGBA accent = UI.named_color ("bb_accent"); // the theme's selection color without a skin
 			if (rows.size == 0) {
 				text (cr, area, _("No plays yet"), 0, 0, width, fg, 0.6);
 				return;

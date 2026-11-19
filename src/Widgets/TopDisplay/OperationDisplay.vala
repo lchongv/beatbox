@@ -65,13 +65,13 @@ public class BeatBox.OperationDisplay : BeatBox.Display, Box {
 	void operation_started() {
 		_is_enabled = true;
 		// no progress known yet: a barber pole (see theme.css) until the first update
-		operation_bar.get_style_context().add_class("live");
+		operation_bar.add_css_class("live");
 		enabled();
 	}
 	
 	void operation_progress_updated(double progress) {
 		if(progress > 0)
-			operation_bar.get_style_context().remove_class("live");
+			operation_bar.remove_css_class("live");
 		operation_bar.set_fraction(progress);
 	}
 	

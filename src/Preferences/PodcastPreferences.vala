@@ -89,17 +89,11 @@ public class BeatBox.PodcastPreferences : GLib.Object, PreferencesSection {
 	}
 
 	async void choose_folder() {
-		var chooser = new FileChooserDialog(_("Podcast Folder"), UI.window_of(fileChooser), FileChooserAction.SELECT_FOLDER,
-		                                    _("_Cancel"), ResponseType.CANCEL, _("_Open"), ResponseType.ACCEPT);
-		try {
-			chooser.set_current_folder(File.new_for_path(folder));
-		} catch (Error e) {
-		}
-		if ((yield UI.run_dialog(chooser)) == ResponseType.ACCEPT) {
-			show_folder(chooser.get_file().get_path());
+		var chosen = yield UI.choose_folder(UI.window_of(fileChooser), _("Podcast Folder"), File.new_for_path(folder));
+		if (chosen != null) {
+			show_folder(chosen.get_path());
 			file_chooser_set();
 		}
-		chooser.destroy();
 	}
 
 	void download_new_podcasts_toggled() {

@@ -21,15 +21,15 @@ public class BeatBox.Welcome : Gtk.Box {
 		var title_label = new Gtk.Label (title);
 		title_label.justify = Gtk.Justification.CENTER;
 		title_label.hexpand = true;
-		title_label.get_style_context ().add_class ("h1");
+		title_label.add_css_class("h1");
 
 		var subtitle_label = new Gtk.Label (subtitle);
 		subtitle_label.justify = Gtk.Justification.CENTER;
 		subtitle_label.hexpand = true;
 		subtitle_label.wrap = true;
 		subtitle_label.wrap_mode = Pango.WrapMode.WORD;
-		subtitle_label.get_style_context ().add_class ("dim-label");
-		subtitle_label.get_style_context ().add_class ("h2");
+		subtitle_label.add_css_class("dim-label");
+		subtitle_label.add_css_class("h2");
 
 		options = new Gtk.Grid ();
 		options.orientation = Gtk.Orientation.VERTICAL;
@@ -56,7 +56,7 @@ public class BeatBox.Welcome : Gtk.Box {
 		base.append (scrolled);
 	}
 
-	public int append (string icon_name, string title, string description) {
+	public new int append (string icon_name, string title, string description) {
 		var image = new Gtk.Image.from_icon_name (icon_name);
 		image.use_fallback = true;
 		return append_with_image (image, title, description);
@@ -70,7 +70,7 @@ public class BeatBox.Welcome : Gtk.Box {
 
 	public int append_with_image (Gtk.Image? image, string title, string description) {
 		var title_label = new Gtk.Label (title);
-		title_label.get_style_context ().add_class ("h3");
+		title_label.add_css_class("h3");
 		title_label.halign = Gtk.Align.START;
 		title_label.valign = Gtk.Align.END;
 
@@ -82,7 +82,7 @@ public class BeatBox.Welcome : Gtk.Box {
 		// one fixed width: a centered grid whose height changes with its width makes GTK 4 warn
 		description_label.width_chars = description_label.max_width_chars = 40;
 		description_label.xalign = 0;
-		description_label.get_style_context ().add_class ("dim-label");
+		description_label.add_css_class("dim-label");
 
 		var grid = new Gtk.Grid ();
 		grid.column_spacing = 12;

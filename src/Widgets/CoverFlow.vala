@@ -35,7 +35,7 @@ public class BeatBox.CoverFlow : DrawingArea {
 		this.grid = grid;
 		can_focus = true;
 		set_size_request(-1, 200);
-		get_style_context().add_class("coverflow");
+		add_css_class("coverflow");
 		set_draw_func(on_draw);
 		// event controllers, as in GTK4 (they need a reference kept)
 		scroll_controller = new Gtk.EventControllerScroll(Gtk.EventControllerScrollFlags.BOTH_AXES);
@@ -136,7 +136,7 @@ public class BeatBox.CoverFlow : DrawingArea {
 		});
 		flow.album_activated.connect((a) => album_activated(a));
 		var win = new Gtk.Window();
-		win.get_style_context().add_class("coverflow");
+		win.add_css_class("coverflow");
 		win.set_child(flow);
 		flow.fs_window = win;
 		((Gtk.Widget) win).destroy.connect(() => { fs_window = null; }); // Window.destroy () hides the signal
@@ -206,7 +206,7 @@ public class BeatBox.CoverFlow : DrawingArea {
 		int reflection = (int)(size * REFLECTION);
 		var surface = new Cairo.ImageSurface(Cairo.Format.ARGB32, size, size + reflection);
 		var cr = new Cairo.Context(surface);
-		Gdk.cairo_set_source_pixbuf(cr, pix, 0, 0);
+		UI.set_source_pixbuf (cr, pix, 0, 0);
 		cr.paint();
 
 		// reflection: flipped copy, masked with a fading gradient
@@ -215,7 +215,7 @@ public class BeatBox.CoverFlow : DrawingArea {
 		cr.clip();
 		cr.translate(0, 2 * size);
 		cr.scale(1, -1);
-		Gdk.cairo_set_source_pixbuf(cr, pix, 0, 0);
+		UI.set_source_pixbuf (cr, pix, 0, 0);
 		var fade = new Cairo.Pattern.linear(0, size, 0, size - reflection);
 		fade.add_color_stop_rgba(0, 0, 0, 0, 0.35);
 		fade.add_color_stop_rgba(1, 0, 0, 0, 0);

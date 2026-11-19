@@ -64,7 +64,7 @@ public class BeatBox.TrackReport : Box {
 		var m = App.playback.media_active ? App.playback.current_media : null;
 		if (m == null) {
 			var nothing = new Label (_("Nothing is playing."));
-			nothing.get_style_context ().add_class ("dim-label");
+			nothing.add_css_class("dim-label");
 			nothing.margin_top = 20;
 			content.append (nothing);
 			return;
@@ -78,11 +78,11 @@ public class BeatBox.TrackReport : Box {
 		var who = new Label ((m.media_type == MediaType.STATION) ? m.artist : string.joinv (" — ", { m.artist, m.album }));
 		who.wrap = true;
 		who.xalign = 0;
-		who.get_style_context ().add_class ("dim-label");
+		who.add_css_class("dim-label");
 		content.append (who);
 
 		var reading = new Label (_("Reading the file…"));
-		reading.get_style_context ().add_class ("dim-label");
+		reading.add_css_class("dim-label");
 		reading.xalign = 0;
 		reading.margin_top = 10;
 		content.append (reading);
@@ -169,7 +169,7 @@ public class BeatBox.TrackReport : Box {
 			var key = new Label (pairs[i]);
 			key.xalign = 0;
 			key.margin_top = (i == 0) ? 0 : 6;
-			key.get_style_context ().add_class ("dim-label");
+			key.add_css_class("dim-label");
 			var val = new Label (pairs[i + 1]);
 			val.xalign = 0;
 			val.wrap = true;

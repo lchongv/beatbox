@@ -270,9 +270,6 @@ public class BeatBox.DuplicateList : GenericList {
 		});
 	}
 
-	public void apply_style_to_view(CssProvider style) {
-		get_style_context().add_provider(style, STYLE_PROVIDER_PRIORITY_APPLICATION);
-	}
 	
 	int view_compare_func (int col, Gtk.SortType dir, Media a_media, Media b_media) {
 		int rv = 0;

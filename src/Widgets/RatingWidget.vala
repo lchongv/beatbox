@@ -40,7 +40,7 @@ public class BeatBox.RatingWidget : Gtk.DrawingArea {
 
     private bool symbolic = false;
     private Gtk.IconSize size = Gtk.IconSize.NORMAL;
-    private Gtk.StyleContext? context = null;
+    private Gtk.Widget? context = null; // whose color the symbolic stars take
 
     private int rating = 0;
     private int hover_rating = 0;
@@ -62,9 +62,9 @@ public class BeatBox.RatingWidget : Gtk.DrawingArea {
     private Gtk.GestureClick press_gesture;
 
     /**
-     * It's not necessary to set a context. In most cases it should be 'null'.
+     * It's not necessary to set a context (a widget to take the colors from). In most cases it should be 'null'.
      */
-    public RatingWidget (bool centered, Gtk.IconSize size, bool symbolic = false, Gtk.StyleContext? ctx = null) {
+    public RatingWidget (bool centered, Gtk.IconSize size, bool symbolic = false, Gtk.Widget? ctx = null) {
         this.centered = centered;
         this.symbolic = symbolic;
         this.size = size;
@@ -72,9 +72,9 @@ public class BeatBox.RatingWidget : Gtk.DrawingArea {
         if (ctx != null)
             this.context = ctx;
         else
-            this.context = get_style_context ();
+            this.context = this;
 
-        this.is_menu_item = this.context.has_class ("menuitem");
+        this.is_menu_item = this.context.has_css_class ("menuitem");
 
         render_stars ();
 
@@ -101,7 +101,7 @@ public class BeatBox.RatingWidget : Gtk.DrawingArea {
         state_flags_changed.connect (render_stars);
     }
 
-    // a theme change repaints the stars (GTK4 has no "changed" signal on StyleContext)
+    // a theme change repaints the stars
     public override void css_changed (Gtk.CssStyleChange change) {
         base.css_changed (change);
         render_stars ();
@@ -241,6 +241,7 @@ public class BeatBox.RatingWidget : Gtk.DrawingArea {
             else
                 not_starred.copy_area (0, 0, item_width, item_height, _canvas, i * (item_width + (i > 0 ? spacing : 0)), 0);
         }
+        UI.pixbuf_changed (_canvas);
 
         queue_draw();
     }
@@ -248,10 +249,10 @@ public class BeatBox.RatingWidget : Gtk.DrawingArea {
     /** the draw function paints our own custom widget **/
     void on_draw (Gtk.DrawingArea area, Cairo.Context cairo, int width, int height) {
         if(centered) {
-            Gdk.cairo_set_source_pixbuf (cairo, _canvas, (width - width_request) / 2, (height - height_request) / 2);
+            UI.set_source_pixbuf (cairo, _canvas, (width - width_request) / 2, (height - height_request) / 2);
         }
         else {
-            Gdk.cairo_set_source_pixbuf (cairo, _canvas, 0,  (height - height_request) / 2);
+            UI.set_source_pixbuf (cairo, _canvas, 0,  (height - height_request) / 2);
         }
 
         cairo.paint();
@@ -336,7 +337,7 @@ public class BeatBox.RatingMenuItem : BeatBox.PopMenuItem {
     public RatingMenuItem () {
         keep_open = false;
 
-        rating = new RatingWidget (false, Gtk.IconSize.NORMAL, false, get_style_context ());
+        rating = new RatingWidget (false, Gtk.IconSize.NORMAL, false, this);
         set_child (rating);
 
         motion_controller = new Gtk.EventControllerMotion ();
@@ -396,9 +397,9 @@ public class BeatBox.RatingMenuItem : BeatBox.PopMenuItem {
     // The item's own window covers the stars: it gets the events and passes them
     // on, in the stars' coordinates. The release then activates the item as usual.
     void hover_at (double x, double y) {
-        double star_x, star_y;
-        translate_coordinates (rating, (int) x, (int) y, out star_x, out star_y);
-        rating.hover (star_x);
+        Graphene.Point star;
+        if (compute_point (rating, Graphene.Point () { x = (float) x, y = (float) y }, out star))
+            rating.hover (star.x);
     }
 }
 
@@ -458,7 +459,7 @@ public class BeatBox.CellRendererRating : Gtk.CellRenderer {
         int y = cell_area.y + ypad + (int) ((cell_area.height - pixbuf.height - 2 * ypad) * yalign);
         var bounds = Graphene.Rect ();
         bounds.init (x, y, pixbuf.width, pixbuf.height);
-        snapshot.append_texture (Gdk.Texture.for_pixbuf (pixbuf), bounds);
+        snapshot.append_texture (UI.texture_from_pixbuf (pixbuf), bounds);
     }
 
     /** Common Rating API functions **/

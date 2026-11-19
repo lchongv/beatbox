@@ -10,6 +10,7 @@
  * "Artist - Album (1999)/03 Title.flac", "Artist - Title.mp3"...
  * Only what the tags leave empty is filled in.
  */
+[GIR (visible = false)] // internal: plugins don't see it
 namespace BeatBox.TagGuess {
 	public class Guess : Object {
 		public string artist = "";

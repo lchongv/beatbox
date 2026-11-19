@@ -13,8 +13,8 @@ jobs:
   appimage:
     runs-on: ubuntu-latest
     # The AppImage runs on distributions with the build system's glibc or a newer one:
-    # Ubuntu 22.04's (2.35) covers anything from 2022 on
-    container: ubuntu:22.04
+    # Ubuntu 24.04's (2.39) covers anything from 2024 on. Not older: BeatBox needs GTK 4.14
+    container: ubuntu:24.04
     steps:
       - uses: actions/checkout@v7
       - name: Dependencies
@@ -29,7 +29,7 @@ jobs:
             libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev \
             gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-libav \
             cmake g++ libutfcpp-dev zlib1g-dev dpkg-dev patchelf
-      # Ubuntu 22.04 has TagLib 1.11; writing album art into files needs 2.0
+      # Ubuntu 24.04 has TagLib 1.13; writing album art into files needs 2.0
       - name: TagLib 2
         run: |
           curl -fsSL https://github.com/taglib/taglib/releases/download/v2.3.2/taglib-2.3.2.tar.gz | tar -xz

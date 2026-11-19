@@ -86,7 +86,7 @@ namespace BeatBox.PixbufUtils {
         cr.save ();
         rounded_rectangle (cr, SHADOW_SIZE, SHADOW_SIZE, width, height, RADIUS);
         cr.clip ();
-        Gdk.cairo_set_source_pixbuf (cr, source_pixbuf, SHADOW_SIZE, SHADOW_SIZE);
+        UI.set_source_pixbuf (cr, source_pixbuf, SHADOW_SIZE, SHADOW_SIZE);
         cr.paint ();
         cr.restore ();
 
@@ -95,7 +95,7 @@ namespace BeatBox.PixbufUtils {
         cr.set_line_width (1);
         cr.stroke ();
 
-        return Gdk.pixbuf_get_from_surface (surface, 0, 0, S_WIDTH, S_HEIGHT);
+        return UI.pixbuf_from_surface (surface);
     }
 
     void rounded_rectangle (Cairo.Context cr, double x, double y, double width, double height, double radius) {

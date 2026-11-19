@@ -149,32 +149,23 @@ public class BeatBox.FileNotFoundDialog : Window {
 		Media m = ids.get(0);
 		
 		string file = "";
-		var file_chooser = new FileChooserDialog (_("Locate Music File"), this,
-								  FileChooserAction.OPEN,
-								  _("_Cancel"), ResponseType.CANCEL,
-								  _("_Open"), ResponseType.ACCEPT);
-		
 		// try and help user by setting a sane default folder
 		var invalid_file = File.new_for_uri(m.uri);
 		var invalid_parent = invalid_file.get_parent();
-		
+		File start;
 		if(invalid_parent.query_exists())
-			try { file_chooser.set_current_folder(invalid_parent); } catch (Error e) { }
+			start = invalid_parent;
 		else if(invalid_parent.get_parent().query_exists() && 
 		invalid_parent.get_parent().get_path().contains(App.settings.main.music_folder))
-			try { file_chooser.set_current_folder(invalid_parent.get_parent()); } catch (Error e) { }
+			start = invalid_parent.get_parent();
 		else if(File.new_for_path(App.settings.main.music_folder).query_exists())
-			try { file_chooser.set_current_folder(File.new_for_path(App.settings.main.music_folder)); } catch (Error e) { }
+			start = File.new_for_path(App.settings.main.music_folder);
 		else
-			try { file_chooser.set_current_folder(File.new_for_path(Environment.get_home_dir())); } catch (Error e) { }
+			start = File.new_for_path(Environment.get_home_dir());
 		
-		if ((yield UI.run_dialog (file_chooser)) == ResponseType.ACCEPT) {
-			var chosen = file_chooser.get_file();
-			if (chosen != null && chosen.get_path() != null)
-				file = chosen.get_path();
-		}
-		
-		file_chooser.destroy ();
+		var chosen = yield UI.open_file (this, _("Locate Music File"), null, start);
+		if (chosen != null && chosen.get_path() != null)
+			file = chosen.get_path();
 		
 		if(file != "" && File.new_for_path(file).query_exists()) {
 			m.uri = File.new_for_path(file).get_uri();

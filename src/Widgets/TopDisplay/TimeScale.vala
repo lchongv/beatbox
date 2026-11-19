@@ -36,25 +36,8 @@ public class BeatBox.TimeScale : Box {
 	private uint nyan_id = 0;
 	private bool live = false;
 	
-	private const string WIDGET_STYLESHEET = """
-        .scale.slider,
-        .scale.slider:disabled {
-			background-image: none;
-			background: none;
-			margin: 0px;
-			padding: 0px;
-		}
-		.scale {
-			margin: 0px;
-			padding: 0px;
-			min-width: 6px; min-height: 6px;
-		}
-    """;
 	
 	public TimeScale() {
-		var style_provider = new CssProvider();
-
-		style_provider.load_from_data (WIDGET_STYLESHEET.data);
 		
 		left_time = new Label("0:00");
 		right_time = new Label("0:00");
@@ -70,8 +53,7 @@ public class BeatBox.TimeScale : Box {
 		left_time.xalign = 1;
 		right_time.xalign = 0;
 		
-		//get_style_context().add_class(Gtk.STYLE_CLASS_PRIMARY_TOOLBAR);
-		//scale.get_style_context().add_provider(style_provider, STYLE_PROVIDER_PRIORITY_APPLICATION);
+		//add_css_class(Gtk.STYLE_CLASS_PRIMARY_TOOLBAR);
 		
 		scale.set_draw_value(false);
 		
@@ -117,11 +99,10 @@ public class BeatBox.TimeScale : Box {
 			return;
 		if(run) {
 			nyan_id = Timeout.add(120, () => {
-				var style = scale.get_style_context();
-				if(style.has_class("nyan-b"))
-					style.remove_class("nyan-b");
+				if(scale.has_css_class("nyan-b"))
+					scale.remove_css_class("nyan-b");
 				else
-					style.add_class("nyan-b");
+					scale.add_css_class("nyan-b");
 				return Source.CONTINUE;
 			});
 		}
@@ -136,12 +117,12 @@ public class BeatBox.TimeScale : Box {
 		this.live = live;
 		left_time.visible = right_time.visible = !live;
 		if(live) {
-			scale.get_style_context().add_class("live");
+			scale.add_css_class("live");
 			set_scale_range(0, 2);
 			set_scale_value(1);
 		}
 		else {
-			scale.get_style_context().remove_class("live");
+			scale.remove_css_class("live");
 			value_changed();
 		}
 	}

@@ -95,7 +95,7 @@ public interface BeatBox.IconsInterface : GLib.Object {
 	public abstract Gdk.Pixbuf DEFAULT_ALBUM_SHADOW_PIXBUF { get; protected set; }
 	public abstract Gdk.Pixbuf DROP_ALBUM_PIXBUF { get; protected set; }
 	
-	public abstract GLib.Icon? render_gicon(string icon_name, Gtk.IconSize size, Gtk.StyleContext? context = null);
-	public abstract Gdk.Pixbuf? render_icon(string icon_name, Gtk.IconSize size, Gtk.StyleContext? context = null);
+	public abstract GLib.Icon? render_gicon(string icon_name, Gtk.IconSize size, Gtk.Widget? context = null);
+	public abstract Gdk.Pixbuf? render_icon(string icon_name, Gtk.IconSize size, Gtk.Widget? context = null);
 	public abstract Gtk.Image? render_image(string icon_name, Gtk.IconSize size);
 }

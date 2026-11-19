@@ -38,8 +38,7 @@ public class BeatBox.TransferFromDeviceDialog : Window {
 	
 	CheckButton transferAll;
 	ScrolledWindow mediasScroll;
-	TreeView mediasView;
-	Gtk.ListStore mediasModel;
+	SimpleTable medias_table; // check box, title, artist, album; the row's data is its Media
 	Button transfer;
 	
 	LinkedList<Media> to_transfer;
@@ -72,9 +71,7 @@ public class BeatBox.TransferFromDeviceDialog : Window {
 		Label info = new Label(_("The following files were found on %s, but are not in your library. Check all files you would like to import.").printf(d.getDisplayName()));
 		transferAll = new CheckButton.with_label(_("Import all medias"));
 		mediasScroll = new ScrolledWindow();
-		mediasView = new TreeView();
-		mediasModel = new Gtk.ListStore(5, typeof(bool), typeof(Media), typeof(string), typeof(string), typeof(string));
-		mediasView.set_model(mediasModel);
+		medias_table = new SimpleTable();
 		transfer = new Button.with_label(_("Import"));
 		Button cancel = new Button.with_label(_("Don't Import"));
 		
@@ -90,65 +87,17 @@ public class BeatBox.TransferFromDeviceDialog : Window {
 		info.xalign = 0.0f;
 		info.wrap = true;
 		
-		/* add cellrenderers to columns and columns to treeview */
-		var toggle = new CellRendererToggle ();
-        toggle.toggled.connect ((toggle, path) => {
-            var tree_path = new TreePath.from_string (path);
-            TreeIter iter;
-            mediasModel.get_iter (out iter, tree_path);
-            mediasModel.set (iter, 0, !toggle.active);
-            
-            transfer.set_sensitive(false);
-            mediasModel.foreach(updateTransferSensetivity);
-        });
-
-        var column = new TreeViewColumn ();
-        column.title = "";
-        column.pack_start (toggle, false);
-        column.add_attribute (toggle, "active", 0);
-        mediasView.append_column(column);
+		/* a check box, then title, artist and album */
+		medias_table.add_check_column("");
+		medias_table.add_column(_("Title"), 0).fixed_width = 300;
+		medias_table.add_column(_("Artist"), 1).fixed_width = 125;
+		medias_table.add_column(_("Album"), 2).fixed_width = 125;
+		medias_table.check_toggled.connect(() => update_transfer());
 		
-		column = new TreeViewColumn();
-		column.title = "media";
-		mediasView.append_column(column);
+		foreach(var m in medias)
+			medias_table.add({ m.title, m.artist, m.album }, m);
 		
-		mediasView.insert_column_with_attributes(-1, "Title", new CellRendererText(), "text", 2, null);
-		mediasView.insert_column_with_attributes(-1, "Artist", new CellRendererText(), "text", 3, null);
-		mediasView.insert_column_with_attributes(-1, "Album", new CellRendererText(), "text", 4, null);
-		mediasView.headers_visible = true;
-		
-		for(int i = 0; i < 5; ++i) {
-			mediasView.get_column(i).sizing = Gtk.TreeViewColumnSizing.FIXED;
-			mediasView.get_column(i).resizable = true;
-			mediasView.get_column(i).reorderable = false;
-			mediasView.get_column(i).clickable = false;
-		}
-		
-		mediasView.get_column(1).visible = false;
-		
-		mediasView.get_column(0).fixed_width = 25;
-		mediasView.get_column(1).fixed_width = 10;
-		mediasView.get_column(2).fixed_width = 300;
-		mediasView.get_column(3).fixed_width = 125;
-		mediasView.get_column(4).fixed_width = 125;
-		
-		//view.get_selection().set_mode(SelectionMode.MULTIPLE);
-		
-		/* fill the treeview */
-		var medias_sorted = new LinkedList<Media>();
-        foreach(var m in medias)
-			medias_sorted.add(m);
-		message("TODO: Fixme");
-		//medias_sorted.sort((CompareFunc)mediaCompareFunc);
-		
-		foreach(var s in medias_sorted) {
-			TreeIter item;
-			mediasModel.append(out item);
-			
-			mediasModel.set(item, 0, false, 1, s, 2, s.title, 3, s.artist, 4, s.album);
-		}
-		
-		mediasScroll.set_child(mediasView);
+		mediasScroll.set_child(medias_table.view);
 		mediasScroll.set_policy(PolicyType.AUTOMATIC, PolicyType.AUTOMATIC);
 		
 		transfer.set_sensitive(false);
@@ -226,58 +175,29 @@ public class BeatBox.TransferFromDeviceDialog : Window {
 			return (a.artist > b.artist) ? 1 : -1;
 	}*/
 	
-	bool updateTransferSensetivity(TreeModel model, TreePath path, TreeIter iter) {
-		bool sel = false;
-		model.get(iter, 0, out sel);
-		
-		if(sel) {
-			transfer.set_sensitive(true);
-			return true;
-		}
-		
-		return false;
-	}
-	
-	bool selectAll(TreeModel model, TreePath path, TreeIter iter) {
-		mediasModel.set(iter, 0, true);
-		
-		return false;
-	}
-	
-	bool unselectAll(TreeModel model, TreePath path, TreeIter iter) {
-		mediasModel.set(iter, 0, false);
-		
-		return false;
+	/** Import only with some song ticked */
+	void update_transfer() {
+		bool any = false;
+		for(uint i = 0; i < medias_table.size; i++)
+			any = any || medias_table.get_row(i).checked;
+		transfer.set_sensitive(any);
 	}
 	
 	void transferAllToggled() {
-		if(transferAll.active) {
-			mediasModel.foreach(selectAll);
-			mediasView.set_sensitive(false);
-			transfer.set_sensitive(true);
-		}
-		else {
-			mediasModel.foreach(unselectAll);
-			mediasView.set_sensitive(true);
-			transfer.set_sensitive(false);
-		}
-	}
-	
-	bool createTransferList(TreeModel model, TreePath path, TreeIter iter) {
-		Media? m = null;
-		bool selected = false;
-		mediasModel.get(iter, 0, out selected, 1, out m);
-		
-		if(m != null && selected) {
-			to_transfer.add(m);
-		}
-		
-		return false;
+		for(uint i = 0; i < medias_table.size; i++)
+			medias_table.get_row(i).checked = transferAll.active;
+		medias_table.rows.items_changed(0, medias_table.size, medias_table.size);
+		medias_table.view.set_sensitive(!transferAll.active);
+		transfer.set_sensitive(transferAll.active);
 	}
 	
 	void transferClick() {
 		to_transfer.clear();
-		mediasModel.foreach(createTransferList);
+		for(uint i = 0; i < medias_table.size; i++) {
+			var row = medias_table.get_row(i);
+			if(row.checked)
+				to_transfer.add((Media) row.data);
+		}
 		
 		if(App.operations.doing_ops) {
 			App.window.doAlert(_("Cannot Import"), _("BeatBox is already doing file operations. Please wait until those finish to import from ") + Markup.escape_text(d.getDisplayName()));

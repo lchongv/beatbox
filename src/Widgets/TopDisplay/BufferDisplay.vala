@@ -61,8 +61,8 @@ public class BeatBox.BufferDisplay : BeatBox.Display, Box {
 				var name = String.ellipsize(App.playback.current_media.title, 53);
 				
 				// connecting: no progress known yet, so a barber pole (see theme.css) until the first percent
-				if(percent > 0) buffering_bar.get_style_context().remove_class("live");
-				else buffering_bar.get_style_context().add_class("live");
+				if(percent > 0) buffering_bar.remove_css_class("live");
+				else buffering_bar.add_css_class("live");
 				buffering_bar.set_fraction((double)((double)percent / (double)100));
 
 				if(name != null) {

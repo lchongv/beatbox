@@ -225,8 +225,8 @@ public class BeatBox.MusicList : GenericList {
 		queueMoveDown.clicked.connect(() => move_selected_in_queue(1));
 		queueClear.clicked.connect(() => App.playback.clear_queue());
 		saveArtInFiles.clicked.connect(save_art_in_files);
-		fillTags.clicked.connect(() => FillTagsDialog.run_for(selected_list()));
-		findReplace.clicked.connect(() => FindReplaceDialog.run_for(selected_list()));
+		fillTags.clicked.connect(() => FillTagsDialog.run_for.begin(selected_list()));
+		findReplace.clicked.connect(() => FindReplaceDialog.run_for.begin(selected_list()));
 		mediaMenuNewPlaylist.clicked.connect(mediaMenuNewPlaylistClicked);
 		mediaMenuAddToPlaylist.keep_open = true; // the playlists open beside the menu
 		mediaMenuAddToPlaylist.clicked.connect(() => addToPlaylistMenu.popup_under(mediaMenuAddToPlaylist));
@@ -667,9 +667,6 @@ public class BeatBox.MusicList : GenericList {
 		import_requested(to_import);
 	}
 
-	public void apply_style_to_view(CssProvider style) {
-		get_style_context().add_provider(style, STYLE_PROVIDER_PRIORITY_APPLICATION);
-	}
 	
 	int view_compare_func (int col, Gtk.SortType dir, Media a_media, Media b_media) {
 		int rv = 0;

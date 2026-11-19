@@ -27,6 +27,7 @@
 
 [GIR (visible = false)] // internal, not for plugins
 public class BeatBox.DatabaseTransactionFiller {
+	[GIR (visible = false)] // valac writes a class's delegates even when the class is hidden
 	public delegate void TransactionFiller(ref SQLHeavy.Transaction transaction, DatabaseTransactionFiller db_filler);
 	public unowned TransactionFiller filler;
 	public Object data;
@@ -38,6 +39,7 @@ public class BeatBox.DatabaseTransactionFiller {
 
 [GIR (visible = false)] // internal, not for plugins
 public interface BeatBox.DatabaseInterface : GLib.Object {
+	[GIR (visible = false)] // the interface's struct is written even when it is hidden
 	public abstract SQLHeavy.QueryResult execute(string statement);
 	public abstract void queue_transaction(DatabaseTransactionFiller db_filler);
 	public abstract void add_periodic_transaction(DatabaseTransactionFiller periodic_filler);

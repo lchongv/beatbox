@@ -50,7 +50,7 @@ public class BeatBox.StatusBar : Gtk.Box {
         var paintable = image.get_paintable ();
         if (!(paintable is Gdk.Texture))
             return;
-        Gdk.Pixbuf? pix = Gdk.pixbuf_get_from_texture ((Gdk.Texture) paintable);
+        Gdk.Pixbuf? pix = UI.pixbuf_from_texture ((Gdk.Texture) paintable);
         if (pix == null)
             return;
 
@@ -58,7 +58,7 @@ public class BeatBox.StatusBar : Gtk.Box {
         if (size > 0 && (pix.width != size || pix.height != size))
             pix = pix.scale_simple (size, size, Gdk.InterpType.BILINEAR);
 
-        UI.show_pixbuf (image, UI.tint (pix, image.get_style_context ().get_color ()));
+        UI.show_pixbuf (image, UI.tint (pix, image.get_color ()));
     }
 
     public StatusBar () {

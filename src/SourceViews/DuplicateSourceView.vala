@@ -33,7 +33,7 @@ public class BeatBox.DuplicateSourceView : SourceView {
 	
 	Gtk.Box top_bar;
 	Gtk.Button remove_checked;
-	Gtk.ComboBoxText priority;
+	ChoiceBox priority;
 	
 	GLib.CompareDataFunc<Media> first_priority;
 	
@@ -49,11 +49,11 @@ public class BeatBox.DuplicateSourceView : SourceView {
 		top_bar = new Box(Orientation.HORIZONTAL, 0);
 		top_bar.margin_top = top_bar.margin_bottom = top_bar.margin_start = top_bar.margin_end = 6;
 		remove_checked = new Gtk.Button.with_label(_("Remove Checked Items"));
-		priority = new ComboBoxText();
+		priority = new ChoiceBox();
 		priority.append("manual", _("Manually select duplicates"));
 		priority.append("bitrate", _("Keep highest bitrate"));
 		priority.append("file", _("Keep largest file"));
-		priority.set_active(0);
+		priority.active = 0;
 		first_priority = highest_bitrate;
 		top_bar.append(priority);
 		remove_checked.hexpand = true;
@@ -108,7 +108,7 @@ public class BeatBox.DuplicateSourceView : SourceView {
 		var dup_list = (DuplicateList)list_view;
 		dup_list.clear_checked();
 		
-		if(priority.get_active() != 0) {
+		if(priority.active != 0) {
 			foreach(var ent in dups.entries) {
 				var all = new PriorityQueue<Media>((a, b) => first_priority(a, b));
 				all.offer(ent.key);
@@ -128,7 +128,7 @@ public class BeatBox.DuplicateSourceView : SourceView {
 	}
 	
 	void priority_changed() {
-		int a = priority.get_active();
+		int a = priority.active;
 		if(a == 1)
 			first_priority = largest_file;
 		else if(a == 2)

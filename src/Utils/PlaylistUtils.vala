@@ -226,80 +226,28 @@ namespace BeatBox.PlaylistUtils {
 		string name = "";
 		string extension = "";
 		
-		var file_chooser = new Gtk.FileChooserDialog (_("Export Playlist"), main_window,
-								  Gtk.FileChooserAction.SAVE,
-								  _("_Cancel"), Gtk.ResponseType.CANCEL,
-								  _("_Save"), Gtk.ResponseType.ACCEPT);
-		
-		// filters for .m3u and .pls
+		// filters for .m3u and .pls: the format is the one of the name typed (.m3u without one)
 		var m3u_filter = new Gtk.FileFilter();
 		m3u_filter.add_pattern("*.m3u");
 		m3u_filter.set_filter_name("MPEG Version 3.0 Extended (*.m3u)");
-		file_chooser.add_filter(m3u_filter);
-		
 		var pls_filter = new Gtk.FileFilter();
 		pls_filter.add_pattern("*.pls");
 		pls_filter.set_filter_name("Shoutcast Playlist Version 2.0 (*.pls)");
-		file_chooser.add_filter(pls_filter);
 		
-		// GTK4: the file chooser asks for confirmation itself
-		file_chooser.set_current_name(p.name + ".m3u");
-		
-		// set original folder. if we don't, then file_chooser.get_file() starts as null, which is bad for signal below.
-		try {
-			if(default_folder != null && default_folder.query_exists())
-				file_chooser.set_current_folder(default_folder);
-			else
-				file_chooser.set_current_folder(File.new_for_path(Environment.get_home_dir()));
-		} catch (Error e) { }
-			
-		
-		// listen for filter change
-		file_chooser.notify["filter"].connect( () => {
-			var current = file_chooser.get_file();
-			if(current == null) // happens when no folder is chosen. need way to get textbox text, rather than filename
-				return;
-			
-			string current_path = current.get_path() ?? "";
-			
-			if(file_chooser.filter == m3u_filter) {
-				debug("changed to m3u\n");
-				var new_file = current_path.replace(".pls", ".m3u");
-				
-				if(new_file.slice(new_file.last_index_of(".", 0), new_file.length).length == 0) {
-					new_file += ".m3u";
-				}
-				
-				file_chooser.set_current_name(new_file.slice(new_file.last_index_of("/", 0) + 1, new_file.length));
-			}
-			else {
-				debug("changed to pls\n");
-				var new_file = current_path.replace(".m3u", ".pls");
-				
-				if(new_file.slice(new_file.last_index_of(".", 0), new_file.length).length == 0) {
-					new_file += ".pls";
-				}
-				
-				file_chooser.set_current_name(new_file.slice(new_file.last_index_of("/", 0) + 1, new_file.length));
-			}
-		});
-		
-		if ((yield UI.run_dialog (file_chooser)) == Gtk.ResponseType.ACCEPT) {
-			var chosen = file_chooser.get_file();
-			if (chosen != null)
-				file = chosen.get_path() ?? "";
+		var start = (default_folder != null && default_folder.query_exists()) ? default_folder : File.new_for_path(Environment.get_home_dir());
+		var chosen = yield UI.save_file (main_window, _("Export Playlist"), p.name + ".m3u", start, { m3u_filter, pls_filter });
+		if (chosen != null) {
+			file = chosen.get_path() ?? "";
 			extension = file.slice(file.last_index_of(".", 0), file.length);
 			
-			if(extension.length == 0 || extension[0] != '.') {
-				extension = (file_chooser.filter == m3u_filter) ? ".m3u" : ".pls";
+			if(extension != ".m3u" && extension != ".pls") {
+				extension = ".m3u";
 				file += extension;
 			}
 			
 			name = file.slice(file.last_index_of("/", 0) + 1, file.last_index_of(".", 0));
 			debug("Playlist name is %s extension is %s\n", name, extension);
 		}
-		
-		file_chooser.destroy ();
 		
 		string original_name = p.name;
 		if(file != "") {

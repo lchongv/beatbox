@@ -133,15 +133,7 @@ public class BeatBox.Actions : BeatBox.ActionsInterface {
 	}
 
 	async void choose_library_folder(Library library) {
-		File? folder = null;
-		var file_chooser = new Gtk.FileChooserDialog (_("Choose %s Folder").printf(library.name), App.window,
-								  Gtk.FileChooserAction.SELECT_FOLDER,
-								  _("_Cancel"), Gtk.ResponseType.CANCEL,
-								  _("_Open"), Gtk.ResponseType.ACCEPT);
-		if ((yield UI.run_dialog (file_chooser)) == Gtk.ResponseType.ACCEPT) {
-			folder = File.new_for_path(file_chooser.get_file().get_path());
-		}
-		file_chooser.destroy ();
+		File? folder = yield UI.choose_folder (App.window, _("Choose %s Folder").printf(library.name));
 		
 		// If different folder chosen, or we have no songs anyways, do set.
 		if(folder != null && (folder != library.folder || library.media_count() == 0)) {
@@ -154,23 +146,11 @@ public class BeatBox.Actions : BeatBox.ActionsInterface {
 	}
 
 	async void choose_import_folders(Library library) {
-		GLib.SList<File> folders = new GLib.SList<File>();
-		var file_chooser = new Gtk.FileChooserDialog (_("Import %s").printf(library.name), App.window,
-								  Gtk.FileChooserAction.SELECT_FOLDER,
-								  _("_Cancel"), Gtk.ResponseType.CANCEL,
-								  _("_Open"), Gtk.ResponseType.ACCEPT);
-		file_chooser.set_select_multiple(true); // allow user to select multiple folders
-
-		if ((yield UI.run_dialog (file_chooser)) == Gtk.ResponseType.ACCEPT) {
-			var selected = file_chooser.get_files();
-			for (uint i = 0; i < selected.get_n_items(); i++)
-				folders.append((File) selected.get_item(i));
-		}
-		file_chooser.destroy ();
+		var folders = yield UI.choose_folders (App.window, _("Import %s").printf(library.name));
 		
 		bool tried_import_from_music_folder = false;
 		var final_folders = new Gee.LinkedList<File>();
-		if(folders.length() > 0) {
+		if(folders.size > 0) {
 			foreach(var folder in folders) {
 				if(!folder.get_path().has_prefix(App.settings.main.music_folder)) {
 					final_folders.add(folder);
@@ -295,28 +275,20 @@ public class BeatBox.Actions : BeatBox.ActionsInterface {
 	private async void import_playlist_or_station(string to_import) {
 		string file = "";
 		string name = "";
-		var file_chooser = new Gtk.FileChooserDialog (_("Import %s").printf(to_import), App.window,
-								  Gtk.FileChooserAction.OPEN,
-								  _("_Cancel"), Gtk.ResponseType.CANCEL,
-								  _("_Open"), Gtk.ResponseType.ACCEPT);
-		
 		// filters for .m3u and .pls
 		var m3u_filter = new Gtk.FileFilter();
 		m3u_filter.add_pattern("*.m3u");
 		m3u_filter.set_filter_name("MPEG Version 3.0 Extended (*.m3u)");
-		file_chooser.add_filter(m3u_filter);
 		
 		var pls_filter = new Gtk.FileFilter();
 		pls_filter.add_pattern("*.pls");
 		pls_filter.set_filter_name("Shoutcast Playlist Version 2.0 (*.pls)");
-		file_chooser.add_filter(pls_filter);
 		
-		if ((yield UI.run_dialog (file_chooser)) == Gtk.ResponseType.ACCEPT) {
-			file = file_chooser.get_file().get_path();
+		var chosen = yield UI.open_file (App.window, _("Import %s").printf(to_import), { m3u_filter, pls_filter });
+		if (chosen != null) {
+			file = chosen.get_path();
 			name = file.slice(file.last_index_of("/", 0) + 1, file.last_index_of(".", 0));
 		}
-		
-		file_chooser.destroy ();
 		
 		var files = new Gee.LinkedList<File>();
 		var stations = new Gee.LinkedList<Media>();

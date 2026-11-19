@@ -1,4 +1,4 @@
-project('beatbox', 'vala', 'c', version: '1.2.61')
+project('beatbox', 'vala', 'c', version: '1.2.62')
 
 gnome = import('gnome')
 i18n = import('i18n')
@@ -43,7 +43,7 @@ deps = [
   dependency('glib-2.0'),
   dependency('gio-2.0'),
   dependency('gio-unix-2.0'),
-  dependency('gtk4', version: '>= 4.6'),
+  dependency('gtk4', version: '>= 4.14'),
   dependency('gee-0.8'),
   dependency('gstreamer-1.0'),
   dependency('gstreamer-pbutils-1.0'),
@@ -140,6 +140,9 @@ core_sources = files(
   'core/Widgets/NavigationArrows.vala',
   'core/Widgets/PopMenu.vala',
   'core/Widgets/StyledBox.vala',
+  'core/Widgets/ButtonDialog.vala',
+  'core/Widgets/SimpleTable.vala',
+  'core/Widgets/ChoiceBox.vala',
 )
 
 # Python plugins: libpeas-2 loads them, and the typelib describes libbeatbox-core to them

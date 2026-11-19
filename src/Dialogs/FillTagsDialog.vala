@@ -1,7 +1,7 @@
 using Gtk;
 
 /** Fill In Tags from File Names: shows what the songs' paths say before the empty tags take it */
-public class BeatBox.FillTagsDialog : Dialog {
+public class BeatBox.FillTagsDialog : ButtonDialog {
 	Gee.HashMap<Media, Media> filled = new Gee.HashMap<Media, Media> (); // song → copy with the tags filled in
 
 	public static async void run_for (Gee.Collection<Media> medias) {
@@ -11,19 +11,18 @@ public class BeatBox.FillTagsDialog : Dialog {
 			App.window.doAlert (_("Nothing to fill in"), _("The file names don't add anything to these songs' tags."));
 			return;
 		}
-		if ((yield UI.run_dialog (dialog)) == ResponseType.APPLY)
+		if ((yield dialog.run ()) == ButtonDialog.APPLY)
 			dialog.apply ();
 		dialog.destroy ();
 	}
 
 	FillTagsDialog (Gee.Collection<Media> medias) {
-		title = _("Fill In Tags from File Names");
-		transient_for = App.window;
-		modal = true;
+		base (_("Fill In Tags from File Names"), App.window);
+		resizable = true;
 		set_default_size (760, 420);
 
 		// columns: file, then track, title, artist, album, year as markup (filled in ones in bold)
-		var store = new Gtk.ListStore (6, typeof (string), typeof (string), typeof (string), typeof (string), typeof (string), typeof (string));
+		var table = new SimpleTable ();
 		var folder = App.library.song_library.folder;
 		foreach (var m in medias) {
 			if (!m.uri.has_prefix ("file:"))
@@ -33,45 +32,36 @@ public class BeatBox.FillTagsDialog : Dialog {
 			if (changed.length == 0)
 				continue;
 			filled[m] = copy;
-			TreeIter iter;
-			store.append (out iter);
-			store.set (iter, 0, File.new_for_uri (m.uri).get_basename (),
-				1, cell ((copy.track > 0) ? copy.track.to_string () : "", "track" in changed),
-				2, cell (copy.title, "title" in changed),
-				3, cell (copy.artist, "artist" in changed),
-				4, cell (copy.album, "album" in changed),
-				5, cell ((copy.year > 0) ? copy.year.to_string () : "", "year" in changed));
+			table.add ({ Markup.escape_text (File.new_for_uri (m.uri).get_basename ()),
+				cell ((copy.track > 0) ? copy.track.to_string () : "", "track" in changed),
+				cell (copy.title, "title" in changed),
+				cell (copy.artist, "artist" in changed),
+				cell (copy.album, "album" in changed),
+				cell ((copy.year > 0) ? copy.year.to_string () : "", "year" in changed) });
 		}
 
-		var view = new TreeView.with_model (store);
 		string[] titles = { _("File"), _("Track"), _("Title"), _("Artist"), _("Album"), _("Year") };
 		for (int i = 0; i < titles.length; i++) {
-			var text = new CellRendererText ();
-			if (i != 1 && i != 5) // track and year are short: never cut
-				text.ellipsize = Pango.EllipsizeMode.END;
-			var column = new TreeViewColumn.with_attributes (titles[i], text, (i == 0) ? "text" : "markup", i);
-			column.resizable = true;
-			column.expand = i != 1 && i != 5;
-			view.append_column (column);
+			bool short_one = i == 1 || i == 5; // track and year are short: never cut
+			table.add_column (titles[i], i, true, !short_one, short_one ? Pango.EllipsizeMode.NONE : Pango.EllipsizeMode.END);
 		}
 		var scroll = new ScrolledWindow ();
 		scroll.vexpand = true;
 		scroll.has_frame = true;
-		scroll.set_child (view);
+		scroll.set_child (table.view);
 
 		var label = new Label (ngettext ("%d song gets the tags in bold. Tags already set are kept.",
 		                                 "%d songs get the tags in bold. Tags already set are kept.", filled.size).printf (filled.size));
 		label.xalign = 0.0f;
 		label.wrap = true;
-		var box = get_content_area ();
+		var box = content_area;
 		box.spacing = 8;
-		box.margin_top = box.margin_bottom = box.margin_start = box.margin_end = 8;
 		box.append (label);
 		box.append (AquaScroll.wrap (scroll));
 
-		add_button (_("Cancel"), ResponseType.CANCEL);
-		add_button (_("Fill In"), ResponseType.APPLY).get_style_context ().add_class ("suggested-action");
-		set_default_response (ResponseType.APPLY);
+		add_button (_("Cancel"), ButtonDialog.CANCEL);
+		add_button (_("Fill In"), ButtonDialog.APPLY).add_css_class("suggested-action");
+		set_default_response (ButtonDialog.APPLY);
 	}
 
 	static string cell (string text, bool bold) {

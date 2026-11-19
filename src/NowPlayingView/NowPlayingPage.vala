@@ -32,8 +32,6 @@ public class BeatBox.NowPlayingPage : Box {
 	Box contents;
 	// GTK 4 does not let a class derive from ScrolledWindow: this is the scrolling part, inside the box
 	ScrolledWindow scroll;
-	
-	static CssProvider style_provider;
 	private const string WIDGET_STYLESHEET = """
         .NowPlayingPage {
 			background-image: linear-gradient(to bottom, shade(#ffffff, 1.05), #ffffff);
@@ -85,16 +83,13 @@ public class BeatBox.NowPlayingPage : Box {
 		contents = new Box(Orientation.VERTICAL, 0);
 
 		// Apply styling
-		if(style_provider == null) {
-			style_provider = new CssProvider();
-			style_provider.load_from_data (WIDGET_STYLESHEET.data);
-		}
+		UI.add_scoped_css("bb-nowplayingpage", WIDGET_STYLESHEET);
 
 		scroll.set_policy(PolicyType.AUTOMATIC, PolicyType.AUTOMATIC);
 
 		// The box takes the styling the old Viewport and EventBox had
 		contents.add_css_class("NowPlayingPage");
-		contents.get_style_context().add_provider(style_provider, STYLE_PROVIDER_PRIORITY_APPLICATION);
+		contents.add_css_class("bb-nowplayingpage");
 
 		scroll.set_child(contents);
 		append(scroll);

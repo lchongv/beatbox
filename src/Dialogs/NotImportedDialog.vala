@@ -38,8 +38,7 @@ public class BeatBox.NotImportedDialog : Window{
 	
 	CheckButton trashAll;
 	ScrolledWindow filesScroll;
-	TreeView filesView;
-	Gtk.ListStore filesModel;
+	SimpleTable files_table; // a check box and the path of each file
 	Button moveToTrash;
 	
 	public NotImportedDialog(Collection<string> files, string music) {
@@ -70,9 +69,7 @@ public class BeatBox.NotImportedDialog : Window{
 		Label info = new Label(ngettext("BeatBox could not read it. It may be damaged or not be audio.", "BeatBox could not read them. They may be damaged or not be audio.", files.size));
 		trashAll = new CheckButton.with_label(_("Move all corrupted files to trash"));
 		filesScroll = new ScrolledWindow();
-		filesView = new TreeView();
-		filesModel = new Gtk.ListStore(2, typeof(bool), typeof(string));
-		filesView.set_model(filesModel);
+		files_table = new SimpleTable();
 		moveToTrash = new Button.with_label(_("Move to Trash"));
 		Button okButton = new Button.with_label(_("Ignore"));
 		
@@ -83,36 +80,16 @@ public class BeatBox.NotImportedDialog : Window{
 		info.xalign = 0.0f;
 		info.wrap = false;
 		
-		/* add cellrenderers to columns and columns to treeview */
-		var toggle = new CellRendererToggle ();
-        toggle.toggled.connect ((toggle, path) => {
-            var tree_path = new TreePath.from_string (path);
-            TreeIter iter;
-            filesModel.get_iter (out iter, tree_path);
-            filesModel.set (iter, 0, !toggle.active);
-            
-            moveToTrash.set_sensitive(false);
-            filesModel.foreach(updateMoveToTrashSensetivity);
-        });
-
-        var column = new TreeViewColumn ();
-        column.title = "del";
-        column.pack_start (toggle, false);
-        column.add_attribute (toggle, "active", 0);
-        filesView.append_column (column);
+		/* a check box column and the files */
+		files_table.add_check_column(null);
+		files_table.add_column(_("File Location"), 0);
+		files_table.headers_visible = false;
+		files_table.check_toggled.connect(() => update_move_to_trash());
 		
-		filesView.insert_column_with_attributes(-1, _("File Location"), new CellRendererText(), "text", 1, null);
-		filesView.headers_visible = false;
+		foreach(string file in files)
+			files_table.add({ file.replace(music_folder, "") });
 		
-		/* fill the treeview */
-		foreach(string file in files) {
-			TreeIter item;
-			filesModel.append(out item);
-			
-			filesModel.set(item, 0, false, 1, file.replace(music_folder, ""));
-		}
-		
-		filesScroll.set_child(filesView);
+		filesScroll.set_child(files_table.view);
 		filesScroll.set_policy(PolicyType.AUTOMATIC, PolicyType.AUTOMATIC);
 		
 		moveToTrash.set_sensitive(false);
@@ -182,50 +159,32 @@ public class BeatBox.NotImportedDialog : Window{
 		return widget;
 	}
 	
-	public bool updateMoveToTrashSensetivity(TreeModel model, TreePath path, TreeIter iter) {
-		bool sel = false;
-		model.get(iter, 0, out sel);
-		
-		if(sel) {
-			moveToTrash.set_sensitive(true);
-			return true;
-		}
-		
-		return false;
+	/** Move to Trash only with some file ticked */
+	void update_move_to_trash() {
+		bool any = false;
+		for(uint i = 0; i < files_table.size; i++)
+			any = any || files_table.get_row(i).checked;
+		moveToTrash.set_sensitive(any);
 	}
 	
-	public bool selectAll(TreeModel model, TreePath path, TreeIter iter) {
-		filesModel.set(iter, 0, true);
-		
-		return false;
-	}
-	
-	public bool unselectAll(TreeModel model, TreePath path, TreeIter iter) {
-		filesModel.set(iter, 0, false);
-		
-		return false;
+	void check_all(bool val) {
+		for(uint i = 0; i < files_table.size; i++)
+			files_table.get_row(i).checked = val;
+		files_table.rows.items_changed(0, files_table.size, files_table.size);
 	}
 	
 	 void trashAllToggled() {
-		if(trashAll.active) {
-			filesModel.foreach(selectAll);
-			filesView.set_sensitive(false);
-			moveToTrash.set_sensitive(true);
-		}
-		else {
-			filesModel.foreach(unselectAll);
-			filesView.set_sensitive(true);
-			moveToTrash.set_sensitive(false);
-		}
+		check_all(trashAll.active);
+		files_table.view.set_sensitive(!trashAll.active);
+		moveToTrash.set_sensitive(trashAll.active);
 	}
 	
-	public bool deleteSelectedItems(TreeModel model, TreePath path, TreeIter iter) {
-		bool selected;
-		string location;
-		filesModel.get(iter, 0, out selected);
-		filesModel.get(iter, 1, out location);
-		
-		if(selected) {
+	 void moveToTrashClick() {
+		for(uint i = 0; i < files_table.size; i++) {
+			var row = files_table.get_row(i);
+			if(!row.checked)
+				continue;
+			string location = row.cells[0];
 			try {
 				var file = File.new_for_path(music_folder + location);
 				file.trash();
@@ -233,22 +192,7 @@ public class BeatBox.NotImportedDialog : Window{
 			catch(GLib.Error err) {
 				stdout.printf("Could not move file %s to recycle: %s\n", location, err.message);
 			}
-			/*else {
-				try {
-					var file = File.new_for_path (location);
-					file.delete();
-				}
-				catch(GLib.Error err) {
-					stdout.printf("Could not delete file %s: %s\n", location, err.message);
-				}
-			}*/
 		}
-		
-		return false;
-	}
-	
-	 void moveToTrashClick() {
-		filesModel.foreach(deleteSelectedItems);
 		this.destroy();
 	}
 }

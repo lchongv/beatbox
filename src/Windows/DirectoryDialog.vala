@@ -6,18 +6,18 @@
 
 using Gtk;
 
-public class BeatBox.DirectoryDialog : Dialog {
+public class BeatBox.DirectoryDialog : ButtonDialog {
 	public enum Kind { RADIO, PODCAST }
 
 	const string PODCAST_API = "https://itunes.apple.com/search?media=podcast&limit=50";
 
-	enum Col { NAME, DETAIL, EXTRA, URL, GENRE, ADDED, COUNTRY }
+	// a result row's cells (its check box: already added)
+	enum Col { NAME, DETAIL, EXTRA, URL, GENRE, COUNTRY }
 
 	Kind kind;
 	SearchEntry entry;
-	Gtk.ListStore store;
-	TreeView view;
-	TreeViewColumn detail_column;
+	SimpleTable results;
+	ColumnViewColumn detail_column;
 	Spinner spinner;
 	Label status;
 	Label source;
@@ -27,14 +27,14 @@ public class BeatBox.DirectoryDialog : Dialog {
 
 	// radio only
 	Radio.Directory directory = Radio.Directory.RADIO_BROWSER;
-	ComboBoxText directories;
-	ComboBoxText country;
-	ComboBoxText state;
-	ComboBoxText language;
-	ComboBoxText genre;
-	ComboBoxText codec;
-	ComboBoxText bitrate;
-	ComboBoxText order;
+	ChoiceBox directories;
+	ChoiceBox country;
+	ChoiceBox state;
+	ChoiceBox language;
+	ChoiceBox genre;
+	ChoiceBox codec;
+	ChoiceBox bitrate;
+	ChoiceBox order;
 	CheckButton https;
 	bool filling = false;
 
@@ -42,8 +42,8 @@ public class BeatBox.DirectoryDialog : Dialog {
 	static Gee.HashMap<string, Gee.List<Radio.Choice>>? lists = null;
 
 	public DirectoryDialog (Kind kind) {
-		Object (title: (kind == Kind.RADIO) ? _("Find Radio Stations") : _("Find Podcasts"),
-		        transient_for: App.window, modal: true, destroy_with_parent: true);
+		base ((kind == Kind.RADIO) ? _("Find Radio Stations") : _("Find Podcasts"), App.window);
+		resizable = true;
 		this.kind = kind;
 		set_default_size ((kind == Kind.RADIO) ? 860 : 720, 560);
 		close_request.connect (() => { closed = true; return false; });
@@ -58,32 +58,34 @@ public class BeatBox.DirectoryDialog : Dialog {
 		top.append(entry);
 		top.append(spinner);
 
-		store = new Gtk.ListStore (7, typeof (string), typeof (string), typeof (string), typeof (string), typeof (string), typeof (bool), typeof (string));
-		view = new TreeView.with_model (store);
-		view.add_css_class ("tracklist");
+		results = new SimpleTable ();
+		results.view.add_css_class ("tracklist");
 		string[] headers = (kind == Kind.RADIO) ? new string[] { _("Station"), _("Country"), _("Genre") }
 		                                        : new string[] { _("Podcast"), _("Author"), _("Genre") };
 		for (int i = 0; i < 3; i++) {
-			var cell = new CellRendererText ();
-			cell.ellipsize = Pango.EllipsizeMode.END;
-			var col = new TreeViewColumn.with_attributes (headers[i], cell, "text", i);
-			col.resizable = true;
-			col.expand = (i != 1);
+			int cell = i;
+			var col = results.add_custom_column (headers[i], (item) => {
+				var label = new Label (null);
+				label.xalign = 0;
+				label.ellipsize = Pango.EllipsizeMode.END;
+				item.child = label;
+			}, (item, row) => {
+				var label = (Label) item.child;
+				label.label = row.cells[cell];
+				// the ones already in the library in bold
+				var attrs = new Pango.AttrList ();
+				if (row.checked)
+					attrs.insert (Pango.attr_weight_new (Pango.Weight.BOLD));
+				label.attributes = attrs;
+			}, i != 1);
 			if (i == 1)
 				col.fixed_width = 140;
-			col.sizing = TreeViewColumnSizing.FIXED;
-			col.set_cell_data_func (cell, (c, r, model, iter) => {
-				bool added;
-				model.get (iter, Col.ADDED, out added);
-				((CellRendererText)r).weight = added ? Pango.Weight.BOLD : Pango.Weight.NORMAL;
-			});
-			view.append_column (col);
 		}
-		detail_column = view.get_column (1);
-		view.row_activated.connect (() => add_selected ());
+		detail_column = results.view.columns.get_item (1) as ColumnViewColumn;
+		results.activated.connect (() => add_selected ());
 		var scroll = new ScrolledWindow ();
 		scroll.has_frame = true;
-		scroll.set_child (view);
+		scroll.set_child (results.view);
 
 		status = new Label ("");
 		status.xalign = 0;
@@ -92,9 +94,8 @@ public class BeatBox.DirectoryDialog : Dialog {
 		source.xalign = 0;
 		source.add_css_class ("dim-label");
 
-		var box = get_content_area ();
+		var box = content_area;
 		box.spacing = 8;
-		box.margin_top = box.margin_bottom = box.margin_start = box.margin_end = 12;
 		box.append (top);
 		if (kind == Kind.RADIO)
 			box.append (build_filters (top));
@@ -103,14 +104,14 @@ public class BeatBox.DirectoryDialog : Dialog {
 		box.append (status);
 		box.append (source);
 
-		add_button (_("Close"), ResponseType.CLOSE);
-		add_btn = add_button ((kind == Kind.RADIO) ? _("Add Station") : _("Subscribe"), ResponseType.APPLY);
+		add_button (_("Close"), ButtonDialog.CLOSE);
+		add_btn = add_button ((kind == Kind.RADIO) ? _("Add Station") : _("Subscribe"), ButtonDialog.APPLY);
 		add_btn.sensitive = false;
-		view.get_selection ().changed.connect (() => {
-			add_btn.sensitive = view.get_selection ().count_selected_rows () > 0;
+		results.selection.selection_changed.connect (() => {
+			add_btn.sensitive = results.selected_row () != null;
 		});
 		response.connect ((id) => {
-			if (id == ResponseType.APPLY)
+			if (id == ButtonDialog.APPLY)
 				add_selected ();
 			else
 				destroy ();
@@ -128,7 +129,8 @@ public class BeatBox.DirectoryDialog : Dialog {
 
 	/** The directory menu (before the search box) and the filters below it */
 	Widget build_filters (Box top) {
-		directories = new ComboBoxText ();
+		directories = new ChoiceBox ();
+		directories.hexpand = false;
 		directories.append_text ("radio-browser.info");
 		directories.append_text ("SHOUTcast");
 		directories.append_text ("laut.fm");
@@ -180,26 +182,16 @@ public class BeatBox.DirectoryDialog : Dialog {
 		return filters;
 	}
 
-	ComboBoxText add_filter (FlowBox filters, string title, bool typing) {
-		var combo = typing ? new ComboBoxText.with_entry () : new ComboBoxText ();
+	ChoiceBox add_filter (FlowBox filters, string title, bool typing) {
+		var combo = typing ? new ChoiceBox.with_entry () : new ChoiceBox ();
 		combo.append ("", _("Any"));
 		if (!typing)
 			combo.active_id = "";
 		else {
-			// a few hundred countries, languages or genres: typed, with completion
-			var typed = (Entry) combo.get_child ();
+			// a few hundred countries, languages or genres: typed, the matching ones listed below
+			var typed = combo.entry;
 			typed.width_chars = 14;
 			typed.placeholder_text = _("Any");
-			var completion = new EntryCompletion ();
-			completion.model = combo.model;
-			completion.text_column = 0;
-			completion.match_selected.connect ((model, iter) => {
-				string id;
-				model.get (iter, 1, out id);
-				combo.active_id = id;
-				return true;
-			});
-			typed.completion = completion;
 			typed.activate.connect (() => filter_changed (combo));
 		}
 		combo.changed.connect (() => {
@@ -207,7 +199,7 @@ public class BeatBox.DirectoryDialog : Dialog {
 				return;
 			// "Any" leaves the box empty, showing it as placeholder: typing doesn't append to it
 			if (combo.has_entry && combo.active_id == "")
-				((Entry) combo.get_child ()).text = "";
+				combo.entry.text = "";
 			filter_changed (combo);
 		});
 		var box = new Box (Orientation.HORIZONTAL, 4);
@@ -217,7 +209,7 @@ public class BeatBox.DirectoryDialog : Dialog {
 		return combo;
 	}
 
-	void filter_changed (ComboBoxText combo) {
+	void filter_changed (ChoiceBox combo) {
 		if (filling)
 			return;
 		if (combo == country)
@@ -257,7 +249,7 @@ public class BeatBox.DirectoryDialog : Dialog {
 	}
 
 	/** A filter's values from the directory, once per session */
-	void load_list (ComboBoxText combo, string list, string country_name = "") {
+	void load_list (ChoiceBox combo, string list, string country_name = "") {
 		if (lists == null)
 			lists = new Gee.HashMap<string, Gee.List<Radio.Choice>> ();
 		string key = "%d/%s/%s".printf ((int) directory, list, country_name);
@@ -280,7 +272,7 @@ public class BeatBox.DirectoryDialog : Dialog {
 	}
 
 	/** Puts a filter's values in its menu, keeping what was chosen or typed */
-	void fill (ComboBoxText combo, Gee.List<Radio.Choice> choices) {
+	void fill (ChoiceBox combo, Gee.List<Radio.Choice> choices) {
 		string chosen = value_of (combo, true);
 		filling = true;
 		combo.remove_all ();
@@ -290,9 +282,9 @@ public class BeatBox.DirectoryDialog : Dialog {
 			string name = c.name.get_char ().totitle ().to_string () + c.name.substring (c.name.index_of_nth_char (1));
 			combo.append (c.value, (c.count > 0) ? "%s (%d)".printf (name, c.count) : name);
 		}
-		if (!combo.set_active_id (chosen)) {
+		if (!combo.select_id (chosen)) {
 			if (combo.has_entry)
-				((Entry) combo.get_child ()).text = chosen;
+				combo.entry.text = chosen;
 			else
 				combo.active_id = "";
 		}
@@ -302,24 +294,21 @@ public class BeatBox.DirectoryDialog : Dialog {
 	}
 
 	/** What a filter asks for: the item chosen, the first one starting with what was typed or, free, the text itself */
-	string value_of (ComboBoxText combo, bool free = false) {
+	string value_of (ChoiceBox combo, bool free = false) {
 		if (combo.active_id != null)
 			return combo.active_id;
 		if (!combo.has_entry)
 			return "";
-		string typed = ((Entry) combo.get_child ()).text.strip ();
+		string typed = combo.entry.text.strip ();
 		if (typed == "")
 			return "";
 		string key = typed.casefold ();
-		string? found = null;
-		combo.model.foreach ((model, path, iter) => {
-			string text, id;
-			model.get (iter, 0, out text, 1, out id);
-			if (id != "" && text.casefold ().has_prefix (key))
-				found = id;
-			return found != null;
-		});
-		return found ?? (free ? typed : "");
+		for (int i = 0; i < combo.n_items; i++) {
+			string? id = combo.get_id (i);
+			if (id != null && id != "" && combo.get_text (i).casefold ().has_prefix (key))
+				return id;
+		}
+		return free ? typed : "";
 	}
 
 	/** Two-letter country of the user's locale (es_CL.UTF-8 → CL), or "" */
@@ -371,7 +360,7 @@ public class BeatBox.DirectoryDialog : Dialog {
 		}
 		if (directory == Radio.Directory.LAUT_FM && term == "" && q.genre == "") {
 			spinner.stop ();
-			store.clear ();
+			results.clear ();
 			status.label = _("Choose a genre or type a station’s name.");
 			return;
 		}
@@ -392,7 +381,7 @@ public class BeatBox.DirectoryDialog : Dialog {
 
 	void show_stations (Gee.List<Radio.Result>? found, string term) {
 		spinner.stop ();
-		store.clear ();
+		results.clear ();
 		if (found == null) {
 			status.label = _("Could not reach the directory. Check your internet connection.");
 			return;
@@ -407,10 +396,8 @@ public class BeatBox.DirectoryDialog : Dialog {
 			string extra = r.tags;
 			if (r.bitrate > 0 && r.country != "") // without a country the format, bitrate included, takes its place
 				extra = "%d kbps%s%s".printf (r.bitrate, extra != "" ? " · " : "", extra);
-			TreeIter iter;
-			store.append (out iter);
-			store.set (iter, Col.NAME, r.name, Col.DETAIL, (r.country != "") ? r.country : format, Col.EXTRA, extra,
-			           Col.URL, r.url, Col.GENRE, r.genre, Col.ADDED, already_added (r.url), Col.COUNTRY, r.country);
+			results.add ({ r.name, (r.country != "") ? r.country : format, extra, r.url, r.genre, r.country })
+			       .checked = already_added (r.url);
 			count++;
 		}
 		if (count == 0)
@@ -421,7 +408,7 @@ public class BeatBox.DirectoryDialog : Dialog {
 
 	void show_podcasts (string body, string term) {
 		spinner.stop ();
-		store.clear ();
+		results.clear ();
 		var items = Http.json_objects (body, "results");
 		if (items == null) {
 			if (body != "")
@@ -438,10 +425,7 @@ public class BeatBox.DirectoryDialog : Dialog {
 			if (url == "" || name == "" || url in seen)
 				continue;
 			seen.add (url);
-			TreeIter iter;
-			store.append (out iter);
-			store.set (iter, Col.NAME, name, Col.DETAIL, str (o, "artistName"), Col.EXTRA, genre,
-			           Col.URL, url, Col.GENRE, genre, Col.ADDED, already_added (url), Col.COUNTRY, "");
+			results.add ({ name, str (o, "artistName"), genre, url, genre, "" }).checked = already_added (url);
 			count++;
 		}
 		if (count == 0)
@@ -463,14 +447,11 @@ public class BeatBox.DirectoryDialog : Dialog {
 	}
 
 	void add_selected () {
-		TreeModel model;
-		TreeIter iter;
-		if (!view.get_selection ().get_selected (out model, out iter))
+		var row = results.selected_row ();
+		if (row == null)
 			return;
-		string name, url, genre, country;
-		bool added;
-		model.get (iter, Col.NAME, out name, Col.URL, out url, Col.GENRE, out genre, Col.ADDED, out added, Col.COUNTRY, out country);
-		if (added) {
+		string name = row.cells[Col.NAME], url = row.cells[Col.URL], genre = row.cells[Col.GENRE], country = row.cells[Col.COUNTRY];
+		if (row.checked) {
 			status.label = _("“%s” is already in your library.").printf (name);
 			return;
 		}
@@ -493,7 +474,7 @@ public class BeatBox.DirectoryDialog : Dialog {
 					add_station (name, stream, genre, country);
 					status.label = _("Added “%s” to Internet Radio.").printf (name);
 					if (my_serial == serial)
-						store.set (iter, Col.ADDED, true);
+						mark_added (row);
 					return false;
 				});
 				return null;
@@ -504,7 +485,15 @@ public class BeatBox.DirectoryDialog : Dialog {
 			add_station (name, url, genre, country);
 			status.label = _("Added “%s” to Internet Radio.").printf (name);
 		}
-		store.set (iter, Col.ADDED, true);
+		mark_added (row);
+	}
+
+	/** In bold from now on */
+	void mark_added (TableRow row) {
+		row.checked = true;
+		uint position;
+		if (results.rows.find (row, out position))
+			results.changed (position);
 	}
 
 	public static void add_station (string name, string url, string genre = "", string host = "") {
@@ -520,8 +509,9 @@ public class BeatBox.DirectoryDialog : Dialog {
 
 	/** Small dialog to add a station from its stream address */
 	public static async void add_station_by_url () {
-		var dialog = new Dialog.with_buttons (_("Add Station"), App.window, DialogFlags.MODAL | DialogFlags.DESTROY_WITH_PARENT,
-		                                      _("Cancel"), ResponseType.CANCEL, _("Add"), ResponseType.OK);
+		var dialog = new ButtonDialog (_("Add Station"), App.window);
+		dialog.add_button (_("Cancel"), ButtonDialog.CANCEL);
+		dialog.add_button (_("Add"), ButtonDialog.OK);
 		var name = new Entry () { placeholder_text = _("My favourite station"), activates_default = true };
 		var url = new Entry () { placeholder_text = "https://…", activates_default = true, width_chars = 40 };
 		var grid = new Grid () { row_spacing = 8, column_spacing = 8, margin_top = 12, margin_bottom = 12, margin_start = 12, margin_end = 12 };
@@ -532,15 +522,15 @@ public class BeatBox.DirectoryDialog : Dialog {
 		var hint = new Label (_("The address of the audio stream itself (often ending in .mp3, .aac or /stream).\nTo add a .pls or .m3u file use “Import File…”."));
 		hint.add_css_class ("dim-label");
 		grid.attach (hint, 0, 2, 2, 1);
-		dialog.get_content_area ().append (grid);
-		dialog.set_default_response (ResponseType.OK);
-		var ok = dialog.get_widget_for_response (ResponseType.OK);
+		dialog.content_area.append (grid);
+		dialog.set_default_response (ButtonDialog.OK);
+		var ok = dialog.get_widget_for_response (ButtonDialog.OK);
 		ok.sensitive = false;
 		url.changed.connect (() => {
 			var u = url.text.strip ();
 			ok.sensitive = (u.has_prefix ("http://") || u.has_prefix ("https://")) && !(" " in u);
 		});
-		if ((yield UI.run_dialog (dialog)) == ResponseType.OK) {
+		if ((yield dialog.run ()) == ButtonDialog.OK) {
 			var n = name.text.strip ();
 			add_station (n != "" ? n : url.text.strip (), url.text.strip ());
 		}

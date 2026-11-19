@@ -52,7 +52,7 @@ public class BeatBox.MetadataDisplay : BeatBox.Display, Box {
         
 		second_line = new LcdLine();
 		third_line = new LcdLine();
-		third_line.get_style_context().add_class("lcd-lyrics"); // skins may make it smaller
+		third_line.add_css_class("lcd-lyrics"); // skins may make it smaller
 		
         this.set_orientation(Orientation.VERTICAL);
         append(label);

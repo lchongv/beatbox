@@ -76,7 +76,7 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 	public SideTreeView sideTree { get; private set; }
 	
 	// File not found stuff
-	InfoBar infoBar;
+	MessageBar infoBar;
 	Label infoBarLabel;
 	LinkedList<Media> file_not_found_pileup;
 	
@@ -341,7 +341,7 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		searchField = new AdvancedSearchBox();
 		searchField.width_request = 250; // 1.5 × its natural width
 		infoBarLabel = new Label("");
-		infoBar = new InfoBar();
+		infoBar = new MessageBar(Gtk.MessageType.ERROR);
 		file_not_found_pileup = new LinkedList<Media>();
 		statusBar = new StatusBar();
 
@@ -367,7 +367,7 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 			cover_dragged = true;
 			var icon = lcdCover.drag_icon();
 			if (icon != null)
-				cover_drag.set_icon(Gdk.Texture.for_pixbuf(icon), icon.width / 2, icon.height / 2);
+				cover_drag.set_icon(UI.texture_from_pixbuf (icon), icon.width / 2, icon.height / 2);
 		});
 		lcdCover.add_controller(cover_drag);
 		// a click (released without dragging) enlarges it. The press is claimed, as in GTK3, so the
@@ -490,8 +490,7 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 		topControls.append(appmenu_button);
 
 		// Info bar to give notices about file not found errors
-		infoBar.set_message_type(Gtk.MessageType.ERROR);
-		infoBar.add_button(_("Resolve"), Gtk.ResponseType.YES);
+		infoBar.add_button(_("Resolve"), ButtonDialog.YES);
 		infoBar.response.connect(info_bar_response);
 
 		infoBarLabel.set_justify(Justification.LEFT);
@@ -1151,7 +1150,7 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 	}
 
 	public void media_not_found(Media m) {
-		m.unique_status_image = App.icons.PROCESS_ERROR.render(Gtk.IconSize.NORMAL, ((SourceView)sideTree.getWidget(sideTree.library_music_iter)).list_view.get_style_context());
+		m.unique_status_image = App.icons.PROCESS_ERROR.render(Gtk.IconSize.NORMAL, ((SourceView)sideTree.getWidget(sideTree.library_music_iter)).list_view);
 		file_not_found_pileup.add(m);
 		infoBarLabel.set_markup(_("%s media files could not be found.").printf("<b>" + file_not_found_pileup.size.to_string() + "</b>"));
 		infoBar.visible = true;
@@ -1195,7 +1194,7 @@ public class BeatBox.LibraryWindow : Gtk.Window, BeatBox.LibraryWindowInterface 
 	}
 
 	void info_bar_response(int response_id) {
-		if(response_id == Gtk.ResponseType.YES) {
+		if(response_id == ButtonDialog.YES) {
 			FileNotFoundDialog fnfd = new FileNotFoundDialog(file_not_found_pileup);
 			fnfd.present();
 			

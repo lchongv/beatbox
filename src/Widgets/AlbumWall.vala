@@ -230,12 +230,11 @@ public class BeatBox.AlbumWall : Widget {
 
 		int w = get_width ();
 		int h = get_height ();
-		var ctx = get_style_context ();
-		ctx.render_background (cr, 0, 0, w, h);
+		// (GTK draws the CSS background of the wall, .albumwall, before this)
 
 		double top = vadjustment.value;
 		double bottom = top + h;
-		var fg = ctx.get_color ();
+		var fg = get_color ();
 
 		for (int i = 0; i < albums.length; i++) {
 			int x, y;
@@ -244,9 +243,7 @@ public class BeatBox.AlbumWall : Widget {
 				continue;
 
 			if (i == open_index && detail.reveal_child) {
-				Gdk.RGBA accent;
-				if (!get_style_context ().lookup_color ("bb_accent", out accent))
-					accent = { 0.24f, 0.43f, 0.79f, 1 };
+				Gdk.RGBA accent = UI.named_color ("bb_accent");
 				cr.set_source_rgba (accent.red, accent.green, accent.blue, 0.18);
 				rounded_rect (cr, x - 4, y - 4, CELL_W + 8, CELL_H + 8, 6);
 				cr.fill ();
@@ -254,7 +251,7 @@ public class BeatBox.AlbumWall : Widget {
 
 			var pix = App.covers.get_album_art_from_key (albums[i].get_album_artist (), albums[i].get_album ())
 			          ?? App.covers.DEFAULT_COVER_SHADOW;
-			Gdk.cairo_set_source_pixbuf (cr, pix, x + (CELL_W - pix.width) / 2, y);
+			UI.set_source_pixbuf (cr, pix, x + (CELL_W - pix.width) / 2, y);
 			cr.paint ();
 
 			draw_text (cr, albums[i].get_album (), x, y + COVER + 2, true, fg);
@@ -298,11 +295,7 @@ public class BeatBox.AlbumWall : Widget {
 		cr.line_to (0, bottom);
 		cr.close_path ();
 		// skins may recolor the band (see theme.css)
-		Gdk.RGBA bg, edge;
-		if (!get_style_context ().lookup_color ("bb_detail_bg", out bg))
-			bg = { 1, 1, 1, 1 };
-		if (!get_style_context ().lookup_color ("bb_detail_border", out edge))
-			edge = { 0.74f, 0.74f, 0.74f, 1 };
+		Gdk.RGBA bg = UI.named_color ("bb_detail_bg"), edge = UI.named_color ("bb_detail_border");
 		Gdk.cairo_set_source_rgba (cr, bg);
 		cr.fill_preserve ();
 		Gdk.cairo_set_source_rgba (cr, edge);

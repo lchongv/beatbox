@@ -128,17 +128,9 @@ public class BeatBox.SetLibraryFolderConfirmation : Window {
 	
 	public async void savePlaylistsClicked() {
 		string folder = "";
-		var file_chooser = new FileChooserDialog (_("Choose Music Folder"), this,
-								  FileChooserAction.SELECT_FOLDER,
-								  _("_Cancel"), ResponseType.CANCEL,
-								  _("_Open"), ResponseType.ACCEPT);
-		if ((yield UI.run_dialog (file_chooser)) == ResponseType.ACCEPT) {
-			var chosen = file_chooser.get_file();
-			if (chosen != null && chosen.get_path() != null)
-				folder = chosen.get_path();
-		}
-		
-		file_chooser.destroy ();
+		var chosen = yield UI.choose_folder (this, _("Choose Music Folder"));
+		if (chosen != null && chosen.get_path() != null)
+			folder = chosen.get_path();
 		
 		if(folder != "") {
 			is_working.visible = true;

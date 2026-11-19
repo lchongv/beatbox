@@ -28,7 +28,6 @@
 using Gtk;
 
 public class BeatBox.StyledBox : Gtk.Box {
-	CssProvider style_provider;
 	string class_style;
 	
 	private const string WIDGET_STYLESHEET = """
@@ -89,12 +88,11 @@ public class BeatBox.StyledBox : Gtk.Box {
 		title_label = new Gtk.Label("");
 		content = new Box(Orientation.VERTICAL, 0);
 		
-		style_provider = new CssProvider();
-        style_provider.load_from_data (WIDGET_STYLESHEET.data);
+		UI.add_scoped_css("bb-styledbox", WIDGET_STYLESHEET);
         
-		get_style_context().add_class("StyledBox");
-		get_style_context().add_class(class_style);
-		get_style_context().add_provider(style_provider, STYLE_PROVIDER_PRIORITY_APPLICATION);
+		add_css_class("StyledBox");
+		add_css_class(class_style);
+		add_css_class("bb-styledbox");
 		homogeneous = false;
 		
 		inner = new Box(Orientation.HORIZONTAL, 0);
@@ -105,15 +103,15 @@ public class BeatBox.StyledBox : Gtk.Box {
 		
 		center = new Box(Orientation.VERTICAL, 0);
 		if(class_style != "white") {
-			center.get_style_context().add_class(class_style);
-			center.get_style_context().add_provider(style_provider, STYLE_PROVIDER_PRIORITY_APPLICATION);
+			center.add_css_class(class_style);
+			center.add_css_class("bb-styledbox");
 		}
 		center.append(content);
 		
 		if(title != "") {
 			Box title_box = new Box(Orientation.VERTICAL, 0);
-			title_box.get_style_context().add_class("pure_" + class_style);
-			title_box.get_style_context().add_provider(style_provider, STYLE_PROVIDER_PRIORITY_APPLICATION);
+			title_box.add_css_class("pure_" + class_style);
+			title_box.add_css_class("bb-styledbox");
 			title_box.append(title_label);
 			title_label.set_markup("<b>" + Markup.escape_text(title) + "</b>");
 			content.append(title_box);
@@ -131,27 +129,27 @@ public class BeatBox.StyledBox : Gtk.Box {
 		append(bottom);
 		hexpand = vexpand = false; // its parts fill it; it doesn't ask its parent for more room
 		
-		top.get_style_context().add_class("top");
-		right.get_style_context().add_class("right");
-		bottom.get_style_context().add_class("bottom");
-		left.get_style_context().add_class("left");
-		top.get_style_context().add_class("borderButton");
-		right.get_style_context().add_class("borderButton");
-		bottom.get_style_context().add_class("borderButton");
-		left.get_style_context().add_class("borderButton");
-		top.get_style_context().add_class(class_style);
-		right.get_style_context().add_class(class_style);
-		bottom.get_style_context().add_class(class_style);
-		left.get_style_context().add_class(class_style);
-		top.get_style_context().remove_class("button");
-		right.get_style_context().remove_class("button");
-		bottom.get_style_context().remove_class("button");
-		left.get_style_context().remove_class("button");
+		top.add_css_class("top");
+		right.add_css_class("right");
+		bottom.add_css_class("bottom");
+		left.add_css_class("left");
+		top.add_css_class("borderButton");
+		right.add_css_class("borderButton");
+		bottom.add_css_class("borderButton");
+		left.add_css_class("borderButton");
+		top.add_css_class(class_style);
+		right.add_css_class(class_style);
+		bottom.add_css_class(class_style);
+		left.add_css_class(class_style);
+		top.remove_css_class("button");
+		right.remove_css_class("button");
+		bottom.remove_css_class("button");
+		left.remove_css_class("button");
 		
-		top.get_style_context().add_provider(style_provider, STYLE_PROVIDER_PRIORITY_APPLICATION);
-		right.get_style_context().add_provider(style_provider, STYLE_PROVIDER_PRIORITY_APPLICATION);
-		bottom.get_style_context().add_provider(style_provider, STYLE_PROVIDER_PRIORITY_APPLICATION);
-		left.get_style_context().add_provider(style_provider, STYLE_PROVIDER_PRIORITY_APPLICATION);
+		top.add_css_class("bb-styledbox");
+		right.add_css_class("bb-styledbox");
+		bottom.add_css_class("bb-styledbox");
+		left.add_css_class("bb-styledbox");
 	}
 	
 	private string _title;
@@ -168,7 +166,7 @@ public class BeatBox.StyledBox : Gtk.Box {
 	public void set_widget(Widget w) {
 		w.vexpand = true;
 		content.append(w);
-		w.get_style_context().add_provider(style_provider, STYLE_PROVIDER_PRIORITY_APPLICATION);
+		w.add_css_class("bb-styledbox");
 		
 		// Turn off scrolling on w: the controller takes the wheel before w sees it
 		if(w is ScrolledWindow) {

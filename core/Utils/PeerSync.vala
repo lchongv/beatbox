@@ -4,6 +4,7 @@
  * itunes7, which implements the same rules in C (src/it7-beatbox-sync.c):
  * change one, change both, add the case to the table and run both tests.
  */
+[GIR (visible = false)] // internal: plugins don't see it
 namespace BeatBox.PeerSync {
 	// The data merged with "agreed value + epoch", in the order of the table's columns
 	public const int RATING = 0;        // stars 0-5

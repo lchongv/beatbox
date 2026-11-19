@@ -58,8 +58,8 @@ patchelf --set-rpath '$ORIGIN/../..' "$APPDIR"/usr/lib/gio/modules/*.so
 # BeatBox doesn't use the tag muxers, whose plugin can bring a second TagLib (the system's
 # 1.x next to the 2.x BeatBox links): two TagLib ABIs in one process would clash
 rm -f "$APPDIR/usr/lib/gstreamer-1.0/libgsttaglib.so" "$APPDIR/usr/lib/libtag.so.1"
-# The sound server's client library has to be the system's (its ABI is stable): Ubuntu 22.04's
-# libpulse leaves a stream resumed after a seek in pause stalled on current PipeWire.
+# The sound server's client library has to be the system's (its ABI is stable): an older
+# libpulse (Ubuntu 22.04's) left a stream resumed after a seek in pause stalled on PipeWire.
 # Without one, GStreamer falls back to ALSA.
 rm -f "$APPDIR"/usr/lib/libpulse.so.0 "$APPDIR"/usr/lib/libpulse-simple.so.0 "$APPDIR"/usr/lib/libpulsecommon-*.so
 # appimagetool looks for the AppStream file under its older name

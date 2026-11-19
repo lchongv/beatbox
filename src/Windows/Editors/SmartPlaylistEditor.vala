@@ -40,7 +40,7 @@ public class BeatBox.SmartPlaylistEditor : Window {
 	private Label optionsLabel;
 	
 	Gtk.Entry nameEntry;
-	ComboBoxText comboMatch;
+	ChoiceBox comboMatch;
 	
 	bool is_in_scroll;
 	Box no_scroll;
@@ -90,7 +90,7 @@ public class BeatBox.SmartPlaylistEditor : Window {
 		/* create match checkbox/combo combination */
 		Box matchBox = new Box(Orientation.HORIZONTAL, 2);
 		Label tMatch = new Label(_("Match"));
-		comboMatch = new ComboBoxText();
+		comboMatch = new ChoiceBox();
 		comboMatch.insert_text(0, _("any"));
 		comboMatch.insert_text(1, _("all"));
 		Label tOfTheFollowing = new Label(_("of the following:"));
@@ -100,9 +100,9 @@ public class BeatBox.SmartPlaylistEditor : Window {
 		matchBox.append (tOfTheFollowing);
 		
 		if(sp.conditional == SmartPlaylist.Conditional.ANY)
-			comboMatch.set_active(0);
+			comboMatch.active = 0;
 		else
-			comboMatch.set_active(1);
+			comboMatch.active = 1;
 		
 		/* create rule list */
 		spQueries = new Gee.ArrayList<SmartPlaylistEditorQuery>();
@@ -239,7 +239,7 @@ public class BeatBox.SmartPlaylistEditor : Window {
 		set_default_size(min_req.width, min_req.height);
 		
 		// Determine if we should move to scroll/out of scroll
-		bool should_be_in_scroll = vertQueries.get_allocated_height() >= (get_display().get_monitor_at_surface(App.window.get_surface()).get_geometry().height - BUFFER_SPACE);
+		bool should_be_in_scroll = vertQueries.get_height() >= (get_display().get_monitor_at_surface(App.window.get_surface()).get_geometry().height - BUFFER_SPACE);
 		if(is_in_scroll && !should_be_in_scroll) {
 			scroll.set_child(null);
 			scrolled_child.hide();
@@ -264,7 +264,7 @@ public class BeatBox.SmartPlaylistEditor : Window {
 		}
 		
 		sp.name = nameEntry.text;
-		sp.conditional = (SmartPlaylist.Conditional)comboMatch.get_active();
+		sp.conditional = (SmartPlaylist.Conditional)comboMatch.active;
 		sp.limit = limitMedias.get_active();
 		sp.limit_amount = (int)mediaLimit.get_value();
 		
@@ -277,16 +277,9 @@ public class BeatBox.SmartPlaylistEditor : Window {
 public class BeatBox.SmartPlaylistEditorQuery : Box {
 	SmartQuery q;
 	
-	Gtk.ListStore field_model;
-	ComboBox field;
-	
-	Gtk.ListStore comparator_model;
-	TreeModelFilter comparator_filter;
-	ComboBox comparator;
-	
-	Gtk.ListStore media_option_model;
-	TreeModelFilter media_option_filter;
-	ComboBox media_option;
+	ChoiceBox field;
+	ChoiceBox comparator; // the comparators that suit the field (see fill_comparators)
+	ChoiceBox media_option;
 	Entry entry;
 	SpinButton spinbutton;
 	
@@ -298,75 +291,27 @@ public class BeatBox.SmartPlaylistEditorQuery : Box {
 	public SmartPlaylistEditorQuery(SmartQuery q) {
 		this.q = q;
 		
-		// Create drop downs
-		field_model = new Gtk.ListStore(2, typeof(int), typeof(string));
-		field = new ComboBox.with_model(field_model);
-		var cell = new CellRendererText();
-		field.pack_start(cell, true);
-		field.add_attribute(cell, "text", 1);
-		field.set_id_column(0);
-		field.set_entry_text_column(1);
-		foreach(SmartQuery.Field field in SmartQuery.Field.all()) {
-			TreeIter iter;
-			field_model.append(out iter);
-			field_model.set(iter, 0, (int)field, 1, field.to_string());
-		}
+		// Create drop downs (an item's id is its enum value)
+		field = new ChoiceBox();
+		foreach(SmartQuery.Field f in SmartQuery.Field.all())
+			field.append(((int)f).to_string(), f.to_string());
 		
-		comparator_model = new Gtk.ListStore(2, typeof(int), typeof(string));
-		comparator_filter = new TreeModelFilter(comparator_model, null);
-		comparator = new ComboBox.with_model(comparator_filter);
-		cell = new CellRendererText();
-		comparator.pack_start(cell, true);
-		comparator.add_attribute(cell, "text", 1);
-		comparator.set_id_column(0);
-		comparator.set_entry_text_column(1);
-		comparator_filter.set_visible_func(visible_func);
-		foreach(SmartQuery.Comparator com in SmartQuery.Comparator.all()) {
-			TreeIter iter;
-			comparator_model.append(out iter);
-			comparator_model.set(iter, 0, (int)com, 1, com.to_string());
-		}
+		comparator = new ChoiceBox();
 		
 		entry = new Entry();
 		spinbutton =  new SpinButton.with_range(0, 9999, 1);
 		
-		media_option_model = new Gtk.ListStore(2, typeof(int), typeof(string));
-		media_option_filter = new TreeModelFilter(media_option_model, null);
-		media_option = new ComboBox.with_model(media_option_filter);
-		cell = new CellRendererText();
-		media_option.pack_start(cell, true);
-		media_option.add_attribute(cell, "text", 1);
-		media_option.set_id_column(0);
-		media_option.set_entry_text_column(1);
-		TreeIter iter;
-		
+		media_option = new ChoiceBox();
 		// TODO: RE-implement MediaType.to_string()
-		media_option_model.append(out iter);
-		media_option_model.set(iter, 0, (int)MediaType.SONG, 1, MediaType.SONG.to_string(1));
-		media_option_model.append(out iter);
-		media_option_model.set(iter, 0, (int)MediaType.PODCAST, 1, MediaType.PODCAST.to_string(1));
-		media_option_model.append(out iter);
-		media_option_model.set(iter, 0, (int)MediaType.AUDIOBOOK, 1, MediaType.AUDIOBOOK.to_string(1));
-		media_option_model.append(out iter);
-		media_option_model.set(iter, 0, (int)MediaType.STATION, 1, MediaType.STATION.to_string(1));
+		foreach(var type in new MediaType[] { MediaType.SONG, MediaType.PODCAST, MediaType.AUDIOBOOK, MediaType.STATION })
+			media_option.append(((int)type).to_string(), type.to_string(1));
 		
 		units = new Label("");
 		removeButton = new Button.with_label(_("Remove"));
 		
-		field.set_active((int)q.field);
-		comparator_filter.refilter();
-		comparator_filter.foreach( (model, path, iter) => {
-			int id;
-			model.get(iter, 0, out id);
-			
-			if((SmartQuery.Comparator)id == q.comparator) {
-				int index = int.parse(path.to_string());
-				comparator.set_active(index);
-				return true;
-			}
-			
-			return false;
-		});
+		field.active = (int)q.field;
+		fill_comparators();
+		comparator.select_id(((int)q.comparator).to_string());
 		
 		entry.visible = false;
 		media_option.visible = false;
@@ -383,7 +328,7 @@ public class BeatBox.SmartPlaylistEditorQuery : Box {
 			entry.show();
 		}
 		else if(q.field.is_type()) {
-			media_option.set_active(q.int_value);
+			media_option.active = q.int_value;
 			media_option.show();
 		}
 		else if(q.field.is_int() || q.field.is_time()) {
@@ -410,32 +355,31 @@ public class BeatBox.SmartPlaylistEditorQuery : Box {
 	public SmartQuery getQuery() {
 		SmartQuery rv = new SmartQuery();
 		
-		rv.field = (SmartQuery.Field)field.get_active();
-		
-		int id;
-		TreeIter iter;
-		comparator.get_active_iter(out iter);
-		comparator_filter.get(iter, 0, out id);
-		rv.comparator = (SmartQuery.Comparator)id;
+		rv.field = (SmartQuery.Field)field.active;
+		rv.comparator = (SmartQuery.Comparator)int.parse(comparator.active_id ?? "0");
 		
 		if(rv.field.is_string())
 			rv.string_value = entry.text;
 		else if(rv.field.is_type())
-			rv.int_value = (MediaType)media_option.get_active();
+			rv.int_value = (MediaType)media_option.active;
 		else
 			rv.int_value = (int)spinbutton.value;
 		
 		return rv;
 	}
 	
-	bool visible_func(TreeModel model, TreeIter iter) {
+	/** The comparators that suit the field chosen */
+	void fill_comparators() {
+		comparator.remove_all();
+		foreach(SmartQuery.Comparator com in SmartQuery.Comparator.all())
+			if(comparator_fits((int)com))
+				comparator.append(((int)com).to_string(), com.to_string());
+	}
+	
+	bool comparator_fits(int id) {
 		bool rv = false;
 		
-		int id;
-		model.get(iter, 0, out id);
-		
-		
-		SmartQuery.Field cur_field = (SmartQuery.Field)field.get_active();
+		SmartQuery.Field cur_field = (SmartQuery.Field)field.active;
 		switch (id) {
 			case SmartQuery.Comparator.IS:
 				rv = cur_field.is_string() || cur_field.is_type(); // strings, mediatype,
@@ -467,16 +411,16 @@ public class BeatBox.SmartPlaylistEditorQuery : Box {
 	}
 	
 	void fieldChanged() {
-		if(((SmartQuery.Field)field.get_active()).is_string()) {
+		if(((SmartQuery.Field)field.active).is_string()) {
 			entry.show();
 			media_option.hide();
 			spinbutton.hide();
 		}
-		else if(((SmartQuery.Field)field.get_active()).is_type()) {
+		else if(((SmartQuery.Field)field.active).is_type()) {
 			entry.hide();
 			spinbutton.hide();
 			media_option.show();
-			media_option.set_active(q.int_value);
+			media_option.active = q.int_value;
 		}
 		else {
 			spinbutton.show();
@@ -484,20 +428,20 @@ public class BeatBox.SmartPlaylistEditorQuery : Box {
 			media_option.hide();
 		}
 		
-		comparator_filter.refilter();
-		comparator.set_active(0);
+		fill_comparators();
+		comparator.active = 0;
 		
 		
 		//helper for units
-		if(((SmartQuery.Field)field.get_active()) == SmartQuery.Field.LENGTH) {
+		if(((SmartQuery.Field)field.active) == SmartQuery.Field.LENGTH) {
 			units.set_text(_("seconds"));
 			units.show();
 		}
-		else if(((SmartQuery.Field)field.get_active()).is_time()) {
+		else if(((SmartQuery.Field)field.active).is_time()) {
 			units.set_text(_("days ago"));
 			units.show();
 		}
-		else if(((SmartQuery.Field)field.get_active()) == SmartQuery.Field.BITRATE) {
+		else if(((SmartQuery.Field)field.active) == SmartQuery.Field.BITRATE) {
 			units.set_text(_("kbps"));
 			units.show();
 		}

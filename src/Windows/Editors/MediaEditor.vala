@@ -54,7 +54,7 @@ public class BeatBox.MediaEditor : Window {
 		transient_for = App.window;
 		destroy_with_parent = true;
 		set_default_size(640, 560);
-		get_style_context().add_class("song-info");
+		add_css_class("song-info");
 		
 		var root = new Box(Orientation.VERTICAL, 10);
 		root.margin_top = root.margin_bottom = root.margin_start = root.margin_end = 14;

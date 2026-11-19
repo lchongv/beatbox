@@ -41,8 +41,6 @@ public class BeatBox.SongSummarySection : Box {
 	StyledBox album_songs_holder;
 	MusicList album_songs;
 	Label summary_text;
-	
-	static CssProvider style_provider;
 	private const string WIDGET_STYLESHEET = """
 		.gray {
 			background-image: linear-gradient(to bottom, shade(#d5d3d1, 1.00), shade(#d5d3d1, 0.95));
@@ -73,10 +71,7 @@ public class BeatBox.SongSummarySection : Box {
 	public SongSummarySection() {
 		set_orientation(Orientation.HORIZONTAL);
 		
-		if(style_provider == null) {
-			style_provider = new CssProvider();
-			style_provider.load_from_data (WIDGET_STYLESHEET.data);
-		}
+		UI.add_scoped_css("bb-songsummary", WIDGET_STYLESHEET);
 		
 		build_ui();
 		
@@ -156,7 +151,7 @@ public class BeatBox.SongSummarySection : Box {
 		dest.set_gtypes ({ typeof (string), typeof (Gdk.FileList) });
 		dest.motion.connect (drag_motion_signal);
 		dest.leave.connect (drag_leave_signal);
-		dest.on_drop.connect (drag_received);
+		dest.drop.connect (drag_received);
 		add_controller (dest);
 		
 		// Now the album list on left side under metadata
@@ -166,7 +161,7 @@ public class BeatBox.SongSummarySection : Box {
 		album_songs.is_mixed = true;
 		album_songs.set_sort_column_id(tvs.sort_column_id, tvs.sort_direction);
 		album_songs.add_css_class("AlbumSongList");
-		//album_songs.get_style_context().add_provider(style_provider, STYLE_PROVIDER_PRIORITY_APPLICATION);
+		//album_songs.add_css_class("bb-songsummary");
 		var scroll = new ScrolledWindow();
 		scroll.set_child(album_songs);
 		scroll.set_policy(PolicyType.AUTOMATIC, PolicyType.AUTOMATIC);
@@ -175,12 +170,12 @@ public class BeatBox.SongSummarySection : Box {
 		
 		// And lastly the lyrics box
 		lyrics_holder = new StyledBox("", "black");
-		lyrics.get_style_context().add_class("white_text");
-		lyrics.get_style_context().add_class("padding");
-		lyrics.get_style_context().add_provider(style_provider, STYLE_PROVIDER_PRIORITY_APPLICATION);
+		lyrics.add_css_class("white_text");
+		lyrics.add_css_class("padding");
+		lyrics.add_css_class("bb-songsummary");
 		var lyrics_scroll = new ScrolledWindow();
 		lyrics_scroll.add_css_class("black");
-		lyrics_scroll.get_style_context().add_provider(style_provider, STYLE_PROVIDER_PRIORITY_APPLICATION);
+		lyrics_scroll.add_css_class("bb-songsummary");
 		lyrics_scroll.set_child(lyrics);
 		lyrics_scroll.set_policy(PolicyType.AUTOMATIC, PolicyType.AUTOMATIC);
 		lyrics_holder.set_size_request(300, -1);

@@ -20,7 +20,7 @@ public class BeatBox.ModeButton : Gtk.Box {
 	public ModeButton () {
 		homogeneous = true;
 		add_css_class ("linked");
-		get_style_context ().add_class ("raised");
+		add_css_class("raised");
 
 		// the wheel moves to the next or previous sensitive button
 		wheel = new Gtk.EventControllerScroll (Gtk.EventControllerScrollFlags.BOTH_AXES | Gtk.EventControllerScrollFlags.DISCRETE);
@@ -37,7 +37,7 @@ public class BeatBox.ModeButton : Gtk.Box {
 		});
 	}
 
-	public void append (Gtk.Widget child) {
+	public new void append (Gtk.Widget child) {
 		int index = items.size;
 		var item = new Gtk.ToggleButton ();
 		item.child = child;

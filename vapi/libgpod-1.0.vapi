@@ -20,7 +20,7 @@
  * Boston, MA 02111-1307, USA.
  */
 
-[CCode (cprefix = "Itdb_", cheader_filename="gpod/itdb.h")]
+[CCode (cprefix = "Itdb_", cheader_filename="gpod/itdb.h", gir_namespace = "BeatBox", gir_version = "1.0")] // no GIR of its own: BeatBox's hides what uses it
 namespace GPod {
   
   [Compact]

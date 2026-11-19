@@ -107,7 +107,8 @@ directory):
 
 It bundles the libraries of the system that builds it, so it runs on
 distributions with that glibc or a newer one; GitHub's is built on Ubuntu
-22.04 (glibc 2.35: Debian 12, Fedora 36 and later).
+24.04 (glibc 2.39: Debian 13, Fedora 40 and later). BeatBox needs GTK 4.14 or
+newer.
 
 Plugins
 -------

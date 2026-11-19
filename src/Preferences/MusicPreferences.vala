@@ -63,7 +63,7 @@ public class BeatBox.MusicPreferences : GLib.Object, PreferencesSection {
 		var hint = new Label(_("A folder holding a file named .nomedia is left out, with its subfolders."));
 		hint.xalign = 0.0f;
 		hint.wrap = true;
-		hint.get_style_context().add_class("dim-label");
+		hint.add_css_class("dim-label");
 		content.append(UI.wrap_alignment(hint, 0, 0, 0, 10));
 		content.append(UI.wrap_alignment(button_box, 0, 0, 0, 10));
 
@@ -84,17 +84,11 @@ public class BeatBox.MusicPreferences : GLib.Object, PreferencesSection {
 	}
 
 	async void choose_folder() {
-		var chooser = new FileChooserDialog(_("Music Folder"), UI.window_of(fileChooser), FileChooserAction.SELECT_FOLDER,
-		                                    _("_Cancel"), ResponseType.CANCEL, _("_Open"), ResponseType.ACCEPT);
-		try {
-			chooser.set_current_folder(File.new_for_path(folder));
-		} catch (Error e) {
-		}
-		if ((yield UI.run_dialog(chooser)) == ResponseType.ACCEPT) {
-			show_folder(chooser.get_file().get_path());
+		var chosen = yield UI.choose_folder(UI.window_of(fileChooser), _("Music Folder"), File.new_for_path(folder));
+		if (chosen != null) {
+			show_folder(chosen.get_path());
 			file_chooser_set();
 		}
-		chooser.destroy();
 	}
 
 	// The idle is so that the dialog is layered properly above the media editor

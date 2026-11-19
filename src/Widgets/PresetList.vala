@@ -26,13 +26,13 @@
  */
 
 using Gtk;
-
-public class BeatBox.PresetList : ComboBox {
+/** The equalizer's presets: Automatic, Delete Current (for a custom preset), the built-in
+ *  presets, then the custom ones after a line */
+public class BeatBox.PresetList : ChoiceBox {
 	// the built-in preset names, for the translations (see Settings.Equalizer.default_presets)
 	const string[] DEFAULT_NAMES = { N_("Flat"), N_("Classical"), N_("Club"), N_("Dance"), N_("Full Bass"),
 		N_("Full Treble"), N_("Full Bass + Treble"), N_("Headphones"), N_("Large Hall"), N_("Live"), N_("Party"),
 		N_("Pop"), N_("Reggae"), N_("Rock"), N_("Soft"), N_("Ska"), N_("Soft Rock"), N_("Techno") };
-
 
 	public signal void preset_selected(EqualizerPreset p);
 	public signal void automatic_preset_chosen();
@@ -46,274 +46,137 @@ public class BeatBox.PresetList : ComboBox {
 
 	public EqualizerPreset last_selected_preset;
 
-	private int ncustompresets {get; set;}
+	const string AUTOMATIC_ID = "automatic";
+	const string DELETE_ID = "delete";
 
-	private bool modifying_list;
-	private bool automatic_selected;
-
-	private Gtk.ListStore store;
-
-	private const string SEPARATOR_NAME = "<separator_item_unique_name>";
-	private const string AUTOMATIC_MODE = _("Automatic");
-	private const string DELETE_PRESET = _("Delete Current");
+	Gee.List<EqualizerPreset> presets = new Gee.ArrayList<EqualizerPreset>();
+	bool modifying_list = false;
+	bool automatic_selected = false;
+	bool show_delete = false; // a custom preset is chosen: it can be deleted
 
 	public PresetList() {
-		ncustompresets = 0;
+		changed.connect(listSelectionChange);
+		rebuild(null);
+	}
+
+	/** The items again, choosing `chosen` (the preset object), or Automatic for null */
+	void rebuild(EqualizerPreset? chosen) {
+		modifying_list = true;
+		remove_all();
+		append(AUTOMATIC_ID, _("Automatic"));
+		append_separator();
+		if (show_delete) {
+			append(DELETE_ID, _("Delete Current"));
+			append_separator();
+		}
+		bool custom_seen = false;
+		foreach (var ep in presets) {
+			if (ep.is_default)
+				// the built-in presets keep their English names (saved, and matched against
+				// genres in automatic mode); only the list shows them translated
+				append(null, _(ep.name), ep);
+		}
+		foreach (var ep in presets) {
+			if (ep.is_default)
+				continue;
+			if (!custom_seen) {
+				append_separator();
+				custom_seen = true;
+			}
+			append(null, ep.name, ep);
+		}
+		active = (chosen != null) ? position_of(chosen) : 0;
 		modifying_list = false;
-		automatic_selected = false;
-
-		store = new Gtk.ListStore(2, typeof(GLib.Object), typeof(string));
-
-		buildUI();
-
-		clearList();
-		addAutomaticMode();
 	}
 
-	public void buildUI() {
-		this.set_model(store);
-
-		this.set_id_column(1);
-		this.set_row_separator_func( (model, iter) => {
-			string content = "";
-			model.get(iter, 1, out content);
-
-			return content == SEPARATOR_NAME;
-		});
-
-		var cell = new CellRendererText();
-		cell.ellipsize = Pango.EllipsizeMode.END;
-		this.pack_start(cell, true);
-		this.add_attribute(cell, "text", 1);
-
-		this.changed.connect(listSelectionChange);
-	}
-
-	private void clearList() {
-		store.clear();
-	}
-
-	public void addAutomaticMode() {
-		TreeIter iter;
-
-		store.append(out iter);
-		store.set(iter, 0, null, 1, AUTOMATIC_MODE);
-
-		addSeparator ();
-	}
-
-	public void addSeparator () {
-		TreeIter iter;
-		store.append(out iter);
-		store.set(iter, 0, null, 1, SEPARATOR_NAME);
+	int position_of(EqualizerPreset ep) {
+		for (int i = 0; i < n_items; i++)
+			if (get_item_data(i) == ep)
+				return i;
+		return 0;
 	}
 
 	public void addPreset(EqualizerPreset ep) {
-		modifying_list = true;
-
-		if(!ep.is_default) {
-			/* If the number of custom presets is zero, add a separator */
-			if (ncustompresets < 1)
-				addSeparator();
-
-   			ncustompresets++;
-		}
-
-		TreeIter iter;
-		store.append(out iter);
-		// the built-in presets keep their English names (saved, and matched against
-		// genres in automatic mode); only the list shows them translated
-		store.set(iter, 0, ep, 1, ep.is_default ? _(ep.name) : ep.name);
-
-		modifying_list = false;
+		presets.add(ep);
 		automatic_selected = false;
-
-		set_active_iter(iter);
+		show_delete = !ep.is_default;
+		last_selected_preset = ep;
+		rebuild(ep);
+		preset_selected(ep); // the one added is chosen, as before
 	}
 
 	public void removeCurrentPreset() {
-		modifying_list = true;
-
-		TreeIter iter;
-		for(int i = 0; store.get_iter_from_string(out iter, i.to_string()); ++i) {
-			GLib.Object o;
-			store.get(iter, 0, out o);
-
-			if(o != null && o is EqualizerPreset && ((EqualizerPreset)o) == last_selected_preset) {
-				if (!((EqualizerPreset)o).is_default) {
-					ncustompresets--;
-					store.remove(ref iter);
-					break;
-				}
-			}
-		}
-
-		/* If there are no custom presets, remove the separator */
-		if (ncustompresets < 1)
-			remove_separator_item (-1);
-
-		modifying_list = false;
-
+		if (last_selected_preset != null && !last_selected_preset.is_default)
+			presets.remove(last_selected_preset);
+		show_delete = false;
+		rebuild(null);
 		selectAutomaticPreset();
 	}
 
-	 void listSelectionChange() {
-		if (modifying_list)
+	void listSelectionChange() {
+		if (modifying_list || active < 0)
 			return;
 
-		TreeIter it;
-		get_active_iter (out it);
-
-		GLib.Object o;
-		store.get (it, 0, out o);
-
+		var o = get_active_data();
 		if (o != null && o is EqualizerPreset) {
-			last_selected_preset = o as EqualizerPreset;
-
-			if (!((EqualizerPreset)o).is_default)
-				add_delete_preset_option();
-			else
-				remove_delete_option();
-
+			var ep = (EqualizerPreset) o;
+			last_selected_preset = ep;
 			automatic_selected = false;
-			preset_selected(o as EqualizerPreset);
+			if (show_delete != !ep.is_default) {
+				show_delete = !ep.is_default; // Delete Current comes and goes with a custom preset
+				Idle.add(() => { rebuild(ep); return false; }); // not while the menu is answering
+			}
+			preset_selected(ep);
 			return;
 		}
 
-		string option;
-		store.get (it, 1, out option);
-
-		if (option != null)
-			switch (option)
-			{
-				case AUTOMATIC_MODE:
-					automatic_selected = true;
-					remove_delete_option();
-					automatic_preset_chosen();
-					break;
-				case DELETE_PRESET:
-					delete_preset_chosen ();
-					break;
-			}
+		switch (active_id) {
+			case AUTOMATIC_ID:
+				automatic_selected = true;
+				if (show_delete) {
+					show_delete = false;
+					Idle.add(() => { rebuild(null); return false; });
+				}
+				automatic_preset_chosen();
+				break;
+			case DELETE_ID:
+				delete_preset_chosen();
+				break;
+		}
 	}
 
 	public void selectAutomaticPreset() {
 		automatic_selected = true;
-		automatic_preset_chosen ();
-		set_active(0);
+		automatic_preset_chosen();
+		modifying_list = true;
+		active = 0;
+		modifying_list = false;
 	}
 
 	public void selectPreset(string? preset_name) {
-
 		if (!(preset_name == null || preset_name.length < 1)) {
-			TreeIter iter;
-			for(int i = 0; store.get_iter_from_string(out iter, i.to_string()); ++i) {
-				GLib.Object o;
-				store.get(iter, 0, out o);
-
-				if(o != null && o is EqualizerPreset && ((EqualizerPreset)o).name == preset_name) {
-					set_active_iter(iter);
+			foreach (var ep in presets) {
+				if (ep.name == preset_name) {
 					automatic_selected = false;
-					preset_selected(o as EqualizerPreset);
+					last_selected_preset = ep;
+					show_delete = !ep.is_default;
+					rebuild(ep);
+					preset_selected(ep);
 					return;
 				}
 			}
 		}
 
-		selectAutomaticPreset ();
+		selectAutomaticPreset();
 	}
 
 	public EqualizerPreset? getSelectedPreset() {
-		TreeIter it;
-		get_active_iter(out it);
-
-		GLib.Object o;
-		store.get(it, 0, out o);
-
-		if(o != null && o is EqualizerPreset)
-			return o as EqualizerPreset;
-		else
-			return null;
+		return get_active_data() as EqualizerPreset;
 	}
 
 	public Gee.Collection<EqualizerPreset> getPresets() {
-
 		var rv = new Gee.LinkedList<EqualizerPreset>();
-
-		TreeIter iter;
-		for(int i = 0; store.get_iter_from_string(out iter, i.to_string()); ++i) {
-			GLib.Object o;
-			store.get(iter, 0, out o);
-
-			if(o != null && o is EqualizerPreset)
-				rv.add(o as EqualizerPreset);
-		}
-
+		rv.add_all(presets);
 		return rv;
 	}
-
-	private void remove_delete_option () {
-		TreeIter iter;
-		for(int i = 0; store.get_iter_from_string(out iter, i.to_string()); ++i) {
-			string text;
-			store.get(iter, 1, out text);
-
-			if(text != null && text == DELETE_PRESET) {
-				store.remove(ref iter);
-				// Also remove the separator ...
-				remove_separator_item(1);
-			}
-		}
-	}
-
-	private void remove_separator_item (int index) {
-		int count = 0, nitems = store.iter_n_children(null);
-		TreeIter iter;
-
-		for(int i = nitems - 1; store.get_iter_from_string(out iter, i.to_string()); --i) {
-			count++;
-			string text;
-			store.get(iter, 1, out text);
-
-			if((nitems - index == count || index == -1) && text != null && text == SEPARATOR_NAME) {
-				store.remove(ref iter);
-				break;
-			}
-		}
-	}
-
-	private void add_delete_preset_option () {
-		bool already_added = false;
-		TreeIter last_iter, new_iter;
-
-		for(int i = 0; store.get_iter_from_string(out last_iter, i.to_string()); ++i) {
-			string text;
-			store.get(last_iter, 1, out text);
-
-			if(text != null && text == SEPARATOR_NAME) {
-				new_iter = last_iter;
-
-				if (store.iter_next(ref new_iter)) {
-					store.get(new_iter, 1, out text);
-					already_added = (text == DELETE_PRESET);				
-				}
-			
-				break;
-			}
-		}
-
-		if (already_added)
-			return;
-
-		// Add option
-		store.insert_after(out new_iter, last_iter);
-		store.set(new_iter, 0, null, 1, DELETE_PRESET);
-
-		last_iter = new_iter;
-
-		// Add separator
-		store.insert_after(out new_iter, last_iter);
-		store.set(new_iter, 0, null, 1, SEPARATOR_NAME);
-	}
 }
-

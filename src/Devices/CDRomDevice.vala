@@ -288,7 +288,7 @@ public class BeatBox.CDRomDevice : GLib.Object, BeatBox.Device {
 		// update media in cdrom list to show as completed
 		warning("TODO: Fixme: Get rid of UI code from here.");
 		SourceView vw = (SourceView)App.window.get_view_from_object(this);
-		s.unique_status_image = App.icons.PROCESS_COMPLETED.render(Gtk.IconSize.NORMAL, vw.list_view.get_style_context());
+		s.unique_status_image = App.icons.PROCESS_COMPLETED.render(Gtk.IconSize.NORMAL, vw.list_view);
 		
 		if(GLib.File.new_for_uri(lib_copy.uri).query_exists()) {
 			try {

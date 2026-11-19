@@ -47,7 +47,7 @@ public class BeatBox.EmbeddedAlert : Gtk.Box {
         orientation = Gtk.Orientation.VERTICAL;
         spacing = 0;
         add_css_class ("view");
-        // get_style_context ().add_class (Granite.STYLE_CLASS_CONTENT_VIEW);
+        // add_css_class(Granite.STYLE_CLASS_CONTENT_VIEW);
 
         primary_text_label = new Gtk.Label (null);
         primary_text_label.margin_bottom = 12;

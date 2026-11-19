@@ -63,9 +63,7 @@ public class BeatBox.SideBarRenderer : CellRenderer {
 	}
 	
 	static string heading_color(Widget widget) {
-		RGBA c;
-		if(!widget.get_style_context().lookup_color("bb_sidebar_heading", out c))
-			return "#4a586d";
+		RGBA c = UI.named_color("bb_sidebar_heading");
 		return "#%02x%02x%02x".printf((int)(c.red * 255), (int)(c.green * 255), (int)(c.blue * 255));
 	}
 	
@@ -109,12 +107,9 @@ public class BeatBox.SideBarRenderer : CellRenderer {
 		state = (flag != 0 && depth != 1) ? StateFlags.SELECTED : StateFlags.NORMAL;
 
 		// GTK4 colors take no state argument: the selected text color is looked up by name
-		rgba = widget.get_style_context().get_color();
-		if(state == StateFlags.SELECTED) {
-			RGBA selected;
-			if(widget.get_style_context().lookup_color("theme_selected_fg_color", out selected))
-				rgba = selected;
-		}
+		rgba = widget.get_color();
+		if(state == StateFlags.SELECTED)
+			rgba = UI.named_color("theme_selected_fg_color");
 		rtl = widget.get_direction() == Gtk.TextDirection.RTL;
 		
 		// Draw a blank space for each level of indent
@@ -127,7 +122,7 @@ public class BeatBox.SideBarRenderer : CellRenderer {
 		if(depth != 1 && pix != null) {
 			context.move_to(start_x, start_y);
 			int image_y = (cell_area.height - pix.height > 0) ? ((cell_area.height - pix.height)/2) : 0;
-			Gdk.cairo_set_source_pixbuf(context, pix, (int)start_x, cell_area.y + image_y);
+			UI.set_source_pixbuf (context, pix, (int)start_x, cell_area.y + image_y);
 			if(is_monochrome(pix)) {
 				// symbolic icon: paint it in the text color (white when selected, light on dark skins)
 				var icon = context.get_source();

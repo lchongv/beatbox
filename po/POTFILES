@@ -5,6 +5,9 @@ core/Playlists/SmartQuery.vala
 core/Playlists/StaticPlaylist.vala
 core/Utils/TimeUtils.vala
 core/Utils/UI.vala
+core/Widgets/ButtonDialog.vala
+core/Widgets/SimpleTable.vala
+core/Widgets/ChoiceBox.vala
 src/BeatBox.vala
 src/Core/AcoustId.vala
 src/Core/Actions.vala
@@ -73,6 +76,7 @@ src/Widgets/TopDisplay/MetadataDisplay.vala
 src/Widgets/TopDisplay/TimeScale.vala
 src/Widgets/TrackReport.vala
 src/Widgets/Visualizer.vala
+src/Widgets/ColumnBrowser.vala
 src/Windows/AddPodcastWindow.vala
 src/Windows/DirectoryDialog.vala
 src/Windows/Editors/FieldEditorImpl.vala

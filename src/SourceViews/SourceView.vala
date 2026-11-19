@@ -182,12 +182,12 @@ public abstract class BeatBox.SourceView : Box, View {
 	
 	protected void pack_widgets() {
 		if (have_error_box) {
-			error_box.get_style_context ().add_class ("source-page"); // for skins
+			error_box.add_css_class("source-page"); // for skins
 			view_container.append_page (error_box);
 		}
 
 		if (have_welcome_screen) {
-			welcome_screen.get_style_context ().add_class ("source-page");
+			welcome_screen.add_css_class("source-page");
 			view_container.append_page (welcome_screen);
 		}
 
@@ -383,7 +383,7 @@ public abstract class BeatBox.SourceView : Box, View {
 	/** A row of explicit buttons above the view (Podcasts, Internet Radio) */
 	protected void pack_action_bar (Button[] buttons) {
 		var bar = new Box (Orientation.HORIZONTAL, 6);
-		bar.get_style_context ().add_class ("source-actions");
+		bar.add_css_class("source-actions");
 		foreach (var b in buttons)
 			bar.append(b);
 		append(bar);

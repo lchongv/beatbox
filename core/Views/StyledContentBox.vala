@@ -29,7 +29,6 @@ using Gtk;
 using Gee;
 
 public class BeatBox.StyledContentBox : Box {
-	static CssProvider style_provider;
 	private const string WIDGET_STYLESHEET = """
         .NowPlayingPage {
 			background-image: linear-gradient(to bottom, shade(#ffffff, 1.05), #ffffff);
@@ -82,19 +81,16 @@ public class BeatBox.StyledContentBox : Box {
 		Viewport vp = new Viewport(null, null);
 		
 		// Apply styling
-		if(style_provider == null) {
-			style_provider = new CssProvider();
-			style_provider.load_from_data (WIDGET_STYLESHEET.data);
-		}
+		UI.add_scoped_css("bb-styledcontent", WIDGET_STYLESHEET);
 		
 		scroll = new ScrolledWindow ();
 		scroll.set_policy(PolicyType.AUTOMATIC, PolicyType.AUTOMATIC);
 		scroll.hexpand = scroll.vexpand = true;
 		
-		vp.get_style_context().add_class("NowPlayingPage");
-		vp.get_style_context().add_provider(style_provider, STYLE_PROVIDER_PRIORITY_APPLICATION);
-        ebox.get_style_context().add_class("NowPlayingPage");
-		ebox.get_style_context().add_provider(style_provider, STYLE_PROVIDER_PRIORITY_APPLICATION);
+		vp.add_css_class("NowPlayingPage");
+		vp.add_css_class("bb-styledcontent");
+        ebox.add_css_class("NowPlayingPage");
+		ebox.add_css_class("bb-styledcontent");
 		
 		vp.set_child(ebox);
 		scroll.set_child(vp);

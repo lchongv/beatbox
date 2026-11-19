@@ -99,7 +99,7 @@ public class BeatBox.SpectrumDisplay : BeatBox.Display, Box {
 		int n = bars_per_side(), rows = rows();
 		int middle = width / 2;
 		int bottom = (height + rows * (SEGMENT + SEGMENT_GAP) - SEGMENT_GAP) / 2;
-		var color = get_style_context().get_color(); // the LCD's text
+		var color = get_color(); // the LCD's text
 
 		// the unlit segments, the lit ones and the top lit one of each bar (the darkest), one fill each
 		double[] alphas = { 0.09, 0.7, 1.0 };

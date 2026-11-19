@@ -467,7 +467,7 @@ public abstract class BeatBox.GenericList : FastList {
 		
 		// If there is only 1 media and it's location is invalid, prompt for user to find it
 		if(to_edit.size == 1 && !GLib.File.new_for_uri(m.uri).query_exists() && !String.is_empty(m.uri) && m.uri.has_prefix(music_folder_uri)) {
-			m.unique_status_image = App.icons.PROCESS_ERROR.render(IconSize.NORMAL, get_style_context());
+			m.unique_status_image = App.icons.PROCESS_ERROR.render(IconSize.NORMAL, this);
 			FileNotFoundDialog fnfd = new FileNotFoundDialog(to_edit);
 			fnfd.present();
 		}

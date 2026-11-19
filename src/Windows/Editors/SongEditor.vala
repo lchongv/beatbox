@@ -498,21 +498,21 @@ public class BeatBox.SongEditor : GLib.Object, MediaEditorInterface {
 	}
 	
 	void choose_artwork() {
-		var chooser = new FileChooserNative(_("Choose Image"), (Gtk.Window)UI.window_of (artwork), FileChooserAction.OPEN, _("Open"), _("Cancel"));
+		open_artwork.begin();
+	}
+
+	async void open_artwork() {
 		var filter = new FileFilter();
-		filter.add_pixbuf_formats();
-		chooser.filter = filter;
-		// GTK 4's native chooser does not block: the answer comes by signal
-		chooser.response.connect((answer) => {
-			if(answer != ResponseType.ACCEPT)
-				return;
-			try {
-				set_artwork(new Gdk.Pixbuf.from_file(chooser.get_file().get_path()));
-			} catch(Error err) {
-				artworkStatus.label = _("Could not open the image: %s").printf(err.message);
-			}
-		});
-		chooser.show();
+		filter.name = _("Images");
+		UI.add_picture_formats (filter);
+		var file = yield UI.open_file((Gtk.Window)UI.window_of (artwork), _("Choose Image"), { filter });
+		if(file == null)
+			return;
+		try {
+			set_artwork(new Gdk.Pixbuf.from_file(file.get_path()));
+		} catch(Error err) {
+			artworkStatus.label = _("Could not open the image: %s").printf(err.message);
+		}
 	}
 	
 	void download_artwork() {
@@ -537,11 +537,8 @@ public class BeatBox.SongEditor : GLib.Object, MediaEditorInterface {
 	
 	async void identify() {
 		if(App.settings.lastfm.acoustid_key == "") {
-			var dialog = new MessageDialog((Gtk.Window)UI.window_of (identifyButton), DialogFlags.MODAL, MessageType.INFO, ButtonsType.CLOSE,
-			                               _("Identifying songs needs an AcoustID application key"));
-			dialog.secondary_text = _("Register a free application at acoustid.org/new-application and paste its key in Preferences › Last.fm.");
-			yield UI.run_dialog(dialog);
-			dialog.destroy();
+			UI.alert((Gtk.Window)UI.window_of (identifyButton), _("Identifying songs needs an AcoustID application key"),
+			         _("Register a free application at acoustid.org/new-application and paste its key in Preferences › Last.fm."));
 			return;
 		}
 		var path = File.new_for_uri(current_media.uri).get_path();
@@ -566,42 +563,39 @@ public class BeatBox.SongEditor : GLib.Object, MediaEditorInterface {
 	async void show_matches(Gee.List<AcoustId.Match> matches, string? error) {
 		var parent = (Gtk.Window)UI.window_of (identifyButton);
 		if(matches.size == 0) {
-			var dialog = new MessageDialog(parent, DialogFlags.MODAL, MessageType.INFO, ButtonsType.CLOSE,
-			                               error != null ? _("Identification failed") : _("No matches found"));
-			dialog.secondary_text = error ?? _("AcoustID doesn't know this recording.");
-			yield UI.run_dialog(dialog);
-			dialog.destroy();
+			UI.alert(parent, error != null ? _("Identification failed") : _("No matches found"),
+			         error ?? _("AcoustID doesn't know this recording."));
 			return;
 		}
-		var dialog = new Dialog.with_buttons(_("Identification results"), parent, DialogFlags.MODAL | DialogFlags.DESTROY_WITH_PARENT,
-		                                     _("Cancel"), ResponseType.CANCEL, _("Apply"), ResponseType.OK);
-		var store = new Gtk.ListStore(4, typeof(string), typeof(string), typeof(string), typeof(string));
-		foreach(var m in matches) {
-			TreeIter iter;
-			store.append(out iter);
-			store.set(iter, 0, "%d %%".printf(m.score), 1, m.title, 2, m.artist, 3, m.album);
+		var dialog = new ButtonDialog(_("Identification results"), parent);
+		dialog.add_button(_("Cancel"), ButtonDialog.CANCEL);
+		dialog.add_button(_("Apply"), ButtonDialog.OK);
+		var table = new SimpleTable();
+		for(int i = 0; i < matches.size; i++) {
+			var m = matches[i];
+			table.add({ "%d %%".printf(m.score), m.title, m.artist, m.album });
 		}
-		var view = new TreeView.with_model(store);
 		string[] titles = { _("Score"), _("Title"), _("Artist"), _("Album") };
 		for(int i = 0; i < 4; i++)
-			view.insert_column_with_attributes(-1, titles[i], new CellRendererText() { ellipsize = Pango.EllipsizeMode.END, width_chars = i == 0 ? 6 : 18 }, "text", i);
-		view.get_selection().select_path(new TreePath.first());
-		view.row_activated.connect(() => dialog.response(ResponseType.OK));
+			table.add_column(titles[i], i, false, i != 0);
+		table.select(0);
+		table.activated.connect(() => dialog.response(ButtonDialog.OK));
 		var scroll = new ScrolledWindow ();
 		scroll.set_size_request(620, 260);
-		scroll.set_child(view);
+		scroll.set_child(table.view);
 		var label = new Label(_("Select a result to apply its title, artist and album to this song:"));
 		label.xalign = 0;
-		var box = dialog.get_content_area();
+		var box = dialog.content_area;
 		box.spacing = 8;
-		box.margin_top = box.margin_bottom = box.margin_start = box.margin_end = 10;
 		box.append(label);
 		box.append(AquaScroll.wrap(scroll));
-		dialog.set_default_response(ResponseType.OK);
-		bool apply = (yield UI.run_dialog(dialog)) == ResponseType.OK;
-		var chosen = view.get_selection().get_selected_rows(null);
-		if(apply && chosen.length() > 0) {
-			var m = matches[chosen.data.get_indices()[0]];
+		dialog.set_default_response(ButtonDialog.OK);
+		bool apply = (yield dialog.run()) == ButtonDialog.OK;
+		var chosen = table.selected_row();
+		if(apply && chosen != null) {
+			uint position;
+			table.rows.find(chosen, out position);
+			var m = matches[(int) position];
 			fields.get("Title").set_value(m.title);
 			fields.get("Artist").set_value(m.artist);
 			if(m.album != "")

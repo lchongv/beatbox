@@ -143,31 +143,27 @@ public class BeatBox.App : Gtk.Application {
 		if (!(shape in new string[] { "diamond", "circle", "cup", "nyan" }))
 			shape = "diamond";
 		int track = settings.main.lcd_track_width.clamp (2, 16);
-		try {
-			if (shape == "nyan") {
-				// whole pixels of the 23×13 cat and its 6×7 rainbow (data/nyan.svg, rainbow.svg), so they stay
-				// crisp; the trail sets the track's width, and TimeScale swaps the frames (class nyan-b)
-				int k = size < 20 ? 1 : 2;
-				marker_css.load_from_data (
-					(".lcd scale trough, .lcd scale highlight { min-height: %dpx; border-radius: 0; }" +
-					 ".lcd scale highlight, .lcd scale slider { transition: none; }" + // the theme's would slide between frames
-					 ".lcd scale highlight { background-color: transparent; background-size: auto 100%%; background-repeat: repeat-x;" +
-					 " background-image: url(\"resource:///net/launchpad/beatbox/rainbow.svg\"); }" +
-					 ".lcd scale.nyan-b highlight { background-position: %dpx 0; }" +
-					 ".lcd scale slider { min-width: %dpx; min-height: %dpx; margin: %dpx %dpx %dpx;" +
-					 " background-image: url(\"resource:///net/launchpad/beatbox/nyan.svg\"); background-size: 200%% 100%%; background-position: 0 0; }" +
-					 ".lcd scale.nyan-b slider { background-position: 100%% 0; }")
-					.printf (7 * k, 3 * k, 23 * k, 13 * k, -2 * k, -(23 * k - 8) / 2, -4 * k).data); // the trail leaves the body's middle
-				return;
-			}
-			marker_css.load_from_data (
-				(".lcd scale trough, .lcd scale highlight { min-height: %dpx; }" +
-				 ".lcd scale slider { min-width: %dpx; min-height: %dpx; margin: %dpx %dpx;" +
-				 " background-image: url(\"resource:///net/launchpad/beatbox/%s.svg\"); }")
-				.printf (track, size, size, -(size - track + 2) / 2, -(size - 8) / 2, shape).data);
-		} catch (Error err) {
-			warning ("Could not restyle the position bar: %s", err.message);
+		if (shape == "nyan") {
+			// whole pixels of the 23×13 cat and its 6×7 rainbow (data/nyan.svg, rainbow.svg), so they stay
+			// crisp; the trail sets the track's width, and TimeScale swaps the frames (class nyan-b)
+			int k = size < 20 ? 1 : 2;
+			marker_css.load_from_string (
+				(".lcd scale trough, .lcd scale highlight { min-height: %dpx; border-radius: 0; }" +
+				 ".lcd scale highlight, .lcd scale slider { transition: none; }" + // the theme's would slide between frames
+				 ".lcd scale highlight { background-color: transparent; background-size: auto 100%%; background-repeat: repeat-x;" +
+				 " background-image: url(\"resource:///net/launchpad/beatbox/rainbow.svg\"); }" +
+				 ".lcd scale.nyan-b highlight { background-position: %dpx 0; }" +
+				 ".lcd scale slider { min-width: %dpx; min-height: %dpx; margin: %dpx %dpx %dpx;" +
+				 " background-image: url(\"resource:///net/launchpad/beatbox/nyan.svg\"); background-size: 200%% 100%%; background-position: 0 0; }" +
+				 ".lcd scale.nyan-b slider { background-position: 100%% 0; }")
+				.printf (7 * k, 3 * k, 23 * k, 13 * k, -2 * k, -(23 * k - 8) / 2, -4 * k)); // the trail leaves the body's middle
+			return;
 		}
+		marker_css.load_from_string (
+			(".lcd scale trough, .lcd scale highlight { min-height: %dpx; }" +
+			 ".lcd scale slider { min-width: %dpx; min-height: %dpx; margin: %dpx %dpx;" +
+			 " background-image: url(\"resource:///net/launchpad/beatbox/%s.svg\"); }")
+			.printf (track, size, size, -(size - track + 2) / 2, -(size - 8) / 2, shape));
 	}
 	
 	public App () {
@@ -222,7 +218,7 @@ public class BeatBox.App : Gtk.Application {
 		Logger.initialize (); // the [INFO hh:mm:ss] log format
 		
 		Skins.apply (settings.main.skin); // base look at APPLICATION + 1, optional skin at + 2
-		Gtk.StyleContext.add_provider_for_display (Gdk.Display.get_default (), marker_css,Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION + 3);
+		UI.add_css_provider (marker_css, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION + 3);
 		apply_lcd_style ();
 		
 		Gtk.IconTheme.get_for_display (Gdk.Display.get_default ()).add_resource_path ("/net/launchpad/beatbox/icons");

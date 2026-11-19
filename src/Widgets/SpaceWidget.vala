@@ -32,7 +32,6 @@ public class BeatBox.SpaceWidget : StyledContentBox {
 
     public signal void sync_clicked();
 
-    public static CssProvider style_provider;
 
     public enum ItemColor {
         BLUE,
@@ -136,12 +135,10 @@ public class BeatBox.SpaceWidget : StyledContentBox {
         scroll.min_content_height = MIN_HEIGHT;
         scroll.set_policy(PolicyType.AUTOMATIC, PolicyType.NEVER);
 
-        style_provider = new CssProvider();
-
-        style_provider.load_from_data (WIDGET_STYLESHEET.data);
+        UI.add_scoped_css("bb-spacewidget", WIDGET_STYLESHEET);
         
-        get_style_context().add_class("spaceWidgetBase");
-        get_style_context().add_provider(style_provider, STYLE_PROVIDER_PRIORITY_APPLICATION);
+        add_css_class("spaceWidgetBase");
+        add_css_class("bb-spacewidget");
 		
         sync_button = new Button.with_label (_("Sync"));
         sync_button.set_size_request (80, -1);
@@ -361,35 +358,34 @@ private class BeatBox.SpaceWidgetBarItem : Gtk.Button {
 
     public SpaceWidgetBarItem (SpaceWidget.ItemColor color, int hsize) {
         this.color = color;
-        var style = this.get_style_context ();
 
         switch (color) {
             case SpaceWidget.ItemColor.BLUE:
-                style.add_class ("blue");
+                add_css_class ("blue");
                 break;
             case SpaceWidget.ItemColor.ORANGE:
-                style.add_class ("orange");
+                add_css_class ("orange");
                 break;
             case SpaceWidget.ItemColor.GREEN:
-                style.add_class ("green");
+                add_css_class ("green");
                 break;
             case SpaceWidget.ItemColor.RED:
-                style.add_class ("red");
+                add_css_class ("red");
                 break;
             case SpaceWidget.ItemColor.PURPLE:
-                style.add_class ("purple");
+                add_css_class ("purple");
                 break;
             case SpaceWidget.ItemColor.GREY:
-                style.add_class ("grey");
+                add_css_class ("grey");
                 break;
             default:
-                style.add_class ("grey");
+                add_css_class ("grey");
                 break;
         }
 
         //this.sensitive = false;
-        style.add_class ("SpaceBarItem");
-        style.add_provider (SpaceWidget.style_provider, STYLE_PROVIDER_PRIORITY_APPLICATION);
+        add_css_class ("SpaceBarItem");
+        add_css_class ("bb-spacewidget");
 
         this.set_size_request (0, BAR_HEIGHT);
     }
@@ -413,11 +409,10 @@ private class BeatBox.SpaceWidgetBarItem : Gtk.Button {
 private class BeatBox.SpaceWidgetBarFullItem : SpaceWidgetBarItem {
     public SpaceWidgetBarFullItem (SpaceWidget.ItemColor color, int hsize) {
         base (color, hsize);
-        var style = this.get_style_context ();
         this.sensitive = false;
-        style.remove_class("SpaceBarItem");
-        style.add_class ("SpaceBarFullItem");
-        style.add_provider (SpaceWidget.style_provider, STYLE_PROVIDER_PRIORITY_APPLICATION);
+        remove_css_class("SpaceBarItem");
+        add_css_class ("SpaceBarFullItem");
+        add_css_class ("bb-spacewidget");
     }
 }
 
@@ -428,34 +423,33 @@ private class BeatBox.LegendItem : Gtk.Button {
 
     public LegendItem (SpaceWidget.ItemColor color) {
         this.color = color;
-        var style = this.get_style_context ();
 
         switch (color) {
             case SpaceWidget.ItemColor.BLUE:
-                style.add_class ("blue");
+                add_css_class ("blue");
                 break;
             case SpaceWidget.ItemColor.ORANGE:
-                style.add_class ("orange");
+                add_css_class ("orange");
                 break;
             case SpaceWidget.ItemColor.GREEN:
-                style.add_class ("green");
+                add_css_class ("green");
                 break;
             case SpaceWidget.ItemColor.RED:
-                style.add_class ("red");
+                add_css_class ("red");
                 break;
             case SpaceWidget.ItemColor.GREY:
-                style.add_class ("grey");
+                add_css_class ("grey");
                 break;
             case SpaceWidget.ItemColor.PURPLE:
-                style.add_class ("purple");
+                add_css_class ("purple");
                 break;
             default:
-                style.add_class ("grey");
+                add_css_class ("grey");
                 break;
         }
 
-        style.add_class ("LegendItem");
-        style.add_provider (SpaceWidget.style_provider, STYLE_PROVIDER_PRIORITY_APPLICATION);
+        add_css_class ("LegendItem");
+        add_css_class ("bb-spacewidget");
         this.sensitive = false;
         this.set_diameter (DEFAULT_DIAMETER);
     }

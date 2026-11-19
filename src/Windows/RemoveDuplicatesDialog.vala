@@ -29,7 +29,7 @@ using Gtk;
 using Gee;
 
 public class BeatBox.RemoveDuplicatesDialog : Gtk.Window {
-	ComboBoxText matchOption;
+	ChoiceBox matchOption;
 	SpinButton matchPercent;
 	Box percent_box;
 	int index;
@@ -60,7 +60,7 @@ public class BeatBox.RemoveDuplicatesDialog : Gtk.Window {
 		var padding = new Box(Orientation.HORIZONTAL, 10);
 		
 		var matchLabel = new Label("");
-		matchOption = new ComboBoxText();
+		matchOption = new ChoiceBox();
 		matchPercent = new SpinButton.with_range(80, 100, 5);
 		is_working = new Gtk.Spinner();
 		feedback_label = new Gtk.Label(FEEDBACK_STRING.printf(0, 0));
@@ -89,7 +89,7 @@ public class BeatBox.RemoveDuplicatesDialog : Gtk.Window {
 		matchLabel.set_markup("<b>" + _("Matching Criteria") + "</b>");
 		matchOption.append_text(_("Title and Artist"));
 		matchOption.append_text(_("Title, Artist, and Album"));
-		matchOption.set_active(0);
+		matchOption.active = 0;
 		
 		// Pack all widgets
 		content.append(wrap_alignment(matchLabel, 10, 0, 0, 0));

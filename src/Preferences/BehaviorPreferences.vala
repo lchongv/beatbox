@@ -117,15 +117,15 @@ public class BeatBox.LibraryPreferences : SimplePreferences {
 	}
 
 	async void ask_rename(string id) {
-		var dialog = new Dialog.with_buttons(_("Rename Library"), UI.window_of(libraries),
-		                                     DialogFlags.MODAL | DialogFlags.DESTROY_WITH_PARENT,
-		                                     _("Cancel"), ResponseType.CANCEL, _("Rename"), ResponseType.OK);
+		var dialog = new ButtonDialog(_("Rename Library"), UI.window_of(libraries));
+		dialog.add_button(_("Cancel"), ButtonDialog.CANCEL);
+		dialog.add_button(_("Rename"), ButtonDialog.OK);
 		var entry = new Entry() { text = LibrarySwitcher.name_of(id), activates_default = true,
 		                          margin_top = 12, margin_bottom = 12, margin_start = 12, margin_end = 12 };
-		dialog.get_content_area().append(entry);
-		dialog.set_default_response(ResponseType.OK);
-		var answer = yield UI.run_dialog(dialog);
-		bool rename = answer == ResponseType.OK && entry.text.strip() != "";
+		dialog.content_area.append(entry);
+		dialog.set_default_response(ButtonDialog.OK);
+		var answer = yield dialog.run();
+		bool rename = answer == ButtonDialog.OK && entry.text.strip() != "";
 		string name = entry.text.strip();
 		dialog.destroy();
 		if (rename) {
@@ -135,14 +135,9 @@ public class BeatBox.LibraryPreferences : SimplePreferences {
 	}
 
 	async void ask_remove(string id) {
-		var dialog = new MessageDialog(UI.window_of(libraries), DialogFlags.MODAL | DialogFlags.DESTROY_WITH_PARENT,
-		                               MessageType.WARNING, ButtonsType.NONE, _("Remove the library “%s”?"), LibrarySwitcher.name_of(id));
-		dialog.secondary_text = _("Its songs, play counts and playlists are removed from BeatBox; the music files stay where they are.");
-		dialog.add_button(_("Cancel"), ResponseType.CANCEL);
-		dialog.add_button(_("Remove"), ResponseType.OK);
-		var answer = yield UI.run_dialog(dialog);
-		bool remove = answer == ResponseType.OK;
-		dialog.destroy();
+		bool remove = yield UI.confirm(UI.window_of(libraries), _("Remove the library “%s”?").printf(LibrarySwitcher.name_of(id)),
+		                               _("Its songs, play counts and playlists are removed from BeatBox; the music files stay where they are."),
+		                               _("Remove"));
 		if (remove) {
 			App.libraries.remove(id);
 			fill_libraries();
@@ -156,7 +151,7 @@ public class BeatBox.PlaybackPreferences : SimplePreferences {
 
 	public PlaybackPreferences() {
 		add_heading(_("Playback"));
-		var rg = new ComboBoxText();
+		var rg = new ChoiceBox();
 		rg.append("0", _("Off"));
 		rg.append("1", _("Per song"));
 		rg.append("2", _("Per album"));
@@ -199,18 +194,13 @@ public class BeatBox.RecordingPreferences : SimplePreferences {
 	}
 
 	async void choose_folder() {
-		var chooser = new FileChooserDialog(_("Recordings Folder"), UI.window_of(recordings), FileChooserAction.SELECT_FOLDER,
-		                                    _("_Cancel"), ResponseType.CANCEL, _("_Open"), ResponseType.ACCEPT);
-		try {
-			chooser.set_current_folder(File.new_for_path(App.settings.main.recordings_path()));
-		} catch (Error e) {
-		}
-		if ((yield UI.run_dialog(chooser)) == ResponseType.ACCEPT) {
-			string chosen = chooser.get_file().get_path();
+		var folder = yield UI.choose_folder(UI.window_of(recordings), _("Recordings Folder"),
+		                                    File.new_for_path(App.settings.main.recordings_path()));
+		if (folder != null) {
+			string chosen = folder.get_path();
 			App.settings.main.recordings_folder = chosen;
 			show_folder(chosen);
 		}
-		chooser.destroy();
 	}
 }
 
@@ -221,13 +211,13 @@ public class BeatBox.AppearancePreferences : SimplePreferences {
 	public AppearancePreferences() {
 		// Skins (plugins: folders in ~/.local/share/beatbox/skins)
 		add_heading(_("Skin"));
-		var skinChooser = new ComboBoxText();
+		var skinChooser = new ChoiceBox();
 		var preview = new Image();
 		preview.halign = Align.START;
 		var skins = Skins.available();
 		foreach (var skin in skins)
 			skinChooser.append(skin.id, skin.name);
-		if (!skinChooser.set_active_id(App.settings.main.skin))
+		if (!skinChooser.select_id(App.settings.main.skin))
 			skinChooser.active_id = Skins.DEFAULT;
 		var editCss = new Button.with_label(_("Edit CSS…"));
 		editCss.clicked.connect(() => {
@@ -303,7 +293,7 @@ public class BeatBox.LcdPreferences : SimplePreferences {
 
 	public LcdPreferences() {
 		add_heading(_("Display"));
-		var lcdLines = new ComboBoxText();
+		var lcdLines = new ChoiceBox();
 		lcdLines.append("two", _("Two lines, artist and album taking turns"));
 		lcdLines.append("three", _("Three lines, synced lyrics on the third"));
 		lcdLines.append("one", _("One line"));
@@ -334,12 +324,12 @@ public class BeatBox.LcdPreferences : SimplePreferences {
 		var trackWidth = new SpinButton.with_range(2, 16, 1);
 		trackWidth.value = App.settings.main.lcd_track_width;
 		add_row(labelled(_("Width of the track:"), trackWidth, _("pixels")));
-		var markerShape = new ComboBoxText();
+		var markerShape = new ChoiceBox();
 		markerShape.append("diamond", _("Diamond"));
 		markerShape.append("circle", _("Circle"));
 		markerShape.append("cup", _("Cup"));
 		markerShape.append("nyan", _("Nyan cat"));
-		if (!markerShape.set_active_id(App.settings.main.lcd_marker_shape))
+		if (!markerShape.select_id(App.settings.main.lcd_marker_shape))
 			markerShape.active_id = "diamond";
 		add_row(labelled(_("Shape of the position marker:"), markerShape));
 		markerShape.changed.connect(() => {
@@ -423,17 +413,17 @@ public class BeatBox.PluginsPreferences : SimplePreferences {
 	}
 
 	void choose_plugin() {
-		var chooser = new FileChooserNative(_("Install Plugin"), UI.window_of(list), FileChooserAction.OPEN, _("Install"), _("Cancel"));
+		install_plugin.begin();
+	}
+
+	async void install_plugin() {
 		var filter = new FileFilter();
 		filter.set_filter_name(_("BeatBox plugins (*.plugin)"));
 		filter.add_pattern("*.plugin");
-		chooser.add_filter(filter);
-		// GTK 4's native chooser does not block: the answer comes by signal
-		chooser.response.connect((answer) => {
-			if(answer != ResponseType.ACCEPT)
-				return;
+		var file = yield UI.open_file(UI.window_of(list), _("Install Plugin"), { filter });
+		if (file != null) {
 			try {
-				var p = App.plugins.install(chooser.get_file());
+				var p = App.plugins.install(file);
 				if(p != null)
 					add_plugin(p);
 				else
@@ -441,8 +431,7 @@ public class BeatBox.PluginsPreferences : SimplePreferences {
 			} catch (Error err) {
 				App.window.doAlert(_("Could not install the plugin"), err.message);
 			}
-		});
-		chooser.show();
+		}
 	}
 }
 
@@ -458,12 +447,12 @@ public class BeatBox.CoverPreferences : SimplePreferences {
 			chosen[n++] = c.id;
 		for(int i = n; i < 4; i++)
 			chosen[i] = "";
-		var combos = new ComboBoxText[4];
+		var combos = new ChoiceBox[4];
 		bool updating = false;
 		
 		for(int i = 0; i < 4; i++) {
 			int index = i;
-			var combo = new ComboBoxText();
+			var combo = new ChoiceBox();
 			if(i > 0)
 				combo.append("", _("(none)"));
 			foreach(var c in BrowserCriterion.all())
@@ -507,7 +496,7 @@ public class BeatBox.CoverPreferences : SimplePreferences {
 		add_browser_column_choosers();
 
 		add_heading(_("Cover Grid"));
-		var clickMode = new ComboBoxText();
+		var clickMode = new ChoiceBox();
 		clickMode.append("inline", _("Unfold it inline, under its row"));
 		clickMode.append("popup", _("Open it in a popup window"));
 		clickMode.active_id = App.settings.main.album_grid_inline ? "inline" : "popup";

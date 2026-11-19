@@ -57,7 +57,7 @@ public class BeatBox.StationSourceView : SourceView {
 		
 		// The grid: each station's logo and name, in the list's order and search
 		grid = new FlowBox();
-		grid.get_style_context().add_class("albumwall"); // the album grid's look
+		grid.add_css_class("albumwall"); // the album grid's look
 		grid.homogeneous = true;
 		grid.valign = Align.START;
 		grid.max_children_per_line = 64;
@@ -71,7 +71,7 @@ public class BeatBox.StationSourceView : SourceView {
 		grid.add_controller(grid_press);
 		var grid_scroll = new ScrolledWindow();
 		grid_scroll.hscrollbar_policy = PolicyType.NEVER;
-		grid_scroll.get_style_context().add_class("albumwall");
+		grid_scroll.add_css_class("albumwall");
 		grid_scroll.set_child(grid);
 		grid_page = AquaScroll.wrap(grid_scroll);
 		list_view.visible_changed.connect(fill_grid);
@@ -119,12 +119,12 @@ public class BeatBox.StationSourceView : SourceView {
 			name.ellipsize = Pango.EllipsizeMode.END;
 			name.max_width_chars = 16;
 			name.margin_top = 4;
-			name.get_style_context().add_class("station-name");
+			name.add_css_class("station-name");
 			box.append(name);
 			var genre = new Label(m.genre);
 			genre.ellipsize = Pango.EllipsizeMode.END;
 			genre.max_width_chars = 16;
-			genre.get_style_context().add_class("dim-label");
+			genre.add_css_class("dim-label");
 			box.append(genre);
 			if (StreamRecorder.get_default().is_recording(m.uri)) {
 				var rec = new Label(null);
@@ -171,22 +171,12 @@ public class BeatBox.StationSourceView : SourceView {
 	}
 	
 	async void choose_logo(Media m) {
-		var chooser = new Gtk.FileChooserDialog(_("Image for “%s”").printf(m.title), App.window, Gtk.FileChooserAction.OPEN,
-		                                       _("Cancel"), Gtk.ResponseType.CANCEL, _("Choose"), Gtk.ResponseType.ACCEPT);
 		var images = new Gtk.FileFilter();
 		images.set_filter_name(_("Images"));
-		images.add_pixbuf_formats();
-		chooser.add_filter(images);
-		if ((yield UI.run_dialog (chooser)) == Gtk.ResponseType.ACCEPT) {
-			var file = chooser.get_file();
-			if (!StationLogos.get_default().set_custom(m.uri, file)) {
-				var error = new Gtk.MessageDialog(App.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.CLOSE,
-				                                  _("“%s” is not an image BeatBox can read."), file.get_basename());
-				yield UI.run_dialog (error);
-				error.destroy();
-			}
-		}
-		chooser.destroy();
+		UI.add_picture_formats (images);
+		var file = yield UI.open_file(App.window, _("Image for “%s”").printf(m.title), { images });
+		if (file != null && !StationLogos.get_default().set_custom(m.uri, file))
+			UI.alert(App.window, _("“%s” is not an image BeatBox can read.").printf(file.get_basename()));
 	}
 	
 	/** The station's logo scaled into a LOGO square, or a generic radio */

@@ -69,7 +69,7 @@ public class BeatBox.FastList : TreeView {
 		set_table(table);
 		set_model(fm);
 		
-		get_style_context().add_class("tracklist");
+		add_css_class("tracklist");
 	}
 	
 	public override void snapshot (Gtk.Snapshot s) {
@@ -99,11 +99,7 @@ public class BeatBox.FastList : TreeView {
 		int height = get_height();
 		int width = get_width();
 		// skins may recolor the stripes (see theme.css)
-		Gdk.RGBA row_a, row_b;
-		if(!get_style_context().lookup_color("bb_row_a", out row_a))
-			row_a = { 1, 1, 1, 1 };
-		if(!get_style_context().lookup_color("bb_row_b", out row_b))
-			row_b = { 0xdd/255.0f, 0xe8/255.0f, 0xf5/255.0f, 1 };
+		Gdk.RGBA row_a = UI.named_color("bb_row_a"), row_b = UI.named_color("bb_row_b");
 		Gdk.cairo_set_source_rgba(cr, row_a);
 		cr.paint();
 		Gdk.cairo_set_source_rgba(cr, row_b);

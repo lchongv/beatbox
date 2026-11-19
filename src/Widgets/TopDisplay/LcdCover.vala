@@ -27,7 +27,7 @@ public class BeatBox.LcdCover : Widget {
 		image.set_parent (this);
 		visible = false;
 		valign = Align.FILL;  // the stylesheet pulls it over the LCD's padding (see .lcd-cover)
-		get_style_context ().add_class ("lcd-cover");
+		add_css_class("lcd-cover");
 
 		App.playback.media_played.connect ((m, old) => refresh ());
 		App.playback.playback_stopped.connect ((m) => refresh ());
@@ -217,9 +217,9 @@ public class BeatBox.LcdCover : Widget {
 		cr.arc (CORNER, side - CORNER, CORNER, 0.5 * Math.PI, Math.PI);
 		cr.close_path ();
 		cr.clip ();
-		Gdk.cairo_set_source_pixbuf (cr, scaled, (side - w) / 2, (side - h) / 2);
+		UI.set_source_pixbuf (cr, scaled, (side - w) / 2, (side - h) / 2);
 		cr.paint ();
-		UI.show_pixbuf (image, Gdk.pixbuf_get_from_surface (surface, 0, 0, side, side));
+		UI.show_pixbuf (image, UI.pixbuf_from_surface (surface));
 	}
 
 	public override void dispose () {

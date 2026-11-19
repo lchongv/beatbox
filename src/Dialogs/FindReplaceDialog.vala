@@ -1,44 +1,41 @@
 using Gtk;
 
 /** Find and Replace in Tags: one tag of the chosen songs, with the changes shown as they are typed */
-public class BeatBox.FindReplaceDialog : Dialog {
+public class BeatBox.FindReplaceDialog : ButtonDialog {
 	// the tags offered: GObject property names of Media
 	const string[] PROPERTIES = { "title", "artist", "album-artist", "album", "genre", "composer", "grouping", "comment" };
 
 	Gee.List<Media> medias;
 	Gee.HashMap<Media, string> changes = new Gee.HashMap<Media, string> (); // song → its tag once replaced
-	ComboBoxText field;
+	DropDown field;
 	Entry find;
 	Entry replace;
 	CheckButton case_sensitive;
 	CheckButton regex;
 	CheckButton whole_word;
 	Label summary;
-	Gtk.ListStore preview;
+	SimpleTable preview;
 	Widget apply_button;
 
 	public static async void run_for (Gee.Collection<Media> medias) {
 		var dialog = new FindReplaceDialog (medias);
-		while ((yield UI.run_dialog (dialog)) == ResponseType.APPLY)
+		while ((yield dialog.run ()) == ButtonDialog.APPLY)
 			dialog.apply (); // stays open for the next replacement
 		dialog.destroy ();
 	}
 
 	FindReplaceDialog (Gee.Collection<Media> chosen) {
-		title = _("Find and Replace in Tags");
-		transient_for = App.window;
-		modal = true;
+		base (_("Find and Replace in Tags"), App.window);
+		resizable = true;
 		set_default_size (680, 480);
 		medias = new Gee.ArrayList<Media> ();
 		foreach (var m in chosen)
 			if (m.can_save_metadata)
 				medias.add (m);
 
-		field = new ComboBoxText ();
 		string[] names = { _("Title"), _("Artist"), _("Album Artist"), _("Album"), _("Genre"), _("Composer"), _("Grouping"), _("Comment") };
-		foreach (var name in names)
-			field.append_text (name);
-		field.active = 1;
+		field = new DropDown.from_strings (names);
+		field.selected = 1;
 		find = new Entry ();
 		find.hexpand = true;
 		find.activates_default = true;
@@ -66,38 +63,30 @@ public class BeatBox.FindReplaceDialog : Dialog {
 		checks.append (whole_word);
 		grid.attach (checks, 1, 3);
 
-		preview = new Gtk.ListStore (2, typeof (string), typeof (string));
-		var view = new TreeView.with_model (preview);
-		string[] columns = { _("Now"), _("After") };
-		for (int i = 0; i < 2; i++) {
-			var text = new CellRendererText ();
-			text.ellipsize = Pango.EllipsizeMode.END;
-			var column = new TreeViewColumn.with_attributes (columns[i], text, "text", i);
-			column.expand = true;
-			view.append_column (column);
-		}
+		preview = new SimpleTable ();
+		preview.add_column (_("Now"), 0);
+		preview.add_column (_("After"), 1);
 		var scroll = new ScrolledWindow ();
 		scroll.vexpand = true;
 		scroll.has_frame = true;
-		scroll.set_child (view);
+		scroll.set_child (preview.view);
 
 		summary = new Label ("");
 		summary.xalign = 0.0f;
 		summary.wrap = true;
 
-		var box = get_content_area ();
+		var box = content_area;
 		box.spacing = 8;
-		box.margin_top = box.margin_bottom = box.margin_start = box.margin_end = 8;
 		box.append (grid);
 		box.append (summary);
 		box.append (AquaScroll.wrap (scroll));
 
-		add_button (_("Close"), ResponseType.CLOSE);
-		apply_button = add_button (_("Replace All"), ResponseType.APPLY);
-		apply_button.get_style_context ().add_class ("suggested-action");
-		set_default_response (ResponseType.APPLY);
+		add_button (_("Close"), ButtonDialog.CLOSE);
+		apply_button = add_button (_("Replace All"), ButtonDialog.APPLY);
+		apply_button.add_css_class("suggested-action");
+		set_default_response (ButtonDialog.APPLY);
 
-		field.changed.connect (refresh);
+		field.notify["selected"].connect (refresh);
 		find.changed.connect (refresh);
 		replace.changed.connect (refresh);
 		case_sensitive.toggled.connect (refresh);
@@ -107,7 +96,7 @@ public class BeatBox.FindReplaceDialog : Dialog {
 	}
 
 	string property () {
-		return PROPERTIES[field.active];
+		return PROPERTIES[field.selected];
 	}
 
 	static string get_tag (Media m, string property) {
@@ -133,9 +122,7 @@ public class BeatBox.FindReplaceDialog : Dialog {
 				if (after == now)
 					continue;
 				changes[m] = after;
-				TreeIter iter;
-				preview.append (out iter);
-				preview.set (iter, 0, now, 1, after);
+				preview.add ({ now, after });
 			}
 			summary.label = ngettext ("%d of %d songs changes.", "%d of %d songs change.", changes.size).printf (changes.size, medias.size);
 		} catch (RegexError err) {

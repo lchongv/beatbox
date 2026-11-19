@@ -166,12 +166,12 @@ public class BeatBox.Icons : GLib.Object, BeatBox.IconsInterface {
         DEFAULT_ALBUM_SHADOW_PIXBUF = shadow_icon.render (null);
 	}
 	
-	public GLib.Icon? render_gicon(string icon_name, Gtk.IconSize size, Gtk.StyleContext? context = null) {
+	public GLib.Icon? render_gicon(string icon_name, Gtk.IconSize size, Gtk.Widget? context = null) {
 		var icon = new BeatBox.Icon (icon_name, null, null, null, false);
 		return icon.get_gicon ();
 	}
 	
-	public Gdk.Pixbuf? render_icon (string icon_name, Gtk.IconSize size, Gtk.StyleContext? context = null) {
+	public Gdk.Pixbuf? render_icon (string icon_name, Gtk.IconSize size, Gtk.Widget? context = null) {
 		var icon = new BeatBox.Icon (icon_name, null, null, null, false);
 		return icon.render (size, context);
 	}

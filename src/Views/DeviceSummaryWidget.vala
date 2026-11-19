@@ -37,12 +37,9 @@ public class BeatBox.DeviceSummaryWidget : Box {
 	CheckButton syncMusic;
 	CheckButton syncPodcasts;
 	//CheckButton syncAudiobooks;
-	ComboBox musicDropdown;
-	ComboBox podcastDropdown;
+	ChoiceBox musicDropdown;
+	ChoiceBox podcastDropdown;
 	//ComboBox audiobookDropdown;
-	Gtk.ListStore musicList;
-	Gtk.ListStore podcastList;
-	//Gtk.ListStore audiobookList;
 	
 	StyledContentBox top_portion;
 	Gtk.Image deviceImage;
@@ -66,14 +63,11 @@ public class BeatBox.DeviceSummaryWidget : Box {
 		syncMusic = new CheckButton();
 		syncPodcasts = new CheckButton();
 		//syncAudiobooks = new CheckButton();
-		musicDropdown = new ComboBox();
-		podcastDropdown = new ComboBox();
+		musicDropdown = new ChoiceBox();
+		podcastDropdown = new ChoiceBox();
 		//audiobookDropdown = new ComboBox();
-		musicList = new Gtk.ListStore(3, typeof(GLib.Object), typeof(string), typeof(Gdk.Pixbuf));
-		podcastList = new Gtk.ListStore(3, typeof(GLib.Object), typeof(string), typeof(Gdk.Pixbuf));
-		//audiobookList = new Gtk.ListStore(3, typeof(GLib.Object), typeof(string), typeof(Gdk.Pixbuf));
 		
-		//get_style_context().add_class (Granite.STYLE_CLASS_CONTENT_VIEW);
+		//add_css_class(Granite.STYLE_CLASS_CONTENT_VIEW);
 		
 		top_portion = new StyledContentBox();
 		deviceImage = new Gtk.Image.from_gicon(dev.get_icon());
@@ -180,31 +174,31 @@ public class BeatBox.DeviceSummaryWidget : Box {
 		//syncAudiobooks.active = dev.get_preferences().sync_audiobooks;
 		
 		if(dev.get_preferences().sync_all_music)
-			musicDropdown.set_active(0);
+			musicDropdown.active = 0;
 		else {
-			bool success = musicDropdown.set_active_id(dev.get_preferences().music_playlist);
+			bool success = musicDropdown.select_id(dev.get_preferences().music_playlist);
 			if(!success) {
 				//App.window.doAlert("Missing Sync Playlist", "The playlist named <b>" + dev.get_preferences().music_playlist + "</b> is used to sync device <b>" + dev.getDisplayName() + "</b>, but could not be found.");
 				dev.get_preferences().music_playlist = "";
 				dev.get_preferences().sync_all_music = true;
-				musicDropdown.set_active(0);
+				musicDropdown.active = 0;
 			}
 		}
 		if(dev.get_preferences().sync_all_podcasts)
-			podcastDropdown.set_active(0);
+			podcastDropdown.active = 0;
 		else {
-			bool success = podcastDropdown.set_active_id(dev.get_preferences().podcast_playlist);
+			bool success = podcastDropdown.select_id(dev.get_preferences().podcast_playlist);
 			if(!success) {
 				//App.window.doAlert("Missing Sync Playlist", "The playlist named <b>" + dev.get_preferences().podcast_playlist + "</b> is used to sync device <b>" + dev.getDisplayName() + "</b>, but could not be found.");
 				dev.get_preferences().podcast_playlist = "";
 				dev.get_preferences().sync_all_podcasts = true;
-				podcastDropdown.set_active(0);
+				podcastDropdown.active = 0;
 			}
 		}
 		/*if(dev.get_preferences().sync_all_audiobooks)
 			audiobookDropdown.set_active(0);
 		else {
-			bool success = audiobookDropdown.set_active_id(dev.get_preferences().audiobook_playlist);
+			bool success = audiobookDropdown.select_id(dev.get_preferences().audiobook_playlist);
 			if(!success) {
 				//App.window.doAlert("Missing Sync Playlist", "The playlist named <b>" + dev.get_preferences().audiobook_playlist + "</b> is used to sync device <b>" + dev.getDisplayName() + "</b>, but could not be found.");
 				dev.get_preferences().audiobook_playlist = "";
@@ -247,49 +241,8 @@ public class BeatBox.DeviceSummaryWidget : Box {
 	}
 	
 	void setupLists() {
-		musicDropdown.set_model(musicList);
-		podcastDropdown.set_model(podcastList);
-		//audiobookDropdown.set_model(audiobookList);
-		
-		musicDropdown.set_id_column(1);
-		podcastDropdown.set_id_column(1);
-		//audiobookDropdown.set_id_column(1);
-		
-		musicDropdown.set_row_separator_func(rowSeparatorFunc);
-		podcastDropdown.set_row_separator_func(rowSeparatorFunc);
-		//audiobookDropdown.set_row_separator_func(rowSeparatorFunc);
-		
-		var music_cell = new CellRendererPixbuf();
-		musicDropdown.pack_start(music_cell, false);
-		musicDropdown.add_attribute(music_cell, "pixbuf", 2);
-		podcastDropdown.pack_start(music_cell, false);
-		podcastDropdown.add_attribute(music_cell, "pixbuf", 2);
-		//audiobookDropdown.pack_start(music_cell, false);
-		//audiobookDropdown.add_attribute(music_cell, "pixbuf", 2);
-		
-		var cell = new CellRendererText();
-		cell.ellipsize = Pango.EllipsizeMode.END;
-		musicDropdown.pack_start(cell, true);
-		musicDropdown.add_attribute(cell, "text", 1);
-		podcastDropdown.pack_start(cell, true);
-		podcastDropdown.add_attribute(cell, "text", 1);
-		//audiobookDropdown.pack_start(cell, true);
-		//audiobookDropdown.add_attribute(cell, "text", 1);
-		
 		musicDropdown.popup.connect(refreshLists);
 		podcastDropdown.popup.connect(refreshLists);
-		//audiobookDropdown.popup.connect(refreshLists);
-		
-		musicDropdown.set_button_sensitivity(SensitivityType.ON);
-		podcastDropdown.set_button_sensitivity(SensitivityType.ON);
-		//audiobookDropdown.set_button_sensitivity(SensitivityType.ON);
-	}
-	
-	bool rowSeparatorFunc(TreeModel model, TreeIter iter) {
-		string sep = "";
-		model.get(iter, 1, out sep);
-		
-		return sep == "<separator_item_unique_name>";
 	}
 	
 	void deviceNameChanged() {
@@ -304,12 +257,12 @@ public class BeatBox.DeviceSummaryWidget : Box {
 		pref.sync_podcasts = syncPodcasts.active;
 		//pref.sync_audiobooks = syncAudiobooks.active;
 		
-		pref.sync_all_music = musicDropdown.get_active() == 0;
-		pref.sync_all_podcasts = podcastDropdown.get_active() == 0;
+		pref.sync_all_music = musicDropdown.active == 0;
+		pref.sync_all_podcasts = podcastDropdown.active == 0;
 		//pref.sync_all_audiobooks = audiobookDropdown.get_active() == 0;
 		
-		pref.music_playlist = musicDropdown.get_active_id();
-		pref.podcast_playlist = podcastDropdown.get_active_id();
+		pref.music_playlist = musicDropdown.active_id;
+		pref.podcast_playlist = podcastDropdown.active_id;
 		//pref.audiobook_playlist = audiobookDropdown.get_active_id();
 		
 		musicDropdown.sensitive = syncMusic.active;
@@ -322,59 +275,28 @@ public class BeatBox.DeviceSummaryWidget : Box {
 	}
 	
 	public void refreshLists() {
-		string musicString = musicDropdown.get_active_id();
-		string podcastString = podcastDropdown.get_active_id();
+		string musicString = musicDropdown.active_id;
+		string podcastString = podcastDropdown.active_id;
 		//string audiobookString = audiobookDropdown.get_active_id();
 		
-		TreeIter iter;
-		musicList.clear();
-		podcastList.clear();
-		//audiobookList.clear();
+		musicDropdown.remove_all();
+		podcastDropdown.remove_all();
 		
-		/* add entire library options */
-		musicList.append(out iter);
-		musicList.set(iter, 0, null, 1, _("All Music"), 2, App.icons.MUSIC.render(IconSize.NORMAL));
-		podcastList.append(out iter);
-		podcastList.set(iter, 0, null, 1, _("All Podcasts"), 2, App.icons.PODCAST.render(IconSize.NORMAL));
-		//audiobookList.append(out iter);
-		//audiobookList.set(iter, 0, null, 1, "All Audiobooks");//, 2, App.icons.audiobook_icon.render(IconSize.NORMAL, audiobookDropdown.get_style_context()));
-		
-		/* add separator */
-		musicList.append(out iter);
-		musicList.set(iter, 0, null, 1, "<separator_item_unique_name>");
-		podcastList.append(out iter);
-		podcastList.set(iter, 0, null, 1, "<separator_item_unique_name>");
-		//audiobookList.append(out iter);
-		//audiobookList.set(iter, 0, null, 1, "<separator_item_unique_name>");
-		
-		/* add all playlists */
-		var smart_playlist_pix = App.icons.SMART_PLAYLIST.render(IconSize.NORMAL, null);
-		var playlist_pix = App.icons.PLAYLIST.render(IconSize.NORMAL, null);
-		
+		/* entire library options, a separator, then all playlists (a playlist's id is its name) */
+		musicDropdown.append(_("All Music"), _("All Music"));
+		podcastDropdown.append(_("All Podcasts"), _("All Podcasts"));
+		musicDropdown.append_separator();
+		podcastDropdown.append_separator();
 		foreach(var p in App.playlists.playlists()) {
-			var pix = (p is StaticPlaylist) ? playlist_pix : smart_playlist_pix;
-			//bool music, podcasts, audiobooks;
-			//test_media_types(App.library.medias_from_smart_playlist(p.rowid), out music, out podcasts, out audiobooks);
-			
-			//if(music) {
-				musicList.append(out iter);
-				musicList.set(iter, 0, p, 1, p.name, 2, pix);
-			//}
-			//if(podcasts) {
-				podcastList.append(out iter);
-				podcastList.set(iter, 0, p, 1, p.name, 2, pix);
-			//}
-			//if(audiobooks) {
-				//audiobookList.append(out iter);
-				//audiobookList.set(iter, 0, p, 1, p.name, 2, pix);
-			//}
+			musicDropdown.append(p.name, p.name, p);
+			podcastDropdown.append(p.name, p.name, p);
 		}
 		
-		if(!musicDropdown.set_active_id(musicString))
-			musicDropdown.set_active(0);
-		if(!podcastDropdown.set_active_id(podcastString))
-			podcastDropdown.set_active(0);
-		//if(!audiobookDropdown.set_active_id(audiobookString))
+		if(!musicDropdown.select_id(musicString))
+			musicDropdown.active = 0;
+		if(!podcastDropdown.select_id(podcastString))
+			podcastDropdown.active = 0;
+		//if(!audiobookDropdown.select_id(audiobookString))
 		//	audiobookDropdown.set_active(0);
 		
 		message("setting sensitivity\n");
@@ -429,7 +351,7 @@ public class BeatBox.DeviceSummaryWidget : Box {
 					
 					pref.music_playlist = "";
 					pref.sync_all_music = true;
-					musicDropdown.set_active(0);
+					musicDropdown.active = 0;
 					return;
 				}
 			}
@@ -455,7 +377,7 @@ public class BeatBox.DeviceSummaryWidget : Box {
 					App.window.doAlert(_("Sync Failed"), _("The playlist named %s is used to sync device %s, but could not be found.").printf("<b>" + pref.podcast_playlist + "</b>", "<b>" + dev.getDisplayName() + "</b>"));
 					pref.podcast_playlist = "";
 					pref.sync_all_podcasts = true;
-					musicDropdown.set_active(0);
+					musicDropdown.active = 0;
 					return;
 				}
 			}
@@ -490,7 +412,7 @@ public class BeatBox.DeviceSummaryWidget : Box {
 					App.window.doAlert("Sync Failed", "The playlist named <b>" + pref.audiobook_playlist + "</b> is used to sync device <b>" + dev.getDisplayName() + "</b>, but could not be found.");
 					pref.audiobook_playlist = "";
 					pref.sync_all_audiobooks = true;
-					musicDropdown.set_active(0);
+					musicDropdown.active = 0;
 					return;
 				}
 			}

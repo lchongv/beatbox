@@ -115,7 +115,7 @@ namespace BeatBox.Skins {
 	public string? preview_css (Skin skin, string css) {
 		if (provider == null) {
 			provider = new Gtk.CssProvider ();
-			Gtk.StyleContext.add_provider_for_display (Gdk.Display.get_default (), provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION + 2);
+			UI.add_css_provider (provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION + 2);
 		}
 		// relative url("image.png") would be read from the working folder: point them at the skin's
 		string data = css;
@@ -127,12 +127,7 @@ namespace BeatBox.Skins {
 			if (first == null)
 				first = _("Line %u: %s").printf ((uint) section.get_start_location ().lines + 1, err.message);
 		});
-		try {
-			provider.load_from_data (data.data);
-		} catch (Error err) {
-			if (first == null)
-				first = err.message;
-		}
+		provider.load_from_string (data);
 		provider.disconnect (handler);
 		return first;
 	}
@@ -169,14 +164,14 @@ namespace BeatBox.Skins {
 	public void apply (string id) {
 		if (id == "" || id == "native") // Native was Adwaita under another name
 			id = DEFAULT;
-		var display = Gdk.Display.get_default ();
+		UI.named_colors_changed (); // the colors drawn by hand are read again from the new skin
 		var gtk = Gtk.Settings.get_default ();
 		if (system_theme == null) {
 			system_theme = gtk.gtk_theme_name;
 			system_scheme = gtk.gtk_interface_color_scheme;
 		}
 		if (provider != null)
-			Gtk.StyleContext.remove_provider_for_display (display, provider);
+			UI.remove_css_provider (provider);
 		provider = null;
 		if (base_look == null) {
 			base_look = new Gtk.CssProvider ();
@@ -186,9 +181,9 @@ namespace BeatBox.Skins {
 		foreach (var skin in available ())
 			if (skin.id == id)
 				found = skin;
-		Gtk.StyleContext.remove_provider_for_display (display, base_look);
+		UI.remove_css_provider (base_look);
 		if (found == null || !found.native)
-			Gtk.StyleContext.add_provider_for_display (display, base_look, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION + 1);
+			UI.add_css_provider (base_look, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION + 1);
 		string theme = (found != null && found.theme != null) ? found.theme : system_theme;
 		if (gtk.gtk_theme_name != theme)
 			gtk.gtk_theme_name = theme;
@@ -201,12 +196,12 @@ namespace BeatBox.Skins {
 			if (skin.id != id)
 				continue;
 			provider = new Gtk.CssProvider ();
-			try {
-				provider.load_from_file (skin.css);
-			} catch (Error err) {
-				warning ("Could not load skin %s: %s", id, err.message);
-			}
-			Gtk.StyleContext.add_provider_for_display (display, provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION + 2);
+			ulong handler = provider.parsing_error.connect ((section, err) => {
+				warning ("Skin %s, line %u: %s", id, (uint) section.get_start_location ().lines + 1, err.message);
+			});
+			provider.load_from_file (skin.css);
+			provider.disconnect (handler);
+			UI.add_css_provider (provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION + 2);
 			return;
 		}
 		warning ("Skin %s not found", id);

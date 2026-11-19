@@ -5,6 +5,7 @@
  * version 2 of the License, or (at your option) any later version.
  */
 
+[GIR (visible = false)] // internal: plugins don't see it
 namespace BeatBox.ListUtils {
 	/**
 	 * Moves items to position index of list, keeping their order. index counts

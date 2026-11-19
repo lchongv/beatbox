@@ -116,15 +116,10 @@ public class BeatBox.SkinEditor : Gtk.Window {
 	/** Unsaved changes: save them, drop them or stay. Closes the window when that is done. */
 	async void confirm_close () {
 		if (text () != saved_text) {
-			var ask = new MessageDialog (this, DialogFlags.MODAL, MessageType.QUESTION, ButtonsType.NONE,
-				"%s", _("Save the changes to the skin?"));
-			ask.add_button (_("Close Without Saving"), ResponseType.REJECT);
-			ask.add_button (_("Cancel"), ResponseType.CANCEL);
-			ask.add_button (_("Save"), ResponseType.ACCEPT);
-			ask.set_default_response (ResponseType.ACCEPT);
-			var answer = yield UI.run_dialog (ask);
-			ask.destroy ();
-			if (!(answer == ResponseType.REJECT || (answer == ResponseType.ACCEPT && save ())))
+			// 0 close without saving, 1 cancel, 2 save
+			var answer = yield UI.choose (this, _("Save the changes to the skin?"), null,
+				{ _("Close Without Saving"), _("Cancel"), _("Save") }, 1, 2);
+			if (!(answer == 0 || (answer == 2 && save ())))
 				return;
 		}
 		if (pending != 0)
