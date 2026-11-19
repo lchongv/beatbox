@@ -111,9 +111,9 @@ fastcell { min-height: 23px; }
 /* the dividers around a list (column browser, Cover Flow, side bar, report): their invisible grab
  * area (Adwaita gives it 8 px on each side) would take the clicks on the titles and the first
  * column (check boxes): it goes away from the list only */
-paned.above-list.vertical > separator:not(.wide) { margin: -8px 0 0 0; }
-paned.before-list.horizontal > separator:not(.wide) { margin: 0 0 0 -8px; }
-paned.after-list.horizontal > separator:not(.wide) { margin: 0 -8px 0 0; }
+paned.above-list.vertical > separator:not(.wide) { margin: -8px 0 0 0; padding: 8px 0 0 0; background-clip: content-box; }
+paned.before-list.horizontal > separator:not(.wide) { margin: 0 0 0 -8px; padding: 0 0 0 8px; background-clip: content-box; }
+paned.after-list.horizontal > separator:not(.wide) { margin: 0 -8px 0 0; padding: 0 8px 0 0; background-clip: content-box; }
 fastcell checkbutton { padding: 0; margin: 0; min-height: 0; }
 fastcell checkbutton check { margin: 0; }
 """;
