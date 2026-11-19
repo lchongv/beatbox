@@ -20,7 +20,7 @@ extern void* classic_new();
 [CCode (cname = "bb_classic_vis_free")]
 extern void classic_free(void* vis);
 [CCode (cname = "bb_classic_vis_tick")]
-extern void classic_tick(void* vis, [CCode (array_length = false)] float[] bands);
+extern void classic_tick(void* vis, [CCode (array_length = false)] float[] bands, double dt);
 [CCode (cname = "bb_classic_vis_draw")]
 extern void classic_draw(void* vis, Cairo.Context cr, int width, int height);
 [CCode (cname = "bb_classic_vis_next")]
@@ -35,6 +35,14 @@ extern void classic_set_style(void* vis, int style);
 extern void classic_set_theme(void* vis, int theme);
 [CCode (cname = "bb_classic_vis_set_auto")]
 extern void classic_set_auto(void* vis, bool auto_switch);
+[CCode (cname = "bb_classic_vis_set_params")]
+extern void classic_set_params(void* vis, double speed, double transition_s, double interval_s, bool show_logos);
+[CCode (cname = "bb_classic_vis_set_masks")]
+extern void classic_set_masks(void* vis, uint styles, uint themes);
+[CCode (cname = "bb_classic_vis_set_initial")]
+extern void classic_set_initial(void* vis, int style, int theme);
+[CCode (cname = "bb_classic_vis_randomize")]
+extern void classic_randomize(void* vis);
 [CCode (cname = "bb_classic_vis_set_artwork")]
 extern void classic_set_artwork(void* vis, Gdk.Pixbuf? cover);
 
@@ -56,13 +64,14 @@ extern void c_numbers_end(void* previous);
 #endif
 
 public class BeatBox.Visualizer : DrawingArea {
-	// in the order of classic-visualizer.c's styles and palettes
-	const string[] STYLE_NAMES = { N_("Tunnel"), N_("Rays"), N_("Burst"), N_("Spectrum"), N_("Wave"),
+	// in the order of classic-visualizer.c's styles and palettes (Preferences › Visualizer lists them too)
+	public const string[] STYLE_NAMES = { N_("Tunnel"), N_("Rays"), N_("Burst"), N_("Spectrum"), N_("Wave"),
 	                               N_("Spectrogram"), N_("Stars"), N_("Lissajous"), N_("Flower"),
 	                               N_("Grid"), N_("Fire"), N_("Circles") };
-	const string[] THEME_NAMES = { N_("Amber"), N_("Ocean"), N_("Neon"), N_("Forest"), N_("Rainbow"), N_("Sunset") };
+	public const string[] THEME_NAMES = { N_("Amber"), N_("Ocean"), N_("Neon"), N_("Forest"), N_("Rainbow"), N_("Sunset") };
 
-	bool auto_change = true; // the effects change by themselves (menu)
+	// the effects change by themselves (the menu and Preferences › Visualizer)
+	bool auto_change { get { return App.settings.main.visualizer_auto_change; } }
 	PopMenu? menu = null;
 	GestureClick press;
 
@@ -71,6 +80,7 @@ public class BeatBox.Visualizer : DrawingArea {
 	uint classic_tick_id = 0;
 	float[] bands = new float[10]; // the spectrum as the classic effects read it
 	int64 last_spectrum = 0;
+	int64 last_tick = 0;
 
 	public Visualizer() {
 		set_draw_func(on_draw);
@@ -83,11 +93,9 @@ public class BeatBox.Visualizer : DrawingArea {
 		App.playback.spectrum_update.connect(on_spectrum);
 		App.playback.media_played.connect(() => update_artwork());
 		App.covers.cover_changed.connect(() => update_artwork());
-		App.settings.main.notify["visualizer-classic"].connect(() => {
-			if (get_mapped()) { // the other engine at once
-				stop();
-				start();
-			}
+		App.settings.main.notify.connect((obj, pspec) => {
+			if (pspec.name.has_prefix("visualizer-"))
+				setting_changed(pspec.name);
 		});
 #if HAVE_PROJECTM
 		App.playback.pcm_ready.connect(on_samples);
@@ -100,6 +108,39 @@ public class BeatBox.Visualizer : DrawingArea {
 			return;
 #endif
 		start_classic();
+	}
+
+	// Preferences › Visualizer: everything takes effect at once
+	void setting_changed(string name) {
+		if (!get_mapped())
+			return; // read when it starts
+		switch (name) {
+		case "visualizer-classic":
+		case "visualizer-fps":
+			stop(); // the other engine, or another frame rate
+			start();
+			return;
+		case "visualizer-style":
+			if (classic != null && App.settings.main.visualizer_style >= 0)
+				classic_set_style(classic, App.settings.main.visualizer_style); // shows the one chosen
+			break;
+		case "visualizer-palette":
+			if (classic != null && App.settings.main.visualizer_palette >= 0)
+				classic_set_theme(classic, App.settings.main.visualizer_palette);
+			break;
+		case "visualizer-auto-change":
+			if (classic != null)
+				classic_set_auto(classic, auto_change);
+#if HAVE_PROJECTM
+			last_preset = get_monotonic_time(); // a whole turn before the next change
+#endif
+			break;
+		}
+		if (classic != null)
+			apply_classic_settings();
+#if HAVE_PROJECTM
+		projectm_settings_changed = true; // applied at the next frame, with its context current
+#endif
 	}
 
 	void stop() {
@@ -132,16 +173,37 @@ public class BeatBox.Visualizer : DrawingArea {
 	void start_classic() {
 		classic = classic_new();
 		classic_set_auto(classic, auto_change);
+		apply_classic_settings();
+		// a random effect among the chosen ones, unless Preferences names the one to start on
+		classic_randomize(classic);
+		classic_set_initial(classic, App.settings.main.visualizer_style, App.settings.main.visualizer_palette);
 		update_artwork();
 		App.playback.want_spectrum(true);
-		classic_tick_id = Timeout.add(33, () => { // the steps the effects were made for (~30 fps)
-			if (get_monotonic_time() - last_spectrum > 150000) // paused or stopped: they rest
+		last_tick = get_monotonic_time();
+		int fps = App.settings.main.visualizer_fps.clamp(10, 60);
+		classic_tick_id = Timeout.add(1000 / fps, () => {
+			int64 now = get_monotonic_time();
+			double dt = (now - last_tick) / 1000000.0; // the effects move by time, at any frame rate
+			last_tick = now;
+			if (now - last_spectrum > 150000) // paused or stopped: they rest
 				for (int i = 0; i < bands.length; i++)
-					bands[i] *= 0.85f;
-			classic_tick(classic, bands);
+					bands[i] *= falling();
+			classic_tick(classic, bands, dt);
 			queue_draw();
 			return Source.CONTINUE;
 		});
+	}
+
+	void apply_classic_settings() {
+		var s = App.settings.main;
+		classic_set_params(classic, s.visualizer_speed / 100.0, s.visualizer_transition_ms / 1000.0,
+		                   s.visualizer_change_seconds, s.visualizer_logos);
+		classic_set_masks(classic, (uint) s.visualizer_styles, (uint) s.visualizer_palettes);
+	}
+
+	// how much of a band's level is kept, each step, as it falls (Preferences: smoothing)
+	static float falling() {
+		return (float) (App.settings.main.visualizer_smoothing.clamp(0, 95) / 100.0);
 	}
 
 	void stop_classic() {
@@ -162,13 +224,15 @@ public class BeatBox.Visualizer : DrawingArea {
 			return;
 		last_spectrum = get_monotonic_time();
 		int n = magnitudes.length;
+		float gain = (float) (App.settings.main.visualizer_sensitivity.clamp(10, 500) / 100.0);
+		float keep = falling();
 		for (int b = 0; b < bands.length; b++) {
 			double power = 0;
 			for (int i = b * n / bands.length; i < (b + 1) * n / bands.length; i++)
 				power += Math.pow(10, magnitudes[i] / 10);
 			double db = (10 * Math.log10(double.max(power, 1e-12))).clamp(-60, 0);
-			float level = (float) ((db + 60) / 60);
-			bands[b] = level > bands[b] ? level : bands[b] * 0.85f + level * 0.15f;
+			float level = float.min((float) ((db + 60) / 60) * gain, 1);
+			bands[b] = level > bands[b] ? level : bands[b] * keep + level * (1 - keep);
 		}
 	}
 
@@ -233,12 +297,7 @@ public class BeatBox.Visualizer : DrawingArea {
 		var change = new PopMenuCheck.with_label(_("Change Effects by Themselves"));
 		change.active = auto_change;
 		change.toggled.connect(() => {
-			auto_change = change.active;
-			if (classic != null)
-				classic_set_auto(classic, auto_change);
-#if HAVE_PROJECTM
-			last_preset = get_monotonic_time(); // a whole turn before the next change
-#endif
+			App.settings.main.visualizer_auto_change = change.active; // setting_changed does the rest
 		});
 		menu.append(change);
 		menu.append(new PopMenuSeparator());
@@ -308,9 +367,11 @@ public class BeatBox.Visualizer : DrawingArea {
 #if HAVE_PROJECTM
 	/* ---- projectM ---- */
 
-	const int64 PRESET_SECONDS = 30;
-	// ponytail: wider views get the frame scaled up; the read back costs per pixel, every frame
-	const int MAX_WIDTH = 1280;
+	// wider views get the frame scaled up from Preferences' width; the read back costs per pixel, every frame
+	static int max_width() {
+		return App.settings.main.visualizer_pm_max_width.clamp(320, 3840);
+	}
+	bool projectm_settings_changed = false;
 
 	void* gl = null;                  // the off-screen context, while on screen
 	void* instance = null;            // projectM, while on screen
@@ -355,8 +416,31 @@ public class BeatBox.Visualizer : DrawingArea {
 		// the presets sample these pictures (noise, shapes); without them they draw noise
 		var textures = Path.build_filename(Environment.get_user_data_dir(), "beatbox", "projectm-textures");
 		ProjectM.set_texture_search_paths(instance, { textures }, 1);
+		ProjectM.set_preset_switch_requested_event_callback(instance, on_switch_requested, this);
+		apply_projectm_settings();
 		wanted_preset = current_preset ?? random_preset();
 		return true;
+	}
+
+	// Preferences › Visualizer; with "C" numbers (projectM's own calls)
+	void apply_projectm_settings() {
+		var s = App.settings.main;
+		ProjectM.set_beat_sensitivity(instance, (float) (s.visualizer_pm_beat.clamp(0, 500) / 100.0));
+		ProjectM.set_soft_cut_duration(instance, s.visualizer_pm_blend_seconds.clamp(0, 30));
+		ProjectM.set_hard_cut_enabled(instance, s.visualizer_pm_hard_cuts);
+		ProjectM.set_hard_cut_duration(instance, 10); // at least this long on one preset before a cut
+		// BeatBox changes the presets itself (on_tick): projectM's own timer only asks, and is ignored
+		ProjectM.set_preset_duration(instance, s.visualizer_change_seconds.clamp(5, 3600));
+		size_t[] widths = { 32, 48, 96, 128 }, heights = { 24, 32, 72, 96 };
+		int mesh = s.visualizer_pm_mesh.clamp(0, 3);
+		ProjectM.set_mesh_size(instance, widths[mesh], heights[mesh]);
+	}
+
+	// projectM heard a strong beat (hard cuts on) or its own timer ran out: only the first counts
+	static void on_switch_requested(bool is_hard_cut, void* data) {
+		unowned Visualizer self = (Visualizer) data;
+		if (is_hard_cut && App.settings.main.visualizer_pm_hard_cuts && self.presets.length > 0)
+			self.wanted_preset = self.random_preset();
 	}
 
 	void stop_projectm() {
@@ -380,9 +464,10 @@ public class BeatBox.Visualizer : DrawingArea {
 	// the frame follows the view's size, up to MAX_WIDTH; a new size is a new pbuffer
 	bool fit_frame() {
 		int width = int.max(1, get_width()), height = int.max(1, get_height());
-		if (width > MAX_WIDTH) {
-			height = int.max(1, height * MAX_WIDTH / width);
-			width = MAX_WIDTH;
+		int max = max_width();
+		if (width > max) {
+			height = int.max(1, height * max / width);
+			width = max;
 		}
 		if (frame != null && frame.get_width() == width && frame.get_height() == height)
 			return true;
@@ -400,7 +485,11 @@ public class BeatBox.Visualizer : DrawingArea {
 		var numbers = c_numbers_begin();
 		if (fit_frame()) {
 			offscreen_gl_make_current(gl); // every projectM call that draws or loads goes to its own context
-			if (wanted_preset == null && auto_change && get_monotonic_time() - last_preset > PRESET_SECONDS * 1000000)
+			if (projectm_settings_changed) {
+				projectm_settings_changed = false;
+				apply_projectm_settings();
+			}
+			if (wanted_preset == null && auto_change && get_monotonic_time() - last_preset > App.settings.main.visualizer_change_seconds.clamp(5, 3600) * (int64) 1000000)
 				wanted_preset = random_preset();
 			if (wanted_preset != null) {
 				show_preset(wanted_preset);
@@ -472,9 +561,8 @@ public class BeatBox.Visualizer : DrawingArea {
 		} catch (FileError err) {
 			// no presets folder
 		}
-		CompareDataFunc<string> by_name = (a, b) => a.collate(b);
-		dirs.sort(by_name);
-		milks.sort(by_name);
+		dirs.sort((a, b) => a.collate(b));
+		milks.sort((a, b) => a.collate(b));
 		folders = dirs.to_array();
 		files = milks.to_array();
 	}

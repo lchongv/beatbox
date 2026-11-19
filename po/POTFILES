@@ -77,6 +77,8 @@ src/Widgets/TopDisplay/TimeScale.vala
 src/Widgets/TrackReport.vala
 src/Widgets/Visualizer.vala
 src/Widgets/ColumnBrowser.vala
+src/Preferences/VisualizerPreferences.vala
+src/Windows/CreditsWindow.vala
 src/Windows/AddPodcastWindow.vala
 src/Windows/DirectoryDialog.vala
 src/Windows/Editors/FieldEditorImpl.vala

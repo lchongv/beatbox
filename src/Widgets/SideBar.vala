@@ -182,7 +182,9 @@ public class BeatBox.SideBar : Gtk.TreeView {
 		tree.set(it, SideBarColumn.COLUMN_VISIBLE, val);
 		
 		if(val && !was) {
-			expand_row(filter.get_path(convertToFilter(it)), true);
+			var shown = convertToFilter(it); // null while a parent is hidden: nothing to expand yet
+			if(shown != null)
+				expand_row(filter.get_path(shown), true);
 		}
 	}
 	

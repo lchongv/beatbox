@@ -35,16 +35,32 @@ public abstract class BeatBox.SimplePreferences : GLib.Object, PreferencesSectio
 	public Widget widget { get { return content; } }
 
 	protected Box content = new Box(Orientation.VERTICAL, 10);
+	protected Box? target = null; // where add_heading and add_row put things: content when null
+
+	Box rows { get { return target ?? content; } }
 
 	protected void add_heading(string text) {
 		var label = new Label("");
 		label.xalign = 0.0f;
 		label.set_markup("<b>" + Markup.escape_text(text) + "</b>");
-		content.append(label);
+		rows.append(label);
 	}
 
 	protected void add_row(Widget row) {
-		content.append(UI.wrap_alignment(row, 0, 0, 0, 10));
+		rows.append(UI.wrap_alignment(row, 0, 0, 0, 10));
+	}
+
+	/** What add_heading and add_row put from here to end_advanced shows only with
+	 *  "Show advanced settings" on (the check at the bottom of the Preferences window) */
+	protected void begin_advanced() {
+		var box = new Box(Orientation.VERTICAL, 10);
+		App.settings.main.bind_property("show-advanced-preferences", box, "visible", BindingFlags.SYNC_CREATE);
+		content.append(box);
+		target = box;
+	}
+
+	protected void end_advanced() {
+		target = null;
 	}
 
 	protected CheckButton add_check(string text, bool active) {
@@ -80,11 +96,13 @@ public class BeatBox.LibraryPreferences : SimplePreferences {
 		add_row(libraries);
 		fill_libraries();
 		add_heading(_("Library Management"));
-		var organize = add_check(_("Keep media folders organized"), App.settings.main.update_folder_hierarchy);
-		var write = add_check(_("Write metadata to file"), App.settings.main.write_metadata_to_file);
 		var watch = add_check(_("Import songs that appear in the music folder"), App.settings.main.watch_music_folder);
 		watch.toggled.connect(() => { App.settings.main.watch_music_folder = watch.active; });
 		var copy = add_check(_("Copy files to library folder when imported"), App.settings.main.copy_imported_music);
+		begin_advanced();
+		var organize = add_check(_("Keep media folders organized"), App.settings.main.update_folder_hierarchy);
+		var write = add_check(_("Write metadata to file"), App.settings.main.write_metadata_to_file);
+		end_advanced();
 		organize.toggled.connect(() => { App.settings.main.update_folder_hierarchy = organize.active; });
 		write.toggled.connect(() => { App.settings.main.write_metadata_to_file = write.active; });
 		copy.toggled.connect(() => { App.settings.main.copy_imported_music = copy.active; });
@@ -151,6 +169,12 @@ public class BeatBox.PlaybackPreferences : SimplePreferences {
 
 	public PlaybackPreferences() {
 		add_heading(_("Playback"));
+		var crossfade = new SpinButton.with_range(0, 12, 1);
+		crossfade.value = App.settings.main.crossfade_seconds;
+		crossfade.value_changed.connect(() => { App.settings.main.crossfade_seconds = (int)crossfade.value; });
+		add_row(labelled(_("Crossfade between songs:"), crossfade, _("seconds (0: none, songs follow without a gap)")));
+
+		begin_advanced();
 		var rg = new ChoiceBox();
 		rg.append("0", _("Off"));
 		rg.append("1", _("Per song"));
@@ -158,11 +182,7 @@ public class BeatBox.PlaybackPreferences : SimplePreferences {
 		rg.active_id = App.settings.equalizer.replaygain.to_string();
 		rg.changed.connect(() => { App.settings.equalizer.replaygain = int.parse(rg.active_id); });
 		add_row(labelled(_("Volume normalization (ReplayGain):"), rg, _("from the next song")));
-
-		var crossfade = new SpinButton.with_range(0, 12, 1);
-		crossfade.value = App.settings.main.crossfade_seconds;
-		crossfade.value_changed.connect(() => { App.settings.main.crossfade_seconds = (int)crossfade.value; });
-		add_row(labelled(_("Crossfade between songs:"), crossfade, _("seconds (0: none, songs follow without a gap)")));
+		end_advanced();
 	}
 }
 
@@ -270,20 +290,10 @@ public class BeatBox.AppearancePreferences : SimplePreferences {
 		});
 		skinChooser.changed();
 
+		begin_advanced();
 		var aqua = add_check(_("Mac OS X Tiger scrollbars (applies on restart)"), App.settings.main.aqua_scrollbars);
 		aqua.toggled.connect(() => { App.settings.main.aqua_scrollbars = aqua.active; });
-#if HAVE_PROJECTM
-		// without projectM there is nothing to choose: the visualizer shows the classic effects
-		add_heading(_("Visualizer"));
-		var classic = add_check(_("Use the classic effects instead of the MilkDrop presets"), App.settings.main.visualizer_classic);
-		classic.toggled.connect(() => { App.settings.main.visualizer_classic = classic.active; });
-		var classic_note = new Label(_("They need no OpenGL. The visualizer also turns to them when the MilkDrop presets can't start."));
-		classic_note.xalign = 0.0f;
-		classic_note.wrap = true;
-		classic_note.max_width_chars = 60;
-		classic_note.add_css_class("dim-label");
-		add_row(classic_note);
-#endif
+		end_advanced();
 	}
 }
 
@@ -493,7 +503,9 @@ public class BeatBox.CoverPreferences : SimplePreferences {
 		add_heading(_("Column Browser"));
 		var browser = add_check(_("Show the Genre, Artist and Album boxes above the song list"), App.settings.main.show_column_browser);
 		browser.toggled.connect(() => { App.settings.main.show_column_browser = browser.active; });
+		begin_advanced();
 		add_browser_column_choosers();
+		end_advanced();
 
 		add_heading(_("Cover Grid"));
 		var clickMode = new ChoiceBox();
@@ -513,8 +525,10 @@ public class BeatBox.CoverPreferences : SimplePreferences {
 		var coverHint = new Label(_("Share of the band's width; 0 shows no cover"));
 		coverHint.add_css_class("dim-label");
 		coverHint.xalign = 0.0f;
+		begin_advanced();
 		add_row(coverBox);
 		add_row(coverHint);
+		end_advanced();
 
 		add_heading(_("Missing Album Art"));
 		var download = add_check(_("Download missing album art from the internet (MusicBrainz, Apple Music)"), App.settings.main.download_covers);
@@ -542,22 +556,11 @@ public class BeatBox.AboutPreferences : SimplePreferences {
 		top.append(name);
 		content.append(top);
 
-		add_heading(_("Authors"));
-		add_row(text("Scott Ringwelski\nVictor Eduardo M."));
-		add_heading(_("Contributions"));
-		add_row(text(_("Di Weng (%s): shortening texts by characters instead of bytes").printf(link("https://github.com/w1ndy/beatbox", "w1ndy")), true));
-		add_heading(_("Artwork"));
-		add_row(text("Scott Ringwelski\nDanielle Foré"));
-		add_heading(_("2026 update"));
-		add_row(text(_("Ported to GTK 4, GStreamer 1.0 and libsoup 3, with a new look, Cover Flow, the inline cover grid, internet radio and podcast directories, online album art and skins.")));
-
-		add_heading(_("Services"));
-		add_row(text(_("Internet radio stations: %s").printf(link("https://www.radio-browser.info", "radio-browser.info") + ", " + link("https://directory.shoutcast.com", "SHOUTcast")
-		             + ", " + link("https://laut.fm", "laut.fm") + ", " + link("https://dir.xiph.org", "Icecast"))
-		             + "\n" + _("Podcasts: %s").printf(link("https://podcasts.apple.com", "Apple Podcasts"))
-		             + "\n" + _("Album art: %s, with %s as fallback").printf(link("https://musicbrainz.org", "MusicBrainz") + " / " + link("https://coverartarchive.org", "Cover Art Archive"), link("https://music.apple.com", "Apple Music"))
-		             + "\n" + _("Lyrics: %s").printf(link("https://lrclib.net", "LRCLIB"))
-		             + "\n" + _("Scrobbling: %s").printf(link("https://www.last.fm", "Last.fm") + ", " + link("https://listenbrainz.org", "ListenBrainz")), true));
+		var credits = new Button.with_label(_("Credits…"));
+		credits.halign = Align.START;
+		credits.tooltip_text = _("The people, the libraries and the services behind BeatBox");
+		credits.clicked.connect(() => new CreditsWindow(UI.window_of(content)).present());
+		add_row(credits);
 
 		add_heading(_("License"));
 		add_row(text(_("Free software under the %s.").printf(link("https://www.gnu.org/licenses/gpl-3.0.html", _("GNU General Public License, version 3")))

@@ -1,4 +1,4 @@
-project('beatbox', 'vala', 'c', version: '1.2.62')
+project('beatbox', 'vala', 'c', version: '1.2.63')
 
 gnome = import('gnome')
 i18n = import('i18n')
@@ -260,6 +260,7 @@ app_sources = files(
   'src/NowPlayingView/SongSummarySection.vala',
   'src/NowPlayingView/PodcastSummarySection.vala',
   'src/Preferences/BehaviorPreferences.vala',
+  'src/Preferences/VisualizerPreferences.vala',
   'src/Preferences/ShortcutsPreferences.vala',
   'src/Preferences/LastfmPreferences.vala',
   'src/Preferences/MusicPreferences.vala',
@@ -317,6 +318,7 @@ app_sources = files(
   'src/Windows/Editors/InfoViewport.vala',
   'src/Windows/EqualizerWindow.vala',
   'src/Windows/PreferencesWindow.vala',
+  'src/Windows/CreditsWindow.vala',
   'src/Windows/PlaylistNameWindow.vala',
   'src/Windows/AddPodcastWindow.vala',
   'src/Windows/DirectoryDialog.vala',

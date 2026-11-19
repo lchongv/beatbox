@@ -37,6 +37,8 @@ public class BeatBox.PreferencesWindow : Gtk.Window {
 	Notebook notebook;
 	
 	Button saveChanges;
+	CheckButton advanced;
+	PreferencesSection first_section; // shown when the page on screen is hidden
 	
 	public PreferencesWindow () {
 		sections = new HashMap<PreferencesSection, TreeIter?>();
@@ -70,7 +72,10 @@ public class BeatBox.PreferencesWindow : Gtk.Window {
 		
 		notebook.show_tabs = false;
 		notebook.show_border = false;
-		notebook_scroll.set_policy(PolicyType.NEVER, PolicyType.NEVER);
+		// the window takes each page's height, up to a screenful: longer pages (Visualizer) scroll
+		notebook_scroll.set_policy(PolicyType.NEVER, PolicyType.AUTOMATIC);
+		notebook_scroll.propagate_natural_height = true;
+		notebook_scroll.max_content_height = 640;
 		
 		notebook.hexpand = true;
 		notebook.margin_start = notebook.margin_end = 10;
@@ -84,9 +89,18 @@ public class BeatBox.PreferencesWindow : Gtk.Window {
 		
 		saveChanges = new Button.with_label(_("Done"));
 		
+		// Basic or advanced: off, the side bar keeps the everyday pages and those hide their
+		// advanced rows (SimplePreferences.begin_advanced); on, everything shows
+		advanced = new CheckButton.with_label(_("Show advanced settings"));
+		App.settings.main.bind_property("show-advanced-preferences", advanced, "active",
+			BindingFlags.BIDIRECTIONAL | BindingFlags.SYNC_CREATE);
+		advanced.hexpand = true;
+		advanced.halign = Align.START;
+		App.settings.main.notify["show-advanced-preferences"].connect(update_visible_sections);
+
 		// Add save button
 		var bottomButtons = new Box(Orientation.HORIZONTAL, 6);
-		bottomButtons.halign = Align.END;
+		bottomButtons.append(advanced);
 		bottomButtons.append(saveChanges);
 		
 		list_to_content.vexpand = true;
@@ -107,11 +121,13 @@ public class BeatBox.PreferencesWindow : Gtk.Window {
 	
 	void add_sections() {
 		var library_pref = new LibraryPreferences();
+		first_section = library_pref;
 		add_section(library_pref);
 		add_section(new PlaybackPreferences());
 		add_section(new RecordingPreferences());
 		add_section(new AppearancePreferences());
 		add_section(new LcdPreferences());
+		add_section(new VisualizerPreferences());
 		add_section(new MiniPlayerPreferences());
 		add_section(new CoverPreferences());
 		add_section(new ShortcutsPreferences());
@@ -125,7 +141,33 @@ public class BeatBox.PreferencesWindow : Gtk.Window {
 			}
 		}
 		
+		update_visible_sections();
 		side_bar.setSelectedIter(side_bar.convertToFilter(sections.get(library_pref)));
+	}
+
+	/** The pages shown without "Show advanced settings": about five everyday ones */
+	static bool is_basic(PreferencesSection section) {
+		return section is LibraryPreferences || section is PlaybackPreferences || section is AppearancePreferences
+		    || section is CoverPreferences || section is AboutPreferences;
+	}
+
+	void update_visible_sections() {
+		bool all = App.settings.main.show_advanced_preferences;
+		var on_screen = side_bar.getSelectedWidget();
+		bool on_screen_hidden = false;
+		bool any_library = false;
+		foreach (var section in sections.keys)
+			any_library = any_library || ((all || is_basic(section)) && section.category == PreferencesSectionCategory.LIBRARIES);
+		side_bar.setVisibility(libraries_iter, any_library); // its heading goes with its pages, and first
+		foreach (var e in sections.entries) {
+			bool shown = all || is_basic(e.key);
+			side_bar.setVisibility(e.value, shown);
+			if (!shown && e.key.widget == on_screen)
+				on_screen_hidden = true;
+		}
+		side_bar.expand_all();
+		if (on_screen_hidden)
+			side_bar.setSelectedIter(side_bar.convertToFilter(sections.get(first_section)));
 	}
 	
 	public void add_section(PreferencesSection section) {
@@ -143,6 +185,8 @@ public class BeatBox.PreferencesWindow : Gtk.Window {
 		TreeIter? iter = side_bar.addItem(parent, null, section, section.widget, section.icon, Markup.escape_text(section.title), null, false, false, false);
 		sections.set(section, iter);
 		notebook.append_page(section.widget);
+		if (first_section != null && !App.settings.main.show_advanced_preferences && !is_basic(section))
+			side_bar.setVisibility(iter, false); // a plugin's page, added later
 	}
 	
 	public void remove_section(PreferencesSection section) {

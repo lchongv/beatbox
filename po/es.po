@@ -4477,3 +4477,226 @@ msgstr "No necesitan OpenGL. El visualizador también recurre a ellos cuando los
 #: src/Core/LibrarySwitcher.vala:83
 msgid "(None)"
 msgstr "(Ninguna)"
+
+msgid "Track Artist"
+msgstr "Artista de la pista"
+
+msgid "Decade"
+msgstr "Década"
+
+#, c-format
+msgid "All (%s)"
+msgstr "Todos (%s)"
+
+msgid "Effects"
+msgstr "Efectos"
+
+msgid "Change the effect by itself every"
+msgstr "Cambiar de efecto solo cada"
+
+msgid "Classic effect to start with:"
+msgstr "Efecto clásico con el que empezar:"
+
+msgid "Colors to start with:"
+msgstr "Colores con los que empezar:"
+
+msgid "Show the logos and the album cover in the middle of the classic effects"
+msgstr "Mostrar los logotipos y la carátula en el centro de los efectos clásicos"
+
+msgid "Show advanced settings"
+msgstr "Mostrar los ajustes avanzados"
+
+msgid "Sound"
+msgstr "Sonido"
+
+msgid "Sensitivity:"
+msgstr "Sensibilidad:"
+
+msgid "louder moves the effects more"
+msgstr "más alto mueve más los efectos"
+
+msgid "Smoothing:"
+msgstr "Suavizado:"
+
+msgid "how slowly the levels fall"
+msgstr "lo despacio que bajan los niveles"
+
+msgid "Classic Effects"
+msgstr "Efectos clásicos"
+
+msgid "Speed:"
+msgstr "Velocidad:"
+
+msgid "Frames per second:"
+msgstr "Fotogramas por segundo:"
+
+#, c-format
+msgid "%.1f s"
+msgstr "%.1f s"
+
+msgid "Fade between two effects:"
+msgstr "Fundido entre dos efectos:"
+
+msgid "Effects the changes pick from:"
+msgstr "Efectos entre los que se cambia:"
+
+msgid "Colors the changes pick from:"
+msgstr "Colores entre los que se cambia:"
+
+msgid "MilkDrop Presets"
+msgstr "Presets de MilkDrop"
+
+msgid "Beat sensitivity:"
+msgstr "Sensibilidad al ritmo:"
+
+#, c-format
+msgid "%d s"
+msgstr "%d s"
+
+msgid "Fade between two presets:"
+msgstr "Fundido entre dos presets:"
+
+msgid "Cut to another preset on strong beats"
+msgstr "Saltar a otro preset en los golpes fuertes"
+
+#, c-format
+msgid "%d pixels wide"
+msgstr "%d píxeles de ancho"
+
+msgid "Drawn up to:"
+msgstr "Dibujar hasta:"
+
+msgid "wider views scale it up"
+msgstr "en vistas más anchas se amplía"
+
+msgid "Low"
+msgstr "Baja"
+
+msgid "Normal"
+msgstr "Normal"
+
+msgid "High"
+msgstr "Alta"
+
+msgid "Very high"
+msgstr "Muy alta"
+
+msgid "Detail of the motion:"
+msgstr "Detalle del movimiento:"
+
+msgid "Higher values look smoother and cost more processor and graphics time."
+msgstr "Los valores altos se ven más suaves y gastan más procesador y gráfica."
+
+#, c-format
+msgid "Presets go in %s."
+msgstr "Los presets van en %s."
+
+msgid "Restore Defaults"
+msgstr "Restablecer valores predeterminados"
+
+msgid "Any (at random)"
+msgstr "Cualquiera (al azar)"
+
+msgid "Credits"
+msgstr "Créditos"
+
+msgid "Ported to GTK 4, GStreamer 1.0 and libsoup 3, with a new look, Cover Flow, the inline cover grid, the column browser, internet radio and podcast directories, online album art, synced lyrics, the visualizer and skins."
+msgstr "Portado a GTK 4, GStreamer 1.0 y libsoup 3, con un aspecto nuevo, Cover Flow, la cuadrícula de carátulas desplegable, el examinador de columnas, directorios de radio por internet y de podcasts, carátulas desde internet, letras sincronizadas, el visualizador y skins."
+
+#, c-format
+msgid "BeatBox is written in %s and built on these free libraries:"
+msgstr "BeatBox está escrito en %s y se apoya en estas librerías libres:"
+
+msgid "the interface"
+msgstr "la interfaz"
+
+msgid "files, settings, D-Bus and the main loop"
+msgstr "archivos, ajustes, D-Bus y el bucle principal"
+
+msgid "drawing, text and pictures"
+msgstr "dibujo, texto e imágenes"
+
+msgid "collections"
+msgstr "colecciones de datos"
+
+msgid "playback, the equalizer and effects, audio CDs, recording radio, the spectrum"
+msgstr "reproducción, ecualizador y efectos, CD de audio, grabación de radio, el espectro"
+
+msgid "reading and writing tags and covers"
+msgstr "lectura y escritura de etiquetas y carátulas"
+
+msgid "everything from the internet"
+msgstr "todo lo que viene de internet"
+
+msgid "the answers of the online services"
+msgstr "las respuestas de los servicios en línea"
+
+msgid "podcast feeds and iTunes libraries"
+msgstr "canales de podcasts y colecciones de iTunes"
+
+msgid "the library database"
+msgstr "la base de datos de la colección"
+
+msgid "public domain"
+msgstr "dominio público"
+
+msgid "desktop notifications"
+msgstr "notificaciones del escritorio"
+
+msgid "the MilkDrop presets of the visualizer"
+msgstr "los presets de MilkDrop del visualizador"
+
+msgid "drawing the visualizer off screen"
+msgstr "dibujar el visualizador fuera de pantalla"
+
+msgid "syncing iPods"
+msgstr "sincronizar iPods"
+
+msgid "identifying songs by their sound, when installed"
+msgstr "identificar canciones por su sonido, si está instalado"
+
+#, c-format
+msgid "Song identification: %s"
+msgstr "Identificación de canciones: %s"
+
+msgid "(none)"
+msgstr "(ninguna)"
+
+msgid "First column:"
+msgstr "Primera columna:"
+
+msgid "Second column:"
+msgstr "Segunda columna:"
+
+msgid "Third column:"
+msgstr "Tercera columna:"
+
+msgid "Fourth column:"
+msgstr "Cuarta columna:"
+
+msgid "Column Browser"
+msgstr "Examinador de columnas"
+
+msgid "Show the Genre, Artist and Album boxes above the song list"
+msgstr "Mostrar las cajas de Género, Artista y Álbum encima de la lista de canciones"
+
+msgid "Credits…"
+msgstr "Créditos…"
+
+msgid "The people, the libraries and the services behind BeatBox"
+msgstr "Las personas, librerías y servicios detrás de BeatBox"
+
+msgid "Show or hide the column browser"
+msgstr "Mostrar u ocultar el examinador de columnas"
+
+msgid "Software Libraries"
+msgstr "Librerías de software"
+
+msgid "New shortcut…"
+msgstr "Nuevo atajo…"
+
+msgid "Disabled"
+msgstr "Desactivado"
+
+msgid "Show all"
+msgstr "Mostrar todo"

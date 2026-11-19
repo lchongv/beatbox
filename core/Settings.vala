@@ -330,6 +330,26 @@ public class BeatBox.Settings {
         public int album_detail_cover_percent { get; set; }
         public bool download_covers { get; set; }
         public bool visualizer_classic { get; set; } // the built-in effects instead of projectM's (Visualizer)
+        public bool show_advanced_preferences { get; set; } // Preferences shows every page and the advanced rows
+        // Preferences › Visualizer. Basic:
+        public bool visualizer_auto_change { get; set; }   // the effects change by themselves
+        public int visualizer_change_seconds { get; set; } // ...every this many seconds
+        public int visualizer_style { get; set; }          // classic effect to start on, -1 any
+        public int visualizer_palette { get; set; }        // classic colors to start on, -1 any
+        public bool visualizer_logos { get; set; }         // the logos and the cover take turns in the middle
+        // Advanced:
+        public int visualizer_sensitivity { get; set; }    // % of the spectrum's level (100 as it is)
+        public int visualizer_smoothing { get; set; }      // % of the last level kept as it falls (0..95)
+        public int visualizer_speed { get; set; }          // % of the classic effects' motion
+        public int visualizer_fps { get; set; }            // frames per second of the classic effects
+        public int visualizer_transition_ms { get; set; }  // fade between two classic effects
+        public int visualizer_styles { get; set; }         // bit n: classic effect n takes part in the changes
+        public int visualizer_palettes { get; set; }       // bit n: palette n takes part in the changes
+        public int visualizer_pm_beat { get; set; }        // projectM's beat sensitivity, % (100 = 1.0)
+        public int visualizer_pm_blend_seconds { get; set; } // projectM's fade between two presets
+        public bool visualizer_pm_hard_cuts { get; set; }  // projectM cuts to another preset on strong beats
+        public int visualizer_pm_max_width { get; set; }   // projectM draws up to this width, then scales up
+        public int visualizer_pm_mesh { get; set; }        // projectM's mesh: 0 low, 1 normal, 2 high, 3 very high
         
         /** Where recordings go: the folder chosen, or Recordings in the user's music folder */
         public string recordings_path () {
@@ -365,11 +385,35 @@ public class BeatBox.Settings {
             album_detail_cover_percent = 25;
             download_covers = true;
             visualizer_classic = false;
+            show_advanced_preferences = false;
+            reset_visualizer ();
             init_config ("settings", "net.launchpad.beatbox.Settings", {
                 "library-name", "music-folder", "music-mount-name", "watch-music-folder",
                 "last-media-playing", "last-media-position" });
             if (library != ConfigSection.open_library ())
                 library = ConfigSection.open_library (); // it named a library that is gone
+        }
+
+        /** The visualizer's effects as they come (Preferences › Visualizer, "Restore Defaults");
+         *  the engine and whether the advanced settings show are left as they are */
+        public void reset_visualizer () {
+            visualizer_auto_change = true;
+            visualizer_change_seconds = 25;
+            visualizer_style = -1;
+            visualizer_palette = -1;
+            visualizer_logos = true;
+            visualizer_sensitivity = 100;
+            visualizer_smoothing = 85;
+            visualizer_speed = 100;
+            visualizer_fps = 30;
+            visualizer_transition_ms = 1300;
+            visualizer_styles = 0xFFF;
+            visualizer_palettes = 0x3F;
+            visualizer_pm_beat = 100;
+            visualizer_pm_blend_seconds = 3;
+            visualizer_pm_hard_cuts = false;
+            visualizer_pm_max_width = 1280;
+            visualizer_pm_mesh = 1;
         }
     }
 

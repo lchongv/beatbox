@@ -63,6 +63,14 @@ struct _BbClassicVis {
   double      logo_clock;    /* cyclic clock (s) for the logo fade */
   float       spec_hist[SPEC_HIST_W][N_BANDS];
   int         spec_head;     /* index of the most recent column */
+  /* Set from Preferences › Visualizer (bb_classic_vis_set_params / _set_masks) */
+  double      speed;         /* 1 = the motion the effects were made for */
+  double      transition_s;  /* seconds of the fade between two effects */
+  double      interval_s;    /* seconds between automatic changes */
+  gboolean    show_logos;    /* Tux, the distro, the cover and GNU take turns in the middle */
+  guint       style_mask;    /* bit n: style n takes part in the changes */
+  guint       theme_mask;    /* bit n: palette n takes part in the changes */
+  double      spec_clock;    /* the spectrogram gets a column every ~33 ms, whatever the frame rate */
 };
 
 /* Convert HSV→RGB. h in [0,1). Reusable core. */
@@ -932,79 +940,101 @@ bb_classic_vis_draw (BbClassicVis *self, cairo_t *cr, int w, int h)
   /* Centre icon cycle: Tux / distro / album art / GNU rotate with fades and
    * empty gaps, all configured in Preferences › Window › Visualizer.
    * Position respects vis.icon_pos (center / corner / edge). */
-  draw_icon_cycle (self, cr, w, h, icx, icy, e, fast);
+  if (self->show_logos)
+    draw_icon_cycle (self, cr, w, h, icx, icy, e, fast);
 }
 
 /* Cambia a un estilo ELEGIDO AL AZAR (distinto del actual) y a una
  * paleta al azar, arrancando la disolvencia suave. Sustituye al antiguo
  * sequential advance: so the order of styles is not predictable. */
+/* A random index below n, in mask (when the mask leaves any), other than current if possible */
+static int
+pick_other (int n, guint mask, int current)
+{
+  int candidates[32];
+  int count = 0;
+  for (int i = 0; i < n && i < 32; i++)
+    if ((mask & (1u << i)) && i != current)
+      candidates[count++] = i;
+  if (count == 0) {
+    /* only the current one is chosen (or none): keep it if allowed, else any other */
+    if (current >= 0 && (mask & (1u << current)))
+      return current;
+    for (int i = 0; i < n && i < 32; i++)
+      if (i != current)
+        candidates[count++] = i;
+  }
+  return count ? candidates[g_random_int_range (0, count)] : MAX (current, 0);
+}
+
+/* Cambia a un estilo ELEGIDO AL AZAR (distinto del actual, entre los que
+ * Preferences deja) y a una paleta al azar, arrancando la disolvencia suave. */
 static void
 vis_switch_random (BbClassicVis *self)
 {
-  self->prev_style = self->style;
-  VisStyle next = self->style;
-  if (VIS_N_STYLES > 1) {
-    /* elegir entre los (N-1) estilos restantes y saltar el actual */
-    int r = g_random_int_range (0, VIS_N_STYLES - 1);
-    if (r >= (int) self->style) r += 1;
-    next = (VisStyle) r;
+  int next = pick_other (VIS_N_STYLES, self->style_mask, (int) self->style);
+  if (next != (int) self->style) {
+    self->prev_style = self->style;
+    self->style = (VisStyle) next;
+    self->transition = 0.0;      /* iniciar disolvencia hacia el nuevo estilo */
   }
-  self->style = next;
-  self->transition = 0.0;        /* iniciar disolvencia hacia el nuevo estilo */
   /* Palette also random, decoupled from the style, for lots of variety. */
-  if (VIS_N_THEMES > 1) {
-    int t = g_random_int_range (0, VIS_N_THEMES - 1);
-    if (t >= self->theme) t += 1;
-    self->theme = t;
-  }
+  self->theme = pick_other (VIS_N_THEMES, self->theme_mask, self->theme);
 }
 
-/* One step of ~33 ms with the spectrum's 10 bands (0..1; NULL = silence) */
+/* One step of dt seconds with the spectrum's 10 bands (0..1; NULL = silence).
+ * The effects were made for steps of 33 ms: every rate below is scaled to dt,
+ * so the motion is the same at any frame rate (and `speed` times it). */
 void
-bb_classic_vis_tick (BbClassicVis *self, const float *bands)
+bb_classic_vis_tick (BbClassicVis *self, const float *bands, double dt)
 {
+  dt = CLAMP (dt, 0.001, 0.25);
+  double steps = dt / 0.033;           /* how many of the original steps this one is */
   float mag[N_BANDS] = { 0 };
   if (bands)
     memcpy (mag, bands, sizeof mag);
+  float attack = 1.0f - powf (1.0f - 0.6f, (float) steps);
+  float decay = 1.0f - powf (1.0f - 0.12f, (float) steps);
   float sum = 0;
   for (int i = 0; i < N_BANDS; ++i) {
     float tgt = CLAMP (mag[i], 0.0f, 1.0f);
     /* Fast attack, slow decay for pleasant motion. */
-    if (tgt > self->smooth[i]) self->smooth[i] += (tgt - self->smooth[i]) * 0.6f;
-    else                       self->smooth[i] += (tgt - self->smooth[i]) * 0.12f;
+    if (tgt > self->smooth[i]) self->smooth[i] += (tgt - self->smooth[i]) * attack;
+    else                       self->smooth[i] += (tgt - self->smooth[i]) * decay;
     sum += self->smooth[i];
   }
   float e = CLAMP (sum / N_BANDS * 1.6f, 0.0f, 1.0f);
-  self->energy += (e - self->energy) * 0.2f;
+  self->energy += (e - self->energy) * (1.0f - powf (0.8f, (float) steps));
 
-  /* Push a new column to the spectrogram history. */
-  self->spec_head = (self->spec_head + 1) % SPEC_HIST_W;
-  for (int i = 0; i < N_BANDS; ++i)
-    self->spec_hist[self->spec_head][i] = self->smooth[i];
+  /* Push a new column to the spectrogram history (it scrolls at its own pace). */
+  self->spec_clock += dt * self->speed;
+  while (self->spec_clock >= 0.033) {
+    self->spec_clock -= 0.033;
+    self->spec_head = (self->spec_head + 1) % SPEC_HIST_W;
+    for (int i = 0; i < N_BANDS; ++i)
+      self->spec_hist[self->spec_head][i] = self->smooth[i];
+  }
 
-  /* Advance the style crossfade toward 1 (≈1.3 s transition). */
+  /* Advance the style crossfade toward 1. */
   if (self->transition < 1.0) {
-    self->transition += 0.033 / 1.3;
+    self->transition += dt / MAX (self->transition_s, 0.05);
     if (self->transition > 1.0) self->transition = 1.0;
   }
 
   /* The phase advances faster with more energy: the visual accelerates
    * with the music. */
-  self->phase += 0.012 + self->energy * 0.05;
+  self->phase += (0.012 + self->energy * 0.05) * steps * self->speed;
 
   /* Reloj del fundido del logo (ver draw_icon_cycle). */
-  self->logo_clock += 0.033;
+  self->logo_clock += dt;
 
-  /* Style auto-rotation every ~22 s (tick ≈ 33 ms) for variety
-   * without the user having to do anything (unless auto_switch is off).
+  /* Automatic changes every interval_s seconds (unless auto_switch is off).
    * The change starts a smooth fade. */
-  self->since_switch += 0.033;
-  if (self->auto_switch && self->since_switch >= self->switch_interval) {
+  self->since_switch += dt;
+  if (self->auto_switch && self->since_switch >= self->interval_s) {
     self->since_switch = 0.0;
-    self->switch_interval = 10.0 + (g_random_int () % 200) / 10.0;  /* 10-30s */
     vis_switch_random (self);
   }
-
 }
 
 BbClassicVis *
@@ -1012,8 +1042,14 @@ bb_classic_vis_new (void)
 {
   BbClassicVis *self = g_new0 (BbClassicVis, 1);
   self->transition = 1.0;          /* asentado: sin fundido al arrancar */
-  self->switch_interval = 22.0;    /* first switch at default ~22s */
+  self->switch_interval = 22.0;
   self->auto_switch = TRUE;
+  self->speed = 1.0;
+  self->transition_s = 1.3;
+  self->interval_s = 22.0;
+  self->show_logos = TRUE;
+  self->style_mask = (1u << VIS_N_STYLES) - 1;
+  self->theme_mask = (1u << VIS_N_THEMES) - 1;
   return self;
 }
 
@@ -1072,3 +1108,43 @@ bb_classic_vis_set_artwork (BbClassicVis *self, GdkPixbuf *cover)
   if (cover) self->art_surf = surface_from_pixbuf (cover);
 }
 
+/* How the effects move: speed (1 = as made), seconds of the fade between two, seconds between
+ * automatic changes, and whether the logos and the cover take turns in the middle */
+void
+bb_classic_vis_set_params (BbClassicVis *self, double speed, double transition_s,
+                           double interval_s, gboolean show_logos)
+{
+  self->speed = CLAMP (speed, 0.05, 10.0);
+  self->transition_s = CLAMP (transition_s, 0.05, 30.0);
+  self->interval_s = CLAMP (interval_s, 1.0, 3600.0);
+  self->show_logos = show_logos;
+}
+
+/* Which styles and palettes the automatic changes (and "Next") pick from: bit n is number n */
+void
+bb_classic_vis_set_masks (BbClassicVis *self, guint styles, guint themes)
+{
+  self->style_mask = styles;
+  self->theme_mask = themes;
+}
+
+/* Starts on this style and palette, without a fade (-1: keeps the one there) */
+void
+bb_classic_vis_set_initial (BbClassicVis *self, int style, int theme)
+{
+  if (style >= 0 && style < VIS_N_STYLES) {
+    self->style = (VisStyle) style;
+    self->prev_style = (VisStyle) style;
+    self->transition = 1.0;
+  }
+  if (theme >= 0 && theme < VIS_N_THEMES)
+    self->theme = theme;
+}
+
+/* A random style and palette among the chosen ones (to start on) */
+void
+bb_classic_vis_randomize (BbClassicVis *self)
+{
+  bb_classic_vis_set_initial (self, pick_other (VIS_N_STYLES, self->style_mask, -1),
+                              pick_other (VIS_N_THEMES, self->theme_mask, -1));
+}
