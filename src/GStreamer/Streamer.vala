@@ -50,6 +50,7 @@ public class BeatBox.Streamer : GLib.Object {
 	bool is_video_enabled;
 	bool buffering;
 	bool internal_playing_flag;
+	bool holding_read; // a song from the disk is read in full before it plays
 	
 	/** signals **/
 	public signal void end_of_stream();
@@ -115,6 +116,7 @@ public class BeatBox.Streamer : GLib.Object {
 	
 	void listen_to(Pipeline p) {
 		p.pcm_ready.connect((samples) => { if (p == pipe) pcm_update(samples); }); // not the one fading out
+		p.song_read.connect(() => { if (p == pipe) song_read(); });
 		p.bus.enable_sync_message_emission();
 		p.bus_watch = p.bus.add_watch(GLib.Priority.DEFAULT, busCallback);
 		p.bus.sync_message.connect(sync_message);
@@ -231,6 +233,9 @@ public class BeatBox.Streamer : GLib.Object {
 	}
 	
 	public void setState(State s) {
+		if(holding_read && s == State.PLAYING) // stays paused until the whole song is read (song_read)
+			s = State.PAUSED;
+		
 		if(s == State.PAUSED)
 			internal_playing_flag = false;
 		else if(s == State.PLAYING)
@@ -246,6 +251,9 @@ public class BeatBox.Streamer : GLib.Object {
 		next_after_eos = null;
 		
 		setState(State.READY);
+		
+		holding_read = playing && App.playback.media_active && App.playback.current_media.media_type == MediaType.SONG && uri.has_prefix("file://");
+		pipe.hold_until_read(holding_read);
 		
 		pipe.playbin.uri = uri.replace("#", "%23");
 		
@@ -336,6 +344,16 @@ public class BeatBox.Streamer : GLib.Object {
 		((Gst.Element)pipe.playbin).set("flags", flags);
 	}
 	
+	/** The whole song is in: it plays now, if it still should */
+	void song_read() {
+		if(!holding_read)
+			return;
+		holding_read = false;
+		pipe.hold_until_read(false);
+		if(App.playback.playing)
+			play();
+	}
+	
 	/* Callbacks */
 	private bool busCallback(Gst.Bus bus, Gst.Message message) {
 		// the song fading out: only its end (or a failure) matters
@@ -350,6 +368,8 @@ public class BeatBox.Streamer : GLib.Object {
 			string debug;
 			message.parse_error (out err, out debug);
 			warning ("Error: %s\n", err.message);
+			if(holding_read)
+				song_read();
 			
 			break;
 		case Gst.MessageType.ELEMENT:

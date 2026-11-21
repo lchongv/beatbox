@@ -92,6 +92,7 @@ public class BeatBox.Pipeline : GLib.Object {
 		
 		audiotee = ElementFactory.make("tee", null);
 		audiosinkqueue = ElementFactory.make("queue", null);
+		audiosinkqueue.max_size_time = 3 * Gst.SECOND;
 		
 		eq = new Equalizer();
 		if(eq.element != null) {
@@ -197,11 +198,12 @@ public class BeatBox.Pipeline : GLib.Object {
 			playbin.set("video-sink", video.element);
 		}
 		
-		// Don't enable video for now
+		// Don't enable video for now; buffering keeps a few seconds read ahead so a slow disk can't starve the sound
 		Gst.PlayFlag flags;
 		playbin.get("flags", out flags);
-		flags = 			(Gst.PlayFlag.AUDIO);
+		flags = (Gst.PlayFlag.AUDIO | Gst.PlayFlag.BUFFERING);
 		((Gst.Element)playbin).set("flags", flags);
+		playbin.buffer_duration = 5 * Gst.SECOND;
 		
 		//bus.add_watch(busCallback);
 		/*play.audio_tags_changed.connect(audioTagsChanged);
@@ -310,6 +312,41 @@ public class BeatBox.Pipeline : GLib.Object {
 		}
 		else
 			spectrum_drop = spectrum_in.add_probe(PadProbeType.BUFFER, (pad, info) => PadProbeReturn.DROP);
+	}
+
+	/** The sound's queue takes the whole song (no limit) while it is read, so nothing reaches the sink
+	 * until the end of the file is in; song_read tells when it is */
+	public signal void song_read();
+	Pad? read_pad = null;
+	ulong read_probe = 0;
+	uint64 queue_time = 0;
+	uint queue_buffers = 0;
+	uint queue_bytes = 0;
+
+	public void hold_until_read(bool hold) {
+		if(hold == (read_probe != 0))
+			return;
+		if(hold) {
+			queue_time = audiosinkqueue.max_size_time;
+			queue_buffers = audiosinkqueue.max_size_buffers;
+			queue_bytes = audiosinkqueue.max_size_bytes;
+			audiosinkqueue.max_size_time = 0;
+			audiosinkqueue.max_size_buffers = 0;
+			audiosinkqueue.max_size_bytes = 0;
+			read_pad = audiosinkqueue.get_static_pad("sink");
+			read_probe = read_pad.add_probe(PadProbeType.EVENT_DOWNSTREAM, (pad, info) => {
+				if(info.get_event().type == Gst.EventType.EOS)
+					Idle.add(() => { song_read(); return false; });
+				return PadProbeReturn.OK;
+			});
+		}
+		else {
+			read_pad.remove_probe(read_probe);
+			read_probe = 0;
+			audiosinkqueue.max_size_time = queue_time;
+			audiosinkqueue.max_size_buffers = queue_buffers;
+			audiosinkqueue.max_size_bytes = queue_bytes;
+		}
 	}
 
 	/** The visualizer's samples are read only while it is on screen */
