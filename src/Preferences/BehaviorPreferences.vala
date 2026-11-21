@@ -556,15 +556,12 @@ public class BeatBox.AboutPreferences : SimplePreferences {
 		top.append(name);
 		content.append(top);
 
-		var credits = new Button.with_label(_("Credits…"));
-		credits.halign = Align.START;
-		credits.tooltip_text = _("The people, the libraries and the services behind BeatBox");
-		credits.clicked.connect(() => new CreditsWindow(UI.window_of(content)).present());
-		add_row(credits);
-
 		add_heading(_("License"));
 		add_row(text(_("Free software under the %s.").printf(link("https://www.gnu.org/licenses/gpl-3.0.html", _("GNU General Public License, version 3")))
 		             + "\n" + link("https://launchpad.net/beat-box", "launchpad.net/beat-box"), true));
+
+		add_heading(_("Credits"));
+		content.append(new Credits());
 	}
 
 	static string link(string url, string label) {

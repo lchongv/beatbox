@@ -1,21 +1,13 @@
 /*
- * Credits: the people, the libraries BeatBox is built on and the services it talks to, in a
- * window of its own that scrolls (Preferences › About › Credits).
+ * Credits: the people, the libraries BeatBox is built on and the services it talks to. Shown
+ * in the About page of the Preferences window, which scrolls.
  */
 
 using Gtk;
 
-public class BeatBox.CreditsWindow : Gtk.Window {
-	Box content = new Box(Orientation.VERTICAL, 8);
-
-	public CreditsWindow(Gtk.Window? parent) {
-		title = _("Credits");
-		transient_for = parent;
-		modal = true;
-		set_default_size(560, 560);
-
-		content.margin_start = content.margin_end = 18;
-		content.margin_top = content.margin_bottom = 14;
+public class BeatBox.Credits : Box {
+	public Credits() {
+		Object(orientation: Orientation.VERTICAL, spacing: 8);
 
 		heading(_("Authors"));
 		row(text("Scott Ringwelski\nVictor Eduardo M."));
@@ -59,32 +51,6 @@ public class BeatBox.CreditsWindow : Gtk.Window {
 		         + "\n" + _("Lyrics: %s").printf(link("https://lrclib.net", "LRCLIB"))
 		         + "\n" + _("Song identification: %s").printf(link("https://acoustid.org", "AcoustID"))
 		         + "\n" + _("Scrobbling: %s").printf(link("https://www.last.fm", "Last.fm") + ", " + link("https://listenbrainz.org", "ListenBrainz")), true));
-
-		var scroll = new ScrolledWindow();
-		scroll.set_policy(PolicyType.NEVER, PolicyType.AUTOMATIC);
-		scroll.vexpand = true;
-		scroll.set_child(content);
-
-		var close = new Button.with_label(_("Close"));
-		close.halign = Align.END;
-		close.margin_top = close.margin_bottom = close.margin_end = 10;
-		close.clicked.connect(() => destroy());
-
-		var box = new Box(Orientation.VERTICAL, 0);
-		box.append(AquaScroll.wrap(scroll));
-		box.append(new Separator(Orientation.HORIZONTAL));
-		box.append(close);
-		set_child(box);
-
-		var keys = new EventControllerKey();
-		keys.key_pressed.connect((keyval, code, state) => {
-			if (keyval == Gdk.Key.Escape) {
-				destroy();
-				return true;
-			}
-			return false;
-		});
-		((Widget) this).add_controller(keys);
 	}
 
 	void heading(string s) {
@@ -92,12 +58,12 @@ public class BeatBox.CreditsWindow : Gtk.Window {
 		label.xalign = 0.0f;
 		label.margin_top = 6;
 		label.set_markup("<b>" + Markup.escape_text(s) + "</b>");
-		content.append(label);
+		append(label);
 	}
 
 	void row(Widget w) {
 		w.margin_start = 10;
-		content.append(w);
+		append(w);
 	}
 
 	// name (a link), what BeatBox uses it for, and its license

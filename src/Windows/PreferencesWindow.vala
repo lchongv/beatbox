@@ -30,6 +30,7 @@ using Gee;
 
 public class BeatBox.PreferencesWindow : Gtk.Window {
 	HashMap<PreferencesSection, SideBarItem?> sections;
+	HashMap<Widget, Widget> pages; // a section's widget → the page it is in (its own scroll)
 	SideBarItem general_iter;
 	SideBarItem libraries_iter;
 	
@@ -42,6 +43,7 @@ public class BeatBox.PreferencesWindow : Gtk.Window {
 	
 	public PreferencesWindow () {
 		sections = new HashMap<PreferencesSection, SideBarItem?>();
+		pages = new HashMap<Widget, Widget>();
 		
 		build_ui();
 		add_sections();
@@ -63,7 +65,6 @@ public class BeatBox.PreferencesWindow : Gtk.Window {
 		var content = new Box(Orientation.VERTICAL, 10);
 		var padding = new Box(Orientation.HORIZONTAL, 0);
 		var notebook_padding = new Box(Orientation.HORIZONTAL, 10);
-		var notebook_scroll = new ScrolledWindow();
 		
 		side_bar = new SideBar();
 		notebook = new Notebook();
@@ -72,15 +73,11 @@ public class BeatBox.PreferencesWindow : Gtk.Window {
 		
 		notebook.show_tabs = false;
 		notebook.show_border = false;
-		// the window takes each page's height, up to a screenful: longer pages (Visualizer) scroll
-		notebook_scroll.set_policy(PolicyType.NEVER, PolicyType.AUTOMATIC);
-		notebook_scroll.propagate_natural_height = true;
-		notebook_scroll.max_content_height = 640;
 		
-		notebook.hexpand = true;
+		notebook.hexpand = notebook.vexpand = true;
 		notebook.margin_start = notebook.margin_end = 10;
 		notebook_padding.append(notebook);
-		notebook_scroll.set_child(notebook_padding);
+		notebook_padding.hexpand = notebook_padding.vexpand = true;
 		
 		var list_to_content = new Box(Orientation.HORIZONTAL, 0);
 		var side_scroll = new ScrolledWindow();
@@ -88,8 +85,7 @@ public class BeatBox.PreferencesWindow : Gtk.Window {
 		side_scroll.set_child(side_bar);
 		side_scroll.has_frame = true;
 		list_to_content.append(side_scroll);
-		notebook_scroll.hexpand = true;
-		list_to_content.append(AquaScroll.wrap(notebook_scroll));
+		list_to_content.append(notebook_padding);
 		
 		saveChanges = new Button.with_label(_("Done"));
 		
@@ -188,7 +184,15 @@ public class BeatBox.PreferencesWindow : Gtk.Window {
 		
 		SideBarItem? iter = side_bar.addItem(parent, null, section, section.widget, section.icon, section.title, null, false, false, false);
 		sections.set(section, iter);
-		notebook.append_page(section.widget);
+		// only a page taller than the window scrolls: its own scroll, not the whole notebook's
+		var page_scroll = new ScrolledWindow();
+		page_scroll.set_policy(PolicyType.NEVER, PolicyType.AUTOMATIC);
+		page_scroll.propagate_natural_height = true;
+		page_scroll.max_content_height = 640;
+		page_scroll.set_child(section.widget);
+		Widget page = AquaScroll.wrap(page_scroll);
+		pages.set(section.widget, page);
+		notebook.append_page(page);
 		if (first_section != null && !App.settings.main.show_advanced_preferences && !is_basic(section))
 			side_bar.setVisibility(iter, false); // a plugin's page, added later
 	}
@@ -200,13 +204,14 @@ public class BeatBox.PreferencesWindow : Gtk.Window {
 		}
 		
 		side_bar.removeItem(sections.get(section));
-		notebook.remove_page(notebook.page_num(section.widget));
+		notebook.remove_page(notebook.page_num(pages.get(section.widget)));
+		pages.unset(section.widget);
 		sections.unset(section);
 	}
 	
 	void side_bar_selection_change() {
 		var w = side_bar.getSelectedWidget ();
-		notebook.set_current_page(notebook.page_num(w));
+		notebook.set_current_page(notebook.page_num(pages.get(w)));
 	}
 		
 	void saveClicked() {

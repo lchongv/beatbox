@@ -45,6 +45,7 @@ src/Media/Station.vala
 src/NowPlayingView/PodcastSummarySection.vala
 src/NowPlayingView/SongSummarySection.vala
 src/Preferences/BehaviorPreferences.vala
+src/Preferences/Credits.vala
 src/Preferences/LastfmPreferences.vala
 src/Preferences/MusicPreferences.vala
 src/Preferences/PodcastPreferences.vala
@@ -78,7 +79,6 @@ src/Widgets/TrackReport.vala
 src/Widgets/Visualizer.vala
 src/Widgets/ColumnBrowser.vala
 src/Preferences/VisualizerPreferences.vala
-src/Windows/CreditsWindow.vala
 src/Windows/AddPodcastWindow.vala
 src/Windows/DirectoryDialog.vala
 src/Windows/Editors/FieldEditorImpl.vala
