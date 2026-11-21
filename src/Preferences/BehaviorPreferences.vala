@@ -173,6 +173,8 @@ public class BeatBox.PlaybackPreferences : SimplePreferences {
 		crossfade.value = App.settings.main.crossfade_seconds;
 		crossfade.value_changed.connect(() => { App.settings.main.crossfade_seconds = (int)crossfade.value; });
 		add_row(labelled(_("Crossfade between songs:"), crossfade, _("seconds (0: none, songs follow without a gap)")));
+		var preload = add_check(_("Load each song in full before it plays (from the next song)"), App.settings.main.preload_songs);
+		preload.toggled.connect(() => { App.settings.main.preload_songs = preload.active; });
 
 		begin_advanced();
 		var rg = new ChoiceBox();

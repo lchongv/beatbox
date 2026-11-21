@@ -53,12 +53,14 @@ public class BeatBox.BufferDisplay : BeatBox.Display, Box {
 	}
 	
 	void player_buffering_update(int percent) {
-		if(!App.playback.media_active || App.playback.current_media.uri.has_prefix("file:/")) {
+		if(!App.playback.media_active) {
 			disabled();
 		}
 		else {
 			if(percent >= 0 && percent < 100) {
 				var name = String.ellipsize(App.playback.current_media.title, 53);
+				// a song from the disk is loaded in full before it plays (Streamer.setURI)
+				bool loading = App.playback.current_media.uri.has_prefix("file:/");
 				
 				// connecting: no progress known yet, so a barber pole (see theme.css) until the first percent
 				if(percent > 0) buffering_bar.remove_css_class("live");
@@ -66,10 +68,10 @@ public class BeatBox.BufferDisplay : BeatBox.Display, Box {
 				buffering_bar.set_fraction((double)((double)percent / (double)100));
 
 				if(name != null) {
-					buffering_status.set_markup(_("Buffering %s...").printf("<b>" + Markup.escape_text(name) + "</b>"));
+					buffering_status.set_markup((loading ? _("Loading %s...") : _("Buffering %s...")).printf("<b>" + Markup.escape_text(name) + "</b>"));
 				}
 				else {
-					buffering_status.set_markup(_("Buffering..."));
+					buffering_status.set_markup(loading ? _("Loading...") : _("Buffering..."));
 				}
 				
 				enabled();
@@ -80,10 +82,8 @@ public class BeatBox.BufferDisplay : BeatBox.Display, Box {
 		}
 	}
 	
-	// When a new media is played, assume it doesn't need buffering until the
-	// gstreamer playbin starts sending off buffering updates
+	// The Streamer reports the start of each song (loading or not), so nothing is hidden here
 	void media_played(Media m, Media ?old) {
-		disabled();
 	}
 	
 	void playback_stopped(Media? was_playing) {

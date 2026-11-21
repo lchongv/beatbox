@@ -295,6 +295,7 @@ public class BeatBox.Settings {
         public string[] shortcuts { get; set; }      // "id=accelerator" (Shortcuts), only once changed
         public string[] enabled_plugins { get; set; } // ids of the plugins turned on (Preferences › Plugins)
         public int crossfade_seconds { get; set; }   // 0: no crossfade (gapless)
+        public bool preload_songs { get; set; }      // songs from the disk are read in full before they play (Streamer)
         public string podcast_folder { get; set; }
         public bool update_folder_hierarchy { get; set; }
         public bool write_metadata_to_file { get; set; }
@@ -386,6 +387,7 @@ public class BeatBox.Settings {
             download_covers = true;
             visualizer_classic = false;
             show_advanced_preferences = false;
+            preload_songs = true;
             reset_visualizer ();
             init_config ("settings", "net.launchpad.beatbox.Settings", {
                 "library-name", "music-folder", "music-mount-name", "watch-music-folder",

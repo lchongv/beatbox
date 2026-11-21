@@ -252,8 +252,9 @@ public class BeatBox.Streamer : GLib.Object {
 		
 		setState(State.READY);
 		
-		holding_read = playing && App.playback.media_active && App.playback.current_media.media_type == MediaType.SONG && uri.has_prefix("file://");
+		holding_read = App.settings.main.preload_songs && playing && App.playback.media_active && App.playback.current_media.media_type == MediaType.SONG && uri.has_prefix("file://");
 		pipe.hold_until_read(holding_read);
+		buffer_percent_update(holding_read ? 0 : 100); // 0: the notice that the song is loading
 		
 		pipe.playbin.uri = uri.replace("#", "%23");
 		
@@ -350,6 +351,7 @@ public class BeatBox.Streamer : GLib.Object {
 			return;
 		holding_read = false;
 		pipe.hold_until_read(false);
+		buffer_percent_update(100);
 		if(App.playback.playing)
 			play();
 	}
