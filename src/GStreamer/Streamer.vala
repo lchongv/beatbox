@@ -528,6 +528,9 @@ public class BeatBox.Streamer : GLib.Object {
 	}
 	
 	void about_to_finish() {
+		// a song held until it is read in full ends by its EOS: the next one comes through setURI, not here
+		if(holding_read)
+			return;
 		// with a crossfade coming, the gapless switch must not take the next song
 		if(App.settings.main.crossfade_seconds > 0 && fade_out == null && next_after_eos == null && getDuration() > 2 * (int64)App.settings.main.crossfade_seconds * Gst.SECOND
 		   && App.playback.media_active && crossfadable(App.playback.current_media))
