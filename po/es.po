@@ -1579,6 +1579,10 @@ msgstr "Fundido entre canciones:"
 msgid "seconds (0: none, songs follow without a gap)"
 msgstr "segundos (0: sin fundido, una canción sigue a la otra sin pausa)"
 
+#: src/Preferences/BehaviorPreferences.vala:178
+msgid "Load each song in full before it plays (from the next song)"
+msgstr "Cargar cada canción completa antes de reproducirla (desde la siguiente canción)"
+
 #: src/Preferences/BehaviorPreferences.vala:181
 #: src/Preferences/BehaviorPreferences.vala:184
 msgid "Recording"
@@ -2775,6 +2779,15 @@ msgstr "Almacenando en búfer %s…"
 #: src/Widgets/TopDisplay/BufferDisplay.vala:65
 msgid "Buffering..."
 msgstr "Almacenando en búfer…"
+
+#: src/Widgets/TopDisplay/BufferDisplay.vala:62
+#, c-format
+msgid "Loading %s..."
+msgstr "Cargando %s…"
+
+#: src/Widgets/TopDisplay/BufferDisplay.vala:65
+msgid "Loading..."
+msgstr "Cargando…"
 
 #: src/Widgets/TopDisplay/TimeScale.vala:90
 msgid "Click to switch between the time left and the total time"
