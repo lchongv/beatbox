@@ -455,6 +455,18 @@ public class BeatBox.PlaybackManager : GLib.Object, BeatBox.PlaybackInterface {
 		return rv;
 	}
 	
+	/** The song getNext would take next, without moving on (the Streamer reads it ahead) */
+	public Media? peek_next() {
+		if(!queue_empty())
+			return peek_queue();
+		int index = current_index;
+		bool queued = _playing_queued_song;
+		Media? rv = getNext(false);
+		current_index = index;
+		_playing_queued_song = queued;
+		return rv;
+	}
+	
 	// Moves the current index to the previous song and returns that media
 	// Only plays if play is true
 	public Media? getPrevious(bool play) {

@@ -51,6 +51,9 @@ public class BeatBox.Streamer : GLib.Object {
 	bool buffering;
 	bool internal_playing_flag;
 	bool holding_read; // a song from the disk is read in full before it plays
+	Pipeline? prepared = null; // the next song, read in full while this one plays, waiting to start
+	Media? prepared_media = null;
+	bool prepared_read = false;
 	
 	/** signals **/
 	public signal void end_of_stream();
@@ -116,7 +119,7 @@ public class BeatBox.Streamer : GLib.Object {
 	
 	void listen_to(Pipeline p) {
 		p.pcm_ready.connect((samples) => { if (p == pipe) pcm_update(samples); }); // not the one fading out
-		p.song_read.connect(() => { if (p == pipe) song_read(); });
+		p.song_read.connect(() => { if (p == pipe) song_read(); else if (p == prepared) prepared_read = true; });
 		p.bus.enable_sync_message_emission();
 		p.bus_watch = p.bus.add_watch(GLib.Priority.DEFAULT, busCallback);
 		p.bus.sync_message.connect(sync_message);
@@ -127,7 +130,7 @@ public class BeatBox.Streamer : GLib.Object {
 	 * one starts in a second pipeline and they cross over; then the old one goes. */
 	void check_crossfade(int64 position) {
 		int seconds = App.settings.main.crossfade_seconds;
-		if(seconds <= 0 || fade_id != 0 || fade_out != null || doing_gapless || next_after_eos != null || !internal_playing_flag || is_video_enabled)
+		if(seconds <= 0 || fade_id != 0 || fade_out != null || doing_gapless || next_after_eos != null || prepared != null || !internal_playing_flag || is_video_enabled)
 			return;
 		var current = App.playback.media_active ? App.playback.current_media : null;
 		if(current == null || !crossfadable(current))
@@ -242,6 +245,8 @@ public class BeatBox.Streamer : GLib.Object {
 			internal_playing_flag = true;
 		
 		pipe.playbin.set_state(s);
+		if(s == State.PLAYING)
+			prepare_next();
 	}
 	
 	// This is never called when doing a gapless transition.
@@ -249,6 +254,7 @@ public class BeatBox.Streamer : GLib.Object {
 		assert(!doing_gapless);
 		finish_crossfade();
 		next_after_eos = null;
+		drop_prepared();
 		
 		setState(State.READY);
 		
@@ -345,6 +351,70 @@ public class BeatBox.Streamer : GLib.Object {
 		((Gst.Element)pipe.playbin).set("flags", flags);
 	}
 	
+	/* The next song is read in full in a pipeline of its own while this one plays, so that it
+	 * starts at once when this one ends. Only with the preload on, and no crossfade. */
+	void prepare_next() {
+		if(prepared != null || !App.settings.main.preload_songs || App.settings.main.crossfade_seconds > 0)
+			return;
+		Media? next = App.playback.peek_next();
+		if(next == null || next.media_type != MediaType.SONG || !next.uri.has_prefix("file://") || !File.new_for_uri(next.uri).query_exists())
+			return;
+		
+		var p = new BeatBox.Pipeline();
+		listen_to(p);
+		p.copy_equalizer_from(pipe);
+		p.want_spectrum(spectrum_wanted);
+		p.want_pcm(pcm_wanted);
+		SignalHandler.disconnect(p.playbin, p.about_to_finish_handler); // it starts by the switch below, not gapless
+		p.hold_until_read(true);
+		p.playbin.volume = volume;
+		p.playbin.uri = next.uri.replace("#", "%23");
+		p.playbin.set_state(State.PAUSED);
+		prepared = p;
+		prepared_media = next;
+		prepared_read = false;
+	}
+	
+	/** The song ended: the prepared one, if it is read and still the next, starts now (false: none) */
+	bool play_prepared() {
+		if(!prepared_read || App.playback.peek_next() != prepared_media) {
+			drop_prepared();
+			return false;
+		}
+		var old = pipe;
+		Source.remove(old.bus_watch);
+		SignalHandler.disconnect(old.playbin, old.about_to_finish_handler);
+		old.playbin.set_state(State.NULL);
+		
+		pipe = prepared;
+		Media next = prepared_media;
+		prepared = null;
+		prepared_media = null;
+		prepared_read = false;
+		pipe.hold_until_read(false);
+		pipe.playbin.volume = volume;
+		checked_video = false;
+		
+		// as a gapless switch: the list moves on, the song is not loaded again, the end is announced
+		doing_gapless = true;
+		App.playback.getNext(false);
+		setState(State.PLAYING);
+		App.playback.play_media(next, false);
+		end_of_stream();
+		doing_gapless = false;
+		return true;
+	}
+	
+	void drop_prepared() {
+		if(prepared == null)
+			return;
+		Source.remove(prepared.bus_watch);
+		prepared.playbin.set_state(State.NULL);
+		prepared = null;
+		prepared_media = null;
+		prepared_read = false;
+	}
+	
 	/** The whole song is in: it plays now, if it still should */
 	void song_read() {
 		if(!holding_read)
@@ -360,6 +430,11 @@ public class BeatBox.Streamer : GLib.Object {
 	private bool busCallback(Gst.Bus bus, Gst.Message message) {
 		// the song fading out: only its end (or a failure) matters
 		if(bus != pipe.bus) {
+			if(prepared != null && bus == prepared.bus) {
+				if(message.type == Gst.MessageType.ERROR)
+					drop_prepared();
+				return true;
+			}
 			if(message.type == Gst.MessageType.EOS || message.type == Gst.MessageType.ERROR)
 				drop_fade_out();
 			return true;
@@ -396,6 +471,8 @@ public class BeatBox.Streamer : GLib.Object {
 			next_track_starting();
 			break;
 		case Gst.MessageType.EOS:
+			if(prepared != null && play_prepared())
+				break;
 			if(!doing_gapless) {
 				end_of_stream();
 			}
@@ -529,7 +606,7 @@ public class BeatBox.Streamer : GLib.Object {
 	
 	void about_to_finish() {
 		// a song held until it is read in full ends by its EOS: the next one comes through setURI, not here
-		if(holding_read)
+		if(holding_read || prepared != null)
 			return;
 		// with a crossfade coming, the gapless switch must not take the next song
 		if(App.settings.main.crossfade_seconds > 0 && fade_out == null && next_after_eos == null && getDuration() > 2 * (int64)App.settings.main.crossfade_seconds * Gst.SECOND

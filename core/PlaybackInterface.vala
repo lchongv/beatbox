@@ -79,6 +79,7 @@ public interface BeatBox.PlaybackInterface : GLib.Object {
 	public abstract void stop_playback();
 	public abstract Media? getPrevious(bool play);
 	public abstract Media? getNext(bool play);
+	public abstract Media? peek_next();
 	public abstract void request_previous();
 	public abstract void request_next();
 	public abstract void play_media(Media m, bool use_resume_position);
