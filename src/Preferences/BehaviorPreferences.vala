@@ -226,6 +226,19 @@ public class BeatBox.RecordingPreferences : SimplePreferences {
 	}
 }
 
+/** How many stations Find Stations shows at a time (the button loads the next page) */
+public class BeatBox.RadioPreferences : SimplePreferences {
+	public override string title { get { return _("Radio"); } }
+
+	public RadioPreferences() {
+		add_heading(_("Find Stations"));
+		var page = new SpinButton.with_range(50, 1000, 50);
+		page.value = App.settings.main.radio_page_size;
+		page.value_changed.connect(() => { App.settings.main.radio_page_size = (int)page.value; });
+		add_row(labelled(_("Stations shown at a time:"), page, _("the button below the list loads the next ones")));
+	}
+}
+
 /** Skins */
 public class BeatBox.AppearancePreferences : SimplePreferences {
 	public override string title { get { return _("Appearance"); } }

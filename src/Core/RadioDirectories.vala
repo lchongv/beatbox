@@ -22,6 +22,7 @@ namespace BeatBox.Radio {
 		public string order = "votes"; // radio-browser's: votes, clickcount, clicktrend, name, bitrate, random
 		public bool https_only = false;
 		public int offset = 0;      // the first station wanted: a page after the ones already shown
+		public int limit = PAGE;    // how many stations a page has
 	}
 
 	public class Result {
@@ -92,7 +93,7 @@ namespace BeatBox.Radio {
 				return null;
 			if (q.text == "")
 				q.genre = "";
-			return filter (found, q, PAGE);
+			return filter (found, q, q.limit);
 		case Directory.LAUT_FM:
 			string body;
 			if (q.text != "") {
@@ -112,7 +113,7 @@ namespace BeatBox.Radio {
 			else
 				return new Gee.ArrayList<Result> ();
 			var found = parse_lautfm (body);
-			return (found != null) ? filter (found, q, PAGE) : null;
+			return (found != null) ? filter (found, q, q.limit) : null;
 		case Directory.ICECAST:
 			cache_lock.lock ();
 			if (icecast == null) {
@@ -122,7 +123,7 @@ namespace BeatBox.Radio {
 			}
 			var all = icecast;
 			cache_lock.unlock ();
-			return (all != null) ? filter (all, q, PAGE) : null;
+			return (all != null) ? filter (all, q, q.limit) : null;
 		default:
 			Gee.List<Result>? found = null;
 			foreach (var path in radio_browser_searches (q)) {
@@ -176,7 +177,7 @@ namespace BeatBox.Radio {
 
 	/** radio-browser searches (paths on its server) for a query */
 	public string[] radio_browser_searches (Query q) {
-		var sb = new StringBuilder ("/json/stations/search?hidebroken=true&limit=%d&order=".printf (PAGE) + q.order);
+		var sb = new StringBuilder ("/json/stations/search?hidebroken=true&limit=%d&order=".printf (q.limit) + q.order);
 		if (q.order != "name" && q.order != "random")
 			sb.append ("&reverse=true");
 		if (q.offset > 0)

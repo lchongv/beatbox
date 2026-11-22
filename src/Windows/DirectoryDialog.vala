@@ -106,7 +106,7 @@ public class BeatBox.DirectoryDialog : ButtonDialog {
 			box.append (build_filters (top));
 		scroll.vexpand = true;
 		box.append (AquaScroll.wrap(scroll));
-		more_btn = new Button.with_label (_("Load the next %d").printf (Radio.PAGE));
+		more_btn = new Button.with_label (_("Load the next %d").printf (App.settings.main.radio_page_size));
 		more_btn.halign = Align.CENTER;
 		more_btn.visible = false;
 		more_btn.clicked.connect (() => load_more ());
@@ -372,6 +372,7 @@ public class BeatBox.DirectoryDialog : ButtonDialog {
 	Radio.Query radio_query (string term) {
 		var q = new Radio.Query ();
 		q.text = term;
+		q.limit = App.settings.main.radio_page_size;
 		q.genre = value_of (genre, true);
 		if (directory != Radio.Directory.LAUT_FM) {
 			q.codec = value_of (codec);
@@ -390,7 +391,7 @@ public class BeatBox.DirectoryDialog : ButtonDialog {
 	void load_more () {
 		string term = entry.text.strip ();
 		var q = radio_query (term);
-		q.offset = pages * Radio.PAGE;
+		q.offset = pages * q.limit;
 		more_btn.sensitive = false;
 		spinner.start ();
 		status.label = _("Searching…");
@@ -425,7 +426,7 @@ public class BeatBox.DirectoryDialog : ButtonDialog {
 		}
 		loaded.add_all (found);
 		pages++;
-		more_btn.visible = (found.size >= Radio.PAGE);
+		more_btn.visible = (found.size >= App.settings.main.radio_page_size);
 		results.clear ();
 		var seen = new GenericSet<string> (str_hash, str_equal);
 		int count = 0;

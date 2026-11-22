@@ -304,6 +304,7 @@ public class BeatBox.Settings {
         public bool download_new_podcasts { get; set; }
         public string recordings_folder { get; set; } // "": Recordings in the user's music folder (StreamRecorder)
         public int recording_minutes { get; set; }   // how long each recorded file is
+        public int radio_page_size { get; set; }     // stations per page in Find Stations (Preferences › Radio)
         public int last_media_playing { get; set; }
         public int last_media_position { get; set; }
         public int shuffle_mode { get; set; }
@@ -370,6 +371,7 @@ public class BeatBox.Settings {
             podcast_folder = "";
             recordings_folder = "";
             recording_minutes = 60;
+            radio_page_size = 200;
             search_string = "";
             skin = "";
             lcd_two_lines = true;

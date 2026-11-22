@@ -125,6 +125,7 @@ public class BeatBox.PreferencesWindow : Gtk.Window {
 		add_section(library_pref);
 		add_section(new PlaybackPreferences());
 		add_section(new RecordingPreferences());
+		add_section(new RadioPreferences());
 		add_section(new AppearancePreferences());
 		add_section(new LcdPreferences());
 		add_section(new VisualizerPreferences());
