@@ -110,6 +110,7 @@ public class BeatBox.ChoiceBox : Gtk.Box {
 		});
 		var scroll = new Gtk.ScrolledWindow ();
 		scroll.hscrollbar_policy = Gtk.PolicyType.NEVER;
+		scroll.propagate_natural_width = true; // as wide as the longest item, not the entry
 		scroll.propagate_natural_height = true;
 		scroll.max_content_height = 300;
 		scroll.child = suggestion_list;
