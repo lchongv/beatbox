@@ -21,6 +21,7 @@ namespace BeatBox.Radio {
 		public int min_bitrate = 0;
 		public string order = "votes"; // radio-browser's: votes, clickcount, clicktrend, name, bitrate, random
 		public bool https_only = false;
+		public int offset = 0;      // the first station wanted: a page after the ones already shown
 	}
 
 	public class Result {
@@ -40,7 +41,8 @@ namespace BeatBox.Radio {
 		public int count = 0;       // its stations; 0 when the directory doesn't say
 	}
 
-	const int MAX_RESULTS = 200;
+	/** Stations in a page of results: "load the next" asks for this many more */
+	public const int PAGE = 200;
 	const int64 DAY = 24 * 3600;
 	const string SHOUTCAST = "https://directory.shoutcast.com";
 	// SHOUTcast's own genres (its pages list them in their scripts, there is nothing to ask)
@@ -90,7 +92,7 @@ namespace BeatBox.Radio {
 				return null;
 			if (q.text == "")
 				q.genre = "";
-			return filter (found, q, MAX_RESULTS);
+			return filter (found, q, PAGE);
 		case Directory.LAUT_FM:
 			string body;
 			if (q.text != "") {
@@ -110,7 +112,7 @@ namespace BeatBox.Radio {
 			else
 				return new Gee.ArrayList<Result> ();
 			var found = parse_lautfm (body);
-			return (found != null) ? filter (found, q, MAX_RESULTS) : null;
+			return (found != null) ? filter (found, q, PAGE) : null;
 		case Directory.ICECAST:
 			cache_lock.lock ();
 			if (icecast == null) {
@@ -120,7 +122,7 @@ namespace BeatBox.Radio {
 			}
 			var all = icecast;
 			cache_lock.unlock ();
-			return (all != null) ? filter (all, q, MAX_RESULTS) : null;
+			return (all != null) ? filter (all, q, PAGE) : null;
 		default:
 			Gee.List<Result>? found = null;
 			foreach (var path in radio_browser_searches (q)) {
@@ -174,9 +176,11 @@ namespace BeatBox.Radio {
 
 	/** radio-browser searches (paths on its server) for a query */
 	public string[] radio_browser_searches (Query q) {
-		var sb = new StringBuilder ("/json/stations/search?hidebroken=true&limit=100&order=" + q.order);
+		var sb = new StringBuilder ("/json/stations/search?hidebroken=true&limit=%d&order=".printf (PAGE) + q.order);
 		if (q.order != "name" && q.order != "random")
 			sb.append ("&reverse=true");
+		if (q.offset > 0)
+			sb.append_printf ("&offset=%d", q.offset);
 		add_parameter (sb, "countrycode", q.country);
 		add_parameter (sb, "state", q.state, true);
 		add_parameter (sb, "language", q.language, true);
@@ -403,17 +407,20 @@ namespace BeatBox.Radio {
 		}
 	}
 
-	/** The stations matching a query, at most max: a word in their name or tags, a genre in their tags... */
+	/** The stations matching a query, from its offset on, at most max: a word in their name or tags, a genre in their tags... */
 	public Gee.List<Result> filter (Gee.List<Result> all, Query q, int max) {
 		string text = q.text.casefold ();
 		string genre = q.genre.casefold ();
 		var found = new Gee.ArrayList<Result> ();
+		int matches = 0;
 		foreach (var r in all) {
 			if (found.size >= max)
 				break;
 			if (text != "" && !(text in r.name.casefold ()) && !(text in r.tags.casefold ()))
 				continue;
 			if ((genre != "" && !(genre in r.tags.casefold ())) || (q.codec != "" && r.codec != q.codec) || r.bitrate < q.min_bitrate)
+				continue;
+			if (matches++ < q.offset)
 				continue;
 			found.add (r);
 		}

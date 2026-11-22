@@ -125,6 +125,13 @@ void test_icecast () {
 	q.codec = "";
 	q.min_bitrate = 100;
 	assert (filter (all, q, 10).size == 1);
+
+	// a page after the first: the matches before its offset are skipped
+	q = new Query ();
+	q.offset = 2;
+	assert (filter (all, q, 10).size == 1 && filter (all, q, 10)[0].name == "Rock Hits");
+	q.offset = 3;
+	assert (filter (all, q, 10).size == 0);
 }
 
 void test_playlists () {

@@ -38,6 +38,11 @@ public class BeatBox.DirectoryDialog : ButtonDialog {
 	CheckButton https;
 	bool filling = false;
 
+	// the stations shown so far: each page of the search adds to them
+	Button more_btn;
+	Gee.ArrayList<Radio.Result> loaded = new Gee.ArrayList<Radio.Result> ();
+	int pages = 0;
+
 	// the filters' values for this session, by directory/list/country; filled on the main loop only
 	static Gee.HashMap<string, Gee.List<Radio.Choice>>? lists = null;
 
@@ -101,6 +106,11 @@ public class BeatBox.DirectoryDialog : ButtonDialog {
 			box.append (build_filters (top));
 		scroll.vexpand = true;
 		box.append (AquaScroll.wrap(scroll));
+		more_btn = new Button.with_label (_("Load the next %d").printf (Radio.PAGE));
+		more_btn.halign = Align.CENTER;
+		more_btn.visible = false;
+		more_btn.clicked.connect (() => load_more ());
+		box.append (more_btn);
 		box.append (status);
 		box.append (source);
 
@@ -344,6 +354,22 @@ public class BeatBox.DirectoryDialog : ButtonDialog {
 			return;
 		}
 
+		var q = radio_query (term);
+		if (directory == Radio.Directory.LAUT_FM && term == "" && q.genre == "") {
+			spinner.stop ();
+			results.clear ();
+			more_btn.visible = false;
+			status.label = _("Choose a genre or type a station’s name.");
+			return;
+		}
+		spinner.start ();
+		status.label = (directory == Radio.Directory.ICECAST) ? _("Searching… the Icecast directory is downloaded once a day (9 MB).")
+		                                                     : _("Searching…");
+		fetch (q, term, my_serial, false);
+	}
+
+	/** The search the filters ask for; a page after the stations already shown is asked with its offset */
+	Radio.Query radio_query (string term) {
 		var q = new Radio.Query ();
 		q.text = term;
 		q.genre = value_of (genre, true);
@@ -358,37 +384,52 @@ public class BeatBox.DirectoryDialog : ButtonDialog {
 			q.order = value_of (order);
 			q.https_only = https.active;
 		}
-		if (directory == Radio.Directory.LAUT_FM && term == "" && q.genre == "") {
-			spinner.stop ();
-			results.clear ();
-			status.label = _("Choose a genre or type a station’s name.");
-			return;
-		}
+		return q;
+	}
+
+	void load_more () {
+		string term = entry.text.strip ();
+		var q = radio_query (term);
+		q.offset = pages * Radio.PAGE;
+		more_btn.sensitive = false;
 		spinner.start ();
-		status.label = (directory == Radio.Directory.ICECAST) ? _("Searching… the Icecast directory is downloaded once a day (9 MB).")
-		                                                     : _("Searching…");
+		status.label = _("Searching…");
+		fetch (q, term, serial, true);
+	}
+
+	void fetch (Radio.Query q, string term, uint my_serial, bool more) {
 		var from = directory;
 		new Thread<void*> ("directory-search", () => {
 			var found = Radio.search (from, q);
 			Idle.add (() => {
 				if (my_serial == serial)
-					show_stations (found, term);
+					show_stations (found, term, more);
 				return false;
 			});
 			return null;
 		});
 	}
 
-	void show_stations (Gee.List<Radio.Result>? found, string term) {
+	void show_stations (Gee.List<Radio.Result>? found, string term, bool more) {
 		spinner.stop ();
-		results.clear ();
+		more_btn.sensitive = true;
+		if (!more) {
+			loaded.clear ();
+			pages = 0;
+		}
 		if (found == null) {
+			if (!more)
+				results.clear ();
 			status.label = _("Could not reach the directory. Check your internet connection.");
 			return;
 		}
+		loaded.add_all (found);
+		pages++;
+		more_btn.visible = (found.size >= Radio.PAGE);
+		results.clear ();
 		var seen = new GenericSet<string> (str_hash, str_equal);
 		int count = 0;
-		foreach (var r in found) {
+		foreach (var r in loaded) {
 			if (r.url in seen)
 				continue;
 			seen.add (r.url);
