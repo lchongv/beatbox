@@ -516,9 +516,15 @@ public class BeatBox.PlaybackManager : GLib.Object, BeatBox.PlaybackInterface {
 		return rv;
 	}
 	
+	/** When the song that plays was chosen (microseconds of the monotonic clock) */
+	int64 started_at = 0;
+
 	public void request_previous() {
 		// TODO: This should be abstracted out on what to do on previous request
-		if(get_position() < 5000000000 || (media_active && current_media is Station)) {
+		// Until the sink has its first buffer the position is how far the file has been read, which
+		// for a song read in full is its end: no more is counted than the time since it was chosen
+		int64 played = int64.min(get_position(), (get_monotonic_time() - started_at) * 1000);
+		if(played < 5000000000 || (media_active && current_media is Station)) {
 			Media prev = getPrevious(true);
 
 			/* test to stop playback/reached end */
@@ -619,6 +625,7 @@ public class BeatBox.PlaybackManager : GLib.Object, BeatBox.PlaybackInterface {
 		// so that this information is correct when media_played signal
 		// is emitted
 		current_media = m;
+		started_at = get_monotonic_time();
 		App.info.current_track = App.info.get_track_info_from_media(m);
 		App.info.current_album = App.info.get_album_info_from_media(m);
 		App.info.current_artist = App.info.get_artist_info_from_media(m);
