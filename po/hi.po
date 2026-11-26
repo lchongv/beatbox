@@ -1086,7 +1086,7 @@ msgstr "संगीत फोल्डर को चुनिएँ"
 #: src/Dialogs/SyncWarningDialog.vala:43
 #, c-format
 msgid "Sync will remove %d medias from %s"
-msgstr "सिंक %s से %d मीडिया हटा देगा"
+msgstr "सिंक %2$s से %1$d मीडिया हटा देगा"
 
 #: src/Dialogs/SyncWarningDialog.vala:44
 #, c-format
@@ -1147,7 +1147,7 @@ msgstr "%s से %s आयात करें"
 #: src/Dialogs/TransferFromDeviceDialog.vala:86
 #, c-format
 msgid "Import %d medias from %s"
-msgstr "%s से %d मीडिया आयात करें"
+msgstr "%2$s से %1$d मीडिया आयात करें"
 
 #: src/Dialogs/TransferFromDeviceDialog.vala:173
 msgid "Select individual medias to import:"

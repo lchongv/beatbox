@@ -394,8 +394,8 @@ msgid ""
 "Your library's %s folder could not be found. Please make sure your %s folder"
 " is mounted before importing."
 msgstr ""
-"A pasta %s da sua biblioteca não foi encontrada. Verifique se ela está "
-"montada antes de importar."
+"A pasta %s da sua biblioteca não foi encontrada. Verifique se a pasta %s "
+"está montada antes de importar."
 
 #: src/Core/Actions.vala:183
 msgid "Doing Partial Import"

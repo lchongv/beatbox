@@ -382,7 +382,7 @@ msgstr "导入失败"
 msgid ""
 "Your library's %s folder could not be found. Please make sure your %s folder"
 " is mounted before importing."
-msgstr "找不到媒体库的 %s 文件夹。导入前请确保已挂载该文件夹。"
+msgstr "找不到媒体库的 %s 文件夹。导入前请确保已挂载 %s 文件夹。"
 
 #: src/Core/Actions.vala:183
 msgid "Doing Partial Import"
@@ -1047,7 +1047,7 @@ msgstr "选择音乐文件夹"
 #: src/Dialogs/SyncWarningDialog.vala:43
 #, c-format
 msgid "Sync will remove %d medias from %s"
-msgstr "同步将从 %s 中移除 %d 个媒体"
+msgstr "同步将从 %2$s 中移除 %1$d 个媒体"
 
 #: src/Dialogs/SyncWarningDialog.vala:44
 #, c-format
@@ -1104,7 +1104,7 @@ msgstr "从 %s 导入 %s"
 #: src/Dialogs/TransferFromDeviceDialog.vala:86
 #, c-format
 msgid "Import %d medias from %s"
-msgstr "从 %s 导入 %d 个媒体"
+msgstr "从 %2$s 导入 %1$d 个媒体"
 
 #: src/Dialogs/TransferFromDeviceDialog.vala:173
 msgid "Select individual medias to import:"

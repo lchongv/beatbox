@@ -3662,12 +3662,12 @@ msgstr "جارٍ الكتابة…"
 #, c-format
 msgid "Written into %d file."
 msgid_plural "Written into %d files."
-msgstr[0] "كُتب في ملف واحد."
+msgstr[0] "كُتب في %d ملف."
 msgstr[1] "كُتب في ملف واحد."
-msgstr[2] "كُتب في ملف واحد."
-msgstr[3] "كُتب في ملف واحد."
-msgstr[4] "كُتب في ملف واحد."
-msgstr[5] "كُتب في ملف واحد."
+msgstr[2] "كُتب في ملفين."
+msgstr[3] "كُتب في %d ملفات."
+msgstr[4] "كُتب في %d ملفًا."
+msgstr[5] "كُتب في %d ملف."
 
 #: src/Windows/Editors/SongEditor.vala:446
 #, c-format

@@ -394,8 +394,8 @@ msgid ""
 "Your library's %s folder could not be found. Please make sure your %s folder"
 " is mounted before importing."
 msgstr ""
-"Der Ordner %s deiner Mediathek wurde nicht gefunden. Stelle sicher, dass er "
-"eingebunden ist, bevor du importierst."
+"Der Ordner %s deiner Mediathek wurde nicht gefunden. Stelle sicher, dass der "
+"Ordner %s eingebunden ist, bevor du importierst."
 
 #: src/Core/Actions.vala:183
 msgid "Doing Partial Import"

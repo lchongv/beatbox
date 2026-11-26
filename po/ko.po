@@ -1047,7 +1047,7 @@ msgstr "음악 폴더 선택"
 #: src/Dialogs/SyncWarningDialog.vala:43
 #, c-format
 msgid "Sync will remove %d medias from %s"
-msgstr "동기화하면 %s에서 미디어 %d개가 제거됩니다"
+msgstr "동기화하면 %2$s에서 미디어 %1$d개가 제거됩니다"
 
 #: src/Dialogs/SyncWarningDialog.vala:44
 #, c-format
@@ -1104,7 +1104,7 @@ msgstr "%s에서 %s 가져오기"
 #: src/Dialogs/TransferFromDeviceDialog.vala:86
 #, c-format
 msgid "Import %d medias from %s"
-msgstr "%s에서 미디어 %d개 가져오기"
+msgstr "%2$s에서 미디어 %1$d개 가져오기"
 
 #: src/Dialogs/TransferFromDeviceDialog.vala:173
 msgid "Select individual medias to import:"
