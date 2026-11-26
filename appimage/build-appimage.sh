@@ -30,7 +30,9 @@ DESTDIR=$APPDIR meson install -C "$WORK/build" --no-rebuild
 # elsewhere SSL_CERT_FILE names the system's, which BeatBox then loads itself.
 GIOMODULES=$(pkg-config --variable=giomoduledir gio-2.0)
 mkdir -p "$APPDIR/usr/lib/gio/modules" "$APPDIR/apprun-hooks"
-cp "$GIOMODULES/libgiognutls.so" "$GIOMODULES/libgioenvironmentproxy.so" "$APPDIR/usr/lib/gio/modules/"
+cp "$GIOMODULES/libgiognutls.so" "$APPDIR/usr/lib/gio/modules/"
+# GLib 2.78 and later build the environment proxy into libgio: no module to bring
+[ ! -e "$GIOMODULES/libgioenvironmentproxy.so" ] || cp "$GIOMODULES/libgioenvironmentproxy.so" "$APPDIR/usr/lib/gio/modules/"
 cat > "$APPDIR/apprun-hooks/beatbox-tls.sh" <<'EOF'
 export GIO_MODULE_DIR="$APPDIR/usr/lib/gio/modules"
 if [ ! -e /etc/ssl/certs/ca-certificates.crt ] && [ -z "${SSL_CERT_FILE:-}" ]; then
