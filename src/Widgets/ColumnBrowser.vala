@@ -313,7 +313,7 @@ public class BeatBox.ColumnBrowser : Box {
 		var sb = new StringBuilder ();
 		foreach (var c in columns) {
 			sb.append (c.criterion.id).append ("=");
-			sb.append (string.joinv ("\u0001", sorted (c.wanted))).append ("\u0002");
+			sb.append (string.joinv ("\x01", sorted (c.wanted))).append ("\x02");
 		}
 		return sb.str;
 	}
