@@ -16,6 +16,23 @@ Packages for each version: https://github.com/lchongv/beatbox/releases
   BeatBox API keep working.
 - The --display option is gone (GTK 4 no longer parses it): set the DISPLAY
   environment variable instead.
+- The mini player can no longer stay on top by itself (GTK 4 cannot do it):
+  use "Always on top" in the window's menu.
+- Column browser: one to four boxes (genre, artist, album, year...) above the
+  songs that filter them, several values each; a toolbar button shows or hides
+  it and Preferences choose the criterion of each box.
+- Song check boxes: an unchecked song is skipped by Next, Previous, the end of
+  a song and shuffle; a double click or the queue still plays it.
+- Songs from the disk are read in full before they play, and the next one is
+  read while this one plays, so a song starts at once. The top display says
+  when one is loading. Preferences › Playback has a switch for it.
+- Find Stations: a button loads the next page of 200 results, and
+  Preferences › Radio sets how many it shows at a time.
+- Podcasts: "Unsubscribe from Podcast" in the episodes' menu removes every
+  episode of the feed (and, if asked, its downloaded files).
+- Preferences: "Show advanced settings", a page per topic that scrolls on its
+  own, visualizer settings, and Credits inside About.
+- Translations: format errors in ar, de, fr, hi, it, ko, pt_BR and zh_CN fixed.
 
 
 1.2 (11 November 2026)
