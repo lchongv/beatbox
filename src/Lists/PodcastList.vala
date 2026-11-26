@@ -43,6 +43,7 @@ public class BeatBox.PodcastList : GenericList {
 	PopMenu addToPlaylistMenu;
 	RatingMenuItem mediaRateMedia;
 	PopMenuItem mediaRemove;
+	PopMenuItem mediaUnsubscribe;
 	PopMenuItem mediaSaveLocally;
 	PopMenuItem importToLibrary;
 
@@ -61,10 +62,12 @@ public class BeatBox.PodcastList : GenericList {
 		if(get_hint() == TreeViewSetup.Hint.PODCAST) {
 			mediaRemove.set_visible(true);
 			mediaRemove.set_label(_("Remove from Library"));
+			mediaUnsubscribe.set_visible(true);
 			importToLibrary.set_visible(false);
 		}
 		else if(get_hint() == TreeViewSetup.Hint.DEVICE_PODCAST) {
 			mediaRemove.set_visible(false);
+			mediaUnsubscribe.set_visible(false);
 			mediaRemove.set_label(_("Remove from Device"));
 			importToLibrary.set_visible(true);
 			mediaSaveLocally.set_visible(false);
@@ -73,6 +76,7 @@ public class BeatBox.PodcastList : GenericList {
 		}
 		else {
 			mediaRemove.set_visible(false);
+			mediaUnsubscribe.set_visible(false);
 		}
 	}
 
@@ -105,6 +109,7 @@ public class BeatBox.PodcastList : GenericList {
 		mediaMenuNewPlaylist = new PopMenuItem.with_label(_("New Playlist"));
 		mediaMenuAddToPlaylist = new PopMenuItem.with_label(_("Add to Playlist"));
 		mediaRemove = new PopMenuItem.with_label(_("Remove Episode"));
+		mediaUnsubscribe = new PopMenuItem.with_label(_("Unsubscribe from Podcast"));
 		mediaSaveLocally = new PopMenuItem.with_label(_("Download"));
 		importToLibrary = new PopMenuItem.with_label(_("Import to Library"));
 		mediaRateMedia = new RatingMenuItem();
@@ -120,6 +125,7 @@ public class BeatBox.PodcastList : GenericList {
 		mediaMenuActionMenu.append(mediaMenuAddToPlaylist);
 		mediaMenuActionMenu.append(new PopMenuSeparator());
 		mediaMenuActionMenu.append(mediaRemove);
+		mediaMenuActionMenu.append(mediaUnsubscribe);
 		mediaMenuActionMenu.append(importToLibrary);
 		mediaEditMedia.clicked.connect(mediaMenuEditClicked);
 		mediaFileBrowse.clicked.connect(mediaFileBrowseClicked);
@@ -127,6 +133,7 @@ public class BeatBox.PodcastList : GenericList {
 		mediaMenuQueue.clicked.connect(mediaMenuQueueClicked);
 		mediaMenuNewPlaylist.clicked.connect(mediaMenuNewPlaylistClicked);
 		mediaRemove.clicked.connect(mediaRemoveClicked);
+		mediaUnsubscribe.clicked.connect(mediaUnsubscribeClicked);
 		importToLibrary.clicked.connect(importToLibraryClicked);
 		mediaRateMedia.clicked.connect(mediaRateMediaClicked);
 		mediaMenuAddToPlaylist.keep_open = true; // the playlists open beside the menu
@@ -337,6 +344,29 @@ public class BeatBox.PodcastList : GenericList {
 				App.library.remove_medias (toRemove, delete_files);
 			});
 		}
+	}
+
+	/* Subscriptions are the feeds of the episodes in the library, so unsubscribing is
+	 * removing every episode of the feeds of the selection. */
+	void mediaUnsubscribeClicked() {
+		var feeds = new HashSet<string>();
+		foreach(Media m in get_selected_medias()) {
+			if(m.rss_uri != null && m.rss_uri != "")
+				feeds.add(m.rss_uri);
+		}
+
+		var toRemove = new LinkedList<Media>();
+		foreach(Media m in App.library.podcast_library.medias()) {
+			if(!m.isTemporary && m.rss_uri != null && feeds.contains(m.rss_uri))
+				toRemove.add(m);
+		}
+		if(toRemove.size == 0)
+			return;
+
+		var dialog = new RemoveFilesDialog (toRemove, get_hint());
+		dialog.remove_media.connect ( (delete_files) => {
+			App.library.remove_medias (toRemove, delete_files);
+		});
 	}
 
 	void importToLibraryClicked() {
