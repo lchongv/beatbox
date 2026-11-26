@@ -32,7 +32,17 @@ namespace BeatBox.Skins {
 	/** Whether the skin applied last wants the square app icon on the menu button */
 	public bool square_menu_icon = false;
 	string? system_theme = null; // what the desktop asked for, restored by skins without Theme=
-	Gtk.InterfaceColorScheme system_scheme; // GTK 4 replaces the prefer-dark-theme flag with this
+	/* GTK 4.20 replaces the prefer-dark-theme flag with gtk-interface-color-scheme (0 unsupported,
+	 * 1 default, 2 dark, 3 light). Both are used by name: the typed binding does not exist in the
+	 * GTK 4.14 to 4.18 that 2.0 still builds against, and then the flag is the way. */
+	const string SCHEME = "gtk-interface-color-scheme";
+	const string PREFER_DARK = "gtk-application-prefer-dark-theme";
+	int system_scheme = 1;
+	bool system_prefer_dark = false;
+
+	static bool has_scheme (Gtk.Settings gtk) {
+		return ((ObjectClass) typeof (Gtk.Settings).class_ref ()).find_property (SCHEME) != null;
+	}
 
 	public string user_dir () {
 		return Path.build_filename (Environment.get_user_data_dir (), "beatbox", "skins");
@@ -168,7 +178,10 @@ namespace BeatBox.Skins {
 		var gtk = Gtk.Settings.get_default ();
 		if (system_theme == null) {
 			system_theme = gtk.gtk_theme_name;
-			system_scheme = gtk.gtk_interface_color_scheme;
+			if (has_scheme (gtk))
+				gtk.get (SCHEME, out system_scheme, null);
+			else
+				gtk.get (PREFER_DARK, out system_prefer_dark, null);
 		}
 		if (provider != null)
 			UI.remove_css_provider (provider);
@@ -188,8 +201,11 @@ namespace BeatBox.Skins {
 		if (gtk.gtk_theme_name != theme)
 			gtk.gtk_theme_name = theme;
 		// the dark skins ask for the dark scheme; the others get back what the desktop asked for
-		gtk.gtk_interface_color_scheme = (found != null && found.dark) ? Gtk.InterfaceColorScheme.DARK
-			: (system_scheme == Gtk.InterfaceColorScheme.UNSUPPORTED ? Gtk.InterfaceColorScheme.DEFAULT : system_scheme);
+		bool dark = found != null && found.dark;
+		if (has_scheme (gtk))
+			gtk.set (SCHEME, dark ? 2 : (system_scheme == 0 ? 1 : system_scheme), null);
+		else
+			gtk.set (PREFER_DARK, dark || system_prefer_dark, null);
 		square_menu_icon = found != null && found.square_icon;
 
 		foreach (var skin in available ()) {
